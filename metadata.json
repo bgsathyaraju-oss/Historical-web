@@ -1,0 +1,6 @@
+{
+  "name": "Suryavamsha Odiyaraju Kshatriya Portal",
+  "description": "Historical documentary, royal heritage archive, and global community portal dedicated to Suryavamsha Odiyaraju Kshatriya, Odra Desha, and Gajapathi heritage.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

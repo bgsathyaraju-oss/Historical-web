@@ -1,0 +1,108 @@
+import React, { useState } from 'react';
+import { HistoricalEvent } from '../types';
+import { Calendar, AlertCircle, BookOpen, ShieldCheck, MapPin } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+
+interface TimelineViewerProps {
+  events: HistoricalEvent[];
+}
+
+export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
+  const { t } = useLanguage();
+  const [selectedEvent, setSelectedEvent] = useState<HistoricalEvent | null>(null);
+  const [searchFilter, setSearchFilter] = useState('');
+
+  const filteredEvents = events.filter(e =>
+    e.title.toLowerCase().includes(searchFilter.toLowerCase()) ||
+    e.year_text.toLowerCase().includes(searchFilter.toLowerCase()) ||
+    e.rulers_involved.toLowerCase().includes(searchFilter.toLowerCase())
+  );
+
+  return (
+    <div className="w-full space-y-6">
+      {/* Search & Filter Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#121622] border border-stone-800">
+        <div>
+          <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+            {t.timeline.title}
+          </h3>
+          <p className="text-xs text-stone-400">
+            {t.timeline.subtitle}
+          </p>
+        </div>
+        <input
+          type="text"
+          value={searchFilter}
+          onChange={(e) => setSearchFilter(e.target.value)}
+          placeholder={t.timeline.filterPlaceholder}
+          className="w-full sm:w-72 px-3 py-1.5 text-xs rounded-lg bg-[#192030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+        />
+      </div>
+
+      {/* Interactive Timeline Stream */}
+      <div className="relative border-l-2 border-[#c99738]/40 ml-4 sm:ml-8 pl-6 sm:pl-8 space-y-8">
+        {filteredEvents.map((item, idx) => (
+          <div key={item.id || idx} className="relative group">
+            {/* Timeline Dot Marker */}
+            <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-5 h-5 rounded-full bg-[#580014] border-2 border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.4)] flex items-center justify-center group-hover:scale-125 transition-transform">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#d4af37]" />
+            </div>
+
+            {/* Event Card */}
+            <div
+              onClick={() => setSelectedEvent(selectedEvent?.id === item.id ? null : item)}
+              className="p-5 rounded-2xl bg-[#131724] border border-stone-800/90 hover:border-[#c99738]/60 hover:bg-[#181e2e] transition-all cursor-pointer shadow-md"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e8c872] bg-[#2a1b12] px-3 py-1 rounded-full border border-[#c99738]/40 w-fit">
+                  <Calendar className="w-3.5 h-3.5 text-[#d4af37]" />
+                  {item.year_text} ({item.period})
+                </span>
+                <span className="text-xs text-stone-400 font-medium">
+                  {t.timeline.rulerLabel}: <strong className="text-stone-200">{item.rulers_involved}</strong>
+                </span>
+              </div>
+
+              <h4 className="text-base sm:text-lg font-bold text-stone-100 font-royal-heading mb-2 group-hover:text-[#fcedc7] transition-colors">
+                {item.title}
+              </h4>
+
+              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mb-3">
+                {item.political_development}
+              </p>
+
+              {/* Inscriptions / Monuments Pill */}
+              <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400 mb-2">
+                <span className="text-stone-500 font-medium">{t.timeline.evidenceLabel}:</span>
+                <span className="px-2 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-300">
+                  {item.monuments_inscriptions}
+                </span>
+              </div>
+
+              {/* Uncertainty Notes & Primary Sources (Expandable or Always visible) */}
+              <div className="mt-3 pt-3 border-t border-stone-800/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="flex items-start gap-2 text-stone-400">
+                  <BookOpen className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-stone-300 font-semibold">{t.timeline.citationsLabel}:</span>
+                    <p className="text-stone-400">{item.primary_sources}</p>
+                  </div>
+                </div>
+
+                {item.uncertainty_notes && (
+                  <div className="flex items-start gap-2 text-stone-400 bg-amber-950/20 p-2 rounded-lg border border-amber-900/40">
+                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-amber-300 font-semibold">{t.timeline.methodologyLabel}:</span>
+                      <p className="text-amber-200/80 text-[11px] leading-snug">{item.uncertainty_notes}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --royal-maroon: #580014;
+    --royal-maroon-dark: #3a000d;
+    --royal-gold: #c99738;
+    --royal-gold-light: #e6be6c;
+    --royal-gold-dark: #91681c;
+    --royal-navy: #0b1528;
+    --royal-navy-dark: #070d18;
+    --royal-ivory: #faf7f0;
+    --royal-cream: #f4eee1;
+    --royal-sand: #e6dcce;
+    --royal-slate: #151922;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #0d0f17;
+    color: #f5f3ed;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-royal-heading {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.02em;
+  }
+
+  .font-royal-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0f17;
+}
+::-webkit-scrollbar-thumb {
+  background: #2f2214;
+  border-radius: 4px;
+  border: 1px solid #c99738;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c99738;
+}
+
+/* Royal Ornaments and Borders */
+.royal-border {
+  border: 1px solid rgba(201, 151, 56, 0.35);
+  box-shadow: 0 0 15px rgba(201, 151, 56, 0.08), inset 0 0 15px rgba(201, 151, 56, 0.03);
+}
+
+.royal-border-glow {
+  border: 1px solid rgba(201, 151, 56, 0.6);
+  box-shadow: 0 0 25px rgba(201, 151, 56, 0.2), inset 0 0 20px rgba(201, 151, 56, 0.06);
+}
+
+.royal-gold-gradient {
+  background: linear-gradient(135deg, #e6be6c 0%, #c99738 50%, #8b6218 100%);
+}
+
+.royal-gold-text {
+  background: linear-gradient(135deg, #fcedc7 0%, #d4af37 50%, #aa7c11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.royal-maroon-gradient {
+  background: linear-gradient(135deg, #780016 0%, #4a000d 50%, #290007 100%);
+}
+
+.bg-pattern-royal {
+  background-color: #0c0e16;
+  background-image: radial-gradient(rgba(201, 151, 56, 0.12) 1px, transparent 1px), radial-gradient(rgba(201, 151, 56, 0.06) 1px, #0c0e16 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
