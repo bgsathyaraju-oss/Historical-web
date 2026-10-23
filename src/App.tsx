@@ -81,7 +81,7 @@ function AppContent() {
     } else {
       setSearchParam(null);
     }
-    window.history.pushState({}, '', pathWithQuery);
+    window.history.pushState({ path: pathWithQuery }, '', pathWithQuery);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
