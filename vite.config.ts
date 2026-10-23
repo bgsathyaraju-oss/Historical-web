@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/Historical-web/',
+    base: process.env.GITHUB_ACTIONS === 'true' ? '/Historical-web/' : '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

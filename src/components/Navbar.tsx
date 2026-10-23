@@ -267,7 +267,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             </div>
           </nav>
 
-          {/* Right Header Action Items: Search, Language, Auth */}
+          {/* Right Header Action Items: Search & Export ZIP */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Search Trigger */}
             <button
@@ -287,14 +287,41 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               <Download className="w-3.5 h-3.5 text-[#d4af37]" />
               <span className="hidden sm:inline font-semibold">Export ZIP</span>
             </button>
+          </div>
+        </div>
+      </div>
 
+      {/* Line Break: Dedicated Sub-bar for Member Login, Create Account & Language Option Panel */}
+      <div className="border-t border-[#c99738]/25 bg-[#090b12]/95 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-3">
+          {/* Sub-bar Left: Epigraphic Citation Tag & Portal Welcome */}
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs text-stone-300">
+            <span className="inline-block w-2 h-2 rounded-full bg-[#d4af37] animate-pulse"></span>
+            {user ? (
+              <span className="font-medium text-stone-200">
+                Welcome, <span className="text-[#fae29c] font-semibold">{user.profile?.full_name || user.email}</span>
+                {isAdminOrEditor && (
+                  <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
+                    Staff
+                  </span>
+                )}
+              </span>
+            ) : (
+              <span className="text-stone-300 font-medium">
+                Official Gajapathi Kshatriya Historical Repository
+              </span>
+            )}
+          </div>
+
+          {/* Sub-bar Right: Shifted Member Login, Create Account & Language Option Panel */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 ml-auto">
             {/* Member Auth Status or Buttons */}
             {user ? (
               <div className="flex items-center gap-2">
                 {isAdminOrEditor && (
                   <button
                     onClick={() => navigateTo('/admin')}
-                    className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#580014] text-[#fcedc7] border border-[#d4af37]/60 hover:bg-[#780016] transition-all"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-[#580014] text-[#fcedc7] border border-[#d4af37]/60 hover:bg-[#780016] transition-all cursor-pointer"
                   >
                     <Shield className="w-3.5 h-3.5 text-[#d4af37]" />
                     <span>{t.nav.admin}</span>
@@ -303,11 +330,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
 
                 <button
                   onClick={() => navigateTo('/dashboard')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#181e2b] hover:bg-[#20293a] text-stone-200 border border-[#c99738]/40 hover:border-[#c99738] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-lg bg-[#181e2b] hover:bg-[#20293a] text-stone-200 border border-[#c99738]/40 hover:border-[#c99738] transition-all cursor-pointer"
                   title="Member Dashboard"
                 >
                   <User className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span className="hidden sm:inline font-semibold">{user.profile?.full_name?.split(' ')[0] || 'Dashboard'}</span>
+                  <span className="font-semibold">{user.profile?.full_name?.split(' ')[0] || 'Dashboard'}</span>
                 </button>
 
                 <button
@@ -315,30 +342,33 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                     await logout();
                     navigateTo('/');
                   }}
-                  className="p-2 rounded-lg text-stone-400 hover:text-stone-200 hover:bg-stone-800 transition-colors"
+                  className="p-1.5 rounded-lg text-stone-400 hover:text-stone-200 hover:bg-stone-800 transition-colors cursor-pointer"
                   title={t.nav.logout}
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigateTo('/login')}
-                  className="px-3 py-1.5 text-xs sm:text-sm font-medium text-stone-300 hover:text-[#e8c872] transition-colors"
+                  className="px-3 py-1 text-xs sm:text-sm font-medium text-stone-200 hover:text-[#fae29c] bg-[#161a24] hover:bg-[#212736] border border-stone-700/60 rounded-lg transition-all cursor-pointer shadow-sm"
                 >
                   {t.nav.login}
                 </button>
                 <button
                   onClick={() => navigateTo('/register')}
-                  className="px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-lg bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] shadow-md transition-all"
+                  className="px-3 py-1 text-xs sm:text-sm font-semibold rounded-lg bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] shadow-md transition-all cursor-pointer"
                 >
                   {t.nav.register}
                 </button>
               </div>
             )}
 
-            {/* Language toggle option shifted to top right position */}
+            {/* Subtle Divider between Auth & Language */}
+            <div className="h-4 w-px bg-[#c99738]/30"></div>
+
+            {/* Language Option Panel */}
             <div className="flex items-center">
               <LanguageSelector />
             </div>
@@ -418,7 +448,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             </button>
           </div>
 
-          {user && (
+          {user ? (
             <div className="py-3">
               <button
                 onClick={() => navigateTo('/dashboard')}
@@ -443,6 +473,33 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                   setExportModalOpen(true);
                 }}
                 className="w-full mt-2 text-left px-3 py-2.5 text-sm font-semibold rounded-lg bg-[#2a0810] text-[#fcedc7] border border-[#d4af37]/40 flex items-center justify-between"
+              >
+                <span>Export & Download ZIP Package</span>
+                <Download className="w-4 h-4 text-[#d4af37]" />
+              </button>
+            </div>
+          ) : (
+            <div className="py-3 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => navigateTo('/login')}
+                  className="w-full text-center py-2 text-sm font-medium text-stone-200 bg-[#181d28] border border-stone-700/70 rounded-lg hover:bg-[#202736]"
+                >
+                  {t.nav.login}
+                </button>
+                <button
+                  onClick={() => navigateTo('/register')}
+                  className="w-full text-center py-2 text-sm font-semibold text-[#290106] bg-gradient-to-r from-[#997022] to-[#c99738] rounded-lg shadow"
+                >
+                  {t.nav.register}
+                </button>
+              </div>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setExportModalOpen(true);
+                }}
+                className="w-full text-left px-3 py-2.5 text-sm font-semibold rounded-lg bg-[#2a0810] text-[#fcedc7] border border-[#d4af37]/40 flex items-center justify-between"
               >
                 <span>Export & Download ZIP Package</span>
                 <Download className="w-4 h-4 text-[#d4af37]" />
