@@ -41,10 +41,19 @@ export interface BaseTranslationDictionary {
     dashboard: string;
     admin: string;
     submitResearch: string;
-    documentedFigures?: string;
-    historicalPersons?: string;
+    documentedFigures: string;
+    historicalPersons: string;
     logout: string;
     exportZip: string;
+  };
+  publisher: {
+    designedAndPublishedBy: string;
+    publisherName: string;
+    leaderTitle: string;
+    leaderBio: string;
+    contactWhatsApp: string;
+    callMobile: string;
+    whatsappGreeting: string;
   };
   hero: {
     badge: string;
