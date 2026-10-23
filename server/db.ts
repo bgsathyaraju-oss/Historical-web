@@ -87,10 +87,48 @@ export function getDb(): DatabaseSchema {
     try {
       const content = fs.readFileSync(DB_FILE, 'utf-8');
       memoryDb = JSON.parse(content);
-      if (memoryDb && !memoryDb.email_verifications) {
-        memoryDb.email_verifications = [];
+      if (memoryDb) {
+        if (!memoryDb.email_verifications) {
+          memoryDb.email_verifications = [];
+        }
+        // Auto-merge any newly added canonical seed items
+        const seed = initializeSeedData();
+        let changed = false;
+        for (const art of seed.articles) {
+          if (!memoryDb.articles.some(a => a.id === art.id)) {
+            memoryDb.articles.push(art);
+            changed = true;
+          }
+        }
+        for (const fig of seed.figures) {
+          if (!memoryDb.figures.some(f => f.id === fig.id)) {
+            memoryDb.figures.push(fig);
+            changed = true;
+          }
+        }
+        for (const mon of seed.monuments) {
+          if (!memoryDb.monuments.some(m => m.id === mon.id)) {
+            memoryDb.monuments.push(mon);
+            changed = true;
+          }
+        }
+        for (const loc of seed.locations) {
+          if (!memoryDb.locations.some(l => l.id === loc.id)) {
+            memoryDb.locations.push(loc);
+            changed = true;
+          }
+        }
+        for (const insc of seed.inscriptions) {
+          if (!memoryDb.inscriptions.some(i => i.id === insc.id)) {
+            memoryDb.inscriptions.push(insc);
+            changed = true;
+          }
+        }
+        if (changed) {
+          saveDb(memoryDb);
+        }
+        return memoryDb;
       }
-      return memoryDb!;
     } catch (e) {
       console.error('Failed to read db file, initializing seed:', e);
     }
@@ -1552,6 +1590,78 @@ Hundreds of thousands of devotees, including Odiyaraju Kshatriya families, farme
 
 5. Historical Legacy and Cultural Continuity:
 Kolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthesis of martial defense, environmental stewardship, and living folk-devotional heritage. As the Suryavamsha Odiyaraju Kshatriya Portal honors the civilizational memory of Odra Desha and its southern diaspora, the island citadel of Kolletikota stands as an eternal monument to the valor of the warriors and the loving protection of their warrior-mother, Sri Peddintlamma Thalli.`
+    },
+    {
+      id: 'art_epigraphic_evolution_odra',
+      slug: 'epigraphic-evolution-of-odra-identity',
+      category: 'Inscriptions',
+      original_language: 'en',
+      original_title: 'Epigraphic Evolution of the Odra Identity: From Ancient Prakrit Edicts to Medieval Gajapathi Copper Plates',
+      summary: 'A comprehensive epigraphical and paleographical treatise tracing the evolution of the Odra identity across two millennia—from ancient Ashokan and Kharavela Prakrit lithic edicts, Bhauma-Kara copper grants, and Somavamshi inscriptions to imperial Eastern Ganga and Suryavamsha Gajapathi bilingual Sanskrit-Odia charters and southern pillar records.',
+      author_name: 'Dr. Vikramaditya Gajapathi Raju & Council of Epigraphists',
+      publication_date: '2026-02-25',
+      verification_status: 'Published',
+      evidence_category: 'verified_archaeological',
+      featured_image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80',
+      tags: ['Odra Identity', 'Epigraphy', 'Paleography', 'Hathigumpha', 'Veligalani', 'Lingaraja', 'Copper Plates', 'Gajapathi'],
+      sources: [
+        {
+          id: 'src_epi_01',
+          source_type: 'Inscription',
+          title: 'Hathigumpha 17-Line Prakrit Inscription of Emperor Kharavela',
+          author_or_authority: 'Epigraphia Indica, Vol. XX, ed. K.P. Jayaswal & R.D. Banerji',
+          publication_or_location: 'Archaeological Survey of India',
+          year_or_era: 'c. 1st Century BCE',
+          citation_details: 'Udayagiri Hill, Bhubaneswar; regnal chronicles and canal construction',
+          verified: true
+        },
+        {
+          id: 'src_epi_02',
+          source_type: 'Inscription',
+          title: 'Veligalani Bilingual Copper-Plate Grant of Kapilendra Deva',
+          author_or_authority: 'Epigraphia Indica, Vol. XXXIII, ed. D.C. Sircar',
+          publication_or_location: 'Archaeological Survey of India',
+          year_or_era: '1458 CE',
+          citation_details: 'Guntur District; imperial titles Gaudesvara Navakoti Karnata Kalavargesvara',
+          verified: true
+        },
+        {
+          id: 'src_epi_03',
+          source_type: 'Scholarly Book',
+          title: 'Inscriptions of Orissa (Circa 5th to 15th Century A.D.)',
+          author_or_authority: 'Satyanarayan Rajaguru',
+          publication_or_location: 'Odisha State Museum, Bhubaneswar',
+          year_or_era: '1960',
+          citation_details: 'Vols. I–V (Bhauma-Kara, Somavamshi, Ganga, and Suryavamsha epigraphs)',
+          verified: true
+        }
+      ],
+      original_content: `In the field of Indian epigraphy, the term "Odra" (also inscribed as Audra, Odda, and Odra-rajya) preserves an unbroken paleographical and political trajectory spanning over two thousand years. From early Brahmi rock inscriptions in Prakrit to early medieval Sanskrit copper-plate charters and bilingual 15th-century Gajapathi imperial edicts, the epigraphic record reflects the maturation of an ancient kingdom into a trans-regional imperial identity.
+
+1. Classical Antiquity: Emperor Kharavela & the Hathigumpha Edict (1st Century BCE):
+The 17-line Hathigumpha inscription, engraved in deep Brahmi script in the Prakrit language on the overhang of Udayagiri hill near Bhubaneswar, constitutes the earliest imperial lithic monument of the Odra-Kalinga realm. Emperor Kharavela chronicles his major accomplishments year by year:
+- Year 1: Repairing city ramparts, gateways, and flood-embankments of Kalinganagari damaged by cyclone storms.
+- Year 5: Extending into his royal capital the canal excavated three centuries earlier by King Nanda from the Tiwasachala basin.
+- Year 12: Northern military campaigns and retrieval of the sacred Kalinga Jina image from Magadha.
+This edict provides verified epigraphic evidence linking ancient Odra governance directly to massive hydraulic canalization and fortress engineering.
+
+2. Early Medieval Horizon: Bhauma-Kara and Somavamshi Charters (8th–11th Century CE):
+Between the 8th and 11th centuries, copper-plate grants issued by the Bhauma-Kara queens (such as Tribhuvana Mahadevi) and Somavamshi monarchs (such as Yayati I and Mahasivagupta) formally delineate the geopolitical boundary of "Odra Vishaya" (the Odra district) and "Odra Desha".
+Engraved in northern proto-regional scripts with royal bull and lotus seals, these charters record land grants along the Mahanadi and Brahmani river basins, establishing that Odra was the agrarian and spiritual heartland of eastern India.
+
+3. The Imperial Ganga Synthesis (11th–15th Century CE):
+Under Anantavarman Chodaganga Deva, Anangabhima Deva III, and Narasimhadeva I, the Eastern Gangas unified Kalinga, Utkala, and Odra into an imperial whole.
+Stone epigraphs carved upon the Jaya-Vijaya doorway of the Jagannath Temple at Puri and the pillar records of Simhachalam and Draksharama document the transition from Sanskrit-dominated inscriptions to early vernacular prose, establishing Puri as the spiritual anchor of the Odra identity.
+
+4. The Suryavamsha Gajapathi Imperial Epigraphs (1434–1540 CE):
+The accession of Kapilendra Deva in 1434 CE inaugurated the golden age of epigraphy in the vernacular Odia script alongside Sanskrit and Telugu:
+- The Lingaraja Temple Inscription (1452 CE): Written in early Odia script and prose, recording Kapilendra Deva's imperial order abolishing the salt tax and regulating temple levies.
+- The Veligalani Copper Plates (1458 CE): Discovered in Guntur District, Andhra Pradesh, this bilingual charter in Nagari, Odia, and Telugu scripts records grants to 120 scholars on the Krishna River and confirms the imperial title "Gaudesvara Navakoti Karnata Kalavargesvara Sri Kapilendra Gajapathi Maharaju".
+- The Simhachalam and Draksharama Pillar Grants: Inscribed during the reigns of Purushottama Deva and Prataparudra Deva, documenting royal endowments and fortress commands.
+- The Srirangam Inscription (1464 CE): Records military endowments made by Kumara Hamvira Deva on the banks of the Kaveri in modern Tamil Nadu.
+
+5. Historical Legacy and Southern Diaspora:
+These primary inscriptions explain how Odra military contingents and commanders stationed across southern hill forts (Kondavidu, Udayagiri, Bellamkonda, Malebennur) came to bear the proud designations "OddeRajulu", "VaddeRajulu", and "Oddar". The epigraphic record proves that modern community identities are not post-colonial inventions, but living continuations of verified ancient and medieval royal decrees.`
     }
   ];
 

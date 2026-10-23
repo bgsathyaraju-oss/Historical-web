@@ -267,7 +267,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             </div>
           </nav>
 
-          {/* Right Header Action Items: Search & Export ZIP */}
+          {/* Right Header Action Items: Search, Export ZIP, & Top-Right Language Toggle Option */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Search Trigger */}
             <button
@@ -287,6 +287,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               <Download className="w-3.5 h-3.5 text-[#d4af37]" />
               <span className="hidden sm:inline font-semibold">Export ZIP</span>
             </button>
+
+            {/* Top Right Language Toggle Option */}
+            <div className="flex items-center">
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       </div>

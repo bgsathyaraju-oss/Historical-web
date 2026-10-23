@@ -58,6 +58,7 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
     { key: 'Odra Desha', label: getMetadataLabel('category', 'odra_desha') || 'Odra Desha' },
     { key: 'Gajapathi Kings', label: getMetadataLabel('category', 'gajapathi_rulers') || 'Gajapathi Kings' },
     { key: 'Royal Genealogy', label: getMetadataLabel('category', 'lineage_genealogy') || 'Royal Genealogy' },
+    { key: 'Inscriptions', label: getMetadataLabel('category', 'epigraphy_inscriptions') || 'Inscriptions & Epigraphy' },
     { key: 'Research Articles', label: translateText('research_archive', 'Research Articles') }
   ];
 

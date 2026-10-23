@@ -1189,6 +1189,40 @@ United by solar ancestry, engineering genius, and unyielding honor, this communi
       'Sri Peddintlamma Thalli as divine warrior-mother guardian of the island citadel',
       'Annual Phalguna Shuddha Purnima Jatara and Gokarneshwara Swamy temple'
     ]
+  },
+  {
+    id: 'mono_part_8_epigraphic_evolution',
+    order: 8,
+    section_title: {
+      en: 'Part 8: Epigraphic Evolution of the Odra Identity: From Ancient Prakrit Edicts to Gajapathi Copper Plates',
+      hi: 'भाग 8: ओड्र अस्मिता का पुरालेखीय विकास: प्राचीन प्राकृत अभिलेखों से मध्यकालीन गजपति ताम्रपत्रों तक',
+      te: 'భాగం 8: ఓడ్ర అస్తిత్వ శాసన పరిణామ క్రమం: ప్రాచీన ప్రాకృత శిలాశాసనాల నుండి గజపతి తామ్రపత్రాల వరకు',
+      kn: 'ಭಾಗ ೮: ಓಡ್ರ ಅಸ್ಮಿತೆಯ ಶಾಸನಬದ್ಧ ವಿಕಾಸ: ಪ್ರಾಚೀನ ಪ್ರಾಕೃತ ಶಾಸನಗಳಿಂದ ಗಜಪತಿ ತಾಮ್ರಪಟಗಳವರೆಗೆ',
+      ta: 'பகுதி 8: ஒட்ர அடையாளத்தின் கல்வெட்டு பரிணாமம்: பண்டைய பிராகிருத சாசனங்கள் முதல் கஜபதி செப்பேடுகள் வரை',
+      mr: 'भाग ८: ओड्र अस्मितेची पुराभिलेखीय उत्क्रांती: प्राचीन प्राकृत शिलालेखांपासून गजपती ताम्रपटांपर्यंत',
+      or: 'ଭାଗ ୮: ଓଡ଼୍ର ଅସ୍ମିତାର ଶିଳାଲେଖୀୟ କ୍ରମବିକାଶ: ପ୍ରାଚୀନ ପ୍ରାକୃତ ଅଭିଲେଖରୁ ମଧ୍ୟଯୁଗୀୟ ଗଜପତି ତାମ୍ରଶାସନ',
+      bn: 'অধ্যায় ৮: ওড্র পরিচয়ের শিলালিপিগত বিবর্তন: প্রাচীন প্রাকৃত অনুশাসন থেকে মধ্যযুগীয় গজপতি তাম্রশাসন'
+    },
+    content: {
+      en: `The epigraphic evolution of the Odra identity represents an unbroken two-thousand-year record across lithic and metallic charters:
+1. Classical Antiquity (1st Century BCE): Emperor Kharavela's 17-line Brahmi Hathigumpha inscription at Udayagiri chronicles canal extension and urban defense restoration in ancient Odra-Kalinga.
+2. Early Medieval Charters (8th–11th Century CE): Copper-plate grants of the Bhauma-Kara and Somavamshi dynasties officially define "Odra Vishaya" and "Odra Desha" along the fertile Mahanadi river basin.
+3. Eastern Ganga Transition (11th–15th Century CE): Epigraphs at Puri Jagannath Temple, Simhachalam, and Draksharama document the synthesis of Sanskrit with proto-regional vernacular scripts.
+4. Imperial Gajapathi Charters (1434–1540 CE): Kapilendra Deva's bilingual Veligalani grant (1458 CE) recording imperial titles, the Lingaraja temple edict (1452 CE) abolishing the salt tax, and southern pillar grants at Srirangam and Kondavidu confirming OddeRajulu warrior commander garrisons.`,
+      hi: 'भारतीय पुरालेखशास्त्र में ओड्र पहचान का दो सहस्राब्दियों का क्रमबद्ध इतिहास सुरक्षित है। सम्राट खारवेल के हाथीगुंफा अभिलेख (नहर निर्माण व दुर्ग जीर्णोद्धार), भौम-कर व सोमवंशी ताम्रपत्रों (ओड्र विषय सीमांकन), तथा सूर्यवंशी गजपतियों के वेलिगलनी ताम्रपत्र (1458 ई.) व श्रीरंगम स्तंभ लेखों से ओड्र और ओडियाराजु/वड्डेराजुलु क्षत्रियों का प्रत्यक्ष प्रमाण मिलता है।',
+      te: 'భారతీయ శాసన శాస్త్రంలో ఓడ్ర అస్తిత్వానికి రెండు వేల సంవత్సరాల నిరంతర ఆధారాలున్నాయి. ఖారవేలుని హాథీగుంఫా శాసనం (కాలువ తవ్వకం, దుర్గ రక్షణ), భౌమ-కర మరియు సోమవంశ తామ్రపత్రాలు (ఓడ్ర విషయ సరిహద్దులు), మరియు కపిలేంద్ర గజపతి వెలిగలని తామ్రపత్రం (1458), శ్రీరంగం శాసనాలు ఒడ్డేరాజుల సైనిక నాయకత్వానికి తిరుగులేని సాక్ష్యాలు.',
+      kn: 'ಖಾರವೇಲನ ಹಾಥೀಗುಂಫಾ ಶಾಸನದಿಂದ ಹಿಡಿದು ಸೂರ್ಯವಂಶಿ ಗಜಪತಿಗಳ ವೆಲಿಗಲನಿ, ಲಿಂಗರಾಜ ಮತ್ತು ಶ್ರೀರಂಗಂ ತಾಮ್ರಪಟಗಳವರೆಗೆ ಎರಡು ಸಾವಿರ ವರ್ಷಗಳ ಶಾಸನಗಳಲ್ಲಿ ಓಡ್ರ-ಒಡ್ಡೇರಾಜುಲು ಕ್ಷತ್ರಿಯರ ಇತಿಹಾಸವು ಅಚ್ಚಳಿಯದೆ ಉಳಿದುಕೊಂಡು ಬಂದಿದೆ.',
+      ta: 'காரவேலனின் ஹாத்திகும்பா கல்வெட்டு முதல் கஜபதிகளின் வெலிகலானி மற்றும் ஸ்ரீரங்கம் செப்பேடுகள் வரை, இரண்டாயிரத்திற்கும் மேற்பட்ட ஆண்டுகளாக ஒட்ர மற்றும் ஒட்டியராஜு சத்திரியர்களின் வரலாறு கல்வெட்டுகளில் பதிவாகியுள்ளது.',
+      mr: 'सम्राट खारवेलांच्या हाथीगुंफा शिलालेखापासून ते सूर्यवंशी गजपतींच्या वेलिगलनी ताम्रपटांपर्यंत, ओड्र अस्मिता व ओडियाराजू क्षत्रिय परंपरांचा दोन हजार वर्षांचा पुराभिलेखीय इतिहास सिद्ध होतो.',
+      or: 'ସମ୍ରାଟ ଖାରବେଳଙ୍କ ହାତୀଗୁମ୍ଫା ପ୍ରାକୃତ ଅଭିଲେଖରୁ ଆରମ୍ଭ କରି କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ବେଳିଗାଲନୀ ତାମ୍ରଶାସନ ଓ ଶ୍ରୀରଙ୍ଗମ ସ୍ତମ୍ଭଲେଖ ପର୍ଯ୍ୟନ୍ତ ଓଡ଼୍ର ଅସ୍ମିତାର ଦୁଇ ହଜାର ବର୍ଷର ଗୌରବମୟ ପ୍ରମାଣ ବିଦ୍ୟମାନ।',
+      bn: 'সম্রাট খারবেলের হাতিগুম্ফা শিলালিপি থেকে শুরু করে সূর্যবংশীয় গজপতিদের ভেলিগালানি ও শ্রীরঙ্গম তাম্রশাসন পর্যন্ত, ওড্র পরিচয় ও ওডিয়ারাজু ক্ষত্রিয় ঐতিহ্যের দুই সহস্রাব্দের নিরবচ্ছিন্ন দলিল সুরক্ষিত।'
+    },
+    key_points: [
+      'Hathigumpha 17-line Prakrit lithic edict linking early Odra to civic canals and ramparts',
+      'Bhauma-Kara and Somavamshi copper grants formally defining Odra Vishaya and Odra Desha',
+      'Veligalani bilingual grant of 1458 CE conferring imperial Gajapathi titles',
+      'Southern epigraphs at Srirangam and Kondavidu documenting OddeRajulu commanders'
+    ]
   }
 ];
 
