@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldCheck, BookOpen, Scroll, Compass, Mail, Heart, ExternalLink } from 'lucide-react';
+import { ShieldCheck, BookOpen, Scroll, Compass, Mail, Heart, ExternalLink, Crown, Phone } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { WhatsAppIcon } from './PublisherCreditCard';
 
 interface FooterProps {
   onNavigate: (path: string) => void;
@@ -8,9 +9,62 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
+  const whatsappUrl = "https://wa.me/919480112897?text=Namaste%20Dr%20G.%20Sathyanarayana%20Raju%20ji%2C%20regarding%20Suryavamsha%20Odiyaraju%20Kshatriya%20Heritage%20Portal";
 
   return (
     <footer className="w-full bg-[#080a10] border-t border-[#c99738]/30 text-stone-300">
+      {/* WebSite Design and Published by Dr G.Sathyanarayana Raju */}
+      <div className="bg-gradient-to-r from-[#21020b] via-[#101420] to-[#21020b] border-b border-[#c99738]/40 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-5">
+            <div className="relative shrink-0">
+              <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#e8c872] shadow-xl ring-2 ring-[#580014]">
+                <img
+                  src="/assets/dr_g_sathyanarayana_raju.png"
+                  alt="Dr G.Sathyanarayana Raju"
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div className="absolute -bottom-1 -right-1 bg-[#580014] text-[#fae29c] p-1 rounded-full border border-[#d4af37]">
+                <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37]">
+                WebSite Design and Published by
+              </div>
+              <h3 className="font-royal-heading font-black text-xl text-[#fcedc7]">
+                Dr G.Sathyanarayana Raju
+              </h3>
+              <p className="text-xs sm:text-sm font-semibold text-stone-300">
+                Leader of Suryavamsha Odiyaraju Kshatriya Community
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 shrink-0">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] hover:text-black shadow-md transition-all cursor-pointer"
+            >
+              <WhatsAppIcon className="w-4 h-4 fill-current" />
+              <span>Contact on WhatsApp (+91 9480112897)</span>
+            </a>
+
+            <a
+              href="tel:+919480112897"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-[#141a29] hover:bg-[#1e273d] text-stone-300 border border-stone-700 hover:border-[#c99738] transition-all"
+            >
+              <Phone className="w-3.5 h-3.5 text-[#d4af37]" />
+              <span>+91 9480112897</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* Methodological Integrity Banner */}
       <div className="bg-[#121622] border-b border-stone-800 py-6 px-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 text-xs sm:text-sm text-stone-300">

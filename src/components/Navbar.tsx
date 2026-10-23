@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { ExportProjectModal } from './ExportProjectModal';
 import { LanguageSelector } from './LanguageSelector';
+import { WhatsAppIcon } from './PublisherCreditCard';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -45,18 +46,39 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#0c0e16]/95 backdrop-blur-md border-b border-[#c99738]/30 shadow-lg">
-      {/* Top Banner Notice */}
-      <div className="bg-[#42000c] text-[#fcedc7] text-[11px] py-1 px-4 border-b border-[#c99738]/20 flex items-center justify-between font-medium">
-        <div className="flex items-center gap-2 mx-auto sm:mx-0">
-          <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
-          <span>Suryavamsha Odiyaraju Kshatriya • Digital Historical Documentary & Archival Repository</span>
+      {/* Top Banner Notice: Publisher Attribution & Direct WhatsApp */}
+      <div className="bg-gradient-to-r from-[#3d020e] via-[#1a0510] to-[#3d020e] text-[#fcedc7] text-[11px] py-1.5 px-3 sm:px-6 border-b border-[#c99738]/25 flex flex-wrap items-center justify-between gap-2 font-medium">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full overflow-hidden border border-[#d4af37] shrink-0">
+            <img
+              src="/assets/dr_g_sathyanarayana_raju.png"
+              alt="Dr G.Sathyanarayana Raju"
+              className="w-full h-full object-cover object-top"
+            />
+          </div>
+          <span className="text-stone-300 hidden md:inline">WebSite Design & Published by:</span>
+          <span className="font-bold text-[#fae29c]">Dr G.Sathyanarayana Raju</span>
+          <span className="hidden lg:inline text-stone-300">• Leader of Suryavamsha Odiyaraju Kshatriya Community</span>
         </div>
-        <div className="hidden sm:flex items-center gap-4 text-stone-300 text-[11px]">
-          <span>Verified Epigraphic Standard</span>
-          <span>•</span>
-          <button onClick={() => navigateTo('/about')} className="hover:text-white transition-colors">
-            Methodology
-          </button>
+
+        <div className="flex items-center gap-3 ml-auto">
+          <a
+            href="https://wa.me/919480112897?text=Namaste%20Dr%20G.%20Sathyanarayana%20Raju%20ji%2C%20regarding%20Suryavamsha%20Odiyaraju%20Kshatriya%20Heritage%20Portal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] font-bold text-[10px] sm:text-[11px] transition-all shadow-sm"
+            title="Chat with Dr G.Sathyanarayana Raju on WhatsApp (+91 9480112897)"
+          >
+            <WhatsAppIcon className="w-3 h-3 fill-current" />
+            <span>WhatsApp: +91 9480112897</span>
+          </a>
+
+          <div className="hidden sm:flex items-center gap-2 text-stone-400 text-[11px]">
+            <span>•</span>
+            <button onClick={() => navigateTo('/about')} className="hover:text-white transition-colors">
+              Methodology
+            </button>
+          </div>
         </div>
       </div>
 

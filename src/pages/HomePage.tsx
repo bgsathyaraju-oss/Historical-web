@@ -20,6 +20,7 @@ import { EvidenceBadge } from '../components/EvidenceBadge';
 import { TimelineViewer } from '../components/TimelineViewer';
 import { LightboxModal } from '../components/LightboxModal';
 import { ArticleBriefModal } from '../components/ArticleBriefModal';
+import { PublisherCreditCard } from '../components/PublisherCreditCard';
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -73,7 +74,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   }, [language]);
 
   return (
-    <div className="w-full space-y-16 pb-20">
+    <div className="w-full space-y-12 pb-20">
+      {/* TOP POSITION: WebSite Design and Published by Dr G.Sathyanarayana Raju */}
+      <section className="pt-6 sm:pt-8 -mb-4">
+        <PublisherCreditCard variant="hero-top" />
+      </section>
+
       {/* SECTION A: Royal Hero Section */}
       <section className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0c0d15] via-[#1b0a11] to-[#0c0d15] px-4 sm:px-6 lg:px-8 border-b border-[#c99738]/30">
         {/* Architectural Backdrop Glow & Subtle Motif */}

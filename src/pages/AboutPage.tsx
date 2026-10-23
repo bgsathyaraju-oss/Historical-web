@@ -1,5 +1,6 @@
 import { ShieldCheck, BookOpen, Compass, Award, FileText, CheckCircle, Scale } from 'lucide-react';
 import { ArticleActionBar } from '../components/ArticleActionBar';
+import { PublisherCreditCard } from '../components/PublisherCreditCard';
 import { useLanguage } from '../context/LanguageContext';
 
 interface AboutPageProps {
@@ -129,6 +130,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             Documenting the historical migration routes and cultural memory of Suryavamsha Odiyaraju families across Karnataka, Andhra, and Tamil Nadu.
           </p>
         </div>
+      </div>
+
+      {/* Website Design and Publishing Leadership */}
+      <div className="pt-4">
+        <PublisherCreditCard variant="hero-top" />
       </div>
     </div>
   );
