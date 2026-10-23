@@ -251,9 +251,27 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Heuristic lookup for research categories
     if (type === 'category') {
       const k = key.toLowerCase();
-      if (k.includes('odra')) return group.odra_desha?.[language] || key;
-      if (k.includes('gajapathi') || k.includes('ruler')) return group.gajapathi_rulers?.[language] || key;
-      if (k.includes('inscription') || k.includes('epigraphy')) return group.inscriptions_epigraphy?.[language] || key;
+      if (k.includes('maritime') || k.includes('citadel') || k.includes('kolletikota') || k.includes('sarasu') || k.includes('peddintlamma')) {
+        return group.sacred_citadels_maritime?.[language] || group.temple_architecture?.[language] || key;
+      }
+      if (k.includes('antiquity') || (k.includes('suryavamsha') && k.includes('lineage'))) {
+        return group.suryavamsha_lineage_antiquity?.[language] || group.lineage_genealogy?.[language] || key;
+      }
+      if (k.includes('oad') || k.includes('rajput') || (k.includes('od') && k.includes('heritage'))) {
+        return group.oad_rajput_heritage?.[language] || group.community_history?.[language] || key;
+      }
+      if (k.includes('methodology') || (k.includes('genealogy') && k.includes('lineage'))) {
+        return group.genealogy_methodology?.[language] || group.lineage_genealogy?.[language] || key;
+      }
+      if (k.includes('gajapathi') || k.includes('kapilendra') || k.includes('ruler')) {
+        return group.suryavamsha_gajapathi_kings?.[language] || group.gajapathi_rulers?.[language] || key;
+      }
+      if (k.includes('geography') || k.includes('odra')) {
+        return group.odra_desha_geography?.[language] || group.odra_desha?.[language] || key;
+      }
+      if (k.includes('inscription') || k.includes('epigraph')) {
+        return group.inscriptions_epigraphy?.[language] || key;
+      }
       if (k.includes('temple') || k.includes('architecture')) return group.temple_architecture?.[language] || key;
       if (k.includes('water') || k.includes('civic') || k.includes('engineering')) return group.water_civic_engineering?.[language] || key;
       if (k.includes('lineage') || k.includes('genealogy')) return group.lineage_genealogy?.[language] || key;

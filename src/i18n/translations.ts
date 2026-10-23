@@ -41,6 +41,8 @@ export interface BaseTranslationDictionary {
     dashboard: string;
     admin: string;
     submitResearch: string;
+    documentedFigures?: string;
+    historicalPersons?: string;
     logout: string;
     exportZip: string;
   };
@@ -202,6 +204,8 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'Member Dashboard',
       admin: 'Admin Panel',
       submitResearch: 'Submit Research',
+      documentedFigures: 'Documented Historical Figures',
+      historicalPersons: 'Historical Persons',
       logout: 'Logout',
       exportZip: 'Export Project (ZIP)'
     },

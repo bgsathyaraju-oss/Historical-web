@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Article } from '../types';
-import { BookOpen, Search, Filter, ShieldCheck, Calendar, User, ArrowRight } from 'lucide-react';
+import { BookOpen, Search, Filter, ShieldCheck, Calendar, User, ArrowRight, Sparkles } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { ArticleActionBar } from '../components/ArticleActionBar';
+import { ArticleBriefModal } from '../components/ArticleBriefModal';
 import { useLanguage } from '../context/LanguageContext';
 
 interface ResearchArticlesPageProps {
@@ -12,6 +13,9 @@ interface ResearchArticlesPageProps {
 export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNavigate }) => {
   const { language, t, translationManager, getArticleContent, getMetadataLabel, translateText } = useLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [selectedBriefArticle, setSelectedBriefArticle] = useState<Article | null>(null);
+  const [isBriefModalOpen, setIsBriefModalOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,12 +38,54 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
     };
   }, [language, translationManager]);
 
+  const categories = [
+    { id: 'all', label: translateText('all', 'All Categories') },
+    { id: 'odra_desha_geography', label: getMetadataLabel('category', 'odra_desha_geography') || 'Odra Desha & Geography' },
+    { id: 'suryavamsha_gajapathi_kings', label: getMetadataLabel('category', 'suryavamsha_gajapathi_kings') || 'Gajapathi Kings' },
+    { id: 'genealogy_methodology', label: getMetadataLabel('category', 'genealogy_methodology') || 'Genealogy & Methodology' },
+    { id: 'oad_rajput_heritage', label: getMetadataLabel('category', 'oad_rajput_heritage') || 'Oad-Rajput Heritage' },
+    { id: 'suryavamsha_lineage_antiquity', label: getMetadataLabel('category', 'suryavamsha_lineage_antiquity') || 'Suryavamsha Lineage' },
+    { id: 'sacred_citadels_maritime', label: getMetadataLabel('category', 'sacred_citadels_maritime') || 'Sacred Citadels (Kolletikota)' },
+    { id: 'inscriptions_epigraphy', label: getMetadataLabel('category', 'inscriptions_epigraphy') || 'Inscriptions & Epigraphy' }
+  ];
+
+  // Cross-browser safe Unicode search
+  const normalizedSearch = (search || '').normalize('NFC').toLowerCase().trim();
+
   const filtered = articles.filter(a => {
+    // Category filter
+    if (activeCategory !== 'all') {
+      const catKey = a.category.toLowerCase();
+      const match =
+        (activeCategory === 'odra_desha_geography' && (catKey.includes('odra') || catKey.includes('geography'))) ||
+        (activeCategory === 'suryavamsha_gajapathi_kings' && (catKey.includes('gajapathi') || catKey.includes('kapilendra'))) ||
+        (activeCategory === 'genealogy_methodology' && (catKey.includes('genealogy') || catKey.includes('methodology'))) ||
+        (activeCategory === 'oad_rajput_heritage' && (catKey.includes('oad') || catKey.includes('rajput') || catKey.includes('synonym'))) ||
+        (activeCategory === 'suryavamsha_lineage_antiquity' && (catKey.includes('antiquity') || catKey.includes('sagara'))) ||
+        (activeCategory === 'sacred_citadels_maritime' && (catKey.includes('maritime') || catKey.includes('citadel') || catKey.includes('kolletikota') || catKey.includes('sarasu'))) ||
+        (activeCategory === 'inscriptions_epigraphy' && (catKey.includes('inscription') || catKey.includes('epigraph')));
+
+      if (!match) return false;
+    }
+
+    if (!normalizedSearch) return true;
+
     const { title, summary } = getArticleContent(a);
+    const normTitle = (title || '').normalize('NFC').toLowerCase();
+    const normSummary = (summary || '').normalize('NFC').toLowerCase();
+    const normOrigTitle = (a.original_title || '').normalize('NFC').toLowerCase();
+    const normOrigSummary = (a.summary || '').normalize('NFC').toLowerCase();
+    const normAuthor = (a.author_name || '').normalize('NFC').toLowerCase();
+    const normCat = (a.category || '').normalize('NFC').toLowerCase();
+
     return (
-      title.toLowerCase().includes(search.toLowerCase()) ||
-      summary.toLowerCase().includes(search.toLowerCase()) ||
-      a.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))
+      normTitle.includes(normalizedSearch) ||
+      normSummary.includes(normalizedSearch) ||
+      normOrigTitle.includes(normalizedSearch) ||
+      normOrigSummary.includes(normalizedSearch) ||
+      normAuthor.includes(normalizedSearch) ||
+      normCat.includes(normalizedSearch) ||
+      a.tags.some(t => (t || '').normalize('NFC').toLowerCase().includes(normalizedSearch))
     );
   });
 
@@ -49,6 +95,16 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
   const handleSearchChange = (val: string) => {
     setSearch(val);
     setCurrentPage(1);
+  };
+
+  const handleCategoryChange = (catId: string) => {
+    setActiveCategory(catId);
+    setCurrentPage(1);
+  };
+
+  const handleCardClick = (art: Article) => {
+    setSelectedBriefArticle(art);
+    setIsBriefModalOpen(true);
   };
 
   return (
@@ -76,20 +132,40 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
         showLanguages={true}
       />
 
-      {/* Search Bar */}
-      <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-[#121622] border border-stone-800">
-        <div className="w-full sm:w-80 relative">
-          <Search className="w-4 h-4 text-[#d4af37] absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder={t.common?.searchPlaceholder || 'Search articles by title or keyword...'}
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-lg bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
-          />
+      {/* Search and Category Filter Bar */}
+      <div className="space-y-4 p-4 sm:p-5 rounded-3xl bg-[#121622] border border-stone-800">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="w-full sm:w-96 relative">
+            <Search className="w-4 h-4 text-[#d4af37] absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder={t.common?.searchPlaceholder || 'Search articles in any language or script...'}
+              className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+            />
+          </div>
+          <div className="text-xs text-stone-400 flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+            <span>Click any article to view <strong>Brief Information in Multilingual</strong></span>
+          </div>
         </div>
-        <div className="text-xs text-stone-400 hidden sm:block">
-          Showing <strong>{filtered.length}</strong> published research articles
+
+        {/* Category Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 pt-1">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryChange(cat.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                activeCategory === cat.id
+                  ? 'bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] shadow-md font-bold'
+                  : 'bg-stone-900/90 text-stone-400 hover:text-stone-200 hover:bg-stone-800 border border-stone-800'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -102,10 +178,13 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
             No research papers match your current search query "{search}".
           </p>
           <button
-            onClick={() => handleSearchChange('')}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207]"
+            onClick={() => {
+              handleSearchChange('');
+              setActiveCategory('all');
+            }}
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] cursor-pointer"
           >
-            Clear Search
+            Clear Filters
           </button>
         </div>
       ) : (
@@ -115,8 +194,9 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
             return (
             <div
               key={art.id}
-              onClick={() => onNavigate(`/documentary?article=${art.id}`)}
-              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738]/60 p-6 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group"
+              onClick={() => handleCardClick(art)}
+              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] p-6 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+              title="Click to view Brief Information in Multilingual"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
@@ -144,9 +224,21 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
                   <span>{art.publication_date}</span>
                 </div>
 
-                <div className="text-xs font-semibold text-[#e8c872] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  <span>Read Full Research Article</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[11px] text-[#fae29c] font-medium flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-[#d4af37]" />
+                    <span>View Brief Information</span>
+                  </span>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onNavigate(`/documentary?article=${art.id}`);
+                    }}
+                    className="text-xs font-semibold text-[#e8c872] hover:underline flex items-center gap-1 group-hover:translate-x-1 transition-transform"
+                  >
+                    <span>Full Article</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -154,6 +246,14 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
           })}
         </div>
       )}
+
+      {/* Brief Information Multilingual Modal */}
+      <ArticleBriefModal
+        article={selectedBriefArticle}
+        isOpen={isBriefModalOpen}
+        onClose={() => setIsBriefModalOpen(false)}
+        onReadFull={(art) => onNavigate(`/documentary?article=${art.id}`)}
+      />
 
       {/* Pagination Bar */}
       {totalPages > 1 && (

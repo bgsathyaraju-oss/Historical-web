@@ -19,6 +19,7 @@ import { SiteStatistics, Article, HistoricalEvent, GalleryItem } from '../types'
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { TimelineViewer } from '../components/TimelineViewer';
 import { LightboxModal } from '../components/LightboxModal';
+import { ArticleBriefModal } from '../components/ArticleBriefModal';
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -32,6 +33,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   const [timelineEvents, setTimelineEvents] = useState<HistoricalEvent[]>([]);
   const [galleryPreview, setGalleryPreview] = useState<GalleryItem[]>([]);
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
+  const [selectedBriefArticle, setSelectedBriefArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -279,8 +281,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
             return (
               <div
                 key={art.id}
-                onClick={() => onNavigate(`/documentary?article=${art.id}`)}
-                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738]/60 p-5 space-y-4 hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group"
+                onClick={() => setSelectedBriefArticle(art)}
+                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] p-5 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+                title="Click to view Brief Information directly in Multilingual"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -299,9 +302,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-stone-500">
-                  <span>By {art.author_name}</span>
-                  <span>{art.publication_date}</span>
+                <div className="pt-3 border-t border-stone-800/80 space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] text-stone-500">
+                    <span>By {art.author_name}</span>
+                    <span>{art.publication_date}</span>
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[11px] text-[#fae29c] font-medium flex items-center gap-1 group-hover:text-white transition-colors">
+                      <Sparkles className="w-3 h-3 text-[#d4af37]" />
+                      <span>View Brief Information</span>
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#d4af37] group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </div>
             );
@@ -426,6 +438,17 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       <LightboxModal
         item={selectedGalleryItem}
         onClose={() => setSelectedGalleryItem(null)}
+      />
+
+      {/* Multilingual Article Brief Modal */}
+      <ArticleBriefModal
+        article={selectedBriefArticle}
+        isOpen={!!selectedBriefArticle}
+        onClose={() => setSelectedBriefArticle(null)}
+        onReadFull={(art) => {
+          setSelectedBriefArticle(null);
+          onNavigate(`/documentary?article=${art.id}`);
+        }}
       />
     </div>
   );

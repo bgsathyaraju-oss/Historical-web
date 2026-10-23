@@ -119,7 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             >
               <button
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  ['/documentary', '/odra-desha', '/dynasties', '/gajapathi-kings', '/maps', '/timeline'].includes(currentPath)
+                  ['/documentary', '/odra-desha', '/dynasties', '/gajapathi-kings', '/kings-queens', '/documented-historical-figures', '/historical-persons', '/maps', '/timeline'].includes(currentPath)
                     ? 'text-[#e8c872] bg-[#221016]'
                     : 'hover:text-[#e8c872] hover:bg-stone-900/60'
                 }`}
@@ -140,6 +140,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                   </button>
                   <button onClick={() => navigateTo('/gajapathi-kings')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.gajapathiKings}
+                  </button>
+                  <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-medium">
+                    <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+                  </button>
+                  <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-medium">
+                    <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
                   </button>
                   <button onClick={() => navigateTo('/maps')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Compass className="w-4 h-4 text-[#d4af37]" /> {t.nav.maps}
@@ -196,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             >
               <button
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  ['/genealogy', '/gallery', '/culture-traditions', '/literature'].includes(currentPath)
+                  ['/genealogy', '/kings-queens', '/documented-historical-figures', '/historical-persons', '/gallery', '/culture-traditions', '/literature'].includes(currentPath)
                     ? 'text-[#e8c872] bg-[#221016]'
                     : 'hover:text-[#e8c872] hover:bg-stone-900/60'
                 }`}
@@ -208,6 +214,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                 <div className="absolute top-full left-0 w-64 bg-[#121622] border border-[#c99738]/50 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                   <button onClick={() => navigateTo('/genealogy')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Crown className="w-4 h-4 text-[#d4af37]" /> Royal Genealogy Tree
+                  </button>
+                  <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+                  </button>
+                  <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
                   </button>
                   <button onClick={() => navigateTo('/gallery')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Landmark className="w-4 h-4 text-[#d4af37]" /> {t.nav.gallery}
@@ -230,7 +242,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             >
               <button
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  ['/directory', '/community-activities', '/events', '/submit-research', '/about', '/contact'].includes(currentPath)
+                  ['/directory', '/community-heritage', '/kings-queens', '/historical-persons', '/community-activities', '/events', '/submit-research', '/about', '/contact'].includes(currentPath)
                     ? 'text-[#e8c872] bg-[#221016]'
                     : 'hover:text-[#e8c872] hover:bg-stone-900/60'
                 }`}
@@ -242,6 +254,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                 <div className="absolute top-full right-0 w-64 bg-[#121622] border border-[#c99738]/50 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                   <button onClick={() => navigateTo('/community-heritage')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#e8c872] font-semibold">
                     <Shield className="w-4 h-4 text-[#d4af37]" /> Oad-Rajput & Kshatriya Heritage
+                  </button>
+                  <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+                  </button>
+                  <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
                   </button>
                   <button onClick={() => navigateTo('/directory')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Users className="w-4 h-4 text-[#d4af37]" /> {t.nav.directory}
@@ -287,11 +305,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               <Download className="w-3.5 h-3.5 text-[#d4af37]" />
               <span className="hidden sm:inline font-semibold">Export ZIP</span>
             </button>
-
-            {/* Top Right Language Toggle Option */}
-            <div className="flex items-center">
-              <LanguageSelector />
-            </div>
           </div>
         </div>
       </div>
@@ -397,6 +410,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             <button onClick={() => navigateTo('/gajapathi-kings')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.gajapathiKings}
             </button>
+            <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-[#fae29c] font-medium flex items-center gap-2">
+              <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+            </button>
+            <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-[#fae29c] font-medium flex items-center gap-2">
+              <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
+            </button>
             <button onClick={() => navigateTo('/dynasties')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.dynasties}
             </button>
@@ -432,6 +451,12 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
           <div className="py-2 space-y-1">
             <button onClick={() => navigateTo('/community-heritage')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-[#e8c872] font-semibold flex items-center gap-2">
               <Shield className="w-4 h-4 text-[#d4af37]" /> Oad-Rajput & Kshatriya Heritage
+            </button>
+            <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-stone-200 flex items-center gap-2">
+              <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+            </button>
+            <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-stone-200 flex items-center gap-2">
+              <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
             </button>
             <button onClick={() => navigateTo('/directory')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.directory}

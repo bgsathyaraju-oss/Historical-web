@@ -4,14 +4,42 @@ import type { AuthenticatedRequest } from '../auth.ts';
 import {
   HISTORICAL_FIGURES,
   COMMUNITY_SYNONYMS,
-  GEOGRAPHICAL_SPREAD
+  GEOGRAPHICAL_SPREAD,
+  HISTORICAL_MONOGRAPH_SECTIONS
 } from '../../src/data/historyContent.ts';
+import {
+  ARTICLE_TRANSLATIONS,
+  FIGURE_TRANSLATIONS,
+  INSCRIPTION_TRANSLATIONS,
+  MONUMENT_TRANSLATIONS
+} from '../contentTranslations.ts';
+import type { LanguageCode } from '../../src/types/index.ts';
 
 export const searchRouter = Router();
 
+// Cross-browser Unicode NFC string normalizer
+function norm(str?: string | null): string {
+  if (!str) return '';
+  return str.normalize('NFC').trim().toLowerCase();
+}
+
+// Check if any multilingual text field matches the normalized query
+function matchMultiText(obj?: Record<string, string | undefined> | null, query?: string): boolean {
+  if (!obj || !query) return false;
+  return Object.values(obj).some(val => val && norm(val).includes(query));
+}
+
+// Get preferred localized string with fallback
+function getLocalized(obj?: Record<string, string | undefined> | null, preferredLang = 'en', fallback = ''): string {
+  if (!obj) return fallback;
+  return obj[preferredLang] || obj['en'] || Object.values(obj).find(v => !!v) || fallback;
+}
+
 searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
-  const query = typeof req.query.q === 'string' ? req.query.q.trim().toLowerCase() : '';
-  const filterType = typeof req.query.type === 'string' ? req.query.type.toLowerCase() : 'all';
+  const rawQ = typeof req.query.q === 'string' ? req.query.q : '';
+  const query = norm(rawQ);
+  const filterType = typeof req.query.type === 'string' ? req.query.type.toLowerCase().trim() : 'all';
+  const userLang = (typeof req.query.lang === 'string' ? req.query.lang.trim().toLowerCase() : 'en') as LanguageCode;
 
   if (!query) {
     return res.json({ results: [], query: '', total: 0 });
@@ -21,67 +49,118 @@ searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
   const results: any[] = [];
   const isAuth = !!req.user;
 
-  // Search Articles
+  // 1. Search Articles (with full 8-language translations)
   if (filterType === 'all' || filterType === 'articles') {
     db.articles.forEach(art => {
-      if (
-        art.original_title.toLowerCase().includes(query) ||
-        art.summary.toLowerCase().includes(query) ||
-        art.category.toLowerCase().includes(query) ||
-        art.tags.some(t => t.toLowerCase().includes(query))
-      ) {
+      const artTrans = ARTICLE_TRANSLATIONS[art.id] || {};
+      const matchesOrigTitle = norm(art.original_title).includes(query);
+      const matchesOrigSummary = norm(art.summary).includes(query);
+      const matchesCategory = norm(art.category).includes(query);
+      const matchesAuthor = norm(art.author_name).includes(query);
+      const matchesTags = art.tags.some(t => norm(t).includes(query));
+
+      let matchedTransLang: LanguageCode | null = null;
+      let transMatch = false;
+
+      for (const [lKey, tData] of Object.entries(artTrans)) {
+        if (!tData) continue;
+        if (
+          norm(tData.title).includes(query) ||
+          norm(tData.summary).includes(query) ||
+          norm(tData.content).includes(query)
+        ) {
+          transMatch = true;
+          matchedTransLang = lKey as LanguageCode;
+          break;
+        }
+      }
+
+      if (matchesOrigTitle || matchesOrigSummary || matchesCategory || matchesAuthor || matchesTags || transMatch) {
+        const preferred = (artTrans[userLang] ? userLang : matchedTransLang) || userLang;
+        const transObj = artTrans[preferred];
+        const displayTitle = transObj?.title || art.original_title;
+        const displaySummary = transObj?.summary || art.summary;
+
         results.push({
           type: 'Article',
           id: art.id,
           slug: art.slug,
-          title: art.original_title,
-          subtitle: art.category + ' • ' + art.publication_date,
-          snippet: art.summary,
+          title: displayTitle,
+          subtitle: `${art.category} • ${art.publication_date}`,
+          snippet: displaySummary,
           verification_status: art.verification_status,
-          link: `/documentary?article=${art.id}`
+          link: `/documentary?article=${art.id}`,
+          category: art.category,
+          article_id: art.id
         });
       }
     });
   }
 
-  // Search Historical Figures
+  // 2. Search Historical Figures & Royal Progenitors (with full 8-language translations)
   if (filterType === 'all' || filterType === 'figures') {
     db.figures.forEach(fig => {
-      if (
-        fig.name.toLowerCase().includes(query) ||
-        fig.alternate_names.some(a => a.toLowerCase().includes(query)) ||
-        fig.known_titles.some(t => t.toLowerCase().includes(query)) ||
-        fig.biography.toLowerCase().includes(query)
-      ) {
+      const figTrans = FIGURE_TRANSLATIONS[fig.id] || {};
+      const matchesOrig =
+        norm(fig.name).includes(query) ||
+        fig.alternate_names.some(a => norm(a).includes(query)) ||
+        fig.known_titles.some(t => norm(t).includes(query)) ||
+        norm(fig.biography).includes(query) ||
+        norm(fig.dynasty_name).includes(query);
+
+      let figTransMatch = false;
+      let matchedFigLang: LanguageCode | null = null;
+      for (const [lKey, tData] of Object.entries(figTrans)) {
+        if (!tData) continue;
+        if (
+          (tData.name && norm(tData.name).includes(query)) ||
+          (tData.biography && norm(tData.biography).includes(query)) ||
+          (tData.known_titles && tData.known_titles.some(t => norm(t).includes(query)))
+        ) {
+          figTransMatch = true;
+          matchedFigLang = lKey as LanguageCode;
+          break;
+        }
+      }
+
+      if (matchesOrig || figTransMatch) {
+        const preferred = (figTrans[userLang] ? userLang : matchedFigLang) || userLang;
+        const tObj = figTrans[preferred];
         results.push({
           type: 'Historical Figure',
           id: fig.id,
-          title: fig.name,
-          subtitle: fig.dynasty_name + ' (' + fig.reign_period + ')',
-          snippet: fig.biography.substring(0, 150) + '...',
+          title: tObj?.name || fig.name,
+          subtitle: `${fig.dynasty_name} (${fig.reign_period})`,
+          snippet: (tObj?.biography || fig.biography).substring(0, 160) + '...',
           verification_status: fig.evidence_status,
           link: `/kings-queens?figure=${fig.id}`
         });
       }
     });
 
-    // Also search Foundational Sovereign & Sacred Figures (Sagara, Bhagiratha, Rama, Jasma, Siddharameshwara, Kharavela)
+    // Foundational Sovereign & Sacred Progenitors
     HISTORICAL_FIGURES.forEach(fig => {
       const match =
-        fig.canonical_name.toLowerCase().includes(query) ||
-        fig.alternate_names.some(a => a.toLowerCase().includes(query)) ||
-        fig.dynasty_lineage.toLowerCase().includes(query) ||
-        fig.associated_places.some(p => p.toLowerCase().includes(query)) ||
-        (fig.summary.en && fig.summary.en.toLowerCase().includes(query)) ||
-        (fig.titles.en && fig.titles.en.toLowerCase().includes(query));
+        norm(fig.canonical_name).includes(query) ||
+        fig.alternate_names.some(a => norm(a).includes(query)) ||
+        norm(fig.dynasty_lineage).includes(query) ||
+        fig.associated_places.some(p => norm(p).includes(query)) ||
+        matchMultiText(fig.localized_name as any, query) ||
+        matchMultiText(fig.titles as any, query) ||
+        matchMultiText(fig.summary as any, query) ||
+        matchMultiText(fig.detailed_narrative as any, query);
 
       if (match) {
+        const title = getLocalized(fig.localized_name as any, userLang, fig.canonical_name);
+        const subtitle = `${fig.dynasty_lineage} • ${fig.era}`;
+        const snippet = getLocalized(fig.summary as any, userLang, fig.summary.en).substring(0, 160) + '...';
+
         results.push({
           type: 'Sacred Progenitor',
           id: fig.id,
-          title: fig.canonical_name,
-          subtitle: `${fig.dynasty_lineage} • ${fig.era}`,
-          snippet: fig.summary.en.substring(0, 150) + '...',
+          title,
+          subtitle,
+          snippet,
           verification_status: fig.epigraphic_status,
           link: `/community-heritage?tab=figures&figure=${fig.id}`
         });
@@ -89,23 +168,25 @@ searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
     });
   }
 
-  // Search Community Synonyms & Sub-Castes
+  // 3. Search Community Synonyms & Sub-Castes (native scripts + translations)
   if (filterType === 'all' || filterType === 'community' || filterType === 'synonyms') {
     COMMUNITY_SYNONYMS.forEach(syn => {
       const match =
-        syn.title.toLowerCase().includes(query) ||
-        syn.category.toLowerCase().includes(query) ||
-        syn.primary_regions.some(r => r.toLowerCase().includes(query)) ||
-        syn.prominent_states.some(st => st.toLowerCase().includes(query)) ||
-        (syn.historical_role.en && syn.historical_role.en.toLowerCase().includes(query));
+        norm(syn.title).includes(query) ||
+        norm(syn.category).includes(query) ||
+        syn.primary_regions.some(r => norm(r).includes(query)) ||
+        syn.prominent_states.some(st => norm(st).includes(query)) ||
+        (syn.native_scripts && Object.values(syn.native_scripts).some(ns => norm(ns).includes(query))) ||
+        matchMultiText(syn.historical_role as any, query);
 
       if (match) {
+        const snippet = getLocalized(syn.historical_role as any, userLang, syn.historical_role.en).substring(0, 160) + '...';
         results.push({
           type: 'Community Synonym',
           id: syn.id,
           title: syn.title,
           subtitle: `${syn.category} • ${syn.prominent_states.slice(0, 3).join(', ')}`,
-          snippet: syn.historical_role.en.substring(0, 150) + '...',
+          snippet,
           verification_status: 'Documented Community Title',
           link: `/community-heritage?tab=synonyms`
         });
@@ -113,23 +194,26 @@ searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
     });
   }
 
-  // Search Pan-Indian Geographical Spread & Corridors
+  // 4. Search Pan-Indian Geographical Spread & Corridors
   if (filterType === 'all' || filterType === 'geography' || filterType === 'locations') {
     GEOGRAPHICAL_SPREAD.forEach(reg => {
       const match =
-        reg.region_name.toLowerCase().includes(query) ||
-        reg.states_and_territories.some(st => st.toLowerCase().includes(query)) ||
-        reg.prominent_cities_districts.some(c => c.toLowerCase().includes(query)) ||
-        reg.predominant_community_synonyms.some(s => s.toLowerCase().includes(query)) ||
-        (reg.regional_overview.en && reg.regional_overview.en.toLowerCase().includes(query));
+        norm(reg.region_name).includes(query) ||
+        matchMultiText(reg.localized_region as any, query) ||
+        reg.states_and_territories.some(st => norm(st).includes(query)) ||
+        reg.prominent_cities_districts.some(c => norm(c).includes(query)) ||
+        reg.predominant_community_synonyms.some(s => norm(s).includes(query)) ||
+        matchMultiText(reg.regional_overview as any, query);
 
       if (match) {
+        const title = getLocalized(reg.localized_region as any, userLang, reg.region_name);
+        const snippet = getLocalized(reg.regional_overview as any, userLang, reg.regional_overview.en).substring(0, 160) + '...';
         results.push({
           type: 'Geographical Corridor',
           id: reg.id,
-          title: reg.region_name,
+          title,
           subtitle: `${reg.states_and_territories.join(', ')}`,
-          snippet: reg.regional_overview.en.substring(0, 150) + '...',
+          snippet,
           verification_status: 'Pan-Indian Historical Corridor',
           link: `/community-heritage?tab=geography&region=${reg.id}`
         });
@@ -137,21 +221,65 @@ searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
     });
   }
 
-  // Search Inscriptions
+  // 5. Search Historical Monograph Sections
+  if (filterType === 'all' || filterType === 'articles' || filterType === 'monographs') {
+    HISTORICAL_MONOGRAPH_SECTIONS.forEach(sec => {
+      const match =
+        matchMultiText(sec.section_title as any, query) ||
+        matchMultiText(sec.content as any, query) ||
+        sec.key_points.some(kp => norm(kp).includes(query));
+
+      if (match) {
+        const title = getLocalized(sec.section_title as any, userLang, sec.section_title.en);
+        const snippet = getLocalized(sec.content as any, userLang, sec.content.en).substring(0, 160) + '...';
+        results.push({
+          type: 'Historical Monograph',
+          id: sec.id,
+          title,
+          subtitle: `Monograph Section ${sec.order}`,
+          snippet,
+          verification_status: 'Primary Monographic Research',
+          link: `/odra-desha`
+        });
+      }
+    });
+  }
+
+  // 6. Search Inscriptions (with translations)
   if (filterType === 'all' || filterType === 'inscriptions') {
     db.inscriptions.forEach(insc => {
-      if (
-        insc.name.toLowerCase().includes(query) ||
-        insc.location_found.toLowerCase().includes(query) ||
-        insc.ruler.toLowerCase().includes(query) ||
-        insc.historical_context.toLowerCase().includes(query)
-      ) {
+      const inscTrans = INSCRIPTION_TRANSLATIONS[insc.id] || {};
+      const matchOrig =
+        norm(insc.name).includes(query) ||
+        norm(insc.location_found).includes(query) ||
+        norm(insc.ruler).includes(query) ||
+        norm(insc.historical_context).includes(query);
+
+      let transMatch = false;
+      let matchedLang: LanguageCode | null = null;
+      for (const [lKey, tData] of Object.entries(inscTrans)) {
+        if (!tData) continue;
+        if (
+          (tData.name && norm(tData.name).includes(query)) ||
+          (tData.location && norm(tData.location).includes(query)) ||
+          (tData.summary && norm(tData.summary).includes(query)) ||
+          (tData.ruler && norm(tData.ruler).includes(query))
+        ) {
+          transMatch = true;
+          matchedLang = lKey as LanguageCode;
+          break;
+        }
+      }
+
+      if (matchOrig || transMatch) {
+        const preferred = (inscTrans[userLang] ? userLang : matchedLang) || userLang;
+        const tObj = inscTrans[preferred];
         results.push({
           type: 'Inscription',
           id: insc.id,
-          title: insc.name,
-          subtitle: `${insc.ruler} • ${insc.location_found}`,
-          snippet: insc.historical_context.substring(0, 150) + '...',
+          title: tObj?.name || insc.name,
+          subtitle: `${tObj?.ruler || insc.ruler} • ${tObj?.location || insc.location_found}`,
+          snippet: (tObj?.summary || insc.historical_context).substring(0, 160) + '...',
           verification_status: insc.verification_status,
           link: `/inscriptions?id=${insc.id}`
         });
@@ -159,78 +287,98 @@ searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
     });
   }
 
-  // Search Monuments
+  // 7. Search Temples & Monuments (with translations)
   if (filterType === 'all' || filterType === 'monuments') {
     db.monuments.forEach(mon => {
-      if (
-        mon.name.toLowerCase().includes(query) ||
-        mon.location.toLowerCase().includes(query) ||
-        mon.patron_ruler.toLowerCase().includes(query) ||
-        mon.historical_significance.toLowerCase().includes(query)
-      ) {
+      const monTrans = MONUMENT_TRANSLATIONS[mon.id] || {};
+      const matchOrig =
+        norm(mon.name).includes(query) ||
+        norm(mon.location).includes(query) ||
+        norm(mon.patron_ruler).includes(query) ||
+        norm(mon.historical_significance).includes(query);
+
+      let transMatch = false;
+      let matchedLang: LanguageCode | null = null;
+      for (const [lKey, tData] of Object.entries(monTrans)) {
+        if (!tData) continue;
+        if (
+          norm(tData.name).includes(query) ||
+          norm(tData.location).includes(query) ||
+          norm(tData.historical_significance).includes(query)
+        ) {
+          transMatch = true;
+          matchedLang = lKey as LanguageCode;
+          break;
+        }
+      }
+
+      if (matchOrig || transMatch) {
+        const preferred = (monTrans[userLang] ? userLang : matchedLang) || userLang;
+        const tObj = monTrans[preferred];
         results.push({
           type: 'Temple / Monument',
           id: mon.id,
-          title: mon.name,
-          subtitle: `${mon.location}, ${mon.state} • ${mon.century}`,
-          snippet: mon.historical_significance.substring(0, 150) + '...',
+          title: tObj?.name || mon.name,
+          subtitle: `${tObj?.location || mon.location}, ${mon.state} • ${mon.century}`,
+          snippet: (tObj?.historical_significance || mon.historical_significance).substring(0, 160) + '...',
           link: `/temples-monuments`
         });
       }
     });
   }
 
-  // Search Historical Locations
+  // 8. Search Historical Locations
   if (filterType === 'all' || filterType === 'locations') {
     db.locations.forEach(loc => {
       if (
-        loc.name.toLowerCase().includes(query) ||
-        loc.ancient_name.toLowerCase().includes(query) ||
-        loc.summary.toLowerCase().includes(query)
+        norm(loc.name).includes(query) ||
+        norm(loc.ancient_name).includes(query) ||
+        norm(loc.summary).includes(query) ||
+        norm(loc.region).includes(query)
       ) {
         results.push({
           type: 'Historical Location',
           id: loc.id,
           title: loc.name,
           subtitle: `Ancient Name: ${loc.ancient_name} • Region: ${loc.region}`,
-          snippet: loc.summary.substring(0, 150) + '...',
+          snippet: loc.summary.substring(0, 160) + '...',
           link: `/maps`
         });
       }
     });
   }
 
-  // Search Documents
+  // 9. Search Documents
   if (filterType === 'all' || filterType === 'documents') {
     db.documents.forEach(doc => {
       if (
-        doc.title.toLowerCase().includes(query) ||
-        doc.author_authority.toLowerCase().includes(query) ||
-        doc.research_notes.toLowerCase().includes(query)
+        norm(doc.title).includes(query) ||
+        norm(doc.author_authority).includes(query) ||
+        norm(doc.research_notes).includes(query)
       ) {
         results.push({
           type: 'Historical Document',
           id: doc.id,
           title: doc.title,
           subtitle: `${doc.author_authority} • ${doc.approximate_date}`,
-          snippet: doc.research_notes.substring(0, 150) + '...',
+          snippet: doc.research_notes.substring(0, 160) + '...',
           link: `/documents`
         });
       }
     });
   }
 
-  // Search Public Members (Strict Privacy check)
+  // 10. Search Public Members (Strict Privacy check)
   if (filterType === 'all' || filterType === 'members') {
     db.profiles.forEach(p => {
       if (p.profile_visibility === 'private') return;
       if (p.profile_visibility === 'members' && !isAuth) return;
 
       if (
-        p.full_name.toLowerCase().includes(query) ||
-        p.district.toLowerCase().includes(query) ||
-        (p.profession && p.profession.toLowerCase().includes(query)) ||
-        (p.areas_of_historical_interest && p.areas_of_historical_interest.some(i => i.toLowerCase().includes(query)))
+        norm(p.full_name).includes(query) ||
+        norm(p.district).includes(query) ||
+        (p.profession && norm(p.profession).includes(query)) ||
+        (p.areas_of_historical_interest && p.areas_of_historical_interest.some(i => norm(i).includes(query)))
       ) {
         results.push({
           type: 'Community Member',
@@ -250,3 +398,4 @@ searchRouter.get('/', (req: AuthenticatedRequest, res: Response) => {
     results
   });
 });
+

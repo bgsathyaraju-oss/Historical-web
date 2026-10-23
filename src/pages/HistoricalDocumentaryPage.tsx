@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Article, EvidenceCategory, VerificationStatus } from '../types';
-import { BookOpen, Search, Filter, ShieldCheck, ChevronRight, Scroll, ExternalLink, Calendar, User } from 'lucide-react';
+import { BookOpen, Search, Filter, ShieldCheck, ChevronRight, Scroll, ExternalLink, Calendar, User, Sparkles } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { TranslationMatrixBadge } from '../components/TranslationMatrixBadge';
 import { ArticleActionBar } from '../components/ArticleActionBar';
+import { ArticleBriefModal } from '../components/ArticleBriefModal';
 import { useLanguage } from '../context/LanguageContext';
 
 interface DocumentaryPageProps {
@@ -15,7 +16,8 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
   const { language, t, translationManager, getArticleContent, getMetadataLabel, translateText } = useLanguage();
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [briefModalArticle, setBriefModalArticle] = useState<Article | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -54,21 +56,51 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
   }, [language, initialArticleId, translationManager]);
 
   const categories = [
-    { key: 'All', label: translateText('all', 'All') },
-    { key: 'Odra Desha', label: getMetadataLabel('category', 'odra_desha') || 'Odra Desha' },
-    { key: 'Gajapathi Kings', label: getMetadataLabel('category', 'gajapathi_rulers') || 'Gajapathi Kings' },
-    { key: 'Royal Genealogy', label: getMetadataLabel('category', 'lineage_genealogy') || 'Royal Genealogy' },
-    { key: 'Inscriptions', label: getMetadataLabel('category', 'epigraphy_inscriptions') || 'Inscriptions & Epigraphy' },
-    { key: 'Research Articles', label: translateText('research_archive', 'Research Articles') }
+    { key: 'all', label: translateText('all', 'All Categories') },
+    { key: 'odra_desha_geography', label: getMetadataLabel('category', 'odra_desha_geography') || 'Odra Desha & Geography' },
+    { key: 'suryavamsha_gajapathi_kings', label: getMetadataLabel('category', 'suryavamsha_gajapathi_kings') || 'Gajapathi Kings' },
+    { key: 'genealogy_methodology', label: getMetadataLabel('category', 'genealogy_methodology') || 'Genealogy & Methodology' },
+    { key: 'oad_rajput_heritage', label: getMetadataLabel('category', 'oad_rajput_heritage') || 'Oad-Rajput Heritage' },
+    { key: 'suryavamsha_lineage_antiquity', label: getMetadataLabel('category', 'suryavamsha_lineage_antiquity') || 'Suryavamsha Lineage' },
+    { key: 'sacred_citadels_maritime', label: getMetadataLabel('category', 'sacred_citadels_maritime') || 'Sacred Citadels (Kolletikota)' },
+    { key: 'inscriptions_epigraphy', label: getMetadataLabel('category', 'inscriptions_epigraphy') || 'Inscriptions & Epigraphy' }
   ];
 
+  const normQuery = (searchQuery || '').normalize('NFC').toLowerCase().trim();
+
   const filteredArticles = articles.filter(a => {
-    const matchesCat = activeCategory === 'All' || a.category.toLowerCase() === activeCategory.toLowerCase();
+    // Standardized category matching
+    if (activeCategory !== 'all') {
+      const catKey = a.category.toLowerCase();
+      const match =
+        (activeCategory === 'odra_desha_geography' && (catKey.includes('odra') || catKey.includes('geography'))) ||
+        (activeCategory === 'suryavamsha_gajapathi_kings' && (catKey.includes('gajapathi') || catKey.includes('kapilendra'))) ||
+        (activeCategory === 'genealogy_methodology' && (catKey.includes('genealogy') || catKey.includes('methodology'))) ||
+        (activeCategory === 'oad_rajput_heritage' && (catKey.includes('oad') || catKey.includes('rajput') || catKey.includes('synonym'))) ||
+        (activeCategory === 'suryavamsha_lineage_antiquity' && (catKey.includes('antiquity') || catKey.includes('sagara'))) ||
+        (activeCategory === 'sacred_citadels_maritime' && (catKey.includes('maritime') || catKey.includes('citadel') || catKey.includes('kolletikota') || catKey.includes('sarasu'))) ||
+        (activeCategory === 'inscriptions_epigraphy' && (catKey.includes('inscription') || catKey.includes('epigraph')));
+
+      if (!match) return false;
+    }
+
+    if (!normQuery) return true;
+
     const { title, summary } = getArticleContent(a);
-    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCat && matchesSearch;
+    const normTitle = (title || '').normalize('NFC').toLowerCase();
+    const normSummary = (summary || '').normalize('NFC').toLowerCase();
+    const normOrigTitle = (a.original_title || '').normalize('NFC').toLowerCase();
+    const normOrigSummary = (a.summary || '').normalize('NFC').toLowerCase();
+    const normCat = (a.category || '').normalize('NFC').toLowerCase();
+
+    return (
+      normTitle.includes(normQuery) ||
+      normSummary.includes(normQuery) ||
+      normOrigTitle.includes(normQuery) ||
+      normOrigSummary.includes(normQuery) ||
+      normCat.includes(normQuery) ||
+      a.tags.some(tag => (tag || '').normalize('NFC').toLowerCase().includes(normQuery))
+    );
   });
 
   return (
@@ -166,7 +198,20 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
 
                   <div className="mt-2.5 pt-2 border-t border-stone-800/60 flex items-center justify-between text-[11px] text-stone-500">
                     <span>{art.author_name}</span>
-                    <span>{art.publication_date}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{art.publication_date}</span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBriefModalArticle(art);
+                        }}
+                        className="px-2 py-0.5 rounded bg-stone-900 border border-stone-700 hover:border-[#c99738] text-[10px] text-[#fae29c] font-medium transition-all"
+                        title="View Brief Information"
+                      >
+                        Brief
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -223,6 +268,27 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
                   <strong>Translation Notice:</strong> This article is displayed in its original verified language ({selectedArticle.original_language}). Translation into your selected language ({language}) is currently pending peer editorial review.
                 </div>
               )}
+
+              {/* Executive Brief Information Card */}
+              <div className="p-5 rounded-2xl bg-[#151c2b] border border-[#c99738]/50 space-y-2.5 shadow-md">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#d4af37]">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Executive Brief Information</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setBriefModalArticle(selectedArticle)}
+                    className="text-[11px] font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 px-3 py-1 rounded-lg bg-stone-900 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    <span>Open Quick Brief Modal</span>
+                  </button>
+                </div>
+                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed font-sans">
+                  {currentContent.summary}
+                </p>
+              </div>
 
               {/* Title & Featured Image */}
               <div className="space-y-4">
@@ -312,6 +378,17 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
           )}
         </div>
       </div>
+
+      {/* Multilingual Quick Article Brief Modal */}
+      <ArticleBriefModal
+        article={briefModalArticle}
+        isOpen={!!briefModalArticle}
+        onClose={() => setBriefModalArticle(null)}
+        onReadFull={(art) => {
+          setSelectedArticle(art);
+          setBriefModalArticle(null);
+        }}
+      />
     </div>
   );
 };

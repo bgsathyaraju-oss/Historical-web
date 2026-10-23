@@ -10,7 +10,7 @@ interface GlobalSearchModalProps {
 }
 
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, onClose, onNavigate }) => {
-  const { translateText } = useLanguage();
+  const { language, translateText } = useLanguage();
   const [query, setQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'all' | 'articles' | 'figures' | 'community' | 'inscriptions' | 'members'>('all');
   const [results, setResults] = useState<any[]>([]);
@@ -24,7 +24,8 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
   }, [isOpen]);
 
   useEffect(() => {
-    if (!query.trim()) {
+    const trimmed = query.normalize('NFC').trim();
+    if (!trimmed) {
       setResults([]);
       return;
     }
@@ -32,7 +33,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&type=${activeTab}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}&type=${activeTab}&lang=${encodeURIComponent(language)}`);
         if (res.ok) {
           const data = await res.json();
           setResults(data.results || []);
@@ -42,10 +43,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
       } finally {
         setLoading(false);
       }
-    }, 250);
+    }, 200);
 
     return () => clearTimeout(timer);
-  }, [query, activeTab]);
+  }, [query, activeTab, language]);
 
   if (!isOpen) return null;
 

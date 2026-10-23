@@ -99,7 +99,11 @@ function AppContent() {
       case '/dynasties':
         return <GajapathiKingdomPage onNavigate={navigateTo} />;
       case '/kings-queens':
+      case '/documented-historical-figures':
+      case '/historical-figures':
         return <KingsQueensPage onNavigate={navigateTo} />;
+      case '/historical-persons':
+        return <CommunityHeritagePage onNavigate={navigateTo} initialTab="figures" />;
       case '/genealogy':
         return <RoyalGenealogyPage onNavigate={navigateTo} />;
       case '/maps':

@@ -127,6 +127,22 @@
       "status": "active",
       "email_verified": true,
       "created_at": "2026-10-23T09:00:40.278Z"
+    },
+    {
+      "id": "usr_1792749274870_kz4t",
+      "email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-10-23T09:54:35.005Z"
+    },
+    {
+      "id": "usr_1792750244796_1way",
+      "email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-10-23T10:10:44.928Z"
     }
   ],
   "user_passwords": {
@@ -145,7 +161,9 @@
     "usr_1792688861556_q75d": "$2b$10$GZq4hmg6Xmb6M6phFFlH5.CterLIc.JEty.pZnG9Sj6cHI/zfvY0K",
     "usr_1792740149345_f8te": "$2b$10$3x2Dof1MactgB1Z.jz7R3eoivSRaJOjIUTKKidvc9ygI16y1PU/xe",
     "usr_1792742890200_atnd": "$2b$10$GaMcS1oIupCAH1avunSxfe3N0aneZE9atOr9l7YfQlGExFQ/u2sfe",
-    "usr_1792746040139_al0w": "$2b$10$Uix3BdvqnhEvPT049esX1OHYXOw9GyiWlsWZxxgoDVH2CrnifJ/Xi"
+    "usr_1792746040139_al0w": "$2b$10$Uix3BdvqnhEvPT049esX1OHYXOw9GyiWlsWZxxgoDVH2CrnifJ/Xi",
+    "usr_1792749274870_kz4t": "$2b$10$Ps/WkR48ivs/2MAF9QZZseJLR6q4tsmNLaWL1gVyeCa6zk5b6ri9C",
+    "usr_1792750244796_1way": "$2b$10$RMTqb9k9Fm748QstqaXWeePLkXZeZyQa0JxBPuXgsbTfEnYvfyAIe"
   },
   "profiles": [
     {
@@ -429,6 +447,36 @@
       "areas_of_historical_interest": [],
       "languages_known": [],
       "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1792749274870_kz4t",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1792749275341_05062e70d6ceaa1a.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1792750244796_1way",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1792750245231_d279c1e9c064fb32.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
     }
   ],
   "preferences": [
@@ -524,6 +572,18 @@
     },
     {
       "user_id": "usr_1792746040139_al0w",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1792749274870_kz4t",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1792750244796_1way",
       "preferred_language": "en",
       "email_notifications": true,
       "show_original_quotes": true
@@ -1745,7 +1805,7 @@
     {
       "id": "art_odra_desha_history",
       "slug": "historical-geography-of-odra-desha",
-      "category": "Odra Desha",
+      "category": "Odra Desha & Historical Geography",
       "original_language": "en",
       "original_title": "The Historical Geography and Territorial Evolution of Ancient Odra Desha",
       "summary": "An empirical examination of the ancient nomenclature, territorial limits, and geopolitical transformation of Odra Desha from classical references to the medieval period.",
@@ -1791,14 +1851,14 @@
           "summary": "প্রাচীন ওড্র দেশের ঐতিহাসিক বিশ্লেষণ এবং সীমানা পর্যালোচনা।",
           "status": "pending",
           "translator_name": "সূর্যবংশ গবেষক পরিষদ",
-          "last_updated": "2026-10-23T09:00:41.025Z"
+          "last_updated": "2026-10-23T10:10:45.709Z"
         }
       }
     },
     {
       "id": "art_gajapathi_kapilendra",
       "slug": "rise-of-kapilendra-deva-suryavamsha-empire",
-      "category": "Gajapathi Kings",
+      "category": "Suryavamsha Gajapathi Kings",
       "original_language": "en",
       "original_title": "Kapilendra Deva and the Zenith of the Suryavamshi Gajapathi Empire (1434–1466 CE)",
       "summary": "A critical archival investigation into the accession, military reorganization, and trans-regional expansion of the founder of the Suryavamshi Gajapathi dynasty.",
@@ -1841,7 +1901,7 @@
     {
       "id": "art_genealogy_methodology",
       "slug": "royal-genealogy-methodological-distinction",
-      "category": "Royal Genealogy",
+      "category": "Royal Genealogy & Lineage Methodology",
       "original_language": "en",
       "original_title": "Methodological Standards: Distinguishing Epigraphic Lineages from Traditional Vamsavalis",
       "summary": "Why rigorous historiography requires explicit demarcation between primary epigraphic records and post-medieval oral or traditional family claims.",
@@ -1874,7 +1934,7 @@
     {
       "id": "art_oad_rajputh_od_history",
       "slug": "history-of-oad-rajputh-od-kshatriya-synonyms-geography",
-      "category": "Odra Desha",
+      "category": "Oad-Rajput & Kshatriya Heritage",
       "original_language": "en",
       "original_title": "History of Oad-Rajput, Od-Kshatriya & Allied Lineages: Epigraphy, Synonyms, and Geographical Spreading",
       "summary": "A historiographical treatise examining the roots of Oad-Rajput, Od-Kshatriya, and allied communities, documenting regional synonyms (Od, Odra, Odde, Oddar, Waddar, OddeRajulu, VaddeRajulu, Vadiyarajulu), spiritual progenitors (Sagara, Bhagiratha, Sri Rama, Kharavela, Goddess Jasma, Siddharameshwara), and their pan-Indian diaspora.",
@@ -1932,7 +1992,7 @@
     {
       "id": "art_surya_vamsa_sagara_rama",
       "slug": "suryavamsha-antiquity-sagara-bhagiratha-kharavela-rama",
-      "category": "Royal Genealogy",
+      "category": "Suryavamsha Lineage & Antiquity",
       "original_language": "en",
       "original_title": "Suryavamsha Antiquity: From Samrat Sagara and Bhagiratha to Emperor Kharavela and Sri Rama",
       "summary": "An exploration of the civilizational memory connecting the Solar Dynastic monarchs of the Epics with the historical epigraphy of ancient Odra Desha and living community veneration.",
@@ -1976,7 +2036,7 @@
     {
       "id": "art_kolletikota_peddintlamma_lake",
       "slug": "kolletikota-peddintlamma-thalli-kolleti-sarasu-history",
-      "category": "Odra Desha",
+      "category": "Sacred Citadels & Maritime Garrisons",
       "original_language": "en",
       "original_title": "Sri Kolletikota Peddintlamma Thalli & Kolleti Sarasu: The Aquatic Fortress (Jala Durga) and Sacred Royal Guardian of Coastal Andhra",
       "summary": "A comprehensive historical and cultural documentary on Kolleti Sarasu (Kolleru Lake), the island citadel of Kolletikota, the presiding warrior-mother deity Sri Peddintlamma Thalli, Gajapathi-Odiyaraju military garrison defenses, and the living tradition of the annual Phalguna Purnima Theertham.",
@@ -2029,6 +2089,62 @@
         }
       ],
       "original_content": "Nestled between the fertile deltas of the Krishna and Godavari rivers in coastal Andhra Pradesh lies Kolleti Sarasu (Kolleru Lake), one of India's largest natural freshwater lakes and wetland ecosystems. Historically situated across modern Eluru and Krishna districts (near Kaikaluru), Kolleti Sarasu was far more than an ecological marvel: for over a millennium, it served as an impregnable natural water barrier, and its central island citadel, Kolletikota (Kolleti Kota), was celebrated in military annals as a premier \"Jala Durga\" (aquatic fortress).\n\n1. Historical Geography of Kolleti Sarasu (Kolleru Lake):\nIn classical Sanskrit inscriptions and Telugu literature, Kolleru is known as \"Kolanu\" (the lake / tank) and its rulers were termed \"Kolani-nayakas\" or lords of the lake. Spanning hundreds of square miles during monsoon seasons, the lake formed a natural moat surrounded by dense marshes, elephant grass, and labyrinthine waterways. Hostile armies attempting to cross the lake with standard cavalry and foot soldiers were quickly immobilized by the silt and treacherous currents, making Kolleti Kota one of the most formidable defensive strongholds in peninsular India.\n\n2. The Gajapathi & Odiyaraju Fortress Garrison:\nDuring the 15th century, when Emperor Kapilendra Deva Gajapathi and his valorous son Kumara Hamvira Deva swept through coastal Andhra down to the Kaveri River, the Gajapathi forces established strategic garrisons to maintain supply lines between Rajahmundry, Kondapalli, and Kondavidu.\nSuryavamsha Odiyaraju and allied Kshatriya warrior clans garrisoned the island citadel of Kolletikota. Native water pilots utilized flat-bottomed boats (\"dony lu\" / sangam) and created submerged palisades and reed blinds, allowing defenders to ambush invaders while remaining invisible in the mist of Kolleti Sarasu. Historical records from the Bahmani wars recount that Sultanate detachments suffered catastrophic defeats attempting to navigate the uncharted depths of Kolleru.\n\n3. Sri Kolletikota Peddintlamma Thalli: The Presiding Warrior-Mother:\nAt the heart of the island citadel stands the ancient, sanctified temple of Sri Kolletikota Peddintlamma Thalli. The title \"Peddintlamma\" translates to \"The Mother of the Grand / Elder Royal House\" (Peddillu), reflecting her role as the Kuladevatha and sovereign spiritual matriarch of the ruling Kshatriyas, fort commanders, and the indigenous lake brotherhood.\nAccording to regional Kaifiyats and oral traditions preserved by the community:\n- The goddess served as the divine sentinel of the island fort. Before embarking on naval defense or military sorties across the lake, the Gajapathi and Odiyaraju commanders performed solemn Shakthi pujas, receiving swords blessed at her lotus feet.\n- During legendary sieges, when invading forces attempted to breach the lake channels under cover of darkness, Peddintlamma Thalli is said to have conjured blinding fog over the water, disorienting the invaders while guiding the defenders to victory.\n- Beside Peddintlamma stands the ancient temple of Sri Gokarneshwara Swamy (Lord Shiva), establishing a powerful Shakthi-Shiva presence that consecrated the island fortress against foreign desecration.\n\n4. The Living Tradition: Annual Peddintlamma Jatara (Theertham):\nThe worship of Peddintlamma Thalli has remained unbroken across centuries. Every year, during the auspicious Phalguna Shuddha Purnima (corresponding to the Holi / Vasantotsava festival season in February–March), the historic \"Kolletikota Peddintlamma Theertham / Jatara\" is celebrated with extraordinary devotion.\nHundreds of thousands of devotees, including Odiyaraju Kshatriya families, farmers, fishermen, and pilgrims from across Andhra Pradesh and neighboring states, converge upon Kolletikota. Pilgrims historically crossed the lake waters by boat flotillas, offering turmeric, kumkum, sacred yellow threads, and vibrant silk garments to the Mother.\n\n5. Historical Legacy and Cultural Continuity:\nKolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthesis of martial defense, environmental stewardship, and living folk-devotional heritage. As the Suryavamsha Odiyaraju Kshatriya Portal honors the civilizational memory of Odra Desha and its southern diaspora, the island citadel of Kolletikota stands as an eternal monument to the valor of the warriors and the loving protection of their warrior-mother, Sri Peddintlamma Thalli."
+    },
+    {
+      "id": "art_epigraphic_evolution_odra",
+      "slug": "epigraphic-evolution-of-odra-identity",
+      "category": "Inscriptions & Epigraphical Evolution",
+      "original_language": "en",
+      "original_title": "Epigraphic Evolution of the Odra Identity: From Ancient Prakrit Edicts to Medieval Gajapathi Copper Plates",
+      "summary": "A comprehensive epigraphical and paleographical treatise tracing the evolution of the Odra identity across two millennia—from ancient Ashokan and Kharavela Prakrit lithic edicts, Bhauma-Kara copper grants, and Somavamshi inscriptions to imperial Eastern Ganga and Suryavamsha Gajapathi bilingual Sanskrit-Odia charters and southern pillar records.",
+      "author_name": "Dr. Vikramaditya Gajapathi Raju & Council of Epigraphists",
+      "publication_date": "2026-02-25",
+      "verification_status": "Published",
+      "evidence_category": "verified_archaeological",
+      "featured_image": "https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80",
+      "tags": [
+        "Odra Identity",
+        "Epigraphy",
+        "Paleography",
+        "Hathigumpha",
+        "Veligalani",
+        "Lingaraja",
+        "Copper Plates",
+        "Gajapathi"
+      ],
+      "sources": [
+        {
+          "id": "src_epi_01",
+          "source_type": "Inscription",
+          "title": "Hathigumpha 17-Line Prakrit Inscription of Emperor Kharavela",
+          "author_or_authority": "Epigraphia Indica, Vol. XX, ed. K.P. Jayaswal & R.D. Banerji",
+          "publication_or_location": "Archaeological Survey of India",
+          "year_or_era": "c. 1st Century BCE",
+          "citation_details": "Udayagiri Hill, Bhubaneswar; regnal chronicles and canal construction",
+          "verified": true
+        },
+        {
+          "id": "src_epi_02",
+          "source_type": "Inscription",
+          "title": "Veligalani Bilingual Copper-Plate Grant of Kapilendra Deva",
+          "author_or_authority": "Epigraphia Indica, Vol. XXXIII, ed. D.C. Sircar",
+          "publication_or_location": "Archaeological Survey of India",
+          "year_or_era": "1458 CE",
+          "citation_details": "Guntur District; imperial titles Gaudesvara Navakoti Karnata Kalavargesvara",
+          "verified": true
+        },
+        {
+          "id": "src_epi_03",
+          "source_type": "Scholarly Book",
+          "title": "Inscriptions of Orissa (Circa 5th to 15th Century A.D.)",
+          "author_or_authority": "Satyanarayan Rajaguru",
+          "publication_or_location": "Odisha State Museum, Bhubaneswar",
+          "year_or_era": "1960",
+          "citation_details": "Vols. I–V (Bhauma-Kara, Somavamshi, Ganga, and Suryavamsha epigraphs)",
+          "verified": true
+        }
+      ],
+      "original_content": "In the field of Indian epigraphy, the term \"Odra\" (also inscribed as Audra, Odda, and Odra-rajya) preserves an unbroken paleographical and political trajectory spanning over two thousand years. From early Brahmi rock inscriptions in Prakrit to early medieval Sanskrit copper-plate charters and bilingual 15th-century Gajapathi imperial edicts, the epigraphic record reflects the maturation of an ancient kingdom into a trans-regional imperial identity.\n\n1. Classical Antiquity: Emperor Kharavela & the Hathigumpha Edict (1st Century BCE):\nThe 17-line Hathigumpha inscription, engraved in deep Brahmi script in the Prakrit language on the overhang of Udayagiri hill near Bhubaneswar, constitutes the earliest imperial lithic monument of the Odra-Kalinga realm. Emperor Kharavela chronicles his major accomplishments year by year:\n- Year 1: Repairing city ramparts, gateways, and flood-embankments of Kalinganagari damaged by cyclone storms.\n- Year 5: Extending into his royal capital the canal excavated three centuries earlier by King Nanda from the Tiwasachala basin.\n- Year 12: Northern military campaigns and retrieval of the sacred Kalinga Jina image from Magadha.\nThis edict provides verified epigraphic evidence linking ancient Odra governance directly to massive hydraulic canalization and fortress engineering.\n\n2. Early Medieval Horizon: Bhauma-Kara and Somavamshi Charters (8th–11th Century CE):\nBetween the 8th and 11th centuries, copper-plate grants issued by the Bhauma-Kara queens (such as Tribhuvana Mahadevi) and Somavamshi monarchs (such as Yayati I and Mahasivagupta) formally delineate the geopolitical boundary of \"Odra Vishaya\" (the Odra district) and \"Odra Desha\".\nEngraved in northern proto-regional scripts with royal bull and lotus seals, these charters record land grants along the Mahanadi and Brahmani river basins, establishing that Odra was the agrarian and spiritual heartland of eastern India.\n\n3. The Imperial Ganga Synthesis (11th–15th Century CE):\nUnder Anantavarman Chodaganga Deva, Anangabhima Deva III, and Narasimhadeva I, the Eastern Gangas unified Kalinga, Utkala, and Odra into an imperial whole.\nStone epigraphs carved upon the Jaya-Vijaya doorway of the Jagannath Temple at Puri and the pillar records of Simhachalam and Draksharama document the transition from Sanskrit-dominated inscriptions to early vernacular prose, establishing Puri as the spiritual anchor of the Odra identity.\n\n4. The Suryavamsha Gajapathi Imperial Epigraphs (1434–1540 CE):\nThe accession of Kapilendra Deva in 1434 CE inaugurated the golden age of epigraphy in the vernacular Odia script alongside Sanskrit and Telugu:\n- The Lingaraja Temple Inscription (1452 CE): Written in early Odia script and prose, recording Kapilendra Deva's imperial order abolishing the salt tax and regulating temple levies.\n- The Veligalani Copper Plates (1458 CE): Discovered in Guntur District, Andhra Pradesh, this bilingual charter in Nagari, Odia, and Telugu scripts records grants to 120 scholars on the Krishna River and confirms the imperial title \"Gaudesvara Navakoti Karnata Kalavargesvara Sri Kapilendra Gajapathi Maharaju\".\n- The Simhachalam and Draksharama Pillar Grants: Inscribed during the reigns of Purushottama Deva and Prataparudra Deva, documenting royal endowments and fortress commands.\n- The Srirangam Inscription (1464 CE): Records military endowments made by Kumara Hamvira Deva on the banks of the Kaveri in modern Tamil Nadu.\n\n5. Historical Legacy and Southern Diaspora:\nThese primary inscriptions explain how Odra military contingents and commanders stationed across southern hill forts (Kondavidu, Udayagiri, Bellamkonda, Malebennur) came to bear the proud designations \"OddeRajulu\", \"VaddeRajulu\", and \"Oddar\". The epigraphic record proves that modern community identities are not post-colonial inventions, but living continuations of verified ancient and medieval royal decrees."
     }
   ],
   "submissions": [
@@ -2178,6 +2294,18 @@
       "user_id": "usr_1792746040139_al0w",
       "expires_at": 1792749640599,
       "used": true
+    },
+    {
+      "token": "rst_9232181314a2148760bab57b2a30420dd2efd823ade28c07",
+      "user_id": "usr_1792749274870_kz4t",
+      "expires_at": 1792752875385,
+      "used": true
+    },
+    {
+      "token": "rst_6151571b8b18e9ec36153e81434fb04878a8d5a2e51c519f",
+      "user_id": "usr_1792750244796_1way",
+      "expires_at": 1792753845266,
+      "used": true
     }
   ],
   "email_verifications": [
@@ -2258,9 +2386,221 @@
       "user_id": "usr_1792746040139_al0w",
       "expires_at": 1792832440579,
       "used": true
+    },
+    {
+      "token": "eml_813136a6c83810c25cd5913c75cbecc5b7b1f63640a0bc43",
+      "user_id": "usr_1792749274870_kz4t",
+      "expires_at": 1792835675363,
+      "used": true
+    },
+    {
+      "token": "eml_edf47e5b522c149a02a86bc24b6435ace3ee59fffab7fdd3",
+      "user_id": "usr_1792750244796_1way",
+      "expires_at": 1792836645247,
+      "used": true
     }
   ],
   "audit_logs": [
+    {
+      "id": "log_1792750245659_4bohv",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_de0592cb197165d077945a1a4724bd4086637a2dd647faf7a70f430fffc1211f",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T10:10:45.659Z"
+    },
+    {
+      "id": "log_1792750245530_4rbmg",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_9e4841bea7b6bcc26e633151989a9cbe233c8bc7a5ccfa92464180e2c3a3d3e2",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T10:10:45.530Z"
+    },
+    {
+      "id": "log_1792750245407_pmfbt",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1792750244796_1way",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-10-23T10:10:45.407Z"
+    },
+    {
+      "id": "log_1792750245269_phf7c",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_6151571b8b18e9ec36153e81434fb04878a8d5a2e51c519f",
+      "details": "Password reset requested.",
+      "timestamp": "2026-10-23T10:10:45.269Z"
+    },
+    {
+      "id": "log_1792750245260_h77ja",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1792750244796_1way",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-10-23T10:10:45.260Z"
+    },
+    {
+      "id": "log_1792750245249_ektkw",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_edf47e5b522c149a02a86bc24b6435ace3ee59fffab7fdd3",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-10-23T10:10:45.249Z"
+    },
+    {
+      "id": "log_1792750245241_rdst9",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1792750244796_1way",
+      "details": "User updated profile details.",
+      "timestamp": "2026-10-23T10:10:45.241Z"
+    },
+    {
+      "id": "log_1792750245231_fdr16",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1792750245231_d279c1e9c064fb32.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-10-23T10:10:45.231Z"
+    },
+    {
+      "id": "log_1792750245216_rvu79",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_ac03ffc584fade4f3314be43e36180c94f81dc02e57d18749a32dd83f21f3796",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T10:10:45.216Z"
+    },
+    {
+      "id": "log_1792750244929_exnt4",
+      "user_id": "usr_1792750244796_1way",
+      "user_email": "test.researcher.1792750244674@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1792750244796_1way",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-10-23T10:10:44.929Z"
+    },
+    {
+      "id": "log_1792749275794_aqrwa",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_049136c318f55a9298d6beecdba4e05b0feff37b50e6dd5a687555061be06485",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T09:54:35.794Z"
+    },
+    {
+      "id": "log_1792749275656_x5kgj",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_c15e060ae2a6dfce6d6aa86474905c4e447de7e43021ddd5740885e2c5e93694",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T09:54:35.656Z"
+    },
+    {
+      "id": "log_1792749275530_2ttkl",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1792749274870_kz4t",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-10-23T09:54:35.530Z"
+    },
+    {
+      "id": "log_1792749275388_nox6b",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_9232181314a2148760bab57b2a30420dd2efd823ade28c07",
+      "details": "Password reset requested.",
+      "timestamp": "2026-10-23T09:54:35.388Z"
+    },
+    {
+      "id": "log_1792749275377_dv5x4",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1792749274870_kz4t",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-10-23T09:54:35.377Z"
+    },
+    {
+      "id": "log_1792749275366_4qv6z",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_813136a6c83810c25cd5913c75cbecc5b7b1f63640a0bc43",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-10-23T09:54:35.366Z"
+    },
+    {
+      "id": "log_1792749275358_3pq08",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1792749274870_kz4t",
+      "details": "User updated profile details.",
+      "timestamp": "2026-10-23T09:54:35.358Z"
+    },
+    {
+      "id": "log_1792749275341_1ljzt",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1792749275341_05062e70d6ceaa1a.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-10-23T09:54:35.341Z"
+    },
+    {
+      "id": "log_1792749275327_t66k2",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_a0b6a0c1d27bf536032ac6281ed170c33debc82856c1042eb23cf74b95829551",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T09:54:35.327Z"
+    },
+    {
+      "id": "log_1792749275005_puguc",
+      "user_id": "usr_1792749274870_kz4t",
+      "user_email": "test.researcher.1792749274747@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1792749274870_kz4t",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-10-23T09:54:35.005Z"
+    },
     {
       "id": "log_1792746040979_1dbjl",
       "user_id": "usr_admin_001",

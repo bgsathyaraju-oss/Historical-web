@@ -36,15 +36,36 @@ import { LanguageCode } from '../types';
 
 interface CommunityHeritagePageProps {
   onNavigate: (path: string) => void;
+  initialTab?: 'synonyms' | 'figures' | 'geography' | 'history';
 }
 
-export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ onNavigate }) => {
+export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ onNavigate, initialTab }) => {
   const { t, language, setLanguage, translateText, getMetadataLabel } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'synonyms' | 'figures' | 'geography' | 'history'>('synonyms');
+  const [activeTab, setActiveTab] = useState<'synonyms' | 'figures' | 'geography' | 'history'>(() => {
+    if (initialTab) return initialTab;
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam === 'figures' || tabParam === 'synonyms' || tabParam === 'geography' || tabParam === 'history') {
+      return tabParam;
+    }
+    return 'synonyms';
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [selectedFigure, setSelectedFigure] = useState<HistoricalFigureSummary | null>(null);
   const [synonymCategoryFilter, setSynonymCategoryFilter] = useState<string>('all');
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    } else {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam === 'figures' || tabParam === 'synonyms' || tabParam === 'geography' || tabParam === 'history') {
+        setActiveTab(tabParam);
+      }
+    }
+  }, [initialTab]);
 
   // Close modal on escape key
   useEffect(() => {

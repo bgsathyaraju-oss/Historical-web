@@ -91,11 +91,17 @@ export function getDb(): DatabaseSchema {
         if (!memoryDb.email_verifications) {
           memoryDb.email_verifications = [];
         }
-        // Auto-merge any newly added canonical seed items
+        // Auto-merge any newly added canonical seed items and update categorizations
         const seed = initializeSeedData();
         let changed = false;
         for (const art of seed.articles) {
-          if (!memoryDb.articles.some(a => a.id === art.id)) {
+          const existing = memoryDb.articles.find(a => a.id === art.id);
+          if (existing) {
+            if (existing.category !== art.category) {
+              existing.category = art.category;
+              changed = true;
+            }
+          } else {
             memoryDb.articles.push(art);
             changed = true;
           }
@@ -1272,7 +1278,7 @@ function initializeSeedData(): DatabaseSchema {
     {
       id: 'art_odra_desha_history',
       slug: 'historical-geography-of-odra-desha',
-      category: 'Odra Desha',
+      category: 'Odra Desha & Historical Geography',
       original_language: 'en',
       original_title: 'The Historical Geography and Territorial Evolution of Ancient Odra Desha',
       summary: 'An empirical examination of the ancient nomenclature, territorial limits, and geopolitical transformation of Odra Desha from classical references to the medieval period.',
@@ -1318,7 +1324,7 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
     {
       id: 'art_gajapathi_kapilendra',
       slug: 'rise-of-kapilendra-deva-suryavamsha-empire',
-      category: 'Gajapathi Kings',
+      category: 'Suryavamsha Gajapathi Kings',
       original_language: 'en',
       original_title: 'Kapilendra Deva and the Zenith of the Suryavamshi Gajapathi Empire (1434–1466 CE)',
       summary: 'A critical archival investigation into the accession, military reorganization, and trans-regional expansion of the founder of the Suryavamshi Gajapathi dynasty.',
@@ -1361,7 +1367,7 @@ Kapilendra did not merely conquer; he instituted administrative stability by rep
     {
       id: 'art_genealogy_methodology',
       slug: 'royal-genealogy-methodological-distinction',
-      category: 'Royal Genealogy',
+      category: 'Royal Genealogy & Lineage Methodology',
       original_language: 'en',
       original_title: 'Methodological Standards: Distinguishing Epigraphic Lineages from Traditional Vamsavalis',
       summary: 'Why rigorous historiography requires explicit demarcation between primary epigraphic records and post-medieval oral or traditional family claims.',
@@ -1400,7 +1406,7 @@ To preserve unwavering historical credibility, our archive visually and textuall
     {
       id: 'art_oad_rajputh_od_history',
       slug: 'history-of-oad-rajputh-od-kshatriya-synonyms-geography',
-      category: 'Odra Desha',
+      category: 'Oad-Rajput & Kshatriya Heritage',
       original_language: 'en',
       original_title: 'History of Oad-Rajput, Od-Kshatriya & Allied Lineages: Epigraphy, Synonyms, and Geographical Spreading',
       summary: 'A historiographical treatise examining the roots of Oad-Rajput, Od-Kshatriya, and allied communities, documenting regional synonyms (Od, Odra, Odde, Oddar, Waddar, OddeRajulu, VaddeRajulu, Vadiyarajulu), spiritual progenitors (Sagara, Bhagiratha, Sri Rama, Kharavela, Goddess Jasma, Siddharameshwara), and their pan-Indian diaspora.',
@@ -1480,7 +1486,7 @@ Over two millennia of geographical migration, the ancestral ethnonym Odra (Prakr
     {
       id: 'art_surya_vamsa_sagara_rama',
       slug: 'suryavamsha-antiquity-sagara-bhagiratha-kharavela-rama',
-      category: 'Royal Genealogy',
+      category: 'Suryavamsha Lineage & Antiquity',
       original_language: 'en',
       original_title: 'Suryavamsha Antiquity: From Samrat Sagara and Bhagiratha to Emperor Kharavela and Sri Rama',
       summary: 'An exploration of the civilizational memory connecting the Solar Dynastic monarchs of the Epics with the historical epigraphy of ancient Odra Desha and living community veneration.',
@@ -1526,7 +1532,7 @@ This deep heritage explains why Oad-Rajputs, Od-Kshatriyas, and VaddeRajulu main
     {
       id: 'art_kolletikota_peddintlamma_lake',
       slug: 'kolletikota-peddintlamma-thalli-kolleti-sarasu-history',
-      category: 'Odra Desha',
+      category: 'Sacred Citadels & Maritime Garrisons',
       original_language: 'en',
       original_title: 'Sri Kolletikota Peddintlamma Thalli & Kolleti Sarasu: The Aquatic Fortress (Jala Durga) and Sacred Royal Guardian of Coastal Andhra',
       summary: 'A comprehensive historical and cultural documentary on Kolleti Sarasu (Kolleru Lake), the island citadel of Kolletikota, the presiding warrior-mother deity Sri Peddintlamma Thalli, Gajapathi-Odiyaraju military garrison defenses, and the living tradition of the annual Phalguna Purnima Theertham.',
@@ -1594,7 +1600,7 @@ Kolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthes
     {
       id: 'art_epigraphic_evolution_odra',
       slug: 'epigraphic-evolution-of-odra-identity',
-      category: 'Inscriptions',
+      category: 'Inscriptions & Epigraphical Evolution',
       original_language: 'en',
       original_title: 'Epigraphic Evolution of the Odra Identity: From Ancient Prakrit Edicts to Medieval Gajapathi Copper Plates',
       summary: 'A comprehensive epigraphical and paleographical treatise tracing the evolution of the Odra identity across two millennia—from ancient Ashokan and Kharavela Prakrit lithic edicts, Bhauma-Kara copper grants, and Somavamshi inscriptions to imperial Eastern Ganga and Suryavamsha Gajapathi bilingual Sanskrit-Odia charters and southern pillar records.',
