@@ -33,10 +33,10 @@ jobs:
          
 
       - name: Install dependencies
-        run: npn install 
+        run: bun install 
 
       - name: Build website
-        run: npn run build
+        run: bun run build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
