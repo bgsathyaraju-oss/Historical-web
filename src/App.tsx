@@ -51,7 +51,12 @@ function AppContent() {
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPath(window.location.pathname || '/');
+      const basePath = import.meta.env.BASE_URL;
+const currentPath = window.location.pathname;
+const appPath = currentPath.startsWith(basePath)
+  ? '/' + currentPath.slice(basePath.length)
+  : currentPath;
+setCurrentPath(appPath === '' ? '/' : appPath);
       const params = new URLSearchParams(window.location.search);
       setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
     };
@@ -74,6 +79,7 @@ function AppContent() {
 
   const navigateTo = (pathWithQuery: string) => {
     const [path, query] = pathWithQuery.split('?');
+    const basePath = import.meta.env.BASE_URL;
     setCurrentPath(path);
     if (query) {
       const params = new URLSearchParams(query);
@@ -81,7 +87,9 @@ function AppContent() {
     } else {
       setSearchParam(null);
     }
-    window.history.pushState({ path: pathWithQuery }, '', pathWithQuery);
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+const fullPath = `${basePath.replace(/\/$/, '')}${cleanPath}${query ? `?${query}` : ''}`;
+window.history.pushState({ path: fullPath }, '', fullPath);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
