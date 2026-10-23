@@ -103,6 +103,14 @@
       "status": "active",
       "email_verified": true,
       "created_at": "2026-10-22T17:07:41.710Z"
+    },
+    {
+      "id": "usr_1792740149345_f8te",
+      "email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-10-23T07:22:29.514Z"
     }
   ],
   "user_passwords": {
@@ -118,7 +126,8 @@
     "usr_1792687520802_kgs6": "$2b$10$Rbc.w8JcvgB9nA.rizhhcu2P7Hp.WpKVqoA6d4qKSg.6wnLrcJT.a",
     "usr_1792687943474_tz7a": "$2b$10$FdyzGP1.OwGSXaWRSwpbgus3dQYo4oeSMO83IiPC8ME.KIWOsXEgy",
     "usr_1792687954074_7r5u": "$2b$10$e4v1AMSHrxqF2MSgv/hEj.3GZxXcgBUn5ZC2RTVa1p2RKgz.sCtmu",
-    "usr_1792688861556_q75d": "$2b$10$GZq4hmg6Xmb6M6phFFlH5.CterLIc.JEty.pZnG9Sj6cHI/zfvY0K"
+    "usr_1792688861556_q75d": "$2b$10$GZq4hmg6Xmb6M6phFFlH5.CterLIc.JEty.pZnG9Sj6cHI/zfvY0K",
+    "usr_1792740149345_f8te": "$2b$10$3x2Dof1MactgB1Z.jz7R3eoivSRaJOjIUTKKidvc9ygI16y1PU/xe"
   },
   "profiles": [
     {
@@ -357,6 +366,21 @@
       "areas_of_historical_interest": [],
       "languages_known": [],
       "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1792740149345_f8te",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1792740149786_e180f2247d9e9e64.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
     }
   ],
   "preferences": [
@@ -434,6 +458,12 @@
     },
     {
       "user_id": "usr_1792688861556_q75d",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1792740149345_f8te",
       "preferred_language": "en",
       "email_notifications": true,
       "show_original_quotes": true
@@ -931,6 +961,47 @@
         "Zvelebil, Kamil, \"The Vachanas of Siddharama\", 1984.",
         "Epigraphia Carnatica & Solapur District Gazetteer."
       ]
+    },
+    {
+      "id": "fig_kolletikota_peddintlamma",
+      "name": "Sri Kolletikota Peddintlamma Thalli",
+      "alternate_names": [
+        "Peddintlamma Ammavaru",
+        "Kolletikota Peddintlamma",
+        "Goddess of Kolleti Kota Water Citadel"
+      ],
+      "dynasty_name": "Sacred Protector of Gajapathi & Odiyaraju Coastal Garrisons",
+      "dynasty_id": "dyn_traditional_suryavamsha_lineages",
+      "reign_period": "Medieval Era (c. 11th–16th Century CE to Present)",
+      "approx_dates": "Timeless Sacred Living Tradition",
+      "known_titles": [
+        "Presiding Warrior Deity of Kolletikota",
+        "Protector of Kolleti Sarasu (Kolleru Lake) Aquatic Citadel",
+        "Mother of the Royal Elder House (Peddillu)"
+      ],
+      "biography": "Sri Kolletikota Peddintlamma Thalli is the revered warrior-mother goddess presiding over the island fortress of Kolletikota in the heart of Kolleti Sarasu (Kolleru Lake), Andhra Pradesh. Venerated for centuries by Gajapathi royal commanders, Suryavamsha Odiyaraju/Kshatriya warriors, and lake communities as the invincible guardian of the water citadel (\"Jala Durga\"), she protected the island fortress against hostile foreign sieges through the treacherous, reed-filled waterways of Kolleru. Her annual Jatara (Theertham) during Phalguna Purnima draws hundreds of thousands of devotees who travel by boat to seek her fierce maternal grace.",
+      "major_events": [
+        "Consecrated as the presiding warrior guardian and Kuladevatha of the Kolletikota island water fort amidst Kolleti Sarasu.",
+        "Invoked by Gajapathi commanders and Odiyaraju warriors during the southern campaigns of Kapilendra Deva and Kumara Hamvira Deva.",
+        "Protected the water fortress during medieval naval and terrestrial sieges by guiding defenders through hidden reed boat-channels.",
+        "Venerated alongside Sri Gokarneshwara Swamy in the island citadel, celebrated through the annual Phalguna Purnima Peddintlamma Jatara."
+      ],
+      "historical_significance": "Supreme martial-spiritual guardian of Kolleti Sarasu, symbolizing Kshatriya fortress defense, naval water warfare, and unbroken coastal Andhra living traditions.",
+      "associated_places": [
+        "Kolletikota (Kaikaluru, Eluru District, Andhra Pradesh)",
+        "Kolleti Sarasu (Kolleru Freshwater Lake)",
+        "Gokarneshwara Swamy Temple",
+        "Kondapalli & Kondavidu Perimeter"
+      ],
+      "evidence_status": "Living Sacred Tradition",
+      "image_url": "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80",
+      "inscriptions_ids": [],
+      "citations": [
+        "Mackenzie Manuscripts & Local Kaifiyats (Kolletikota & Kaikaluru Kaifiyats).",
+        "South Indian Inscriptions (SII), Vol. X (Eastern Chalukya and Gajapathi Delta Inscriptions).",
+        "Imperial Gazetteer of India, Vol. XV (Kolleru Lake & Kolletikota Fortress).",
+        "Andhra Pradesh State Archaeology & Endowments Department Archival Reports."
+      ]
     }
   ],
   "genealogy": [
@@ -1156,6 +1227,18 @@
       "uncertainty_notes": "Documented with high epigraphic certainty; disputed only regarding exact local governorship boundaries."
     },
     {
+      "id": "ev_kolletikota_gajapathi_garrison",
+      "period": "15th Century CE",
+      "year_text": "c. 1450 CE",
+      "sort_year": 1450,
+      "title": "Fortification of Kolletikota Island Citadel & Veneration of Peddintlamma Thalli",
+      "rulers_involved": "Gajapathi Imperial Flotilla & Suryavamsha Odiyaraju Warriors",
+      "political_development": "Following the consolidation of coastal Andhra deltas, Gajapathi detachments and Odiyaraju Kshatriya garrisons fortified the island citadel of Kolletikota amidst Kolleti Sarasu (Kolleru Lake), establishing an impregnable Jala Durga (water fortress) and invoking Sri Peddintlamma Thalli as their divine guardian against invaders.",
+      "monuments_inscriptions": "Sri Kolletikota Peddintlamma Temple & Sri Gokarneshwara Swamy Temple ruins.",
+      "primary_sources": "Mackenzie Manuscripts (Kolletikota & Kaikaluru Kaifiyats); South Indian Inscriptions Vol. X; Imperial Gazetteer.",
+      "uncertainty_notes": "Corroborated by local Kaifiyats, continuous island fortifications, and the living annual Phalguna Purnima Jatara."
+    },
+    {
       "id": "ev_1458",
       "period": "15th Century CE",
       "year_text": "1458 CE",
@@ -1291,6 +1374,21 @@
         "Vijayanagara victory stelae"
       ],
       "image_url": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80"
+    },
+    {
+      "id": "loc_kolleti_sarasu_fort",
+      "name": "Kolletikota Island Water Citadel & Kolleti Sarasu (Kolleru Lake)",
+      "ancient_name": "Kolanu Durga / Kolleti Kota Jala Durga",
+      "region": "Coastal Andhra Delta",
+      "modern_district": "Eluru / Krishna",
+      "modern_state": "Andhra Pradesh",
+      "summary": "Colossal natural freshwater lake and island water fortress situated between Krishna and Godavari deltas. Garrisoned by Gajapathi commanders and Odiyaraju warriors, protected by presiding warrior deity Sri Peddintlamma Thalli.",
+      "archaeological_findings": "Ancient defensive island ramparts, boat landing jetties, medieval stone temple of Sri Peddintlamma Thalli, and Sri Gokarneshwara Swamy temple precinct.",
+      "inscriptions_found": [
+        "Chalukya and Gajapathi coastal delta copper-plate records",
+        "Local Kaifiyat inscriptions"
+      ],
+      "image_url": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80"
     }
   ],
   "inscriptions": [
@@ -1393,6 +1491,22 @@
       "sources": [
         "South Indian Inscriptions Vol. IV",
         "Andhra Historical Research Society Journal"
+      ]
+    },
+    {
+      "id": "mon_kolletikota_peddintlamma",
+      "name": "Sri Kolletikota Peddintlamma Temple & Island Water Fort",
+      "location": "Kolletikota, Kolleru Lake (Kaikaluru, Eluru District)",
+      "state": "Andhra Pradesh",
+      "patron_ruler": "Gajapathi Imperial Garrisons & Odiyaraju Chieftains",
+      "century": "Medieval Era (c. 11th–16th Century CE)",
+      "architectural_style": "Island Citadel & Coastal Jala-Durga Temple Architecture",
+      "historical_significance": "Historic island fortress sanctuary situated in the middle of Kolleti Sarasu (Kolleru Lake). The temple of Sri Peddintlamma Thalli along with the ancient Gokarneshwara Swamy Shiva shrine formed the sacred and defensive citadel of Gajapathi and Odiyaraju Kshatriya warriors, guarded by natural marshlands and navigated via native boat flotillas.",
+      "image_url": "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80",
+      "sources": [
+        "Mackenzie Manuscripts (Kaikaluru & Kolletikota Kaifiyats)",
+        "Imperial Gazetteer of India, Vol. XV",
+        "Andhra Pradesh State Archaeology & Endowments Reports"
       ]
     }
   ],
@@ -1617,7 +1731,7 @@
           "summary": "প্রাচীন ওড্র দেশের ঐতিহাসিক বিশ্লেষণ এবং সীমানা পর্যালোচনা।",
           "status": "pending",
           "translator_name": "সূর্যবংশ গবেষক পরিষদ",
-          "last_updated": "2026-10-22T17:07:42.417Z"
+          "last_updated": "2026-10-23T07:22:30.304Z"
         }
       }
     },
@@ -1798,6 +1912,63 @@
         }
       ],
       "original_content": "Across centuries of epigraphy and community vamsavalis, the connection between the ancient Suryavamsha and the Odra lineages has remained a living pillar of identity.\n\nFrom Epic Antiquity to Medieval Fortresses:\n- Samrat Sagara's Ashvamedha and his sons' vast excavations established the symbolic origin of earth sculpting and canal creation as a royal, righteous endeavor.\n- Rajarshi Bhagiratha elevated engineering to spiritual perfection, showing that through sheer tapasya and mathematical labor, even the mightiest torrents of nature could be harnessed for the welfare of mankind.\n- Sri Rama exemplified that true Kshatriya strength resides in Dharma, protection of the weak, and self-sacrifice for the realm.\n- Emperor Kharavela in historical times demonstrated this exact combination: military might spanning from Magadha to the Pandya country, paired with the canal extension from the Tiwasachala into his capital, and rock-hewn caves on the Udayagiri hills.\n\nLiving Memory and Community Pride:\nThis deep heritage explains why Oad-Rajputs, Od-Kshatriyas, and VaddeRajulu maintain both martial self-respect and extraordinary engineering skill. Whether building the invincible stone ramparts of Barabati and Kondavidu, the great temple water tanks of southern India, or modern infrastructure across the nation, they carry forward the uninterrupted legacy of Bhagiratha and Sagara."
+    },
+    {
+      "id": "art_kolletikota_peddintlamma_lake",
+      "slug": "kolletikota-peddintlamma-thalli-kolleti-sarasu-history",
+      "category": "Odra Desha",
+      "original_language": "en",
+      "original_title": "Sri Kolletikota Peddintlamma Thalli & Kolleti Sarasu: The Aquatic Fortress (Jala Durga) and Sacred Royal Guardian of Coastal Andhra",
+      "summary": "A comprehensive historical and cultural documentary on Kolleti Sarasu (Kolleru Lake), the island citadel of Kolletikota, the presiding warrior-mother deity Sri Peddintlamma Thalli, Gajapathi-Odiyaraju military garrison defenses, and the living tradition of the annual Phalguna Purnima Theertham.",
+      "author_name": "Historical Research Council & Coastal Andhra Epigraphy Project",
+      "publication_date": "2026-02-24",
+      "verification_status": "Published",
+      "evidence_category": "scholarly_interpretation",
+      "featured_image": "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80",
+      "tags": [
+        "Kolletikota",
+        "Peddintlamma Thalli",
+        "Kolleti Sarasu",
+        "Kolleru Lake",
+        "Gajapathi",
+        "Odiyaraju",
+        "Jala Durga",
+        "Eluru",
+        "Kaikaluru"
+      ],
+      "sources": [
+        {
+          "id": "src_klt_01",
+          "source_type": "Primary Source",
+          "title": "Mackenzie Collection Local Records: Kaikaluru & Kolletikota Kaifiyats",
+          "author_or_authority": "Colin Mackenzie Survey Team / Government Oriental Manuscripts Library",
+          "publication_or_location": "Madras / Hyderabad Archival Repository",
+          "year_or_era": "c. 1800–1815 CE",
+          "citation_details": "Section on Kolletikota water citadel, Peddintlamma temple foundation, and lake garrisons",
+          "verified": true
+        },
+        {
+          "id": "src_klt_02",
+          "source_type": "Scholarly Book",
+          "title": "The Imperial Gazetteer of India, Vol. XV (Entries on Kolleru Lake and Kolletikota)",
+          "author_or_authority": "William Wilson Hunter & Henry Frowde",
+          "publication_or_location": "Oxford: Clarendon Press",
+          "year_or_era": "1908",
+          "citation_details": "pp. 385–388 (Kolleru Lake as an aquatic defense barrier and island fortified settlement)",
+          "verified": true
+        },
+        {
+          "id": "src_klt_03",
+          "source_type": "Inscription",
+          "title": "South Indian Inscriptions (SII), Vol. X: Coastal Andhra Inscriptions",
+          "author_or_authority": "Archaeological Survey of India",
+          "publication_or_location": "New Delhi",
+          "year_or_era": "Medieval Period",
+          "citation_details": "Epigraphic grants mentioning Kolanu / Kolletikota and surrounding delta chieftaincies",
+          "verified": true
+        }
+      ],
+      "original_content": "Nestled between the fertile deltas of the Krishna and Godavari rivers in coastal Andhra Pradesh lies Kolleti Sarasu (Kolleru Lake), one of India's largest natural freshwater lakes and wetland ecosystems. Historically situated across modern Eluru and Krishna districts (near Kaikaluru), Kolleti Sarasu was far more than an ecological marvel: for over a millennium, it served as an impregnable natural water barrier, and its central island citadel, Kolletikota (Kolleti Kota), was celebrated in military annals as a premier \"Jala Durga\" (aquatic fortress).\n\n1. Historical Geography of Kolleti Sarasu (Kolleru Lake):\nIn classical Sanskrit inscriptions and Telugu literature, Kolleru is known as \"Kolanu\" (the lake / tank) and its rulers were termed \"Kolani-nayakas\" or lords of the lake. Spanning hundreds of square miles during monsoon seasons, the lake formed a natural moat surrounded by dense marshes, elephant grass, and labyrinthine waterways. Hostile armies attempting to cross the lake with standard cavalry and foot soldiers were quickly immobilized by the silt and treacherous currents, making Kolleti Kota one of the most formidable defensive strongholds in peninsular India.\n\n2. The Gajapathi & Odiyaraju Fortress Garrison:\nDuring the 15th century, when Emperor Kapilendra Deva Gajapathi and his valorous son Kumara Hamvira Deva swept through coastal Andhra down to the Kaveri River, the Gajapathi forces established strategic garrisons to maintain supply lines between Rajahmundry, Kondapalli, and Kondavidu.\nSuryavamsha Odiyaraju and allied Kshatriya warrior clans garrisoned the island citadel of Kolletikota. Native water pilots utilized flat-bottomed boats (\"dony lu\" / sangam) and created submerged palisades and reed blinds, allowing defenders to ambush invaders while remaining invisible in the mist of Kolleti Sarasu. Historical records from the Bahmani wars recount that Sultanate detachments suffered catastrophic defeats attempting to navigate the uncharted depths of Kolleru.\n\n3. Sri Kolletikota Peddintlamma Thalli: The Presiding Warrior-Mother:\nAt the heart of the island citadel stands the ancient, sanctified temple of Sri Kolletikota Peddintlamma Thalli. The title \"Peddintlamma\" translates to \"The Mother of the Grand / Elder Royal House\" (Peddillu), reflecting her role as the Kuladevatha and sovereign spiritual matriarch of the ruling Kshatriyas, fort commanders, and the indigenous lake brotherhood.\nAccording to regional Kaifiyats and oral traditions preserved by the community:\n- The goddess served as the divine sentinel of the island fort. Before embarking on naval defense or military sorties across the lake, the Gajapathi and Odiyaraju commanders performed solemn Shakthi pujas, receiving swords blessed at her lotus feet.\n- During legendary sieges, when invading forces attempted to breach the lake channels under cover of darkness, Peddintlamma Thalli is said to have conjured blinding fog over the water, disorienting the invaders while guiding the defenders to victory.\n- Beside Peddintlamma stands the ancient temple of Sri Gokarneshwara Swamy (Lord Shiva), establishing a powerful Shakthi-Shiva presence that consecrated the island fortress against foreign desecration.\n\n4. The Living Tradition: Annual Peddintlamma Jatara (Theertham):\nThe worship of Peddintlamma Thalli has remained unbroken across centuries. Every year, during the auspicious Phalguna Shuddha Purnima (corresponding to the Holi / Vasantotsava festival season in February–March), the historic \"Kolletikota Peddintlamma Theertham / Jatara\" is celebrated with extraordinary devotion.\nHundreds of thousands of devotees, including Odiyaraju Kshatriya families, farmers, fishermen, and pilgrims from across Andhra Pradesh and neighboring states, converge upon Kolletikota. Pilgrims historically crossed the lake waters by boat flotillas, offering turmeric, kumkum, sacred yellow threads, and vibrant silk garments to the Mother.\n\n5. Historical Legacy and Cultural Continuity:\nKolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthesis of martial defense, environmental stewardship, and living folk-devotional heritage. As the Suryavamsha Odiyaraju Kshatriya Portal honors the civilizational memory of Odra Desha and its southern diaspora, the island citadel of Kolletikota stands as an eternal monument to the valor of the warriors and the loving protection of their warrior-mother, Sri Peddintlamma Thalli."
     }
   ],
   "submissions": [
@@ -1929,6 +2100,12 @@
       "user_id": "usr_1792688861556_q75d",
       "expires_at": 1792692461993,
       "used": true
+    },
+    {
+      "token": "rst_8413f83da70c695a859cd278fad4fcd94e0791f5320337ac",
+      "user_id": "usr_1792740149345_f8te",
+      "expires_at": 1792743749819,
+      "used": true
     }
   ],
   "email_verifications": [
@@ -1991,9 +2168,115 @@
       "user_id": "usr_1792688861556_q75d",
       "expires_at": 1792775261978,
       "used": true
+    },
+    {
+      "token": "eml_70122ed817f6657a8c20a6165b276837b263610c525a96dd",
+      "user_id": "usr_1792740149345_f8te",
+      "expires_at": 1792826549800,
+      "used": true
     }
   ],
   "audit_logs": [
+    {
+      "id": "log_1792740150230_a1hfk",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_d9ca938715630aae2d07296054813602f580fa3ab665da0f49d3859a997abccd",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T07:22:30.230Z"
+    },
+    {
+      "id": "log_1792740150098_qnujh",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_37979613bed7d4d424805d5ac7c14ab0f0d639ae32ac7da8e47bb8c142261104",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T07:22:30.098Z"
+    },
+    {
+      "id": "log_1792740149969_4qwax",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1792740149345_f8te",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-10-23T07:22:29.969Z"
+    },
+    {
+      "id": "log_1792740149821_uj5t0",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_8413f83da70c695a859cd278fad4fcd94e0791f5320337ac",
+      "details": "Password reset requested.",
+      "timestamp": "2026-10-23T07:22:29.821Z"
+    },
+    {
+      "id": "log_1792740149813_bnclg",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1792740149345_f8te",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-10-23T07:22:29.813Z"
+    },
+    {
+      "id": "log_1792740149802_53p99",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_70122ed817f6657a8c20a6165b276837b263610c525a96dd",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-10-23T07:22:29.802Z"
+    },
+    {
+      "id": "log_1792740149794_5toxa",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1792740149345_f8te",
+      "details": "User updated profile details.",
+      "timestamp": "2026-10-23T07:22:29.794Z"
+    },
+    {
+      "id": "log_1792740149786_pg0ed",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1792740149786_e180f2247d9e9e64.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-10-23T07:22:29.786Z"
+    },
+    {
+      "id": "log_1792740149774_ha6i0",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_4d8be9bf6c0ea9480a5e3f53b5b88fbf9729402e4d847efcdd35fa9a6280cd17",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-10-23T07:22:29.775Z"
+    },
+    {
+      "id": "log_1792740149514_r77l8",
+      "user_id": "usr_1792740149345_f8te",
+      "user_email": "test.researcher.1792740149217@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1792740149345_f8te",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-10-23T07:22:29.514Z"
+    },
     {
       "id": "log_1792688862367_6mkhw",
       "user_id": "usr_admin_001",

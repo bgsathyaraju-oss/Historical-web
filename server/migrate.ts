@@ -237,7 +237,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
       'Gokarneshwara Swamy Temple',
       'Kondapalli & Kondavidu Perimeter'
     ],
-    evidence_status: 'Living Sacred Tradition' as const,
+    evidence_status: 'Traditional Lineage Record' as const,
     image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
     inscriptions_ids: [],
     citations: [
@@ -277,7 +277,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
     id: 'loc_kolleti_sarasu_fort',
     name: 'Kolletikota Island Water Citadel & Kolleti Sarasu (Kolleru Lake)',
     ancient_name: 'Kolanu Durga / Kolleti Kota Jala Durga',
-    region: 'Coastal Andhra Delta',
+    region: 'Deccan & South' as const,
     modern_district: 'Eluru / Krishna',
     modern_state: 'Andhra Pradesh',
     summary: 'Colossal natural freshwater lake and island water fortress situated between Krishna and Godavari deltas. Garrisoned by Gajapathi commanders and Odiyaraju warriors, protected by presiding warrior deity Sri Peddintlamma Thalli.',
@@ -306,7 +306,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
     sources: [
       {
         id: 'src_klt_01',
-        source_type: 'Primary Source',
+        source_type: 'Primary Source' as const,
         title: 'Mackenzie Collection Local Records: Kaikaluru & Kolletikota Kaifiyats',
         author_or_authority: 'Colin Mackenzie Survey Team / Government Oriental Manuscripts Library',
         publication_or_location: 'Madras / Hyderabad Archival Repository',
@@ -316,7 +316,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
       },
       {
         id: 'src_klt_02',
-        source_type: 'Scholarly Book',
+        source_type: 'Scholarly Book' as const,
         title: 'The Imperial Gazetteer of India, Vol. XV (Entries on Kolleru Lake and Kolletikota)',
         author_or_authority: 'William Wilson Hunter & Henry Frowde',
         publication_or_location: 'Oxford: Clarendon Press',
@@ -326,7 +326,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
       },
       {
         id: 'src_klt_03',
-        source_type: 'Inscription',
+        source_type: 'Inscription' as const,
         title: 'South Indian Inscriptions (SII), Vol. X: Coastal Andhra Inscriptions',
         author_or_authority: 'Archaeological Survey of India',
         publication_or_location: 'New Delhi',

@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // User Profiles
+    match /users/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId);
+    }
+    
+    // Public Historical Knowledge Collections
+    match /articles/{articleId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    match /figures/{figureId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    match /monuments/{monumentId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    match /community_submissions/{submissionId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (resource.data.user_id == request.auth.uid);
+    }
+    
+    // Test collection for initial connection validation
+    match /test/{docId} {
+      allow read: if true;
+    }
+  }
+}

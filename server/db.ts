@@ -599,7 +599,7 @@ function initializeSeedData(): DatabaseSchema {
         'Gokarneshwara Swamy Temple',
         'Kondapalli & Kondavidu Perimeter'
       ],
-      evidence_status: 'Living Sacred Tradition',
+      evidence_status: 'Traditional Lineage Record',
       image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
       inscriptions_ids: [],
       citations: [
@@ -920,7 +920,7 @@ function initializeSeedData(): DatabaseSchema {
       id: 'loc_kolleti_sarasu_fort',
       name: 'Kolletikota Island Water Citadel & Kolleti Sarasu (Kolleru Lake)',
       ancient_name: 'Kolanu Durga / Kolleti Kota Jala Durga',
-      region: 'Coastal Andhra Delta',
+      region: 'Deccan & South',
       modern_district: 'Eluru / Krishna',
       modern_state: 'Andhra Pradesh',
       summary: 'Colossal natural freshwater lake and island water fortress situated between Krishna and Godavari deltas. Garrisoned by Gajapathi commanders and Odiyaraju warriors, protected by presiding warrior deity Sri Peddintlamma Thalli.',

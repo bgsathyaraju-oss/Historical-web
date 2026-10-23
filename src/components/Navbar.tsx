@@ -18,6 +18,7 @@ import {
   Package
 } from 'lucide-react';
 import { ExportProjectModal } from './ExportProjectModal';
+import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -62,11 +63,23 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Brand Logo & Sun Emblem */}
-          <div
-            onClick={() => navigateTo('/')}
-            className="flex items-center gap-3 cursor-pointer group select-none"
-          >
+          {/* Left: Three-Line Menu (shifted to top left) + Brand Logo */}
+          <div className="flex items-center gap-2 sm:gap-3.5">
+            {/* Three line menu option shifted to top left position */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-lg bg-[#181d28] hover:bg-[#222938] text-stone-200 hover:text-[#d4af37] border border-[#c99738]/40 hover:border-[#c99738] transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#c99738]"
+              aria-label="Toggle navigation menu"
+              title={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5 text-[#d4af37]" /> : <Menu className="w-5 h-5 text-[#d4af37]" />}
+            </button>
+
+            {/* Brand Logo & Sun Emblem */}
+            <div
+              onClick={() => navigateTo('/')}
+              className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none"
+            >
             {/* Royal Sun Emblem */}
             <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#580014] to-[#80001c] border-2 border-[#d4af37] p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.3)] group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 100 100" className="w-full h-full fill-[#d4af37]">
@@ -84,6 +97,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               </div>
             </div>
           </div>
+        </div>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs xl:text-sm font-medium text-stone-200">
@@ -324,13 +338,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               </div>
             )}
 
-            {/* Mobile Menu Toggle Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-stone-300 hover:text-white hover:bg-stone-800"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            {/* Language toggle option shifted to top right position */}
+            <div className="flex items-center">
+              <LanguageSelector />
+            </div>
           </div>
         </div>
       </div>

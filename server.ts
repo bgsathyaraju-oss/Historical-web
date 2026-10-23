@@ -21,7 +21,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
+function determinePort(): number {
+  const portIndex = process.argv.indexOf('--port');
+  if (portIndex !== -1 && process.argv[portIndex + 1]) {
+    const p = parseInt(process.argv[portIndex + 1], 10);
+    if (!isNaN(p)) return p;
+  }
+  // In development, the dev server must always bind to port 3000
+  if (process.env.npm_lifecycle_event === 'dev' || process.env.NODE_ENV === 'development') {
+    return 3000;
+  }
+  // In production outside of dev supervisor, use process.env.PORT
+  if (process.env.PORT) {
+    const p = parseInt(process.env.PORT, 10);
+    if (!isNaN(p)) return p;
+  }
+  return 3000;
+}
+
+const PORT = determinePort();
 
 // Initialize database & run migrations on boot
 try {
@@ -87,12 +106,12 @@ async function startServer() {
   const distPath = path.resolve(__dirname, 'dist');
   const hasDist = fs.existsSync(path.resolve(distPath, 'index.html'));
   
-  // Production when explicitly configured or running in Cloud Run container (K_SERVICE / non-dev mode with dist present)
+  // Production mode detection (never production if running dev script)
   const isProduction =
-    process.env.NODE_ENV === 'production' ||
-    Boolean(process.env.K_SERVICE) ||
-    process.env.npm_lifecycle_event === 'start' ||
-    (hasDist && process.env.NODE_ENV !== 'development' && !process.env.TSX_TSCONFIG_PATH);
+    process.env.npm_lifecycle_event !== 'dev' &&
+    (process.env.NODE_ENV === 'production' ||
+     process.env.npm_lifecycle_event === 'start' ||
+     Boolean(process.env.K_SERVICE));
 
   if (!isProduction) {
     const { createServer: createViteServer } = await import('vite');
@@ -106,6 +125,24 @@ async function startServer() {
     });
 
     app.use(vite.middlewares);
+
+    // Fallback to transformIndexHtml for SPA routing in development
+    app.use('*', async (req, res, next) => {
+      const url = req.originalUrl;
+      try {
+        const indexPath = path.resolve(__dirname, 'index.html');
+        if (fs.existsSync(indexPath)) {
+          let template = fs.readFileSync(indexPath, 'utf-8');
+          template = await vite.transformIndexHtml(url, template);
+          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+          return;
+        }
+        next();
+      } catch (e) {
+        vite.ssrFixStacktrace(e as Error);
+        next(e);
+      }
+    });
   } else {
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {

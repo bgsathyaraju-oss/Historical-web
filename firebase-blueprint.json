@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile information",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    },
+    "HistoricalArticle": {
+      "title": "HistoricalArticle",
+      "description": "Documented historical article",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" }
+      },
+      "required": ["id", "title", "content"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User account collection"
+    },
+    "/articles/{articleId}": {
+      "schema": "HistoricalArticle",
+      "description": "Historical knowledge archive"
+    }
+  }
+}
