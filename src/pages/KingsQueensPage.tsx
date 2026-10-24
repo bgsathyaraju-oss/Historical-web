@@ -22,15 +22,22 @@ import { getAllDocumentedFigures, DOCUMENTED_FIGURES_REPO } from '../data/docume
 
 interface KingsQueensPageProps {
   onNavigate: (path: string) => void;
+  initialFigureId?: string | null;
 }
 
-export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate }) => {
+export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, initialFigureId }) => {
   const { t, language } = useLanguage();
   
   // Guarantee 100% immediate rendering across all browsers (Safari, Firefox, Chrome, Android, iOS)
   const initialFigures = getAllDocumentedFigures(language);
   const [figures, setFigures] = useState<HistoricalFigure[]>(initialFigures);
-  const [selectedFigure, setSelectedFigure] = useState<HistoricalFigure | null>(initialFigures[0] || null);
+  const [selectedFigure, setSelectedFigure] = useState<HistoricalFigure | null>(() => {
+    if (initialFigureId) {
+      const found = initialFigures.find(f => f.id === initialFigureId);
+      if (found) return found;
+    }
+    return initialFigures[0] || null;
+  });
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);

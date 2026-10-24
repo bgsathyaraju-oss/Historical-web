@@ -133,7 +133,7 @@ function AppContent() {
       case '/kings-queens':
       case '/documented-historical-figures':
       case '/historical-figures':
-        return <KingsQueensPage onNavigate={navigateTo} />;
+        return <KingsQueensPage onNavigate={navigateTo} initialFigureId={searchParam} />;
       case '/community-prominent-persons':
       case '/prominent-persons':
       case '/community-figures':
