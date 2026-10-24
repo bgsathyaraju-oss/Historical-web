@@ -34,7 +34,7 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
   };
 
   return (
-    <aside aria-label="Floating Navigation & Language Controls" className="fixed bottom-4 right-4 z-40 max-w-[94vw] sm:max-w-xl transition-all duration-300">
+    <aside aria-label="Floating Navigation & Language Controls" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-max max-w-[96vw] transition-all duration-300">
       {/* Expanded 8-Language Selector Flyout */}
       {isExpanded && (
         <div className="mb-2 p-3 sm:p-4 rounded-2xl bg-[#0f1320]/95 backdrop-blur-xl border border-[#c99738]/50 shadow-[0_10px_35px_rgba(0,0,0,0.8)] animate-in fade-in slide-in-from-bottom-2 duration-150">
@@ -91,7 +91,7 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
       )}
 
       {/* Main Floating Pill Bar */}
-      <div className="flex items-center gap-1.5 p-1.5 sm:p-2 rounded-2xl bg-[#0a0d17]/95 backdrop-blur-xl border border-[#c99738]/40 shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-xs text-stone-200">
+      <div className="flex items-center justify-center gap-1.5 p-1.5 sm:p-2 rounded-2xl bg-[#0a0d17]/95 backdrop-blur-xl border border-[#c99738]/40 shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-xs text-stone-200">
         {/* Home Button */}
         <button
           type="button"
