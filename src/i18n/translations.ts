@@ -218,6 +218,15 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       logout: 'Logout',
       exportZip: 'Export Project (ZIP)'
     },
+    publisher: {
+      designedAndPublishedBy: 'WebSite Design and Published by',
+      publisherName: 'Dr G.Sathyanarayana Raju',
+      leaderTitle: 'Leader of Suryavamsha Odiyaraju Kshatriya Community',
+      leaderBio: 'Leading the digital historical documentation, epigraphic preservation, and pan-Indian cultural integration of the Suryavamsha Odiyaraju Kshatriya heritage.',
+      contactWhatsApp: 'Contact on WhatsApp (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal'
+    },
     hero: {
       badge: 'Epigraphic Archival Rigor & Primary Evidence',
       headline: 'Explore the Verified History, Sovereign Heritage & Lineage of Suryavamsha Odiyaraju Kshatriya',
@@ -373,8 +382,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'सदस्य डैशबोर्ड',
       admin: 'प्रशासन कक्ष',
       submitResearch: 'शोध प्रस्तुत करें',
+      documentedFigures: 'अभिलेखित ऐतिहासिक व्यक्तित्व',
+      historicalPersons: 'ऐतिहासिक महापुरुष एवं विभूतियाँ',
       logout: 'लॉग आउट',
       exportZip: 'प्रोजेक्ट ज़िप डाउनलोड'
+    },
+    publisher: {
+      designedAndPublishedBy: 'वेबसाइट निर्माण एवं प्रकाशन',
+      publisherName: 'डॉ. जी. सत्यनारायण राजू',
+      leaderTitle: 'सूर्यवंश ओडियाराजू क्षत्रिय समाज के प्रमुख नेता',
+      leaderBio: 'सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक धरोहर, पुरातात्विक अभिलेखों के संरक्षण एवं अखिल भारतीय सांस्कृतिक समन्वय के प्रेरक नेतृत्वकर्ता।',
+      contactWhatsApp: 'व्हाट्सएप पर संपर्क करें (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'नमस्ते डॉ. जी. सत्यनारायण राजू जी, सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक पोर्टल के संदर्भ में'
     },
     hero: {
       badge: 'प्रामाणिक शिलालेखीय साक्ष्य एवं ऐतिहासिक अनुसंधान',
@@ -531,8 +551,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'సభ్యుల డాష్‌బోర్డ్',
       admin: 'అడ్మిన్ ప్యానెల్',
       submitResearch: 'పరిశోధన సమర్పించండి',
+      documentedFigures: 'చారిత్రక ఆధారిత ప్రముఖులు',
+      historicalPersons: 'చారిత్రక వ్యక్తులు & వీరులు',
       logout: 'లాగౌట్',
       exportZip: 'ప్రాజెక్ట్ జిప్ డౌన్‌లోడ్'
+    },
+    publisher: {
+      designedAndPublishedBy: 'వెబ్‌సైట్ రూపకల్పన మరియు ప్రచురణ',
+      publisherName: 'డాక్టర్ జి. సత్యనారాయణ రాజు',
+      leaderTitle: 'సూర్యవంశ ఒడియరాజు క్షత్రియ సమాజ నాయకుడు',
+      leaderBio: 'సూర్యవంశ ఒడియరాజు క్షత్రియ సాంస్కృతిక వారసత్వం, ప్రాచీన శాసనాల పరిరక్షణ మరియు సమగ్ర చారిత్రక డిజిటలైజేషన్ నడిపిస్తున్న నాయకుడు.',
+      contactWhatsApp: 'వాట్సాప్‌లో సంప్రదించండి (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'నమస్కారం డాక్టర్ జి. సత్యనారాయణ రాజు గారు, సూర్యవంశ ఒడియరాజు క్షత్రియ చారిత్రక పోర్టల్ గురించి'
     },
     hero: {
       badge: 'శాసన ఆధారిత చారిత్రక పరిశోధన & ప్రైమరీ ఆధారాలు',
@@ -689,8 +720,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'ಸದಸ್ಯ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
       admin: 'ಆಡಳಿತ ಮಂಡಳಿ',
       submitResearch: 'ಸಂಶೋಧನೆ ಸಲ್ಲಿಸಿ',
+      documentedFigures: 'ದಾಖಲಿತ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು',
+      historicalPersons: 'ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು ಮತ್ತು ನಾಯಕರು',
       logout: 'ಲಾಗೌಟ್',
       exportZip: 'ಪ್ರಾಜೆಕ್ಟ್ ಜಿಪ್ ಡೌನ್‌ಲೋಡ್'
+    },
+    publisher: {
+      designedAndPublishedBy: 'ವೆಬ್‌ಸೈಟ್ ವಿನ್ಯಾಸ ಮತ್ತು ಪ್ರಕಾಶನ',
+      publisherName: 'ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು',
+      leaderTitle: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಸಮಾಜದ ನಾಯಕರು',
+      leaderBio: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಪರಂಪರೆಯ ಐತಿಹಾಸಿಕ ದಾಖಲೀಕರಣ, ಶಾಸನ ಸಂರಕ್ಷಣೆ ಮತ್ತು ಅಖಿಲ ಭಾರತ ಸಾಂಸ್ಕೃತಿಕ ಏಕತೆಯ ಮುಂಚೂಣಿ ಮಾರ್ಗದರ್ಶಕರು.',
+      contactWhatsApp: 'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಿ (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'ನಮಸ್ಕಾರ ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು ಜೀ, ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಐತಿಹಾಸಿಕ ಪೋರ್ಟಲ್ ಕುರಿತು'
     },
     hero: {
       badge: 'ಶಾಸನ ಆಧಾರಿತ ಐತಿಹಾಸಿಕ ಸಂಶೋಧನೆ & ಮೂಲ ಪುರಾವೆ',
@@ -847,8 +889,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'உறுப்பினர் பலகை',
       admin: 'நிர்வாக பலகை',
       submitResearch: 'ஆராய்ச்சியை சமர்ப்பிக்க',
+      documentedFigures: 'ஆவணப்படுத்தப்பட்ட வரலாற்று ஆளுமைகள்',
+      historicalPersons: 'வரலாற்று மாந்தர்கள் & நாயகர்கள்',
       logout: 'வெளியேறு',
       exportZip: 'திட்ட ஜிப் பதிவிறக்கம்'
+    },
+    publisher: {
+      designedAndPublishedBy: 'வலைத்தள வடிவமைப்பு மற்றும் வெளியீடு',
+      publisherName: 'டாக்டர் ஜி. சத்யநாராயண ராஜு',
+      leaderTitle: 'சூரியவம்ச ஒட்டியராஜு சத்திரிய சமூகத்தின் பெருந்தலைவர்',
+      leaderBio: 'சூரியவம்ச ஒட்டியராஜு சத்திரிய வரலாற்று ஆவணப்படுத்துதல், கல்வெட்டு பாதுகாப்பு மற்றும் அகில பாரத கலாச்சார ஒருங்கிணைப்பின் முதன்மை வழிகாட்டி.',
+      contactWhatsApp: 'வாட்ஸ்அப்பில் தொடர்புகொள்ள (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'வணக்கம் டாக்டர் ஜி. சத்யநாராயண ராஜு ஜி, சூரியவம்ச ஒட்டியராஜு சத்திரிய வரலாற்று தளம் குறித்து'
     },
     hero: {
       badge: 'கல்வெட்டு சான்றுகள் மற்றும் வரலாற்று ஆய்வு',
@@ -1005,8 +1058,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'सदस्य डॅशबोर्ड',
       admin: 'प्रशासन कक्ष',
       submitResearch: 'संशोधन सादर करा',
+      documentedFigures: 'दस्तावेजीकृत ऐतिहासिक व्यक्ती',
+      historicalPersons: 'ऐतिहासिक व्यक्ती आणि विभूती',
       logout: 'लॉगआउट',
       exportZip: 'प्रकल्प झिप डाउनलोड'
+    },
+    publisher: {
+      designedAndPublishedBy: 'वेबसाइट रचना व प्रकाशन',
+      publisherName: 'डॉ. जी. सत्यनारायण राजू',
+      leaderTitle: 'सूर्यवंश ओडियाराजू क्षत्रिय समाजाचे नेते',
+      leaderBio: 'सूर्यवंश ओडियाराजू क्षत्रिय वारशाचे ऐतिहासिक दस्तावेजीकरण, शिलालेख संवर्धन आणि अखिल भारतीय सांस्कृतिक ऐक्याचे मार्गदर्शक नेतृत्व.',
+      contactWhatsApp: 'व्हॉट्सॲपवर संपर्क साधा (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'नमस्ते डॉ. जी. सत्यनारायण राजू जी, सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक पोर्टल संदर्भात'
     },
     hero: {
       badge: 'शिलालेखीय पुरावे आणि ऐतिहासिक संशोधन',
@@ -1163,8 +1227,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'ସଦସ୍ୟ ଡ୍ୟାସବୋର୍ଡ',
       admin: 'ପ୍ରଶାସନ ପ୍ୟାନେଲ',
       submitResearch: 'ଗବେଷଣା ଦାଖଲ କରନ୍ତୁ',
+      documentedFigures: 'ପ୍ରାମାଣିକ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
+      historicalPersons: 'ଐତିହାସିକ ବ୍ୟକ୍ତି ଓ ନାୟକ',
       logout: 'ଲଗ୍ଆଉଟ୍',
       exportZip: 'ପ୍ରକଳ୍ପ ଜିପ୍ ଡାଉନଲୋଡ୍'
+    },
+    publisher: {
+      designedAndPublishedBy: 'ୱେବସାଇଟ୍ ନିର୍ମାଣ ଓ ପ୍ରକାଶନ',
+      publisherName: 'ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ',
+      leaderTitle: 'ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ସମାଜର ମହାନେତା',
+      leaderBio: 'ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟର ଡିଜିଟାଲ୍ ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ, ଶିଳାଲେଖ ସଂରକ୍ଷଣ ତଥା ସର୍ବଭାରତୀୟ ସାଂସ୍କୃତିକ ଏକତାର ମାର୍ଗଦର୍ଶକ।',
+      contactWhatsApp: 'ହ୍ୱାଟ୍ସଆପ୍‌ରେ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'ନମସ୍କାର ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ ଜୀ, ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟ ପୋର୍ଟାଲ୍ ସମ୍ପର୍କରେ'
     },
     hero: {
       badge: 'ପ୍ରାମାଣିକ ଶିଳାଲେଖ ଓ ଐତିହାସିକ ଗବେଷଣା',
@@ -1321,8 +1396,19 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       dashboard: 'সদস্য ড্যাশবোর্ড',
       admin: 'প্রশাসন প্যানেল',
       submitResearch: 'গবেষণা জমা দিন',
+      documentedFigures: 'নথিভুক্ত ঐতিহাসিক ব্যক্তিত্ব',
+      historicalPersons: 'ঐতিহাসিক ব্যক্তিবর্গ ও নায়ক',
       logout: 'লগআউট',
       exportZip: 'প্রকল্প জিপ ডাউনলোড'
+    },
+    publisher: {
+      designedAndPublishedBy: 'ওয়েবসাইট ডিজাইন ও প্রকাশনা',
+      publisherName: 'ডক্টর জি. সত্যনারায়ণ রাজু',
+      leaderTitle: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় সমাজের শীর্ষ নেতা',
+      leaderBio: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় ঐতিহ্যের ডিজিটাল ঐতিহাসিক নথিবদ্ধকরণ, শিলালিপি সংরক্ষণ এবং সর্বভারতীয় সাংস্কৃতিক সংহতির দিশারি।',
+      contactWhatsApp: 'হোয়াটসঅ্যাপে যোগাযোগ করুন (+91 9480112897)',
+      callMobile: '+91 9480112897',
+      whatsappGreeting: 'নমস্কার ডক্টর জি. সত্যনারায়ণ রাজু জী, সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় ঐতিহাসিক পোর্টাল প্রসঙ্গে'
     },
     hero: {
       badge: 'শিলালিপিভিত্তিক ঐতিহাসিক গবেষণা ও সংরক্ষণ',

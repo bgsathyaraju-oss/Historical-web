@@ -1,5 +1,6 @@
 import React from 'react';
-import { Crown, Sparkles, ExternalLink, Phone, MessageCircle } from 'lucide-react';
+import { Crown, Sparkles, ExternalLink, Phone } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
@@ -16,27 +17,35 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
   variant = 'hero-top',
   className = ''
 }) => {
-  const whatsappUrl = "https://wa.me/919480112897?text=Namaste%20Dr%20G.%20Sathyanarayana%20Raju%20ji%2C%20regarding%20Suryavamsha%20Odiyaraju%20Kshatriya%20Heritage%20Portal";
+  const { t } = useLanguage();
+  const whatsappGreeting = t.publisher?.whatsappGreeting || 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal';
+  const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
   const imageSrc = "/assets/dr_g_sathyanarayana_raju.png";
+
+  const designedByText = t.publisher?.designedAndPublishedBy || 'WebSite Design and Published by';
+  const publisherName = t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju';
+  const leaderTitle = t.publisher?.leaderTitle || 'Leader of Suryavamsha Odiyaraju Kshatriya Community';
+  const leaderBio = t.publisher?.leaderBio || 'Leading the digital historical documentation, epigraphic preservation, and pan-Indian cultural integration of the Suryavamsha Odiyaraju Kshatriya heritage.';
+  const contactWhatsApp = t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)';
 
   if (variant === 'compact') {
     return (
       <div className={`inline-flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-[#141824]/90 border border-[#c99738]/50 text-xs ${className}`}>
         <img
           src={imageSrc}
-          alt="Dr G.Sathyanarayana Raju"
+          alt={publisherName}
           className="w-7 h-7 rounded-full object-cover object-top border border-[#d4af37]"
         />
         <div className="text-left leading-tight">
-          <div className="text-[10px] text-[#d4af37] uppercase font-bold tracking-wider">WebSite Design & Published by</div>
-          <div className="font-semibold text-[#fcedc7]">Dr G.Sathyanarayana Raju</div>
+          <div className="text-[10px] text-[#d4af37] uppercase font-bold tracking-wider">{designedByText}</div>
+          <div className="font-semibold text-[#fcedc7]">{publisherName}</div>
         </div>
         <a
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="ml-1 p-1 rounded-lg bg-[#25D366] text-black hover:bg-[#20ba5a] transition-all"
-          title="Contact Dr G.Sathyanarayana Raju on WhatsApp (+91 9480112897)"
+          title={`${contactWhatsApp} (+91 9480112897)`}
         >
           <WhatsAppIcon className="w-3.5 h-3.5" />
         </a>
@@ -57,7 +66,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
             <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-[#fae29c] shadow-[0_10px_30px_rgba(0,0,0,0.8)] ring-4 ring-[#580014]/90">
               <img
                 src={imageSrc}
-                alt="Dr G.Sathyanarayana Raju, Leader of Suryavamsha Odiyaraju Kshatriya Community"
+                alt={`${publisherName}, ${leaderTitle}`}
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
               />
             </div>
@@ -74,19 +83,19 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
           <div className="flex-1 space-y-2.5">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#580014]/80 border border-[#d4af37]/60 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#fae29c] shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
-              <span>WebSite Design and Published by</span>
+              <span>{designedByText}</span>
             </div>
 
             <h2 className="font-royal-heading font-black text-2xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-[#fff7e6] via-[#fae29c] to-[#d4af37] tracking-tight leading-tight">
-              Dr G.Sathyanarayana Raju
+              {publisherName}
             </h2>
 
             <p className="text-sm sm:text-base font-semibold text-[#f5ecd5] tracking-wide font-royal-serif">
-              Leader of Suryavamsha Odiyaraju Kshatriya Community
+              {leaderTitle}
             </p>
 
             <p className="text-xs text-stone-400 max-w-2xl leading-relaxed">
-              Leading the digital historical documentation, epigraphic preservation, and pan-Indian cultural integration of the Suryavamsha Odiyaraju Kshatriya heritage.
+              {leaderBio}
             </p>
 
             {/* Direct WhatsApp Contact Button & Direct Mobile Call */}
@@ -98,7 +107,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] hover:text-black shadow-[0_4px_20px_rgba(37,211,102,0.35)] hover:shadow-[0_4px_25px_rgba(37,211,102,0.5)] transition-all cursor-pointer group"
               >
                 <WhatsAppIcon className="w-4 h-4 fill-current" />
-                <span>Contact on WhatsApp (+91 9480112897)</span>
+                <span>{contactWhatsApp}</span>
                 <ExternalLink className="w-3.5 h-3.5 opacity-70 group-hover:translate-x-0.5 transition-transform" />
               </a>
 

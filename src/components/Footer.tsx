@@ -9,7 +9,8 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
-  const whatsappUrl = "https://wa.me/919480112897?text=Namaste%20Dr%20G.%20Sathyanarayana%20Raju%20ji%2C%20regarding%20Suryavamsha%20Odiyaraju%20Kshatriya%20Heritage%20Portal";
+  const whatsappGreeting = t.publisher?.whatsappGreeting || 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal';
+  const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   return (
     <footer className="w-full bg-[#080a10] border-t border-[#c99738]/30 text-stone-300">
@@ -21,7 +22,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#e8c872] shadow-xl ring-2 ring-[#580014]">
                 <img
                   src="/assets/dr_g_sathyanarayana_raju.png"
-                  alt="Dr G.Sathyanarayana Raju"
+                  alt={t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
                   className="w-full h-full object-cover object-top"
                 />
               </div>
@@ -32,13 +33,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
             <div className="space-y-1">
               <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37]">
-                WebSite Design and Published by
+                {t.publisher?.designedAndPublishedBy || 'WebSite Design and Published by'}
               </div>
               <h3 className="font-royal-heading font-black text-xl text-[#fcedc7]">
-                Dr G.Sathyanarayana Raju
+                {t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
               </h3>
               <p className="text-xs sm:text-sm font-semibold text-stone-300">
-                Leader of Suryavamsha Odiyaraju Kshatriya Community
+                {t.publisher?.leaderTitle || 'Leader of Suryavamsha Odiyaraju Kshatriya Community'}
               </p>
             </div>
           </div>
@@ -51,7 +52,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] hover:text-black shadow-md transition-all cursor-pointer"
             >
               <WhatsAppIcon className="w-4 h-4 fill-current" />
-              <span>Contact on WhatsApp (+91 9480112897)</span>
+              <span>{t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)'}</span>
             </a>
 
             <a

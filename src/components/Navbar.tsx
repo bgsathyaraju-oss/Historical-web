@@ -56,21 +56,21 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               className="w-full h-full object-cover object-top"
             />
           </div>
-          <span className="text-stone-300 hidden md:inline">WebSite Design & Published by:</span>
-          <span className="font-bold text-[#fae29c]">Dr G.Sathyanarayana Raju</span>
-          <span className="hidden lg:inline text-stone-300">• Leader of Suryavamsha Odiyaraju Kshatriya Community</span>
+          <span className="text-stone-300 hidden md:inline">{t.publisher?.designedAndPublishedBy || 'WebSite Design & Published by'}:</span>
+          <span className="font-bold text-[#fae29c]">{t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}</span>
+          <span className="hidden lg:inline text-stone-300">• {t.publisher?.leaderTitle || 'Leader of Suryavamsha Odiyaraju Kshatriya Community'}</span>
         </div>
 
         <div className="flex items-center gap-3 ml-auto">
           <a
-            href="https://wa.me/919480112897?text=Namaste%20Dr%20G.%20Sathyanarayana%20Raju%20ji%2C%20regarding%20Suryavamsha%20Odiyaraju%20Kshatriya%20Heritage%20Portal"
+            href={`https://wa.me/919480112897?text=${encodeURIComponent(t.publisher?.whatsappGreeting || 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] font-bold text-[10px] sm:text-[11px] transition-all shadow-sm"
-            title="Chat with Dr G.Sathyanarayana Raju on WhatsApp (+91 9480112897)"
+            title={`${t.publisher?.contactWhatsApp || 'WhatsApp'}: +91 9480112897`}
           >
             <WhatsAppIcon className="w-3 h-3 fill-current" />
-            <span>WhatsApp: +91 9480112897</span>
+            <span>{t.publisher?.contactWhatsApp || 'WhatsApp: +91 9480112897'}</span>
           </a>
 
           <div className="hidden sm:flex items-center gap-2 text-stone-400 text-[11px]">
@@ -164,10 +164,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                     <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.gajapathiKings}
                   </button>
                   <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-medium">
-                    <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+                    <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.documentedFigures || 'Documented Historical Figures'}
                   </button>
                   <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-medium">
-                    <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
+                    <User className="w-4 h-4 text-[#d4af37]" /> {t.nav.historicalPersons || 'Historical Persons'}
                   </button>
                   <button onClick={() => navigateTo('/maps')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Compass className="w-4 h-4 text-[#d4af37]" /> {t.nav.maps}
@@ -238,10 +238,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                     <Crown className="w-4 h-4 text-[#d4af37]" /> Royal Genealogy Tree
                   </button>
                   <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
-                    <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+                    <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.documentedFigures || 'Documented Historical Figures'}
                   </button>
                   <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
+                    <User className="w-4 h-4 text-[#d4af37]" /> {t.nav.historicalPersons || 'Historical Persons'}
                   </button>
                   <button onClick={() => navigateTo('/gallery')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Landmark className="w-4 h-4 text-[#d4af37]" /> {t.nav.gallery}
@@ -433,10 +433,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               {t.nav.gajapathiKings}
             </button>
             <button onClick={() => navigateTo('/kings-queens')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-[#fae29c] font-medium flex items-center gap-2">
-              <Crown className="w-4 h-4 text-[#d4af37]" /> Documented Historical Figures
+              <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.documentedFigures || 'Documented Historical Figures'}
             </button>
             <button onClick={() => navigateTo('/historical-persons')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-[#fae29c] font-medium flex items-center gap-2">
-              <User className="w-4 h-4 text-[#d4af37]" /> Historical Persons
+              <User className="w-4 h-4 text-[#d4af37]" /> {t.nav.historicalPersons || 'Historical Persons'}
             </button>
             <button onClick={() => navigateTo('/dynasties')} className="w-full text-left px-3 py-2 text-sm rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.dynasties}
