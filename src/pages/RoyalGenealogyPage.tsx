@@ -3,7 +3,6 @@ import { GenealogyNode, HistoricalClaim } from '../types';
 import { Crown, ShieldCheck, Scroll, Info, AlertTriangle, BookOpen } from 'lucide-react';
 import { GenealogyTree } from '../components/GenealogyTree';
 import { ClaimCard } from '../components/ClaimCard';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
 
 interface RoyalGenealogyPageProps {
@@ -42,15 +41,6 @@ export const RoyalGenealogyPage: React.FC<RoyalGenealogyPageProps> = ({ onNaviga
           {t.genealogy.subtitle}
         </p>
       </div>
-
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title={t.genealogy.title}
-        badge="Genealogy"
-        showLanguages={true}
-      />
 
       {/* Interactive Genealogy Tree */}
       <div className="space-y-4">

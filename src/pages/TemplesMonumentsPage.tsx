@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TempleMonument } from '../types';
 import { Landmark, MapPin, Calendar, ShieldCheck, BookOpen } from 'lucide-react';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
 
 interface TemplesMonumentsPageProps {
@@ -36,15 +35,6 @@ export const TemplesMonumentsPage: React.FC<TemplesMonumentsPageProps> = ({ onNa
           {t.monuments.subtitle}
         </p>
       </div>
-
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={onNavigate ? () => onNavigate('/') : undefined}
-        onClose={onNavigate ? () => onNavigate('/') : undefined}
-        title={t.monuments.title}
-        badge="Monuments"
-        showLanguages={true}
-      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {monuments.map(mon => (

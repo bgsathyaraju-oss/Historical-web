@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { HistoricalEvent } from '../types';
 import { Calendar, Scroll, BookOpen, AlertCircle } from 'lucide-react';
 import { TimelineViewer } from '../components/TimelineViewer';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
 
 interface HistoricalTimelinePageProps {
@@ -37,15 +36,6 @@ export const HistoricalTimelinePage: React.FC<HistoricalTimelinePageProps> = ({ 
           {t.timeline.subtitle}
         </p>
       </div>
-
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={onNavigate ? () => onNavigate('/') : undefined}
-        onClose={onNavigate ? () => onNavigate('/') : undefined}
-        title={t.timeline.title}
-        badge="Chronology"
-        showLanguages={true}
-      />
 
       <TimelineViewer events={events} />
     </div>

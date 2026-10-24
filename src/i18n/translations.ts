@@ -43,6 +43,7 @@ export interface BaseTranslationDictionary {
     submitResearch: string;
     documentedFigures: string;
     historicalPersons: string;
+    communityProminentPersons: string;
     logout: string;
     exportZip: string;
   };
@@ -215,6 +216,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'Submit Research',
       documentedFigures: 'Documented Historical Figures',
       historicalPersons: 'Historical Persons',
+      communityProminentPersons: 'Community Prominent Persons',
       logout: 'Logout',
       exportZip: 'Export Project (ZIP)'
     },
@@ -384,6 +386,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'शोध प्रस्तुत करें',
       documentedFigures: 'अभिलेखित ऐतिहासिक व्यक्तित्व',
       historicalPersons: 'ऐतिहासिक महापुरुष एवं विभूतियाँ',
+      communityProminentPersons: 'समुदाय के प्रमुख व्यक्तित्व',
       logout: 'लॉग आउट',
       exportZip: 'प्रोजेक्ट ज़िप डाउनलोड'
     },
@@ -553,6 +556,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'పరిశోధన సమర్పించండి',
       documentedFigures: 'చారిత్రక ఆధారిత ప్రముఖులు',
       historicalPersons: 'చారిత్రక వ్యక్తులు & వీరులు',
+      communityProminentPersons: 'సముదాయ ప్రముఖ వ్యక్తులు',
       logout: 'లాగౌట్',
       exportZip: 'ప్రాజెక్ట్ జిప్ డౌన్‌లోడ్'
     },
@@ -722,6 +726,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'ಸಂಶೋಧನೆ ಸಲ್ಲಿಸಿ',
       documentedFigures: 'ದಾಖಲಿತ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು',
       historicalPersons: 'ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು ಮತ್ತು ನಾಯಕರು',
+      communityProminentPersons: 'ಸಮುದಾಯದ ಪ್ರಮುಖ ವ್ಯಕ್ತಿಗಳು',
       logout: 'ಲಾಗೌಟ್',
       exportZip: 'ಪ್ರಾಜೆಕ್ಟ್ ಜಿಪ್ ಡೌನ್‌ಲೋಡ್'
     },
@@ -891,6 +896,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'ஆராய்ச்சியை சமர்ப்பிக்க',
       documentedFigures: 'ஆவணப்படுத்தப்பட்ட வரலாற்று ஆளுமைகள்',
       historicalPersons: 'வரலாற்று மாந்தர்கள் & நாயகர்கள்',
+      communityProminentPersons: 'சமூகத்தின் முக்கிய பிரமுகர்கள்',
       logout: 'வெளியேறு',
       exportZip: 'திட்ட ஜிப் பதிவிறக்கம்'
     },
@@ -1060,6 +1066,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'संशोधन सादर करा',
       documentedFigures: 'दस्तावेजीकृत ऐतिहासिक व्यक्ती',
       historicalPersons: 'ऐतिहासिक व्यक्ती आणि विभूती',
+      communityProminentPersons: 'समाजातील प्रमुख व्यक्तिमत्त्वे',
       logout: 'लॉगआउट',
       exportZip: 'प्रकल्प झिप डाउनलोड'
     },
@@ -1229,6 +1236,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'ଗବେଷଣା ଦାଖଲ କରନ୍ତୁ',
       documentedFigures: 'ପ୍ରାମାଣିକ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
       historicalPersons: 'ଐତିହାସିକ ବ୍ୟକ୍ତି ଓ ନାୟକ',
+      communityProminentPersons: 'ସମୁଦାୟର ପ୍ରମୁଖ ବ୍ୟକ୍ତିବିଶେଷ',
       logout: 'ଲଗ୍ଆଉଟ୍',
       exportZip: 'ପ୍ରକଳ୍ପ ଜିପ୍ ଡାଉନଲୋଡ୍'
     },
@@ -1398,6 +1406,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       submitResearch: 'গবেষণা জমা দিন',
       documentedFigures: 'নথিভুক্ত ঐতিহাসিক ব্যক্তিত্ব',
       historicalPersons: 'ঐতিহাসিক ব্যক্তিবর্গ ও নায়ক',
+      communityProminentPersons: 'সমাজের বিশিষ্ট ব্যক্তিত্ব',
       logout: 'লগআউট',
       exportZip: 'প্রকল্প জিপ ডাউনলোড'
     },

@@ -20,7 +20,6 @@ import {
   Calendar,
   Layers
 } from 'lucide-react';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { useLanguage } from '../context/LanguageContext';
 import {
@@ -118,31 +117,6 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-      {/* Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title={
-          language === 'te'
-            ? 'ఓడ్-రాజ్‌పుత్, ఓడ్-క్షత్రియ మరియు సంబంధిత వంశాల సమగ్ర చరిత్ర'
-            : language === 'or'
-            ? 'ଓଡ଼-ରାଜପୁତ, ଓଡ଼-କ୍ଷତ୍ରିୟ ଓ ସମଗୋତ୍ରୀୟ ସମୁଦାୟଙ୍କ ଇତିହାସ'
-            : language === 'hi'
-            ? 'ओड-राजपूत, ओड-क्षत्रिय एवं संबद्ध समुदायों का प्रामाणिक इतिहास'
-            : language === 'kn'
-            ? 'ಓಡ್-ರಜಪೂತ್, ಓಡ್-ಕ್ಷತ್ರಿಯ ಮತ್ತು ಸಂಬಂಧಿತ ವಂಶಗಳ ಸಮಗ್ರ ಇತಿಹಾಸ'
-            : language === 'ta'
-            ? 'ஓட்-ராஜபுத், ஓட்-சத்திரிய மற்றும் தொடர்புடைய மரபுகளின் வரலாறு'
-            : language === 'mr'
-            ? 'ओड-राजपूत, ओड-क्षत्रिय आणि संबंधित वंशांचा साद्यंत इतिहास'
-            : language === 'bn'
-            ? 'ওড-রাজপুত, ওড-ক্ষত্রিয় ও সমগোত্রীয় সমাজের ইতিহাস'
-            : 'Oad-Rajput, Od-Kshatriya & Allied Heritage'
-        }
-        badge="Community Lineage"
-        showLanguages={true}
-      />
-
       {/* Hero Header */}
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#2a0614] via-[#1c1224] to-[#0c101c] border border-[#c99738]/50 p-8 sm:p-12 shadow-2xl">
         <div className="max-w-4xl space-y-4 relative z-10">

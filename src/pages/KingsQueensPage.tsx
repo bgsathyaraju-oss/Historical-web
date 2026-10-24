@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { HistoricalFigure } from '../types';
-import { Crown, ShieldCheck, MapPin, Calendar, BookOpen, Scroll, ChevronRight, User } from 'lucide-react';
+import {
+  Crown,
+  ShieldCheck,
+  MapPin,
+  Calendar,
+  BookOpen,
+  Scroll,
+  Search,
+  User,
+  Sparkles,
+  ArrowLeft,
+  ChevronRight,
+  Share2,
+  Copy,
+  Check
+} from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
+import { getAllDocumentedFigures, DOCUMENTED_FIGURES_REPO } from '../data/documentedFiguresRepository';
 
 interface KingsQueensPageProps {
   onNavigate: (path: string) => void;
@@ -11,63 +26,135 @@ interface KingsQueensPageProps {
 
 export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate }) => {
   const { t, language } = useLanguage();
-  const [figures, setFigures] = useState<HistoricalFigure[]>([]);
-  const [selectedFigure, setSelectedFigure] = useState<HistoricalFigure | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  // Guarantee 100% immediate rendering across all browsers (Safari, Firefox, Chrome, Android, iOS)
+  const initialFigures = getAllDocumentedFigures(language);
+  const [figures, setFigures] = useState<HistoricalFigure[]>(initialFigures);
+  const [selectedFigure, setSelectedFigure] = useState<HistoricalFigure | null>(initialFigures[0] || null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [copied, setCopied] = useState(false);
 
+  // Synchronize figure translations instantly whenever language changes
   useEffect(() => {
+    const updated = getAllDocumentedFigures(language);
+    setFigures(updated);
+    setSelectedFigure(prev => {
+      if (!prev) return updated[0] || null;
+      return updated.find(f => f.id === prev.id) || updated[0] || null;
+    });
+
+    // Passive background refresh to incorporate any server-side database additions
     fetch(`/api/content/figures?lang=${language}`)
       .then(res => res.json())
       .then(data => {
-        setFigures(data.figures || []);
         if (data.figures && data.figures.length > 0) {
-          setSelectedFigure(data.figures[0]);
+          setFigures(data.figures);
         }
       })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .catch(() => {
+        // Offline or network restricted - repository data already active and complete
+      });
   }, [language]);
 
+  const categories = [
+    { id: 'all', label: `All Historical Figures (${figures.length})` },
+    { id: 'gajapathi_monarchs', label: 'Suryavamsha Gajapathi Monarchs' },
+    { id: 'progenitors_emperors', label: 'Ancient Emperors & Progenitors' },
+    { id: 'sacred_civic', label: 'Spiritual, Martial & Civic Guardians' }
+  ];
+
+  const normQuery = searchQuery.trim().toLowerCase();
+
+  const filteredFigures = figures.filter(fig => {
+    // Find category from repo metadata
+    const repoItem = DOCUMENTED_FIGURES_REPO.find(r => r.id === fig.id);
+    if (selectedCategory !== 'all' && repoItem && repoItem.category !== selectedCategory) {
+      return false;
+    }
+
+    if (!normQuery) return true;
+
+    return (
+      fig.name.toLowerCase().includes(normQuery) ||
+      fig.dynasty_name.toLowerCase().includes(normQuery) ||
+      fig.reign_period.toLowerCase().includes(normQuery) ||
+      fig.alternate_names.some(n => n.toLowerCase().includes(normQuery)) ||
+      fig.known_titles.some(title => title.toLowerCase().includes(normQuery))
+    );
+  });
+
+  const handleCopyLink = () => {
+    if (!selectedFigure) return;
+    const url = `${window.location.origin}${window.location.pathname}?figure=${encodeURIComponent(selectedFigure.id)}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
       {/* Page Header */}
       <div className="border-b border-stone-800 pb-6 space-y-2">
         <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
           <Crown className="w-4 h-4" />
-          <span>{t.kingsQueens.badge}</span>
+          <span>{t.kingsQueens?.badge || 'Suryavamsha Imperial Genealogy & Royal Biographies'}</span>
         </div>
         <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
-          {t.kingsQueens.title}
+          {t.kingsQueens?.title || 'Documented Historical Figures & Monarchs'}
         </h1>
         <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
-          {t.kingsQueens.subtitle}
+          {t.kingsQueens?.subtitle || 'Epigraphically verified chronicles, regnal inscriptions, and biographical monographs of the Suryavamshi Gajapathi emperors, ancient solar progenitors, and heroic guardians of Odra Desha.'}
         </p>
       </div>
 
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title={t.kingsQueens.title}
-        badge="Monarchs"
-        showLanguages={true}
-      />
+      {/* Filter and Search Navigation Bar (Single, Clean Bar - No Duplicated Elements) */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#121622] border border-stone-800 shadow-md">
+        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                selectedCategory === cat.id
+                  ? 'bg-[#c99738] text-[#300207] font-bold shadow-md'
+                  : 'bg-stone-900 text-stone-400 hover:text-stone-200 hover:bg-stone-800'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="w-full md:w-72 relative">
+          <Search className="w-4 h-4 text-[#d4af37] absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search figures, titles, reigns..."
+            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+          />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Figure List Selector */}
         <div className="lg:col-span-4 space-y-3">
-          <div className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-1">
-            {t.kingsQueens.listTitle} ({figures.length})
+          <div className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-1 flex items-center justify-between">
+            <span>{t.kingsQueens?.listTitle || 'Documented Figures'} ({filteredFigures.length})</span>
+            <span className="text-[10px] text-stone-500 lowercase">8 languages active</span>
           </div>
 
-          <div className="space-y-3">
-            {figures.map(fig => {
+          <div className="space-y-2.5 max-h-[75vh] overflow-y-auto pr-1 scrollbar-thin">
+            {filteredFigures.map(fig => {
               const isSelected = selectedFigure?.id === fig.id;
               return (
                 <div
                   key={fig.id}
                   onClick={() => setSelectedFigure(fig)}
-                  className={`p-4 rounded-2xl cursor-pointer border transition-all duration-200 flex items-center gap-4 ${
+                  className={`p-3.5 rounded-2xl cursor-pointer border transition-all duration-200 flex items-center gap-3.5 ${
                     isSelected
                       ? 'bg-[#580014]/40 border-[#d4af37] shadow-[0_0_20px_rgba(201,151,56,0.2)]'
                       : 'bg-[#121622] border-stone-800 hover:border-stone-700 hover:bg-[#181f2f]'
@@ -76,7 +163,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate }) 
                   <img
                     src={fig.image_url}
                     alt={fig.name}
-                    className="w-14 h-14 rounded-xl object-cover border border-[#c99738]/40 shrink-0"
+                    className="w-13 h-13 rounded-xl object-cover border border-[#c99738]/40 shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -99,16 +186,34 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate }) 
 
         {/* Figure Detail View */}
         <div className="lg:col-span-8">
-          {selectedFigure && (
-            <div className="rounded-3xl bg-[#111520] border border-[#c99738]/40 p-6 sm:p-8 space-y-8 shadow-xl">
-              {/* Monarch Summary Frame Action Bar */}
-              <ArticleActionBar
-                onHome={() => onNavigate('/')}
-                onClose={() => setSelectedFigure(null)}
-                title={selectedFigure.name}
-                badge={selectedFigure.reign_period}
-                showLanguages={true}
-              />
+          {selectedFigure ? (
+            <article className="rounded-3xl bg-[#111520] border border-[#c99738]/40 p-6 sm:p-8 space-y-8 shadow-xl">
+              {/* Action Bar with Back to Home & Copy Direct Link (Consolidated, No Redundancy) */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-[#580014] text-stone-200 hover:text-[#fae29c] border border-stone-700 hover:border-[#d4af37] transition-all cursor-pointer shadow-sm active:scale-95"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span>Return to Home</span>
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCopyLink}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#161c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 transition-all cursor-pointer"
+                    title="Copy Link to this Figure"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#d4af37]" />}
+                    <span>{copied ? 'Link Copied!' : 'Copy Link'}</span>
+                  </button>
+                  <span className="text-xs text-stone-400 font-mono bg-stone-950 px-2 py-1 rounded border border-stone-800">
+                    ID: {selectedFigure.id}
+                  </span>
+                </div>
+              </div>
 
               {/* Header Profile Banner */}
               <div className="flex flex-col sm:flex-row items-start gap-6 border-b border-stone-800 pb-6">
@@ -129,91 +234,107 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate }) 
                     {selectedFigure.name}
                   </h2>
 
-                  <div className="text-xs text-stone-400">
-                    <strong className="text-stone-300">{t.kingsQueens.alternateSpellings}:</strong> {selectedFigure.alternate_names.join(', ')}
-                  </div>
+                  {selectedFigure.alternate_names && selectedFigure.alternate_names.length > 0 && (
+                    <div className="text-xs text-stone-400">
+                      <strong className="text-stone-300">{t.kingsQueens?.alternateSpellings || 'Alternate Names'}:</strong>{' '}
+                      {selectedFigure.alternate_names.join(', ')}
+                    </div>
+                  )}
 
                   <div className="text-xs text-stone-400">
-                    <strong className="text-stone-300">{t.kingsQueens.dynastyLabel}:</strong> {selectedFigure.dynasty_name} ({selectedFigure.approx_dates})
+                    <strong className="text-stone-300">{t.kingsQueens?.dynastyLabel || 'Dynastic House'}:</strong>{' '}
+                    {selectedFigure.dynasty_name} {selectedFigure.approx_dates ? `(${selectedFigure.approx_dates})` : ''}
                   </div>
                 </div>
               </div>
 
               {/* Known Imperial Titles */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                  {t.kingsQueens.titlesLabel}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedFigure.known_titles.map((titleItem, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-stone-200 font-medium"
-                    >
-                      {titleItem}
-                    </span>
-                  ))}
+              {selectedFigure.known_titles && selectedFigure.known_titles.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                    {t.kingsQueens?.titlesLabel || 'Imperial & Sovereign Titles'}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedFigure.known_titles.map((titleItem, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-stone-200 font-medium"
+                      >
+                        {titleItem}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Biography */}
               <div className="space-y-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                  {t.kingsQueens.biographyLabel}
+                  {t.kingsQueens?.biographyLabel || 'Historical Biography & Epigraphic Chronicle'}
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed bg-[#0c0f17] p-4 rounded-xl border border-stone-800/80">
+                <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed bg-[#0c0f17] p-5 rounded-xl border border-stone-800/80">
                   {selectedFigure.biography}
                 </p>
               </div>
 
               {/* Major Corroborated Events */}
-              <div className="space-y-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                  {t.kingsQueens.eventsLabel}
-                </h3>
-                <div className="space-y-2">
-                  {selectedFigure.major_events.map((ev, i) => (
-                    <div key={i} className="p-3 rounded-xl bg-[#161c2a] border border-stone-800 text-xs text-stone-300 flex items-start gap-2.5">
-                      <span className="w-2 h-2 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
-                      <span>{ev}</span>
-                    </div>
-                  ))}
+              {selectedFigure.major_events && selectedFigure.major_events.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                    {t.kingsQueens?.eventsLabel || 'Chronological Milestones & Strategic Campaigns'}
+                  </h3>
+                  <div className="space-y-2">
+                    {selectedFigure.major_events.map((ev, i) => (
+                      <div key={i} className="p-3 rounded-xl bg-[#161c2a] border border-stone-800 text-xs text-stone-300 flex items-start gap-2.5">
+                        <span className="w-2 h-2 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
+                        <span>{ev}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Associated Places */}
-              <div className="space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                  {t.kingsQueens.placesLabel}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedFigure.associated_places.map((place, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-xs text-stone-300"
-                    >
-                      <MapPin className="w-3 h-3 text-[#d4af37]" />
-                      {place}
-                    </span>
-                  ))}
+              {selectedFigure.associated_places && selectedFigure.associated_places.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                    {t.kingsQueens?.placesLabel || 'Associated Citadels, Forts & Shrines'}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedFigure.associated_places.map((place, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-xs text-stone-300"
+                      >
+                        <MapPin className="w-3 h-3 text-[#d4af37]" />
+                        {place}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* References & Citations */}
-              <div className="space-y-2 pt-4 border-t border-stone-800">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                  <Scroll className="w-3.5 h-3.5" />
-                  <span>{t.kingsQueens.citationsLabel}</span>
-                </h3>
-                <ul className="space-y-1.5 text-xs text-stone-400">
-                  {selectedFigure.citations.map((cite, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37]" />
-                      <span>{cite}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* References & Primary Epigraphic Citations */}
+              {selectedFigure.citations && selectedFigure.citations.length > 0 && (
+                <div className="space-y-2 pt-4 border-t border-stone-800">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
+                    <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{t.kingsQueens?.citationsLabel || 'Primary Inscriptions & Archaeological Sources'}</span>
+                  </h3>
+                  <ul className="space-y-1.5 text-xs text-stone-400">
+                    {selectedFigure.citations.map((cite, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37]" />
+                        <span>{cite}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </article>
+          ) : (
+            <div className="rounded-3xl bg-[#111520] border border-stone-800 p-12 text-center text-stone-400">
+              Select a historical figure from the left panel to examine their full regnal chronicle.
             </div>
           )}
         </div>

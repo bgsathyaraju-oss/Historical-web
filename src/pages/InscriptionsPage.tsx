@@ -52,15 +52,6 @@ export const InscriptionsPage: React.FC<InscriptionsPageProps> = ({ onNavigate }
         </p>
       </div>
 
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={onNavigate ? () => onNavigate('/') : undefined}
-        onClose={onNavigate ? () => onNavigate('/') : undefined}
-        title={t.inscriptions.title}
-        badge="Epigraphy"
-        showLanguages={true}
-      />
-
       {/* Search Input */}
       <div className="p-4 rounded-2xl bg-[#121622] border border-stone-800 flex items-center justify-between gap-4">
         <div className="w-full sm:w-80 relative">

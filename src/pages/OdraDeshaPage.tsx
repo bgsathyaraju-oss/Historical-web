@@ -1,7 +1,6 @@
 import React from 'react';
 import { Compass, MapPin, Landmark, BookOpen, Scroll, ShieldCheck, ArrowRight } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
 
 interface OdraDeshaPageProps {
@@ -12,14 +11,6 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title={t.odraDesha.title}
-        badge="Geography"
-        showLanguages={true}
-      />
       {/* Hero Header */}
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#170910] via-[#240e18] to-[#111624] border border-[#c99738]/50 p-8 sm:p-12 shadow-2xl">
         <div className="space-y-4 max-w-3xl relative z-10">

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Crown, ShieldCheck, MapPin, Landmark, BookOpen, Scroll, ArrowRight } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
 
 interface GajapathiKingdomPageProps {
@@ -14,14 +13,6 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({ onNa
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title={t.gajapathi.title}
-        badge="Empire"
-        showLanguages={true}
-      />
       {/* Page Hero */}
       <div className="rounded-3xl bg-gradient-to-r from-[#20050d] via-[#151a28] to-[#0c0f17] border border-[#c99738]/50 p-8 sm:p-12 shadow-2xl">
         <div className="max-w-3xl space-y-4">

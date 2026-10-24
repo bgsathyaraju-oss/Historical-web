@@ -41,22 +41,45 @@ import { CopyrightPermissionsPage } from './pages/CopyrightPermissionsPage';
 import { AccessibilityStatementPage } from './pages/AccessibilityStatementPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { UiDesignSystemPage } from './pages/UiDesignSystemPage';
+import { CommunityProminentPersonsPage } from './pages/CommunityProminentPersonsPage';
+
+function getNormalizedAppPath(rawPath: string): string {
+  const basePath = import.meta.env.BASE_URL || '/';
+  let path = rawPath || '/';
+  if (basePath !== '/' && path.startsWith(basePath)) {
+    path = '/' + path.slice(basePath.length);
+  }
+  // Strip query and hash
+  path = path.split('?')[0].split('#')[0];
+  // Ensure leading slash
+  if (!path.startsWith('/')) path = '/' + path;
+  // Remove trailing slash if longer than 1 character
+  if (path.length > 1 && path.endsWith('/')) {
+    path = path.slice(0, -1);
+  }
+  return path || '/';
+}
 
 function AppContent() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
-    return window.location.pathname || '/';
+    if (typeof window === 'undefined') return '/';
+    return getNormalizedAppPath(window.location.pathname);
   });
-  const [searchParam, setSearchParam] = useState<string | null>(null);
+  const [searchParam, setSearchParam] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('article') || params.get('figure') || params.get('id');
+    } catch {
+      return null;
+    }
+  });
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   useEffect(() => {
     const handlePopState = () => {
-      const basePath = import.meta.env.BASE_URL;
-const currentPath = window.location.pathname;
-const appPath = currentPath.startsWith(basePath)
-  ? '/' + currentPath.slice(basePath.length)
-  : currentPath;
-setCurrentPath(appPath === '' ? '/' : appPath);
+      const appPath = getNormalizedAppPath(window.location.pathname);
+      setCurrentPath(appPath);
       const params = new URLSearchParams(window.location.search);
       setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
     };
@@ -78,8 +101,9 @@ setCurrentPath(appPath === '' ? '/' : appPath);
   }, []);
 
   const navigateTo = (pathWithQuery: string) => {
-    const [path, query] = pathWithQuery.split('?');
-    const basePath = import.meta.env.BASE_URL;
+    const [rawPath, query] = pathWithQuery.split('?');
+    const path = getNormalizedAppPath(rawPath);
+    const basePath = import.meta.env.BASE_URL || '/';
     setCurrentPath(path);
     if (query) {
       const params = new URLSearchParams(query);
@@ -88,8 +112,8 @@ setCurrentPath(appPath === '' ? '/' : appPath);
       setSearchParam(null);
     }
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
-const fullPath = `${basePath.replace(/\/$/, '')}${cleanPath}${query ? `?${query}` : ''}`;
-window.history.pushState({ path: fullPath }, '', fullPath);
+    const fullPath = `${basePath.replace(/\/$/, '')}${cleanPath}${query ? `?${query}` : ''}`;
+    window.history.pushState({ path: fullPath }, '', fullPath);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -110,6 +134,11 @@ window.history.pushState({ path: fullPath }, '', fullPath);
       case '/documented-historical-figures':
       case '/historical-figures':
         return <KingsQueensPage onNavigate={navigateTo} />;
+      case '/community-prominent-persons':
+      case '/prominent-persons':
+      case '/community-figures':
+      case '/prominent-figures':
+        return <CommunityProminentPersonsPage onNavigate={navigateTo} />;
       case '/historical-persons':
         return <CommunityHeritagePage onNavigate={navigateTo} initialTab="figures" />;
       case '/genealogy':
@@ -125,12 +154,15 @@ window.history.pushState({ path: fullPath }, '', fullPath);
       case '/documents':
         return <HistoricalDocumentsPage />;
       case '/research':
+      case '/articles':
         return <ResearchArticlesPage onNavigate={navigateTo} />;
       case '/gallery':
+      case '/media':
         return <HistoricalGalleryPage />;
       case '/culture-traditions':
         return <CultureTraditionsPage />;
       case '/literature':
+      case '/publications':
         return <LiteraturePublicationsPage />;
       case '/references':
         return <HistoricalReferencesPage />;

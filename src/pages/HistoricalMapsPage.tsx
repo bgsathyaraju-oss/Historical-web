@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { HistoricalLocation } from '../types';
 import { Compass, MapPin, Landmark, ShieldCheck, Info, ExternalLink, Layers, Navigation, ArrowRight } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { useLanguage } from '../context/LanguageContext';
 import {
   GEOGRAPHICAL_SPREAD,
@@ -68,15 +67,6 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
             : 'Epigraphic boundary models and comprehensive geographical corridors of the Oad-Rajput, Od-Kshatriya, Odde, VaddeRajulu, and Waddar communities across 7 historic regional zones.'}
         </p>
       </div>
-
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title="Historical Maps & Pan-Indian Spreading"
-        badge="Cartography"
-        showLanguages={true}
-      />
 
       {/* Primary View Switcher */}
       <div className="flex items-center gap-3 border-b border-stone-800 pb-3">

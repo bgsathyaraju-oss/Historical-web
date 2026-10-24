@@ -12,8 +12,334 @@ import {
 import {
   HISTORICAL_FIGURES,
   COMMUNITY_SYNONYMS,
-  GEOGRAPHICAL_SPREAD
+  GEOGRAPHICAL_SPREAD,
+  HISTORICAL_MONOGRAPH_SECTIONS
 } from '../data/historyContent';
+import { CANONICAL_ARTICLES } from '../data/articlesRepository';
+import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
+
+export interface ArticleTranslationItem {
+  title: string;
+  summary: string;
+  content: string;
+  status?: string;
+  source?: string;
+}
+
+export type ScriptName = 'Devanagari' | 'Telugu' | 'Kannada' | 'Tamil' | 'Odia' | 'Bengali' | 'Latin';
+
+export const LANGUAGE_SCRIPT_MAP: Record<LanguageCode, ScriptName> = {
+  en: 'Latin',
+  hi: 'Devanagari',
+  mr: 'Devanagari',
+  te: 'Telugu',
+  kn: 'Kannada',
+  ta: 'Tamil',
+  or: 'Odia',
+  bn: 'Bengali'
+};
+
+export const SCRIPT_REGEX_MAP: Record<ScriptName, RegExp> = {
+  Devanagari: /[\u0900-\u097F]/,
+  Telugu: /[\u0C00-\u0C7F]/,
+  Kannada: /[\u0C80-\u0CFF]/,
+  Tamil: /[\u0B80-\u0BFF]/,
+  Odia: /[\u0B00-\u0B7F]/,
+  Bengali: /[\u0980-\u09FF]/,
+  Latin: /[A-Za-z]/
+};
+
+const normalizeKey = (str: string): string => {
+  if (!str) return '';
+  return str.toLowerCase().trim().replace(/[\s\-_]+/g, '_');
+};
+
+const buildInitialTranslationMap = (): Record<string, Partial<Record<LanguageCode, ArticleTranslationItem>>> => {
+  const map: Record<string, Partial<Record<LanguageCode, ArticleTranslationItem>>> = {};
+
+  const registerEntry = (id: string, slug: string | undefined, lang: LanguageCode, item: ArticleTranslationItem) => {
+    if (!item.title && !item.content) return;
+
+    if (!map[id]) map[id] = {};
+    map[id][lang] = item;
+
+    const normId = normalizeKey(id);
+    if (!map[normId]) map[normId] = {};
+    map[normId][lang] = item;
+
+    if (slug) {
+      if (!map[slug]) map[slug] = {};
+      map[slug][lang] = item;
+
+      const normSlug = normalizeKey(slug);
+      if (!map[normSlug]) map[normSlug] = {};
+      map[normSlug][lang] = item;
+    }
+  };
+
+  // 1. Ingest Canonical Articles (English baseline and embedded translations)
+  CANONICAL_ARTICLES.forEach((art) => {
+    registerEntry(art.id, art.slug, 'en', {
+      title: art.original_title,
+      summary: art.summary,
+      content: art.original_content,
+      status: 'published',
+      source: 'canonical'
+    });
+
+    if (art.translations) {
+      (Object.keys(art.translations) as LanguageCode[]).forEach((lang) => {
+        const tr = art.translations?.[lang];
+        if (tr && (tr.title || tr.content)) {
+          registerEntry(art.id, art.slug, lang, {
+            title: tr.title,
+            summary: tr.summary,
+            content: tr.content,
+            status: tr.status || 'reviewed',
+            source: 'embedded'
+          });
+        }
+      });
+    }
+  });
+
+  // 2. Ingest ARTICLE_TRANSLATIONS across all 8 languages (te, or, hi, kn, ta, mr, bn)
+  Object.entries(ARTICLE_TRANSLATIONS).forEach(([artId, langObj]) => {
+    const matchingArticle = CANONICAL_ARTICLES.find(a => a.id === artId);
+    const slug = matchingArticle?.slug;
+
+    (Object.entries(langObj) as [LanguageCode, ContentTranslationMap][]).forEach(([lang, tr]) => {
+      if (tr && (tr.title || tr.content)) {
+        registerEntry(artId, slug, lang, {
+          title: tr.title,
+          summary: tr.summary,
+          content: tr.content,
+          status: 'reviewed',
+          source: 'canonical_translations'
+        });
+      }
+    });
+  });
+
+  // 3. Ingest HISTORICAL_MONOGRAPH_SECTIONS
+  HISTORICAL_MONOGRAPH_SECTIONS.forEach((mono) => {
+    SUPPORTED_LANGUAGES.forEach(({ code }) => {
+      const title = mono.section_title[code] || mono.section_title.en;
+      const content = mono.content[code] || mono.content.en;
+      if (title && content) {
+        registerEntry(mono.id, undefined, code, {
+          title,
+          summary: mono.key_points ? mono.key_points.join(' • ') : '',
+          content,
+          status: 'canonical',
+          source: 'monograph_treatise'
+        });
+      }
+    });
+  });
+
+  return map;
+};
+
+/**
+ * Universal 'translationMap' utility:
+ * Handles fallback logic for all 8 languages, ensuring that article detail pages
+ * display properly in all scripts (Devanagari, Telugu, Kannada, Tamil, Odia, Bengali)
+ * without defaulting to English if the translation key exists.
+ */
+export const translationMap = {
+  entries: buildInitialTranslationMap(),
+
+  /**
+   * Check if a translation key exists for this article in the target language.
+   */
+  has(articleIdOrSlug: string, lang: LanguageCode): boolean {
+    if (!articleIdOrSlug) return false;
+    const norm = normalizeKey(articleIdOrSlug);
+    const entry = this.entries[articleIdOrSlug]?.[lang] || this.entries[norm]?.[lang];
+    return Boolean(entry && (entry.title || entry.content));
+  },
+
+  /**
+   * Get translation for an article by ID or slug in requested language.
+   */
+  get(articleIdOrSlug: string, lang: LanguageCode): ArticleTranslationItem | null {
+    if (!articleIdOrSlug) return null;
+    const norm = normalizeKey(articleIdOrSlug);
+    return this.entries[articleIdOrSlug]?.[lang] || this.entries[norm]?.[lang] || null;
+  },
+
+  /**
+   * Returns the expected script family for a language.
+   */
+  getScriptForLanguage(lang: LanguageCode): ScriptName {
+    return LANGUAGE_SCRIPT_MAP[lang] || 'Latin';
+  },
+
+  /**
+   * Detect script family of a string.
+   */
+  detectScript(text: string): ScriptName {
+    if (!text) return 'Latin';
+    if (SCRIPT_REGEX_MAP.Devanagari.test(text)) return 'Devanagari';
+    if (SCRIPT_REGEX_MAP.Telugu.test(text)) return 'Telugu';
+    if (SCRIPT_REGEX_MAP.Kannada.test(text)) return 'Kannada';
+    if (SCRIPT_REGEX_MAP.Tamil.test(text)) return 'Tamil';
+    if (SCRIPT_REGEX_MAP.Odia.test(text)) return 'Odia';
+    if (SCRIPT_REGEX_MAP.Bengali.test(text)) return 'Bengali';
+    return 'Latin';
+  },
+
+  /**
+   * Validates if the text satisfies the expected script for a language,
+   * avoiding accidental Latin text when an Indian script is required.
+   */
+  isExpectedScript(text: string, lang: LanguageCode): boolean {
+    if (!text || lang === 'en') return true;
+    const expectedScript = this.getScriptForLanguage(lang);
+    if (expectedScript === 'Latin') return true;
+    const regex = SCRIPT_REGEX_MAP[expectedScript];
+    return regex ? regex.test(text) : true;
+  },
+
+  /**
+   * Register or update a translation dynamically (e.g. from server response or user edit).
+   */
+  set(articleIdOrSlug: string, lang: LanguageCode, item: ArticleTranslationItem): void {
+    if (!articleIdOrSlug || !lang) return;
+    if (!this.entries[articleIdOrSlug]) this.entries[articleIdOrSlug] = {};
+    this.entries[articleIdOrSlug][lang] = item;
+    const norm = normalizeKey(articleIdOrSlug);
+    if (!this.entries[norm]) this.entries[norm] = {};
+    this.entries[norm][lang] = item;
+  },
+
+  /**
+   * Core Article Resolution Routine:
+   * Handles multi-tier fallback for all 8 languages, ensuring that article detail pages
+   * display properly in all scripts (Devanagari, Telugu, Kannada, Tamil, Odia, Bengali)
+   * without defaulting to English if the translation key exists.
+   */
+  resolve(
+    article: Article,
+    targetLang: LanguageCode,
+    liveContentTranslations?: Record<string, ContentTranslationMap>
+  ): {
+    title: string;
+    content: string;
+    summary: string;
+    isTranslated: boolean;
+    status: string;
+    script: ScriptName;
+  } {
+    const expectedScript = this.getScriptForLanguage(targetLang);
+
+    // English baseline
+    if (targetLang === 'en') {
+      return {
+        title: article.original_title || (article as any).title || '',
+        content: article.original_content || (article as any).content || '',
+        summary: article.summary || '',
+        isTranslated: true,
+        status: 'original',
+        script: 'Latin'
+      };
+    }
+
+    // Tier 1: Check live content translations from backend state if matching expected script
+    if (liveContentTranslations && liveContentTranslations[article.id]) {
+      const live = liveContentTranslations[article.id];
+      if (live.title && live.content && this.isExpectedScript(live.title, targetLang)) {
+        return {
+          title: live.title,
+          content: live.content,
+          summary: live.summary || article.summary,
+          isTranslated: true,
+          status: 'live_synced',
+          script: expectedScript
+        };
+      }
+    }
+
+    // Tier 2: Check embedded translations on the article object itself if matching expected script
+    if (article.translations && article.translations[targetLang]) {
+      const emb = article.translations[targetLang];
+      if (emb.title && emb.content && this.isExpectedScript(emb.title, targetLang)) {
+        return {
+          title: emb.title,
+          content: emb.content,
+          summary: emb.summary || article.summary,
+          isTranslated: true,
+          status: emb.status || 'reviewed',
+          script: expectedScript
+        };
+      }
+    }
+
+    // Tier 3: Check built-in translationMap by article ID
+    const entryById = this.get(article.id, targetLang);
+    if (entryById && (entryById.title || entryById.content) && this.isExpectedScript(entryById.title, targetLang)) {
+      return {
+        title: entryById.title,
+        content: entryById.content,
+        summary: entryById.summary || article.summary,
+        isTranslated: true,
+        status: entryById.status || 'reviewed',
+        script: expectedScript
+      };
+    }
+
+    // Tier 4: Check built-in translationMap by article slug
+    if (article.slug) {
+      const entryBySlug = this.get(article.slug, targetLang);
+      if (entryBySlug && (entryBySlug.title || entryBySlug.content) && this.isExpectedScript(entryBySlug.title, targetLang)) {
+        return {
+          title: entryBySlug.title,
+          content: entryBySlug.content,
+          summary: entryBySlug.summary || article.summary,
+          isTranslated: true,
+          status: entryBySlug.status || 'reviewed',
+          script: expectedScript
+        };
+      }
+    }
+
+    // Tier 5: Script-cognate fallback (never default to English if cognate script exists)
+    // Devanagari family: mr <-> hi
+    if (targetLang === 'mr' && this.has(article.id, 'hi')) {
+      const cognate = this.get(article.id, 'hi')!;
+      return {
+        title: cognate.title,
+        content: cognate.content,
+        summary: cognate.summary || article.summary,
+        isTranslated: true,
+        status: 'devanagari_cognate_fallback',
+        script: 'Devanagari'
+      };
+    }
+    if (targetLang === 'hi' && this.has(article.id, 'mr')) {
+      const cognate = this.get(article.id, 'mr')!;
+      return {
+        title: cognate.title,
+        content: cognate.content,
+        summary: cognate.summary || article.summary,
+        isTranslated: true,
+        status: 'devanagari_cognate_fallback',
+        script: 'Devanagari'
+      };
+    }
+
+    // Tier 6: Last resort fallback to English original
+    return {
+      title: article.original_title || (article as any).title || '',
+      content: article.original_content || (article as any).content || '',
+      summary: article.summary || '',
+      isTranslated: false,
+      status: 'fallback_original_en',
+      script: 'Latin'
+    };
+  }
+};
 
 export interface LanguageContextType {
   language: LanguageCode;
@@ -36,6 +362,7 @@ export interface LanguageContextType {
     isTranslated: boolean;
     status?: string;
   };
+  translationMap: typeof translationMap;
   refreshTranslations: () => Promise<void>;
   saveTranslation: (
     articleId: string,
@@ -44,11 +371,6 @@ export interface LanguageContextType {
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-const normalizeKey = (str: string): string => {
-  if (!str) return '';
-  return str.toLowerCase().trim().replace(/[\s\-_]+/g, '_');
-};
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<LanguageCode>(() => {
@@ -100,6 +422,19 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       const trMap = await translationManager.fetchTranslationsForLanguage(targetLang, forceRefresh);
       setContentTranslations(trMap || {});
+      if (trMap) {
+        Object.entries(trMap).forEach(([artId, item]) => {
+          if (item && (item.title || item.content)) {
+            translationMap.set(artId, targetLang, {
+              title: item.title,
+              summary: item.summary,
+              content: item.content,
+              status: 'live_synced',
+              source: 'backend_api'
+            });
+          }
+        });
+      }
     } catch (err) {
       console.warn('Failed to fetch content translations for language', targetLang, err);
     } finally {
@@ -354,38 +689,25 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, [language, contentTranslations]);
 
-  // Article Content Resolver Routine with Multi-tier Fallback
+  // Article Content Resolver Routine with Multi-tier Script-Aware Fallback
   const getArticleContent = useCallback((article: Article) => {
-    // Tier 1: Check backend content translations loaded in state
-    if (language !== 'en' && contentTranslations[article.id]) {
-      const tr = contentTranslations[article.id];
-      if (tr.title && tr.content) {
-        return {
-          title: tr.title,
-          content: tr.content,
-          summary: tr.summary || article.summary,
-          isTranslated: true,
-          status: tr.status || 'reviewed'
-        };
-      }
+    if (!article) {
+      return {
+        title: '',
+        content: '',
+        summary: '',
+        isTranslated: false,
+        status: 'empty'
+      };
     }
-
-    // Tier 2: Check embedded translations on the article object itself
-    if (language !== 'en' && article.translations && article.translations[language]) {
-      const emb = article.translations[language];
-      if (emb.title && emb.content) {
-        return {
-          title: emb.title,
-          content: emb.content,
-          summary: emb.summary || article.summary,
-          isTranslated: true,
-          status: emb.status || 'reviewed'
-        };
-      }
-    }
-
-    // Tier 3: Delegate to translationManager
-    return translationManager.getArticleContent(article, language);
+    const resolved = translationMap.resolve(article, language, contentTranslations);
+    return {
+      title: resolved.title,
+      content: resolved.content,
+      summary: resolved.summary,
+      isTranslated: resolved.isTranslated,
+      status: resolved.status
+    };
   }, [language, contentTranslations]);
 
   const t = translations[language] || translations.en;
@@ -403,6 +725,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         getMetadataLabel,
         getEntityTranslation,
         getArticleContent,
+        translationMap,
         refreshTranslations,
         saveTranslation
       }}

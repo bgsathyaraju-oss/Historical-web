@@ -22,6 +22,8 @@ import { LightboxModal } from '../components/LightboxModal';
 import { ArticleBriefModal } from '../components/ArticleBriefModal';
 import { PublisherCreditCard } from '../components/PublisherCreditCard';
 
+import { getAllArticles } from '../data/articlesRepository';
+
 interface HomePageProps {
   onNavigate: (path: string) => void;
   onOpenSearch: () => void;
@@ -30,7 +32,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) => {
   const { t, language, getArticleContent, getMetadataLabel } = useLanguage();
   const [stats, setStats] = useState<SiteStatistics | null>(null);
-  const [featuredArticles, setFeaturedArticles] = useState<Article[]>([]);
+  const [featuredArticles, setFeaturedArticles] = useState<Article[]>(() => getAllArticles(language).slice(0, 3));
   const [timelineEvents, setTimelineEvents] = useState<HistoricalEvent[]>([]);
   const [galleryPreview, setGalleryPreview] = useState<GalleryItem[]>([]);
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
@@ -38,6 +40,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Instant sync with language
+    setFeaturedArticles(getAllArticles(language).slice(0, 3));
+
     const fetchHomeData = async () => {
       try {
         const [statsRes, artsRes, timelineRes, galRes] = await Promise.all([
@@ -53,7 +58,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         }
         if (artsRes.ok) {
           const a = await artsRes.json();
-          setFeaturedArticles(a.articles.slice(0, 3));
+          if (a.articles && a.articles.length > 0) {
+            setFeaturedArticles(a.articles.slice(0, 3));
+          }
         }
         if (timelineRes.ok) {
           const tm = await timelineRes.json();

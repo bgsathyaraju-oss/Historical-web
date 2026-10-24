@@ -1,5 +1,4 @@
 import { ShieldCheck, BookOpen, Compass, Award, FileText, CheckCircle, Scale } from 'lucide-react';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { PublisherCreditCard } from '../components/PublisherCreditCard';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -12,14 +11,6 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={onNavigate ? () => onNavigate('/') : undefined}
-        onClose={onNavigate ? () => onNavigate('/') : undefined}
-        title={t.about?.title || 'About'}
-        badge="Methodology"
-        showLanguages={true}
-      />
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#580014]/60 border border-[#d4af37]/40 text-[#fcedc7] text-xs font-semibold">

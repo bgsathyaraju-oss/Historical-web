@@ -1,5 +1,6 @@
 import { LanguageCode, LanguageOption, Article } from '../types';
 import { SUPPORTED_LANGUAGES } from '../i18n/translations';
+import { getAllArticles, getArticleByIdOrSlug } from '../data/articlesRepository';
 
 export interface ContentTranslationMap {
   title: string;
@@ -260,9 +261,14 @@ export class TranslationManager {
       return articles;
     } catch (err: any) {
       this.emit({ type: 'error', language: lang, error: err });
-      // Fallback to cache if available
+      // 1. Fallback to cache if available
       const fallback = this.getFromLocalStorage<Article[]>(cacheKey);
-      if (fallback) return fallback;
+      if (fallback && fallback.length > 0) return fallback;
+      // 2. Fallback to built-in canonical repository so articles NEVER fail in any browser
+      const repoFallback = getAllArticles(lang);
+      if (repoFallback && repoFallback.length > 0) {
+        return repoFallback;
+      }
       throw err;
     }
   }
@@ -305,6 +311,8 @@ export class TranslationManager {
     } catch (err: any) {
       const fallback = this.getFromLocalStorage<Article>(cacheKey);
       if (fallback) return fallback;
+      const repoFallback = getArticleByIdOrSlug(idOrSlug, lang);
+      if (repoFallback) return repoFallback;
       throw err;
     }
   }

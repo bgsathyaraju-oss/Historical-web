@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Article } from '../types';
 import { BookOpen, Search, Filter, ShieldCheck, Calendar, User, ArrowRight, Sparkles } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
-import { ArticleActionBar } from '../components/ArticleActionBar';
 import { ArticleBriefModal } from '../components/ArticleBriefModal';
 import { useLanguage } from '../context/LanguageContext';
+
+import { getAllArticles } from '../data/articlesRepository';
 
 interface ResearchArticlesPageProps {
   onNavigate: (path: string) => void;
@@ -12,30 +13,23 @@ interface ResearchArticlesPageProps {
 
 export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNavigate }) => {
   const { language, t, translationManager, getArticleContent, getMetadataLabel, translateText } = useLanguage();
-  const [articles, setArticles] = useState<Article[]>([]);
+  const initialArticles = getAllArticles(language);
+  const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [selectedBriefArticle, setSelectedBriefArticle] = useState<Article | null>(null);
   const [isBriefModalOpen, setIsBriefModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
+    const updated = getAllArticles(language);
+    setArticles(updated);
     translationManager.fetchArticles(language)
       .then(data => {
-        if (isMounted) setArticles(data || []);
+        if (data && data.length > 0) setArticles(data);
       })
-      .catch(console.error)
-      .finally(() => {
-        if (isMounted) setLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
+      .catch(() => {});
   }, [language, translationManager]);
 
   const categories = [
@@ -123,14 +117,6 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
         </p>
       </div>
 
-      {/* Global Page Action Bar with Home, Close, and 8-Language Switcher */}
-      <ArticleActionBar
-        onHome={() => onNavigate('/')}
-        onClose={() => onNavigate('/')}
-        title={t.home?.researchTitle || 'Research Articles & Historiographical Studies'}
-        badge="Historiography"
-        showLanguages={true}
-      />
 
       {/* Search and Category Filter Bar */}
       <div className="space-y-4 p-4 sm:p-5 rounded-3xl bg-[#121622] border border-stone-800">
