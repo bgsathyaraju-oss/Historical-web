@@ -14,7 +14,10 @@ import {
   ChevronRight,
   Share2,
   Copy,
-  Check
+  Check,
+  X,
+  ExternalLink,
+  Maximize2
 } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { useLanguage } from '../context/LanguageContext';
@@ -38,6 +41,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     }
     return initialFigures[0] || null;
   });
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(() => Boolean(initialFigureId));
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
@@ -63,6 +67,36 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
         // Offline or network restricted - repository data already active and complete
       });
   }, [language]);
+
+  // Synchronize initialFigureId prop changes (e.g. from search navigation)
+  useEffect(() => {
+    if (initialFigureId) {
+      const match = figures.find(f => f.id === initialFigureId);
+      if (match) {
+        setSelectedFigure(match);
+        setIsModalOpen(true);
+      }
+    }
+  }, [initialFigureId, figures]);
+
+  // Handle ESC key to close modal and body scroll prevention
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsModalOpen(false);
+      }
+    };
+    if (isModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
 
   const categories = [
     { id: 'all', label: `All Historical Figures (${figures.length})` },
@@ -160,17 +194,30 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               return (
                 <div
                   key={fig.id}
-                  onClick={() => setSelectedFigure(fig)}
-                  className={`p-3.5 rounded-2xl cursor-pointer border transition-all duration-200 flex items-center gap-3.5 ${
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    setSelectedFigure(fig);
+                    setIsModalOpen(true);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedFigure(fig);
+                      setIsModalOpen(true);
+                    }
+                  }}
+                  className={`p-3.5 rounded-2xl cursor-pointer border transition-all duration-200 flex items-center gap-3.5 group relative ${
                     isSelected
                       ? 'bg-[#580014]/40 border-[#d4af37] shadow-[0_0_20px_rgba(201,151,56,0.2)]'
                       : 'bg-[#121622] border-stone-800 hover:border-stone-700 hover:bg-[#181f2f]'
                   }`}
+                  aria-label={`Open details for ${fig.name}`}
                 >
                   <img
                     src={fig.image_url}
                     alt={fig.name}
-                    className="w-13 h-13 rounded-xl object-cover border border-[#c99738]/40 shrink-0"
+                    className="w-13 h-13 rounded-xl object-cover border border-[#c99738]/40 shrink-0 group-hover:scale-105 transition-transform"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1 mb-0.5">
@@ -178,13 +225,14 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         {fig.reign_period}
                       </span>
                     </div>
-                    <h3 className="font-royal-heading font-bold text-sm text-stone-100 truncate">
+                    <h3 className="font-royal-heading font-bold text-sm text-stone-100 truncate group-hover:text-[#fae29c] transition-colors">
                       {fig.name}
                     </h3>
                     <p className="text-[11px] text-stone-400 truncate">
                       {fig.dynasty_name}
                     </p>
                   </div>
+                  <ChevronRight className="w-4 h-4 text-stone-500 group-hover:text-[#d4af37] group-hover:translate-x-0.5 transition-all shrink-0" />
                 </div>
               );
             })}
@@ -195,7 +243,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
         <div className="lg:col-span-8">
           {selectedFigure ? (
             <article className="rounded-3xl bg-[#111520] border border-[#c99738]/40 p-6 sm:p-8 space-y-8 shadow-xl">
-              {/* Action Bar with Back to Home & Copy Direct Link (Consolidated, No Redundancy) */}
+              {/* Action Bar with Back to Home, Open Modal & Copy Direct Link */}
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-stone-800">
                 <button
                   type="button"
@@ -207,6 +255,15 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 </button>
 
                 <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37]/60 transition-all cursor-pointer shadow-sm active:scale-95"
+                    title="Open Full Popup Modal"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>Open Popup Modal</span>
+                  </button>
                   <button
                     type="button"
                     onClick={handleCopyLink}
@@ -346,6 +403,214 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           )}
         </div>
       </div>
+
+      {/* Centered, Responsive Modal Dialog for Selected Historical Personage */}
+      {isModalOpen && selectedFigure && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="figure-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsModalOpen(false);
+            }
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+        >
+          <div className="bg-[#0e121c] border-2 border-[#c99738] rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl relative text-stone-200 overflow-hidden">
+            {/* Pinned Modal Header Bar (Ensures Close button is never scrolled away) */}
+            <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-3 bg-[#121622] rounded-t-2xl sm:rounded-t-3xl shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Crown className="w-5 h-5 text-[#d4af37] shrink-0" />
+                <div className="min-w-0">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#d4af37] block truncate">
+                    {t.kingsQueens?.badge || 'Suryavamsha Historical Personage Dossier'}
+                  </span>
+                  <h2 id="figure-modal-title" className="text-sm sm:text-lg font-bold font-royal-heading text-[#fae29c] truncate">
+                    {selectedFigure.name}
+                  </h2>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCopyLink}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#161c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 transition-all cursor-pointer"
+                  title="Copy link to this person"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#d4af37]" />}
+                  <span className="hidden sm:inline">{copied ? 'Copied' : 'Share'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 sm:p-2.5 rounded-xl bg-stone-900 hover:bg-[#580014] text-stone-300 hover:text-white border border-stone-700 hover:border-[#d4af37] transition-all cursor-pointer"
+                  aria-label="Close dialog (Escape)"
+                  title="Close (Escape)"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable Content Container (Smooth internal scroll on mobile & desktop) */}
+            <div className="p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 scrollbar-thin">
+              {/* Profile Card Banner */}
+              <div className="flex flex-col sm:flex-row items-start gap-5 sm:gap-6 border-b border-stone-800 pb-6">
+                <img
+                  src={selectedFigure.image_url}
+                  alt={selectedFigure.name}
+                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover border-2 border-[#d4af37] shadow-xl shrink-0 bg-[#161a29]"
+                />
+                <div className="space-y-2 flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-3 py-0.5 rounded-full bg-stone-900 border border-stone-800">
+                      {selectedFigure.reign_period}
+                    </span>
+                    <EvidenceBadge category="verified_archaeological" size="sm" />
+                  </div>
+
+                  <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
+                    {selectedFigure.name}
+                  </h3>
+
+                  {selectedFigure.alternate_names && selectedFigure.alternate_names.length > 0 && (
+                    <div className="text-xs text-stone-400">
+                      <strong className="text-stone-300">{t.kingsQueens?.alternateSpellings || 'Alternate Names'}:</strong>{' '}
+                      {selectedFigure.alternate_names.join(', ')}
+                    </div>
+                  )}
+
+                  <div className="text-xs text-stone-400">
+                    <strong className="text-stone-300">{t.kingsQueens?.dynastyLabel || 'Dynastic House'}:</strong>{' '}
+                    {selectedFigure.dynasty_name} {selectedFigure.approx_dates ? `(${selectedFigure.approx_dates})` : ''}
+                  </div>
+                </div>
+              </div>
+
+              {/* Recorded Imperial Titles & Prasastis */}
+              {selectedFigure.known_titles && selectedFigure.known_titles.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                    {t.kingsQueens?.titlesLabel || 'Recorded Imperial Titles & Prasastis'}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedFigure.known_titles.map((titleItem, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-stone-200 font-medium"
+                      >
+                        {titleItem}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Scholarly Biography */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-[#d4af37]" />
+                  <span>{t.kingsQueens?.biographyLabel || 'Scholarly Biography & Historical Significance'}</span>
+                </h4>
+                <div className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed bg-[#0c0f17] p-5 rounded-xl border border-stone-800/80 space-y-3">
+                  <p>{selectedFigure.biography}</p>
+                  {selectedFigure.historical_significance && (
+                    <div className="pt-3 border-t border-stone-800/60">
+                      <strong className="text-[#fae29c] font-royal-heading block mb-1 text-xs uppercase tracking-wider">
+                        Historical Significance:
+                      </strong>
+                      <p className="text-xs sm:text-sm text-stone-300 italic">
+                        {selectedFigure.historical_significance}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Chronologically Documented Milestones */}
+              {selectedFigure.major_events && selectedFigure.major_events.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                    {t.kingsQueens?.eventsLabel || 'Chronologically Documented Events & Strategic Campaigns'}
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedFigure.major_events.map((ev, i) => (
+                      <div key={i} className="p-3 rounded-xl bg-[#161c2a] border border-stone-800 text-xs text-stone-300 flex items-start gap-2.5">
+                        <span className="w-2 h-2 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
+                        <span>{ev}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Associated Citadels, Forts & Shrines */}
+              {selectedFigure.associated_places && selectedFigure.associated_places.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                    {t.kingsQueens?.placesLabel || 'Associated Fortresses, Shrines & Kshetrams'}
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedFigure.associated_places.map((place, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-xs text-stone-300"
+                      >
+                        <MapPin className="w-3 h-3 text-[#d4af37]" />
+                        {place}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Primary Inscriptions & Epigraphia Indica Citations */}
+              {selectedFigure.citations && selectedFigure.citations.length > 0 && (
+                <div className="space-y-2 pt-4 border-t border-stone-800">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
+                    <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{t.kingsQueens?.citationsLabel || 'Primary Inscriptions & Archaeological Sources'}</span>
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-stone-400 bg-[#0c0f17] p-4 rounded-xl border border-stone-800/80">
+                    {selectedFigure.citations.map((cite, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
+                        <span>{cite}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Pinned Modal Footer */}
+            <div className="p-4 sm:p-5 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 bg-[#121622] rounded-b-2xl sm:rounded-b-3xl shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  onNavigate('/inscriptions');
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#182030] hover:bg-[#20293d] text-[#fae29c] border border-[#c99738]/40 transition-all cursor-pointer"
+              >
+                <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+                <span>{t.nav?.inscriptions || 'Explore Epigraphic Corpus'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37] transition-all cursor-pointer shadow-md active:scale-95"
+              >
+                Close Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
