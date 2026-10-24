@@ -6,10 +6,48 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     base: process.env.GITHUB_ACTIONS === 'true' ? '/Historical-web/' : '/',
+    // Tailwind v4 plugin MUST precede @vitejs/plugin-react
     plugins: [tailwindcss(), react()],
     resolve: {
-      alias: {
-        '@': path.resolve(import.meta.dirname || process.cwd(), '.'),
+      alias: [
+        {
+          find: /^@\/src\/(.*)/,
+          replacement: path.resolve(import.meta.dirname || process.cwd(), 'src/$1'),
+        },
+        {
+          find: /^@\/server\/(.*)/,
+          replacement: path.resolve(import.meta.dirname || process.cwd(), 'server/$1'),
+        },
+        {
+          find: /^@\/(.*)/,
+          replacement: path.resolve(import.meta.dirname || process.cwd(), 'src/$1'),
+        },
+        {
+          find: '@',
+          replacement: path.resolve(import.meta.dirname || process.cwd(), 'src'),
+        },
+      ],
+    },
+    build: {
+      outDir: 'dist',
+      chunkSizeWarningLimit: 2500,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom')) {
+                return 'vendor-react';
+              }
+              if (id.includes('lucide-react')) {
+                return 'vendor-icons';
+              }
+              if (id.includes('firebase')) {
+                return 'vendor-firebase';
+              }
+              return 'vendor';
+            }
+          },
+        },
       },
     },
     server: {
