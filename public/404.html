@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <script>
+    const segmentCount = 1;
+    const locationParts = window.location.pathname.split('/');
+    const basePath = '/' + locationParts.slice(1, segmentCount + 1).join('/');
+    const routePath = locationParts.slice(segmentCount + 1).join('/');
+    const query = window.location.search;
+    const hash = window.location.hash;sessionStorage.setItem('spa-redirect', JSON.stringify({
+  path: '/' + routePath,
+  query: query,
+  hash: hash
+}));
+
+window.location.replace(basePath + '/');
+
+  </script>
+</head>
+<body>
+  <p>Loading page...</p>
+</body>
+</html>
