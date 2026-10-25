@@ -8,6 +8,14 @@ import {
   INSCRIPTION_TRANSLATIONS,
   MONUMENT_TRANSLATIONS
 } from '../contentTranslations.ts';
+import {
+  GENEALOGY_NODE_TRANSLATIONS,
+  CLAIM_TRANSLATIONS,
+  TIMELINE_EVENT_TRANSLATIONS,
+  LOCATION_TRANSLATIONS,
+  DOCUMENT_TRANSLATIONS,
+  GALLERY_TRANSLATIONS
+} from '../../src/data/multilingualSeedTranslations.ts';
 
 export const contentRouter = Router();
 
@@ -266,27 +274,77 @@ contentRouter.get('/dynasties', (req: Request, res: Response) => {
 });
 
 // Genealogy Nodes
-contentRouter.get('/genealogy', (_req: Request, res: Response) => {
+contentRouter.get('/genealogy', (req: Request, res: Response) => {
   const db = getDb();
-  res.json({ genealogy: db.genealogy });
+  const langCode = (req.query.lang as LanguageCode) || 'en';
+  const mapped = db.genealogy.map(node => {
+    const tr = GENEALOGY_NODE_TRANSLATIONS[node.id]?.[langCode];
+    if (langCode !== 'en' && tr) {
+      return {
+        ...node,
+        name: tr.name || node.name,
+        titles: tr.titles || node.titles,
+        reign: tr.reign || node.reign,
+        spouse: tr.spouse || node.spouse,
+        notes: tr.notes || node.notes,
+        sources: tr.sources || node.sources
+      };
+    }
+    return node;
+  });
+  res.json({ genealogy: mapped });
 });
 
 // Timeline Events
-contentRouter.get('/timeline', (_req: Request, res: Response) => {
+contentRouter.get('/timeline', (req: Request, res: Response) => {
   const db = getDb();
-  const sorted = [...db.events_timeline].sort((a, b) => a.sort_year - b.sort_year);
+  const langCode = (req.query.lang as LanguageCode) || 'en';
+  const sorted = [...db.events_timeline].sort((a, b) => a.sort_year - b.sort_year).map(ev => {
+    const tr = TIMELINE_EVENT_TRANSLATIONS[ev.id]?.[langCode];
+    if (langCode !== 'en' && tr) {
+      return {
+        ...ev,
+        period: tr.period || ev.period,
+        year_text: tr.year_text || ev.year_text,
+        title: tr.title || ev.title,
+        rulers_involved: tr.rulers_involved || ev.rulers_involved,
+        political_development: tr.political_development || ev.political_development,
+        monuments_inscriptions: tr.monuments_inscriptions || ev.monuments_inscriptions,
+        primary_sources: tr.primary_sources || ev.primary_sources,
+        uncertainty_notes: tr.uncertainty_notes || ev.uncertainty_notes
+      };
+    }
+    return ev;
+  });
   res.json({ events: sorted });
 });
 
 // Locations
 contentRouter.get('/locations', (req: Request, res: Response) => {
   const db = getDb();
-  const { region } = req.query;
+  const { region, lang } = req.query;
+  const langCode = (lang as LanguageCode) || 'en';
   let list = db.locations;
   if (region && typeof region === 'string' && region !== 'All') {
     list = list.filter(l => l.region.toLowerCase() === region.toLowerCase());
   }
-  res.json({ locations: list });
+  const mapped = list.map(loc => {
+    const tr = LOCATION_TRANSLATIONS[loc.id]?.[langCode];
+    if (langCode !== 'en' && tr) {
+      return {
+        ...loc,
+        name: tr.name || loc.name,
+        ancient_name: tr.ancient_name || loc.ancient_name,
+        modern_district: tr.modern_district || loc.modern_district,
+        modern_state: tr.modern_state || loc.modern_state,
+        summary: tr.summary || loc.summary,
+        archaeological_findings: tr.archaeological_findings || loc.archaeological_findings,
+        inscriptions_found: tr.inscriptions_found || loc.inscriptions_found
+      };
+    }
+    return loc;
+  });
+  res.json({ locations: mapped });
 });
 
 // Inscriptions
@@ -310,7 +368,8 @@ contentRouter.get('/inscriptions', (req: Request, res: Response) => {
         name: tr.name || i.name,
         ruler: tr.ruler || i.ruler,
         location_found: tr.location || i.location_found,
-        historical_context: tr.summary || i.historical_context
+        historical_context: tr.summary || i.historical_context,
+        english_translation: tr.summary ? `${tr.summary}\n\n[English Archival Translation]: ${i.english_translation}` : i.english_translation
       };
     }
     return i;
@@ -342,24 +401,73 @@ contentRouter.get('/monuments', (req: Request, res: Response) => {
 });
 
 // Documents
-contentRouter.get('/documents', (_req: Request, res: Response) => {
+contentRouter.get('/documents', (req: Request, res: Response) => {
   const db = getDb();
-  res.json({ documents: db.documents });
+  const langCode = (req.query.lang as LanguageCode) || 'en';
+  const mapped = db.documents.map(doc => {
+    const tr = DOCUMENT_TRANSLATIONS[doc.id]?.[langCode];
+    if (langCode !== 'en' && tr) {
+      return {
+        ...doc,
+        title: tr.title || doc.title,
+        original_language: tr.original_language || doc.original_language,
+        approximate_date: tr.approximate_date || doc.approximate_date,
+        author_authority: tr.author_authority || doc.author_authority,
+        current_location: tr.current_location || doc.current_location,
+        source_provenance: tr.source_provenance || doc.source_provenance,
+        digitization_info: tr.digitization_info || doc.digitization_info,
+        translation_excerpt: tr.translation_excerpt || doc.translation_excerpt,
+        research_notes: tr.research_notes || doc.research_notes
+      };
+    }
+    return doc;
+  });
+  res.json({ documents: mapped });
 });
 
 // Gallery
 contentRouter.get('/gallery', (req: Request, res: Response) => {
   const db = getDb();
-  const { category } = req.query;
+  const { category, lang } = req.query;
+  const langCode = (lang as LanguageCode) || 'en';
   let list = db.gallery;
   if (category && typeof category === 'string' && category !== 'all') {
     list = list.filter(g => g.category.toLowerCase() === category.toLowerCase());
   }
-  res.json({ gallery: list });
+  const mapped = list.map(item => {
+    const tr = GALLERY_TRANSLATIONS[item.id]?.[langCode];
+    if (langCode !== 'en' && tr) {
+      return {
+        ...item,
+        title: tr.title || item.title,
+        period: tr.period || item.period,
+        location: tr.location || item.location,
+        description: tr.description || item.description
+      };
+    }
+    return item;
+  });
+  res.json({ gallery: mapped });
 });
 
 // Historical Claims
-contentRouter.get('/claims', (_req: Request, res: Response) => {
+contentRouter.get('/claims', (req: Request, res: Response) => {
   const db = getDb();
-  res.json({ claims: db.claims });
+  const langCode = (req.query.lang as LanguageCode) || 'en';
+  const mapped = db.claims.map(claim => {
+    const tr = CLAIM_TRANSLATIONS[claim.id]?.[langCode];
+    if (langCode !== 'en' && tr) {
+      return {
+        ...claim,
+        topic: tr.topic || claim.topic,
+        claim_statement: tr.claim_statement || claim.claim_statement,
+        supporting_evidence: tr.supporting_evidence || claim.supporting_evidence,
+        contradictory_evidence: tr.contradictory_evidence || claim.contradictory_evidence,
+        source_reliability_notes: tr.source_reliability_notes || claim.source_reliability_notes,
+        reviewer_comments: tr.reviewer_comments || claim.reviewer_comments
+      };
+    }
+    return claim;
+  });
+  res.json({ claims: mapped });
 });

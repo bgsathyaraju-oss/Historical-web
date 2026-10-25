@@ -52,7 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-full overflow-hidden border border-[#d4af37] shrink-0">
             <img
-              src="/assets/dr_g_sathyanarayana_raju.png"
+              src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
               alt={t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
               className="w-full h-full object-cover object-top"
             />

@@ -1,25 +1,137 @@
 import React, { useState, useEffect } from 'react';
-import { HistoricalFigure } from '../types';
+import { LanguageCode, HistoricalFigure } from '../types';
+
+const KINGS_QUEENS_UI: Record<LanguageCode, {
+  catAll: string;
+  catGajapathi: string;
+  catProgenitors: string;
+  catSacred: string;
+  searchPlaceholder: string;
+  returnHome: string;
+  openModal: string;
+  copyLink: string;
+  linkCopied: string;
+  emptySelect: string;
+  closeProfile: string;
+}> = {
+  en: {
+    catAll: 'All Historical Figures',
+    catGajapathi: 'Suryavamsha Gajapathi Monarchs',
+    catProgenitors: 'Ancient Emperors & Progenitors',
+    catSacred: 'Spiritual, Martial & Civic Guardians',
+    searchPlaceholder: 'Search figures, titles, reigns...',
+    returnHome: 'Return to Home',
+    openModal: 'Open Popup Modal',
+    copyLink: 'Copy Link',
+    linkCopied: 'Link Copied!',
+    emptySelect: 'Select a historical figure from the left panel to examine their full regnal chronicle.',
+    closeProfile: 'Close Profile'
+  },
+  hi: {
+    catAll: 'सभी ऐतिहासिक विभूतियाँ',
+    catGajapathi: 'सूर्यवंश गजपति सम्राट',
+    catProgenitors: 'प्राचीन सम्राट एवं आदि-पुरुष',
+    catSacred: 'आध्यात्मिक, सैन्य एवं नागरिक रक्षक',
+    searchPlaceholder: 'विभूतियाँ, उपाधियाँ, शासनकाल खोजें...',
+    returnHome: 'मुख्य पृष्ठ पर लौटें',
+    openModal: 'पॉपअप विंडो खोलें',
+    copyLink: 'लिंक कॉपी करें',
+    linkCopied: 'लिंक कॉपी हो गया!',
+    emptySelect: 'पूर्ण शासन वृत्तांत देखने के लिए बाएँ पैनल से किसी ऐतिहासिक विभूति का चयन करें।',
+    closeProfile: 'प्रोफ़ाइल बंद करें'
+  },
+  te: {
+    catAll: 'అన్ని చారిత్రక వ్యక్తులు',
+    catGajapathi: 'సూర్యవంశ గజపతి చక్రవర్తులు',
+    catProgenitors: 'ప్రాచీన చక్రవర్తులు & ఆది పురుషులు',
+    catSacred: 'ఆధ్యాత్మిక, సైనిక & పౌర రక్షకులు',
+    searchPlaceholder: 'చక్రవర్తులు, బిరుదులు, పాలనా కాలం వెతకండి...',
+    returnHome: 'హోమ్ పేజీకి తిరిగి వెళ్ళండి',
+    openModal: 'పాప్అప్ విండో తెరవండి',
+    copyLink: 'లింక్ కాపీ చేయండి',
+    linkCopied: 'లింక్ కాపీ చేయబడింది!',
+    emptySelect: 'పూర్తి పాలనా చరిత్రను పరిశీలించడానికి ఎడమ ప్యానెల్ నుండి చారిత్రక వ్యక్తిని ఎంచుకోండి.',
+    closeProfile: 'ప్రొఫైల్ మూసివేయండి'
+  },
+  kn: {
+    catAll: 'ಎಲ್ಲಾ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು',
+    catGajapathi: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಟರು',
+    catProgenitors: 'ಪ್ರಾಚೀನ ಸಾಮ್ರಾಟರು ಮತ್ತು ಆದಿಪುರುಷರು',
+    catSacred: 'ಆಧ್ಯಾತ್ಮಿಕ, ಸೈನಿಕ ಮತ್ತು ನಾಗರಿಕ ರಕ್ಷಕರು',
+    searchPlaceholder: 'ವ್ಯಕ್ತಿಗಳು, ಬಿರುದುಗಳು, ಆಳ್ವಿಕೆ ಹುಡುಕಿ...',
+    returnHome: 'ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ',
+    openModal: 'ಪಾಪ್‌ಅಪ್ ವಿಂಡೋ ತೆರೆಯಿರಿ',
+    copyLink: 'ಲಿಂಕ್ ನಕಲಿಸಿ',
+    linkCopied: 'ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
+    emptySelect: 'ಸಂಪೂರ್ಣ ಆಳ್ವಿಕೆಯ ವೃತ್ತಾಂತವನ್ನು ಪರೀಕ್ಷಿಸಲು ಎಡ ಪ್ಯಾನೆಲ್‌ನಿಂದ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
+    closeProfile: 'ಪ್ರೊಫೈಲ್ ಮುಚ್ಚಿ'
+  },
+  ta: {
+    catAll: 'அனைத்து வரலாற்று ஆளுமைகள்',
+    catGajapathi: 'சூர்யவம்ச கஜபதி பேரரசர்கள்',
+    catProgenitors: 'பண்டைய பேரரசர்கள் & முன்னோடிகள்',
+    catSacred: 'ஆன்மீக, ராணுவ & குடிமைப் பாதுகாவலர்கள்',
+    searchPlaceholder: 'ஆளுமைகள், பட்டங்கள், ஆட்சிக்காலம் தேடுக...',
+    returnHome: 'முகப்புப் பக்கத்திற்குத் திரும்பு',
+    openModal: 'பாப்-அப் சாளரத்தைத் திற',
+    copyLink: 'இணைப்பை நகலெடு',
+    linkCopied: 'இணைப்பு நகலெடுக்கப்பட்டது!',
+    emptySelect: 'முழு ஆட்சி வரலாற்றைக் காண இடது பலகத்திலிருந்து ஒரு வரலாற்று ஆளுமையைத் தேர்ந்தெடுக்கவும்.',
+    closeProfile: 'சுயவிவரத்தை மூடு'
+  },
+  mr: {
+    catAll: 'सर्व ऐतिहासिक विभूती',
+    catGajapathi: 'सूर्यवंश गजपती सम्राट',
+    catProgenitors: 'प्राचीन सम्राट आणि पूर्वज',
+    catSacred: 'आध्यात्मिक, लष्करी आणि नागरी रक्षक',
+    searchPlaceholder: 'विभूती, पदव्या, शासनकाळ शोधा...',
+    returnHome: 'मुख्य पृष्ठावर परत जा',
+    openModal: 'पॉपअप विंडो उघडा',
+    copyLink: 'लिंक कॉपी करा',
+    linkCopied: 'लिंक कॉपी झाली!',
+    emptySelect: 'संपूर्ण शासन वृत्तांत पाहण्यासाठी डाव्या पॅनेलमधून ऐतिहासिक विभूती निवडा.',
+    closeProfile: 'प्रोफाइल बंद करा'
+  },
+  or: {
+    catAll: 'ସମସ୍ତ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
+    catGajapathi: 'ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସମ୍ରାଟ',
+    catProgenitors: 'ପ୍ରାଚୀନ ସମ୍ରାଟ ଓ ଆদিପୁରୁଷ',
+    catSacred: 'ଆଧ୍ୟାତ୍ମିକ, ସାମରିକ ଓ ନାଗରିକ ରକ୍ଷକ',
+    searchPlaceholder: 'ବ୍ୟକ୍ତିତ୍ୱ, উপାଧି, ଶାସନକାଳ ଖୋଜନ୍ତୁ...',
+    returnHome: 'ମୁଖ୍ୟ ପୃଷ୍ଠାକୁ ଫେରନ୍ତୁ',
+    openModal: 'ପପ୍-ଅପ୍ ୱିଣ୍ଡୋ ଖୋଲନ୍ତୁ',
+    copyLink: 'ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    linkCopied: 'ଲିଙ୍କ୍ କପି ହେଲା!',
+    emptySelect: 'ସମ୍ପୂର୍ଣ୍ଣ ଶାସନ ଇତିହାସ ଦେଖିବାକୁ ବାମ ପ୍ୟାନେଲରୁ ଜଣେ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱଙ୍କୁ ବାଛନ୍ତୁ।',
+    closeProfile: 'ପ୍ରୋଫାଇଲ୍ ବନ୍ଦ କରନ୍ତୁ'
+  },
+  bn: {
+    catAll: 'সকল ঐতিহাসিক ব্যক্তিত্ব',
+    catGajapathi: 'সূর্যবংশী গজপতি সম্রাটগণ',
+    catProgenitors: 'প্রাচীন সম্রাট ও আদিপুরুষ',
+    catSacred: 'আধ্যাত্মিক, সামরিক ও নাগরিক রক্ষক',
+    searchPlaceholder: 'ব্যক্তিত্ব, উপাধি, শাসনকাল খুঁজুন...',
+    returnHome: 'হোম পেজে ফিরে যান',
+    openModal: 'পপআপ উইন্ডো খুলুন',
+    copyLink: 'লিঙ্ক কপি করুন',
+    linkCopied: 'লিঙ্ক কপি হয়েছে!',
+    emptySelect: 'সম্পূর্ণ শাসন বৃত্তান্ত দেখতে বাম প্যানেল থেকে একজন ঐতিহাসিক ব্যক্তিত্ব নির্বাচন করুন।',
+    closeProfile: 'প্রোফাইল বন্ধ করুন'
+  }
+};
 import {
   Crown,
-  ShieldCheck,
   MapPin,
-  Calendar,
-  BookOpen,
   Scroll,
   Search,
-  User,
-  Sparkles,
   ArrowLeft,
   ChevronRight,
-  Share2,
   Copy,
   Check,
-  X,
-  ExternalLink,
   Maximize2
 } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 import { useLanguage } from '../context/LanguageContext';
 import { getAllDocumentedFigures, DOCUMENTED_FIGURES_REPO } from '../data/documentedFiguresRepository';
 
@@ -30,6 +142,7 @@ interface KingsQueensPageProps {
 
 export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, initialFigureId }) => {
   const { t, language } = useLanguage();
+  const ui = KINGS_QUEENS_UI[language] || KINGS_QUEENS_UI.en;
   
   // Guarantee 100% immediate rendering across all browsers (Safari, Firefox, Chrome, Android, iOS)
   const initialFigures = getAllDocumentedFigures(language);
@@ -57,9 +170,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
     // Passive background refresh to incorporate any server-side database additions
     fetch(`/api/content/figures?lang=${language}`)
-      .then(res => res.json())
+      .then(res => (res.ok ? res.json() : null))
       .then(data => {
-        if (data.figures && data.figures.length > 0) {
+        if (data?.figures && data.figures.length > 0) {
           setFigures(data.figures);
         }
       })
@@ -79,36 +192,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     }
   }, [initialFigureId, figures]);
 
-  // Handle ESC key to close modal and body scroll prevention
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsModalOpen(false);
-      }
-    };
-    if (isModalOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
-
   const categories = [
-    { id: 'all', label: `All Historical Figures (${figures.length})` },
-    { id: 'gajapathi_monarchs', label: 'Suryavamsha Gajapathi Monarchs' },
-    { id: 'progenitors_emperors', label: 'Ancient Emperors & Progenitors' },
-    { id: 'sacred_civic', label: 'Spiritual, Martial & Civic Guardians' }
+    { id: 'all', label: `${ui.catAll} (${figures.length})` },
+    { id: 'gajapathi_monarchs', label: ui.catGajapathi },
+    { id: 'progenitors_emperors', label: ui.catProgenitors },
+    { id: 'sacred_civic', label: ui.catSacred }
   ];
 
   const normQuery = searchQuery.trim().toLowerCase();
 
   const filteredFigures = figures.filter(fig => {
-    // Find category from repo metadata
     const repoItem = DOCUMENTED_FIGURES_REPO.find(r => r.id === fig.id);
     if (selectedCategory !== 'all' && repoItem && repoItem.category !== selectedCategory) {
       return false;
@@ -134,6 +227,53 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     });
   };
 
+  const modalItem: ContentDetailItem | null = selectedFigure
+    ? {
+        id: selectedFigure.id,
+        badge: t.kingsQueens?.badge || 'Suryavamsha Historical Personage Dossier',
+        category: selectedFigure.dynasty_name,
+        title: selectedFigure.name,
+        subtitle:
+          selectedFigure.alternate_names && selectedFigure.alternate_names.length > 0
+            ? `${t.kingsQueens?.alternateSpellings || 'Alternate Names'}: ${selectedFigure.alternate_names.join(', ')}`
+            : undefined,
+        datesOrEra: `${selectedFigure.reign_period}${selectedFigure.approx_dates ? ` (${selectedFigure.approx_dates})` : ''}`,
+        imageUrl: selectedFigure.image_url,
+        imageStyle: 'portrait',
+        evidenceCategory: 'verified_archaeological',
+        summary: selectedFigure.historical_significance,
+        content: selectedFigure.biography,
+        sections: [
+          {
+            title: t.kingsQueens?.titlesLabel || 'Recorded Imperial Titles & Prasastis',
+            items: selectedFigure.known_titles,
+            type: 'tags'
+          },
+          {
+            title: t.kingsQueens?.eventsLabel || 'Chronologically Documented Events & Strategic Campaigns',
+            items: selectedFigure.major_events,
+            type: 'list'
+          },
+          {
+            title: t.kingsQueens?.placesLabel || 'Associated Fortresses, Shrines & Kshetrams',
+            items: selectedFigure.associated_places,
+            type: 'tags'
+          }
+        ],
+        sources: (selectedFigure.citations || []).map((cite, idx) => ({
+          id: `cite-${idx}`,
+          source_type: 'Epigraphic Citation',
+          title: cite,
+          verified: true
+        })),
+        shareUrl: `${window.location.origin}${window.location.pathname}?figure=${encodeURIComponent(selectedFigure.id)}`,
+        actionButton: {
+          label: t.nav?.inscriptions || 'Explore Epigraphic Corpus',
+          onClick: () => onNavigate('/inscriptions')
+        }
+      }
+    : null;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
       {/* Page Header */}
@@ -150,7 +290,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
         </p>
       </div>
 
-      {/* Filter and Search Navigation Bar (Single, Clean Bar - No Duplicated Elements) */}
+      {/* Filter and Search Navigation Bar */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#121622] border border-stone-800 shadow-md">
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
           {categories.map(cat => (
@@ -174,7 +314,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search figures, titles, reigns..."
+            placeholder={ui.searchPlaceholder}
             className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
           />
         </div>
@@ -251,7 +391,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-[#580014] text-stone-200 hover:text-[#fae29c] border border-stone-700 hover:border-[#d4af37] transition-all cursor-pointer shadow-sm active:scale-95"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>Return to Home</span>
+                  <span>{ui.returnHome}</span>
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -259,19 +399,19 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     type="button"
                     onClick={() => setIsModalOpen(true)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37]/60 transition-all cursor-pointer shadow-sm active:scale-95"
-                    title="Open Full Popup Modal"
+                    title={ui.openModal}
                   >
                     <Maximize2 className="w-3.5 h-3.5 text-[#d4af37]" />
-                    <span>Open Popup Modal</span>
+                    <span>{ui.openModal}</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleCopyLink}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#161c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 transition-all cursor-pointer"
-                    title="Copy Link to this Figure"
+                    title={ui.copyLink}
                   >
                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#d4af37]" />}
-                    <span>{copied ? 'Link Copied!' : 'Copy Link'}</span>
+                    <span>{copied ? ui.linkCopied : ui.copyLink}</span>
                   </button>
                   <span className="text-xs text-stone-400 font-mono bg-stone-950 px-2 py-1 rounded border border-stone-800">
                     ID: {selectedFigure.id}
@@ -398,219 +538,21 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             </article>
           ) : (
             <div className="rounded-3xl bg-[#111520] border border-stone-800 p-12 text-center text-stone-400">
-              Select a historical figure from the left panel to examine their full regnal chronicle.
+              {ui.emptySelect}
             </div>
           )}
         </div>
       </div>
 
-      {/* Centered, Responsive Modal Dialog for Selected Historical Personage */}
-      {isModalOpen && selectedFigure && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="figure-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setIsModalOpen(false);
-            }
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
-        >
-          <div className="bg-[#0e121c] border-2 border-[#c99738] rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl relative text-stone-200 overflow-hidden">
-            {/* Pinned Modal Header Bar (Ensures Close button is never scrolled away) */}
-            <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-3 bg-[#121622] rounded-t-2xl sm:rounded-t-3xl shrink-0">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <Crown className="w-5 h-5 text-[#d4af37] shrink-0" />
-                <div className="min-w-0">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#d4af37] block truncate">
-                    {t.kingsQueens?.badge || 'Suryavamsha Historical Personage Dossier'}
-                  </span>
-                  <h2 id="figure-modal-title" className="text-sm sm:text-lg font-bold font-royal-heading text-[#fae29c] truncate">
-                    {selectedFigure.name}
-                  </h2>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#161c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 transition-all cursor-pointer"
-                  title="Copy link to this person"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#d4af37]" />}
-                  <span className="hidden sm:inline">{copied ? 'Copied' : 'Share'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2 sm:p-2.5 rounded-xl bg-stone-900 hover:bg-[#580014] text-stone-300 hover:text-white border border-stone-700 hover:border-[#d4af37] transition-all cursor-pointer"
-                  aria-label="Close dialog (Escape)"
-                  title="Close (Escape)"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Scrollable Content Container (Smooth internal scroll on mobile & desktop) */}
-            <div className="p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 scrollbar-thin">
-              {/* Profile Card Banner */}
-              <div className="flex flex-col sm:flex-row items-start gap-5 sm:gap-6 border-b border-stone-800 pb-6">
-                <img
-                  src={selectedFigure.image_url}
-                  alt={selectedFigure.name}
-                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover border-2 border-[#d4af37] shadow-xl shrink-0 bg-[#161a29]"
-                />
-                <div className="space-y-2 flex-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-3 py-0.5 rounded-full bg-stone-900 border border-stone-800">
-                      {selectedFigure.reign_period}
-                    </span>
-                    <EvidenceBadge category="verified_archaeological" size="sm" />
-                  </div>
-
-                  <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
-                    {selectedFigure.name}
-                  </h3>
-
-                  {selectedFigure.alternate_names && selectedFigure.alternate_names.length > 0 && (
-                    <div className="text-xs text-stone-400">
-                      <strong className="text-stone-300">{t.kingsQueens?.alternateSpellings || 'Alternate Names'}:</strong>{' '}
-                      {selectedFigure.alternate_names.join(', ')}
-                    </div>
-                  )}
-
-                  <div className="text-xs text-stone-400">
-                    <strong className="text-stone-300">{t.kingsQueens?.dynastyLabel || 'Dynastic House'}:</strong>{' '}
-                    {selectedFigure.dynasty_name} {selectedFigure.approx_dates ? `(${selectedFigure.approx_dates})` : ''}
-                  </div>
-                </div>
-              </div>
-
-              {/* Recorded Imperial Titles & Prasastis */}
-              {selectedFigure.known_titles && selectedFigure.known_titles.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                    {t.kingsQueens?.titlesLabel || 'Recorded Imperial Titles & Prasastis'}
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedFigure.known_titles.map((titleItem, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-stone-200 font-medium"
-                      >
-                        {titleItem}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Scholarly Biography */}
-              <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-[#d4af37]" />
-                  <span>{t.kingsQueens?.biographyLabel || 'Scholarly Biography & Historical Significance'}</span>
-                </h4>
-                <div className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed bg-[#0c0f17] p-5 rounded-xl border border-stone-800/80 space-y-3">
-                  <p>{selectedFigure.biography}</p>
-                  {selectedFigure.historical_significance && (
-                    <div className="pt-3 border-t border-stone-800/60">
-                      <strong className="text-[#fae29c] font-royal-heading block mb-1 text-xs uppercase tracking-wider">
-                        Historical Significance:
-                      </strong>
-                      <p className="text-xs sm:text-sm text-stone-300 italic">
-                        {selectedFigure.historical_significance}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Chronologically Documented Milestones */}
-              {selectedFigure.major_events && selectedFigure.major_events.length > 0 && (
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                    {t.kingsQueens?.eventsLabel || 'Chronologically Documented Events & Strategic Campaigns'}
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedFigure.major_events.map((ev, i) => (
-                      <div key={i} className="p-3 rounded-xl bg-[#161c2a] border border-stone-800 text-xs text-stone-300 flex items-start gap-2.5">
-                        <span className="w-2 h-2 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
-                        <span>{ev}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Associated Citadels, Forts & Shrines */}
-              {selectedFigure.associated_places && selectedFigure.associated_places.length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
-                    {t.kingsQueens?.placesLabel || 'Associated Fortresses, Shrines & Kshetrams'}
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedFigure.associated_places.map((place, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-xs text-stone-300"
-                      >
-                        <MapPin className="w-3 h-3 text-[#d4af37]" />
-                        {place}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Primary Inscriptions & Epigraphia Indica Citations */}
-              {selectedFigure.citations && selectedFigure.citations.length > 0 && (
-                <div className="space-y-2 pt-4 border-t border-stone-800">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                    <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
-                    <span>{t.kingsQueens?.citationsLabel || 'Primary Inscriptions & Archaeological Sources'}</span>
-                  </h4>
-                  <ul className="space-y-1.5 text-xs text-stone-400 bg-[#0c0f17] p-4 rounded-xl border border-stone-800/80">
-                    {selectedFigure.citations.map((cite, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
-                        <span>{cite}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {/* Pinned Modal Footer */}
-            <div className="p-4 sm:p-5 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 bg-[#121622] rounded-b-2xl sm:rounded-b-3xl shrink-0">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  onNavigate('/inscriptions');
-                }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#182030] hover:bg-[#20293d] text-[#fae29c] border border-[#c99738]/40 transition-all cursor-pointer"
-              >
-                <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span>{t.nav?.inscriptions || 'Explore Epigraphic Corpus'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37] transition-all cursor-pointer shadow-md active:scale-95"
-              >
-                Close Profile
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Shared Reusable Content Detail Modal */}
+      <ContentDetailModal
+        item={modalItem}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        closeLabel={ui.closeProfile}
+      />
     </div>
   );
 };
+
 

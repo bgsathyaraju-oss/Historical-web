@@ -152,7 +152,7 @@ export function performClientSearch(
           subtitle: `${displayTitle} • ${p.era[currentLang] || p.era.en}`,
           snippet: extractSnippet(displayBio, query, displaySummary),
           verification_status: 'Documented Primary Heritage',
-          link: `/community-prominent-persons`
+          link: `/community-prominent-persons?figure=${p.id}`
         });
       }
     });
@@ -249,7 +249,7 @@ export function performClientSearch(
           subtitle: `${fig.dynasty_lineage} (${fig.reign_or_dates || fig.era})`,
           snippet: extractSnippet(narrative, query, summary),
           verification_status: fig.epigraphic_status,
-          link: `/dynasties`
+          link: `/historical-persons?figure=${fig.id}`
         });
       }
     });
@@ -281,7 +281,7 @@ export function performClientSearch(
           subtitle: `${syn.category} • ${syn.linguistic_origin}`,
           snippet: extractSnippet(roleDesc, query, roleDesc),
           verification_status: 'Verified Epigraphic Form',
-          link: `/community-heritage`
+          link: `/community-heritage?id=${syn.id}`
         });
       }
     });
@@ -315,7 +315,7 @@ export function performClientSearch(
           subtitle: `${ruler}${loc ? ' • ' + loc : ''}`,
           snippet: extractSnippet(desc, query, desc.substring(0, 160) + '...'),
           verification_status: 'Primary Epigraphic Proof',
-          link: `/inscriptions`
+          link: `/inscriptions?id=${inscrId}`
         });
       }
     }

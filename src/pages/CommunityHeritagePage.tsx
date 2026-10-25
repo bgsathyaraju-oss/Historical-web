@@ -32,13 +32,19 @@ import {
   GeographicalSpreadRegion
 } from '../data/historyContent';
 import { LanguageCode } from '../types';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 
 interface CommunityHeritagePageProps {
   onNavigate: (path: string) => void;
   initialTab?: 'synonyms' | 'figures' | 'geography' | 'history';
+  initialItemId?: string | null;
 }
 
-export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ onNavigate, initialTab }) => {
+export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
+  onNavigate,
+  initialTab,
+  initialItemId
+}) => {
   const { t, language, setLanguage, translateText, getMetadataLabel } = useLanguage();
   const [activeTab, setActiveTab] = useState<'synonyms' | 'figures' | 'geography' | 'history'>(() => {
     if (initialTab) return initialTab;
@@ -52,7 +58,117 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [selectedFigure, setSelectedFigure] = useState<HistoricalFigureSummary | null>(null);
+  const [selectedModalRef, setSelectedModalRef] = useState<{ type: 'synonym' | 'region' | 'monograph'; id: string } | null>(null);
   const [synonymCategoryFilter, setSynonymCategoryFilter] = useState<string>('all');
+
+  const openSynonymModal = (item: CommunitySynonym) => {
+    setSelectedModalRef({ type: 'synonym', id: item.id });
+  };
+
+  const modalItem: ContentDetailItem | null = React.useMemo(() => {
+    if (!selectedModalRef) return null;
+    if (selectedModalRef.type === 'synonym') {
+      const item = COMMUNITY_SYNONYMS.find(s => s.id === selectedModalRef.id);
+      if (!item) return null;
+      return {
+        id: item.id,
+        title: item.title,
+        subtitle: `${item.category} • ${item.linguistic_origin}`,
+        badge: item.category,
+        location: item.prominent_states.join(', '),
+        content: item.historical_role[language] || item.historical_role.en,
+        metadata: [
+          { label: 'Linguistic Origin', value: item.linguistic_origin },
+          { label: 'Primary Regions', value: item.primary_regions.join(', ') },
+          { label: 'Prominent States', value: item.prominent_states.join(', ') }
+        ],
+        sections: [
+          {
+            heading: 'Native Script Attestations',
+            type: 'tags',
+            items: Object.entries(item.native_scripts).map(([k, v]) => `${k}: ${v}`)
+          },
+          {
+            heading: 'Sacred Associations & Patron Deities',
+            type: 'list',
+            items: item.sacred_associations
+          }
+        ]
+      };
+    }
+    if (selectedModalRef.type === 'region') {
+      const activeReg = GEOGRAPHICAL_SPREAD.find(r => r.id === selectedModalRef.id);
+      if (!activeReg) return null;
+      const regTitle = activeReg.localized_region[language] || activeReg.region_name;
+      const regOverview = activeReg.regional_overview[language] || activeReg.regional_overview.en;
+      return {
+        id: activeReg.id,
+        title: regTitle,
+        subtitle: activeReg.states_and_territories.join(' • '),
+        badge: 'Regional Corridor Spotlight',
+        era: activeReg.migration_epoch_and_corridor,
+        location: activeReg.prominent_cities_districts.join(', '),
+        content: regOverview,
+        sections: [
+          {
+            heading: 'Predominant Community Designations',
+            type: 'tags',
+            items: activeReg.predominant_community_synonyms
+          },
+          {
+            heading: 'Landmark Forts & Reservoirs',
+            type: 'list',
+            items: activeReg.historical_forts_and_landmarks
+          },
+          {
+            heading: 'Sacred Centers & Shrines',
+            type: 'list',
+            items: activeReg.sacred_centers
+          }
+        ]
+      };
+    }
+    if (selectedModalRef.type === 'monograph') {
+      const sec = HISTORICAL_MONOGRAPH_SECTIONS.find(s => s.id === selectedModalRef.id);
+      if (!sec) return null;
+      const secTitle = sec.section_title[language] || sec.section_title.en;
+      const secContent = sec.content[language] || sec.content.en;
+      return {
+        id: sec.id,
+        title: secTitle,
+        subtitle: 'The Civilizational Odyssey of Oad-Rajput & Od-Kshatriya Communities',
+        badge: 'Peer-Reviewed Archival Monograph',
+        author: 'Suryavamsha Archival Research Council',
+        content: secContent,
+        sections:
+          sec.key_points && sec.key_points.length > 0
+            ? [{ heading: 'Key Historical Takeaways', type: 'list', items: sec.key_points }]
+            : []
+      };
+    }
+    return null;
+  }, [selectedModalRef, language]);
+
+  useEffect(() => {
+    const targetId =
+      initialItemId ||
+      new URLSearchParams(window.location.search).get('id') ||
+      new URLSearchParams(window.location.search).get('figure');
+    if (!targetId) return;
+
+    const foundFig = HISTORICAL_FIGURES.find(f => f.id === targetId);
+    if (foundFig) {
+      setActiveTab('figures');
+      setSelectedFigure(foundFig);
+      return;
+    }
+
+    const foundSyn = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
+    if (foundSyn) {
+      setActiveTab('synonyms');
+      openSynonymModal(foundSyn);
+    }
+  }, [initialItemId, language]);
 
   useEffect(() => {
     if (initialTab) {
@@ -148,6 +264,16 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
               ? 'ప్రాచీన సూర్యవంశ చక్రవర్తులు (సగరుడు, భగీరథుడు, శ్రీరాముడు), కళింగ-ఓడ్ర సమ్రాట్ ఖారవేలుడు నుండి పవిత్ర రక్షకులు (మాతా జస్మా దేవి, సిద్ధరామేశ్వరుడు) వరకు — ఓడ్-రాజ్‌పుత్, ఓడ్-క్షత్రియ, ఒడ్డే, వడ్డెరాజులు మరియు వడ్డార్ సమాజాల చారిత్రక ప్రస్థానం.'
               : language === 'hi'
               ? 'प्राचीन सूर्यवंशी चक्रवर्ती सम्राटों (सगर, भगीरथ, श्रीराम) एवं कलिंग-ओड्र सम्राट खारवेल से लेकर पवित्र रक्षकों (माता जस्मा देवी, संत सिद्धरामेश्वर) तक — ओड-राजपूत, ओड-क्षत्रिय, वड्डेराजुलु, वड्डार और ओड्डार समाज का गौरवशाली इतिहास।'
+              : language === 'or'
+              ? 'ପ୍ରାଚୀନ ସୂର୍ଯ୍ୟବଂଶୀ ଚକ୍ରବର୍ତ୍ତୀ ସମ୍ରାଟ (ସଗର, ଭଗୀରଥ, ଶ୍ରୀରାମ) ଓ କଳିଙ୍ଗ-ଓଡ଼୍ର ସମ୍ରାଟ ଖାରବେଳଙ୍କଠାରୁ ଆରମ୍ଭ କରି ପବିତ୍ର ରକ୍ଷକ (ମାତା ଜସ୍ମା ଦେବୀ, ସନ୍ଥ ସିଦ୍ଧରାମେଶ୍ୱର) ପର୍ଯ୍ୟନ୍ତ — ଓଡ଼-ରାଜପୁତ, ଓଡ଼-କ୍ଷତ୍ରିୟ, ଓଡ଼ିଆରାଜୁ ଓ ୱଡ୍ଡାର ସମାଜର ଗୌରବমୟ ଇତିହାସ।'
+              : language === 'kn'
+              ? 'ಪ್ರಾಚೀನ ಸೂರ್ಯವಂಶ ಚಕ್ರವರ್ತಿಗಳು (ಸಗರ, ಭಗೀರಥ, ಶ್ರೀರಾಮ) ಮತ್ತು ಕಳಿಂಗ-ಓಡ್ರ ಸಾಮ್ರಾಟ್ ಖಾರವೇಲನಿಂದ ಪವಿತ್ರ ರಕ್ಷಕರಾದ (ಮಾತಾ ಜಸ್ಮಾ ದೇವಿ, ಸಂತ ಸಿದ್ಧರಾಮೇಶ್ವರ) ವರೆಗೆ — ಓಡ್-ರಜಪೂತ್, ಓಡ್-ಕ್ಷತ್ರಿಯ, ಒಡ್ಡೇ, ವಡ್ಡೇರಾಜುಲು ಮತ್ತು ವಡ್ಡರ್ ಸಮುದಾಯಗಳ ಐತಿಹಾಸಿಕ ಪಯಣ.'
+              : language === 'ta'
+              ? 'பண்டைய சூர்யவம்ச சக்கரவர்த்திகள் (சகரர், பகீரதன், ஸ்ரீராமர்) மற்றும் கலிங்க-ஒட்டர பேரரசர் காரவேலன் முதல் புனித பாதுகாவலர்கள் (மாதா ஜஸ்மா தேவி, சித்தராமேஸ்வரர்) வரை — ஓட்-ராஜ்புத், ஓட்-க்ஷத்ரிய, ஒட்டே, வட்டேராஜுலு மற்றும் ஒட்டர் சமூகங்களின் வரலாற்றுப் பயணம்.'
+              : language === 'mr'
+              ? 'प्राचीन सूर्यवंशी चक्रवर्ती सम्राट (सगर, भगीरथ, श्रीराम) आणि कलिंग-ओड्र सम्राट खारवेल यांच्यापासून पवित्र रक्षकांपर्यंत (माता जस्मा देवी, संत सिद्धरामेश्वर) — ओड-राजपूत, ओड-क्षत्रिय, वड्डेराजुलु आणि वड्डार समाजाचा गौरवशाली इतिहास.'
+              : language === 'bn'
+              ? 'প্রাচীন সূর্যবংশী চক্রবর্তী সম্রাট (সগর, ভগীরথ, শ্রীরাম) এবং কলিঙ্গ-ওড্র সম্রাট খারবেল থেকে শুরু করে পবিত্র রক্ষক (মাতা জস্মা দেবী, সন্ত সিদ্ধরামেশ্বর) পর্যন্ত — ওড-রাজপুত, ওড-ক্ষত্রিয়, ওড্ডেরাজুলু এবং ওড্ডার সমাজের গৌরবময় ইতিহাস।'
               : 'Documenting the epic civilizational journey of the Oad-Rajput, Od-Kshatriya, OddeRajulu, VaddeRajulu, and Waddar communities across 8 major Indian geographical corridors, linking classical epigraphy with living sacred tradition.'}
           </p>
 
@@ -287,7 +413,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
             {filteredSynonyms.map(item => (
               <div
                 key={item.id}
-                className="bg-[#121624] border border-[#c99738]/30 rounded-2xl p-6 space-y-4 hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.15)]"
+                onClick={() => openSynonymModal(item)}
+                className="bg-[#121624] border border-[#c99738]/30 rounded-2xl p-6 space-y-4 hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.15)] cursor-pointer"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
@@ -331,18 +458,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
                 </div>
 
                 <div className="pt-3 border-t border-stone-800/60 flex items-center justify-between text-[11px]">
-                  <span className="text-stone-400 truncate max-w-[200px]">
+                  <span className="text-stone-400 truncate max-w-[180px]">
                     🙏 {item.sacred_associations.slice(0, 2).join(' • ')}
                   </span>
-                  <button
-                    onClick={() => {
-                      setActiveTab('geography');
-                      setSearchTerm(item.prominent_states[0] || '');
-                    }}
-                    className="text-[#d4af37] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
-                  >
-                    View Regions <ChevronRight className="w-3 h-3" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        setActiveTab('geography');
+                        setSearchTerm(item.prominent_states[0] || '');
+                      }}
+                      className="text-stone-400 hover:text-[#d4af37] hover:underline font-medium cursor-pointer"
+                    >
+                      Regions
+                    </button>
+                    <span className="text-[#d4af37] font-semibold flex items-center gap-0.5">
+                      Details <ChevronRight className="w-3 h-3" />
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -482,11 +615,14 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
               const regOverview = activeReg.regional_overview[language] || activeReg.regional_overview.en;
 
               return (
-                <div className="lg:col-span-2 bg-[#121624] border border-[#c99738]/40 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl">
+                <div
+                  onClick={() => setSelectedModalRef({ type: 'region', id: activeReg.id })}
+                  className="lg:col-span-2 bg-[#121624] border border-[#c99738]/40 hover:border-[#c99738] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl cursor-pointer transition-all"
+                >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-4">
                     <div>
                       <span className="text-[11px] font-bold text-[#d4af37] uppercase tracking-wider">
-                        Regional Corridor Spotlight
+                        Regional Corridor Spotlight (Click to Open Full Modal)
                       </span>
                       <h3 className="font-royal-heading font-extrabold text-2xl text-[#fcedc7]">
                         {regTitle}
@@ -555,7 +691,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
                       States: {activeReg.states_and_territories.join(', ')}
                     </span>
                     <button
-                      onClick={() => {
+                      onClick={e => {
+                        e.stopPropagation();
                         setActiveTab('synonyms');
                         setSearchTerm(activeReg.predominant_community_synonyms[0] || '');
                       }}
@@ -585,7 +722,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
               The Civilizational Odyssey of Oad-Rajput & Od-Kshatriya Communities
             </h2>
             <p className="text-xs sm:text-sm text-stone-400">
-              Authored by the Suryavamsha Archival Research Council • Integrating Classical Epigraphy, Dynastic Inscriptions, and Living Community Heritage
+              Authored by the Suryavamsha Archival Research Council • Click any chapter below to open in focused reader modal
             </p>
           </div>
 
@@ -595,15 +732,22 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
               const secContent = sec.content[language] || sec.content.en;
 
               return (
-                <section key={sec.id} className="space-y-3 pb-6 border-b border-stone-800/60 last:border-0">
-                  <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c]">
-                    {secTitle}
-                  </h3>
+                <section
+                  key={sec.id}
+                  onClick={() => setSelectedModalRef({ type: 'monograph', id: sec.id })}
+                  className="space-y-3 pb-6 border-b border-stone-800/60 last:border-0 cursor-pointer p-4 -mx-4 rounded-2xl hover:bg-stone-900/40 transition-colors group"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] group-hover:text-white transition-colors">
+                      {secTitle}
+                    </h3>
+                    <span className="text-xs font-sans font-semibold text-[#d4af37] shrink-0">Open Chapter →</span>
+                  </div>
                   <div className="whitespace-pre-line text-stone-300">
                     {secContent}
                   </div>
                   {sec.key_points && sec.key_points.length > 0 && (
-                    <div className="pt-2 flex flex-wrap gap-2 text-xs">
+                    <div className="pt-2 flex flex-wrap gap-2 text-xs font-sans">
                       {sec.key_points.map((kp, idx) => (
                         <span
                           key={idx}
@@ -620,6 +764,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({ on
           </div>
         </article>
       )}
+
+      <ContentDetailModal item={modalItem} onClose={() => setSelectedModalRef(null)} />
 
       {/* ---------------------------------------------------------------------- */}
       {/* DETAILED HISTORICAL FIGURE MODAL DIALOG */}

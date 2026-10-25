@@ -20,9 +20,11 @@ import { EvidenceBadge } from '../components/EvidenceBadge';
 import { TimelineViewer } from '../components/TimelineViewer';
 import { LightboxModal } from '../components/LightboxModal';
 import { ArticleBriefModal } from '../components/ArticleBriefModal';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 import { PublisherCreditCard } from '../components/PublisherCreditCard';
 
 import { getAllArticles } from '../data/articlesRepository';
+import { getCanonicalTimelineEvents, getCanonicalGallery, CANONICAL_STATISTICS } from '../data/archivalSeedData';
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -31,47 +33,62 @@ interface HomePageProps {
 
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) => {
   const { t, language, getArticleContent, getMetadataLabel } = useLanguage();
-  const [stats, setStats] = useState<SiteStatistics | null>(null);
+  const [stats, setStats] = useState<SiteStatistics>(CANONICAL_STATISTICS);
   const [featuredArticles, setFeaturedArticles] = useState<Article[]>(() => getAllArticles(language).slice(0, 3));
-  const [timelineEvents, setTimelineEvents] = useState<HistoricalEvent[]>([]);
-  const [galleryPreview, setGalleryPreview] = useState<GalleryItem[]>([]);
+  const [timelineEvents, setTimelineEvents] = useState<HistoricalEvent[]>(() => getCanonicalTimelineEvents(language).slice(0, 4));
+  const [galleryPreview, setGalleryPreview] = useState<GalleryItem[]>(() => getCanonicalGallery(language).slice(0, 4));
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
   const [selectedBriefArticle, setSelectedBriefArticle] = useState<Article | null>(null);
+  const [selectedFullArticle, setSelectedFullArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Instant sync with language
-    setFeaturedArticles(getAllArticles(language).slice(0, 3));
+    const localArts = getAllArticles(language);
+    const localTimeline = getCanonicalTimelineEvents(language);
+    const localGallery = getCanonicalGallery(language);
+    setFeaturedArticles(localArts.slice(0, 3));
+    setTimelineEvents(localTimeline.slice(0, 4));
+    setGalleryPreview(localGallery.slice(0, 4));
+    setSelectedBriefArticle(prev => prev ? (localArts.find(a => a.id === prev.id) || prev) : null);
+    setSelectedFullArticle(prev => prev ? (localArts.find(a => a.id === prev.id) || prev) : null);
+    setSelectedGalleryItem(prev => prev ? (localGallery.find(g => g.id === prev.id) || prev) : null);
 
     const fetchHomeData = async () => {
       try {
         const [statsRes, artsRes, timelineRes, galRes] = await Promise.all([
           fetch('/api/content/statistics'),
           fetch(`/api/content/articles?lang=${language}`),
-          fetch('/api/content/timeline'),
-          fetch('/api/content/gallery')
+          fetch(`/api/content/timeline?lang=${language}`),
+          fetch(`/api/content/gallery?lang=${language}`)
         ]);
 
         if (statsRes.ok) {
           const s = await statsRes.json();
-          setStats(s.statistics);
+          if (s && s.statistics) {
+            setStats(s.statistics);
+          }
         }
         if (artsRes.ok) {
           const a = await artsRes.json();
-          if (a.articles && a.articles.length > 0) {
+          if (a && Array.isArray(a.articles) && a.articles.length > 0) {
             setFeaturedArticles(a.articles.slice(0, 3));
           }
         }
         if (timelineRes.ok) {
           const tm = await timelineRes.json();
-          setTimelineEvents(tm.events.slice(0, 4));
+          if (tm && Array.isArray(tm.events) && tm.events.length > 0) {
+            setTimelineEvents(tm.events.slice(0, 4));
+          }
         }
         if (galRes.ok) {
           const g = await galRes.json();
-          setGalleryPreview(g.gallery.slice(0, 4));
+          if (g && Array.isArray(g.gallery) && g.gallery.length > 0) {
+            setGalleryPreview(g.gallery.slice(0, 4));
+          }
         }
-      } catch (err) {
-        console.error('Failed to load homepage data:', err);
+      } catch {
+        // Static deployment fallback: canonical state is already initialized
       } finally {
         setLoading(false);
       }
@@ -294,9 +311,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
             return (
               <div
                 key={art.id}
-                onClick={() => setSelectedBriefArticle(art)}
+                onClick={() => setSelectedFullArticle(art)}
                 className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] p-5 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
-                title="Click to view Brief Information directly in Multilingual"
+                title="Click to read Complete Research Article"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -321,11 +338,21 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                     <span>{art.publication_date}</span>
                   </div>
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-[11px] text-[#fae29c] font-medium flex items-center gap-1 group-hover:text-white transition-colors">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedBriefArticle(art);
+                      }}
+                      className="text-[11px] text-[#fae29c] hover:underline font-medium flex items-center gap-1 group-hover:text-white transition-colors cursor-pointer"
+                    >
                       <Sparkles className="w-3 h-3 text-[#d4af37]" />
-                      <span>View Brief Information</span>
+                      <span>Brief Summary</span>
+                    </button>
+                    <span className="text-xs font-semibold text-[#e8c872] flex items-center gap-1">
+                      <span>Read Full Article</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#d4af37] group-hover:translate-x-1 transition-transform" />
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#d4af37] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
@@ -460,8 +487,44 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         onClose={() => setSelectedBriefArticle(null)}
         onReadFull={(art) => {
           setSelectedBriefArticle(null);
-          onNavigate(`/documentary?article=${art.id}`);
+          setSelectedFullArticle(art);
         }}
+      />
+
+      {/* Full Research Article Modal */}
+      <ContentDetailModal
+        item={selectedFullArticle ? (() => {
+          const { title, summary, content } = getArticleContent(selectedFullArticle);
+          return {
+            id: selectedFullArticle.id,
+            title,
+            subtitle: `${selectedFullArticle.author_name} • ${selectedFullArticle.publication_date}`,
+            badge: getMetadataLabel('category', selectedFullArticle.category) || selectedFullArticle.category,
+            evidenceCategory: selectedFullArticle.evidence_category,
+            verificationStatus: selectedFullArticle.verification_status,
+            imageUrl: selectedFullArticle.featured_image,
+            imageLayout: 'banner',
+            summary,
+            summaryLabel: 'Executive Summary',
+            fullText: content,
+            fullTextLabel: 'Complete Documented Research Article',
+            metadata: [
+              { label: 'Author / Research Council', value: selectedFullArticle.author_name },
+              { label: 'Publication Date', value: selectedFullArticle.publication_date },
+              { label: 'Archival Category', value: getMetadataLabel('category', selectedFullArticle.category) || selectedFullArticle.category }
+            ],
+            sources: (selectedFullArticle.sources || []).map(s => ({
+              title: s.title,
+              author: s.author_or_authority,
+              year: s.year_or_era,
+              type: s.source_type,
+              details: `${s.publication_or_location ? s.publication_or_location + ' — ' : ''}${s.citation_details || ''}`
+            })),
+            tags: selectedFullArticle.tags,
+            shareUrl: `${window.location.origin}/documentary?article=${encodeURIComponent(selectedFullArticle.id)}`
+          };
+        })() : null}
+        onClose={() => setSelectedFullArticle(null)}
       />
     </div>
   );

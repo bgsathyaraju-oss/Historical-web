@@ -2,37 +2,155 @@ import React, { useState, useEffect } from 'react';
 import { HistoricalLocation } from '../types';
 import { Compass, MapPin, Landmark, ShieldCheck, Info, ExternalLink, Layers, Navigation, ArrowRight } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 import { useLanguage } from '../context/LanguageContext';
 import {
   GEOGRAPHICAL_SPREAD,
   GeographicalSpreadRegion
 } from '../data/historyContent';
+import { getCanonicalLocations } from '../data/archivalSeedData';
 
 interface HistoricalMapsPageProps {
   onNavigate: (path: string) => void;
 }
 
 export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNavigate }) => {
-  const { language, translateText, getMetadataLabel } = useLanguage();
-  const [locations, setLocations] = useState<HistoricalLocation[]>([]);
+  const { language, translateText } = useLanguage();
+  const [locations, setLocations] = useState<HistoricalLocation[]>(() => getCanonicalLocations(language));
   const [activeView, setActiveView] = useState<'cartography' | 'corridors'>('cartography');
   const [activeRegion, setActiveRegion] = useState<string>('All');
   const [selectedCorridor, setSelectedCorridor] = useState<GeographicalSpreadRegion>(GEOGRAPHICAL_SPREAD[0]);
+  const [activeModalTarget, setActiveModalTarget] = useState<
+    | { type: 'location'; id: string }
+    | { type: 'corridor'; id: string }
+    | { type: 'banner' }
+    | null
+  >(null);
 
   useEffect(() => {
-    fetch('/api/content/locations')
-      .then(res => res.json())
+    setLocations(getCanonicalLocations(language));
+    fetch(`/api/content/locations?lang=${language}`)
+      .then(res => res.ok ? res.json() : null)
       .then(data => {
-        setLocations(data.locations || []);
+        if (data?.locations && data.locations.length > 0) {
+          setLocations(data.locations);
+        }
       })
-      .catch(console.error);
-  }, []);
+      .catch(() => {});
+  }, [language]);
 
   const regions = ['All', 'Odra', 'Utkala', 'Kalinga', 'Deccan & South'];
 
   const filteredLocations = locations.filter(loc =>
     activeRegion === 'All' || loc.region.toLowerCase() === activeRegion.toLowerCase()
   );
+
+  const buildLocationModalItem = (loc: HistoricalLocation): ContentDetailItem => ({
+    id: loc.id,
+    title: loc.name,
+    subtitle: `Ancient Name: ${loc.ancient_name} • ${loc.modern_district}, ${loc.modern_state}`,
+    badge: `${loc.region} Frontier & Citadel`,
+    verificationStatus: 'Archaeological & Epigraphic Site',
+    imageUrl: loc.image_url,
+    imageLayout: 'banner',
+    metadata: [
+      { label: 'Ancient Nomenclature', value: loc.ancient_name },
+      { label: 'Historical Region', value: loc.region },
+      { label: 'Modern District & State', value: `${loc.modern_district}, ${loc.modern_state}` }
+    ],
+    fullText: loc.summary,
+    fullTextLabel: 'Historical Geography & Strategic Significance',
+    sections: [
+      {
+        heading: 'Archaeological Survey & Structural Findings',
+        type: 'text',
+        content: loc.archaeological_findings
+      },
+      ...(loc.inscriptions_found && loc.inscriptions_found.length > 0
+        ? [{
+            heading: 'Corroborating Inscriptions Discovered at Site',
+            type: 'list' as const,
+            items: loc.inscriptions_found
+          }]
+        : [])
+    ]
+  });
+
+  const buildCorridorModalItem = (reg: GeographicalSpreadRegion): ContentDetailItem => {
+    const localizedTitle = reg.localized_region[language] || reg.region_name;
+    const overview = reg.regional_overview[language] || reg.regional_overview.en;
+    return {
+      id: reg.id,
+      title: localizedTitle,
+      subtitle: `States & Territories: ${reg.states_and_territories.join(', ')}`,
+      badge: `Epoch: ${reg.migration_epoch_and_corridor}`,
+      verificationStatus: 'Documented Historical Corridor',
+      metadata: [
+        { label: 'States & Territories', value: reg.states_and_territories.join(', ') },
+        { label: 'Migration Epoch & Corridor', value: reg.migration_epoch_and_corridor },
+        { label: 'Key Cities & Districts', value: reg.prominent_cities_districts.join(', ') }
+      ],
+      fullText: overview,
+      fullTextLabel: 'Regional Overview & Historical Trajectory',
+      sections: [
+        {
+          heading: 'Historical Citadels, Forts & Hydraulic Landmarks',
+          type: 'list',
+          items: reg.historical_forts_and_landmarks
+        },
+        {
+          heading: 'Key Sacred Centers & Kshetrams',
+          type: 'list',
+          items: reg.sacred_centers
+        },
+        {
+          heading: 'Predominant Community Synonyms & Sub-Castes',
+          type: 'tags',
+          items: reg.predominant_community_synonyms
+        }
+      ]
+    };
+  };
+
+  const buildBannerModalItem = (): ContentDetailItem => ({
+    id: 'map_1465_zenith',
+    title: 'Territorial Extent of Suryavamsha Gajapathi Empire (c. 1465 CE)',
+    subtitle: 'Ganges to Kaveri Hegemony (Zenith under Emperor Kapilendra Deva)',
+    badge: 'Corroborated Cartographic Reconstruction',
+    verificationStatus: 'Epigraphic Boundary Model',
+    imageUrl: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&auto=format&fit=crop&q=80',
+    imageLayout: 'banner',
+    metadata: [
+      { label: 'Northern Frontier', value: 'Hooghly / Mandaran (Lower Bengal)' },
+      { label: 'Imperial Core', value: 'Varanasi Kataka (Cuttack) & Srikshetra Puri' },
+      { label: 'Southern Frontier', value: 'Srirangam & Tiruchirappalli (Kaveri Basin)' }
+    ],
+    fullText:
+      'Based on the corroborated findspots of the Veligalani copper-plate grant (1458 CE), Lingaraja temple proclamations (1452 CE), Draksharama and Simhachalam pillar inscriptions, Kondavidu and Udayagiri fortress bastions, and Kumara Hamvira Deva’s Srirangam donations (1464 CE), the Suryavamsha Gajapathi Empire at its zenith extended from the Bhagirathi-Hooghly in the north to the Kaveri River in the south.',
+    fullTextLabel: 'Cartographic Methodology & Epigraphic Findspot Synthesis',
+    sources: [
+      { title: 'Epigraphia Indica, Vol. XXXIII (Veligalani Plates of Kapilendra Deva)', author: 'Dr. D.C. Sircar', year: '1458 CE', type: 'Primary Inscription' },
+      { title: 'Annual Report on Indian Epigraphy (Srirangam Inscription of Hamvira Deva)', author: 'Archaeological Survey of India', year: '1464 CE', type: 'Primary Inscription' },
+      { title: 'The Suryavamsi Gajapatis of Orissa', author: 'Dr. R. Subrahmanyam', year: '1957', type: 'Scholarly Monograph' }
+    ]
+  });
+
+  const openLocationModal = (loc: HistoricalLocation) => setActiveModalTarget({ type: 'location', id: loc.id });
+  const openCorridorModal = (reg: GeographicalSpreadRegion) => setActiveModalTarget({ type: 'corridor', id: reg.id });
+  const openCartographicBannerModal = () => setActiveModalTarget({ type: 'banner' });
+
+  const modalItem: ContentDetailItem | null = (() => {
+    if (!activeModalTarget) return null;
+    if (activeModalTarget.type === 'location') {
+      const loc = locations.find(l => l.id === activeModalTarget.id);
+      return loc ? buildLocationModalItem(loc) : null;
+    }
+    if (activeModalTarget.type === 'corridor') {
+      const reg = GEOGRAPHICAL_SPREAD.find(r => r.id === activeModalTarget.id);
+      return reg ? buildCorridorModalItem(reg) : null;
+    }
+    return buildBannerModalItem();
+  })();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -64,6 +182,16 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
             ? 'శాసన ఆధారిత సరిహద్దులు మరియు ఓడ్-రాజ్‌పుత్, ఓడ్-క్షత్రియ, ఒడ్డే, వడ్డెరాజులు, వడ్డార్ సమాజాల 7 ప్రధాన అఖిల భారత వలస మార్గాలు.'
             : language === 'hi'
             ? 'अभिलेखीय सीमाएं एवं ओड-राजपूत, ओड-क्षत्रिय, वड्डेराजुलु, वड्डार समाजों के ७ प्रमुख अखिल भारतीय प्रवास गलियारे।'
+            : language === 'or'
+            ? 'ଶିଳାଲେଖ ଆଧାରିତ ସୀମା ଏବଂ ଓଡ଼-ରାଜପୁତ, ଓଡ଼-କ୍ଷତ୍ରିୟ, ଓଡ଼ିଆରାଜୁ ଓ ୱଡ୍ଡାର ସମାଜର ୭ଟି ପ୍ରମୁଖ ସର୍ବଭାରତୀୟ ପ୍ରବାସ ମାର୍ଗ।'
+            : language === 'kn'
+            ? 'ಶಾಸನಾಧಾರಿತ ಗಡಿಗಳು ಮತ್ತು ಓಡ್-ರಜಪೂತ್, ಓಡ್-ಕ್ಷತ್ರಿಯ, ಒಡ್ಡೇ, ವಡ್ಡೇರಾಜುಲು, ವಡ್ಡಾರ ಸಮುದಾಯಗಳ 7 ಪ್ರಮುಖ ಅಖಿಲ ಭಾರತೀಯ ವಲಸೆ ಮಾರ್ಗಗಳು.'
+            : language === 'ta'
+            ? 'கல்வெட்டு எல்லைகள் மற்றும் ஓட்-ராஜபுத், ஓட்-சத்திரியர், ஒட்டே, வட்டேராஜுலு சமூகங்களின் 7 முக்கிய அகில இந்தியப் பாதைகள்.'
+            : language === 'mr'
+            ? 'शिलालेखीय सीमा आणि ओड-राजपूत, ओड-क्षत्रिय, ओडियाराजू, वडार समाजांचे ७ प्रमुख अखिल भारतीय प्रवास मार्ग.'
+            : language === 'bn'
+            ? 'শিলালিপিভিত্তিক সীমানা এবং ওড-রাজপুত, ওড-ক্ষত্রিয়, ওডিয়ারাজু ও ওয়াদ্দার সমাজের ৭টি প্রধান সর্বভারতীয় বিস্তার করিডোর।'
             : 'Epigraphic boundary models and comprehensive geographical corridors of the Oad-Rajput, Od-Kshatriya, Odde, VaddeRajulu, and Waddar communities across 7 historic regional zones.'}
         </p>
       </div>
@@ -98,19 +226,30 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
       {activeView === 'cartography' ? (
         <>
           {/* Cartographic Reconstruction Display */}
-          <div className="rounded-3xl bg-[#121622] border border-[#c99738]/40 overflow-hidden shadow-2xl p-6 sm:p-8 space-y-6">
+          <div
+            onClick={openCartographicBannerModal}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openCartographicBannerModal();
+              }
+            }}
+            className="rounded-3xl bg-[#121622] border border-[#c99738]/40 hover:border-[#d4af37] overflow-hidden shadow-2xl p-6 sm:p-8 space-y-6 cursor-pointer transition-all group"
+          >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
                   Corroborated Reconstruction (c. 1465 CE)
                 </span>
-                <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] mt-0.5">
+                <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] group-hover:text-[#e8c872] transition-colors mt-0.5">
                   Territorial Extent of Suryavamsha Gajapathi Empire
                 </h2>
               </div>
               <div className="p-2 px-3 rounded-lg bg-amber-950/40 border border-amber-900/60 text-xs text-amber-300 flex items-center gap-2">
                 <Info className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Epigraphic boundary model; frontiers varied seasonally</span>
+                <span>Click map to inspect Epigraphic Boundary Model</span>
               </div>
             </div>
 
@@ -118,7 +257,7 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
               <img
                 src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&auto=format&fit=crop&q=80"
                 alt="Historical Cartography Map of Eastern India"
-                className="w-full h-full object-cover opacity-80"
+                className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-6">
                 <h3 className="font-royal-heading font-bold text-lg text-white">
@@ -159,8 +298,16 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
               {filteredLocations.map(loc => (
                 <div
                   key={loc.id}
-                  onClick={() => onNavigate(`/temples-monuments`)}
-                  className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738]/60 overflow-hidden shadow-lg transition-all cursor-pointer flex flex-col justify-between group"
+                  onClick={() => openLocationModal(loc)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openLocationModal(loc);
+                    }
+                  }}
+                  className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738]/60 overflow-hidden shadow-lg transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
                 >
                   <div className="h-44 w-full overflow-hidden relative">
                     <img
@@ -215,7 +362,19 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
                   return (
                     <div
                       key={reg.id}
-                      onClick={() => setSelectedCorridor(reg)}
+                      onClick={() => {
+                        setSelectedCorridor(reg);
+                        openCorridorModal(reg);
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedCorridor(reg);
+                          openCorridorModal(reg);
+                        }
+                      }}
                       className={`p-4 rounded-xl cursor-pointer border transition-all ${
                         isSelected
                           ? 'bg-[#580014]/40 border-[#d4af37] shadow-[0_0_15px_rgba(201,151,56,0.2)]'
@@ -253,7 +412,10 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
                   <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
                     Corridor Dossier • {selectedCorridor.states_and_territories.join(', ')}
                   </span>
-                  <h3 className="font-royal-heading font-extrabold text-2xl text-[#fcedc7] mt-1">
+                  <h3
+                    onClick={() => openCorridorModal(selectedCorridor)}
+                    className="font-royal-heading font-extrabold text-2xl text-[#fcedc7] hover:text-[#e8c872] cursor-pointer transition-colors mt-1"
+                  >
                     {selectedCorridor.localized_region[language] || selectedCorridor.region_name}
                   </h3>
                   <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#580014]/60 border border-[#d4af37]/30 text-[#fcedc7] text-xs">
@@ -308,12 +470,12 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
                   </div>
                 </div>
 
-                <div className="pt-2 flex justify-end">
+                <div className="pt-2 flex justify-end gap-3">
                   <button
-                    onClick={() => onNavigate(`/community-heritage?tab=geography&region=${selectedCorridor.id}`)}
+                    onClick={() => openCorridorModal(selectedCorridor)}
                     className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all flex items-center gap-2 cursor-pointer shadow-md"
                   >
-                    <span>Explore Complete Community Heritage Dossier</span>
+                    <span>Open Full Corridor Modal</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -322,6 +484,16 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
           </div>
         </div>
       )}
+
+      {/* Shared Content Detail Modal */}
+      <ContentDetailModal
+        item={modalItem}
+        onClose={() => setActiveModalTarget(null)}
+        onHome={() => {
+          setActiveModalTarget(null);
+          onNavigate('/');
+        }}
+      />
     </div>
   );
 };

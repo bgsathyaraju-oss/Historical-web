@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Users,
   Crown,
@@ -36,11 +36,13 @@ type CategoryFilter = 'all' | 'Royal Sovereignty' | 'Martial Guardians' | 'Civic
 interface CommunityProminentPersonsPageProps {
   onNavigate: (path: string) => void;
   initialBranch?: CommunityBranch | 'all';
+  initialPersonId?: string | null;
 }
 
 export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPageProps> = ({
   onNavigate,
-  initialBranch = 'all'
+  initialBranch = 'all',
+  initialPersonId
 }) => {
   const { language, t } = useLanguage();
   const currentLang = (language as LanguageCode) || 'en';
@@ -50,6 +52,30 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const [searchQuery, setSearchQuery] = useState('');
   const [activeModalPerson, setActiveModalPerson] = useState<ProminentPerson | null>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const targetId =
+      initialPersonId ||
+      new URLSearchParams(window.location.search).get('figure') ||
+      new URLSearchParams(window.location.search).get('id');
+    if (targetId) {
+      const found = PROMINENT_PERSONS.find(p => p.id === targetId);
+      if (found) {
+        setActiveModalPerson(found);
+      }
+    }
+  }, [initialPersonId]);
+
+  useEffect(() => {
+    if (!activeModalPerson) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveModalPerson(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeModalPerson]);
 
   // Localized UI Labels for the page header and controls across all 8 languages
   const pageLabels = useMemo(() => {
@@ -583,7 +609,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             return (
               <div
                 key={person.id}
-                className="bg-[#0f1420] border border-stone-800/90 hover:border-[#c99738]/60 rounded-2xl p-5 sm:p-6 transition-all shadow-lg hover:shadow-2xl hover:shadow-[#580014]/20 flex flex-col justify-between space-y-5 group"
+                onClick={() => setActiveModalPerson(person)}
+                className="bg-[#0f1420] border border-stone-800/90 hover:border-[#c99738]/60 rounded-2xl p-5 sm:p-6 transition-all shadow-lg hover:shadow-2xl hover:shadow-[#580014]/20 flex flex-col justify-between space-y-5 group cursor-pointer"
               >
                 <div className="space-y-4">
                   {/* Top Bar: Badge & Era */}
@@ -635,7 +662,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       return (
                         <button
                           key={branchKey}
-                          onClick={() => setSelectedBranch(branchKey)}
+                          onClick={e => {
+                            e.stopPropagation();
+                            setSelectedBranch(branchKey);
+                          }}
                           className={`text-[10px] px-2 py-0.5 rounded-md font-semibold transition-colors cursor-pointer ${
                             isBranchActive
                               ? 'bg-[#d4af37] text-black font-bold'
@@ -688,7 +718,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleShare(person)}
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleShare(person);
+                      }}
                       className="p-2 rounded-lg bg-[#151c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 text-xs transition-colors cursor-pointer"
                       title={pageLabels.shareLink}
                     >
@@ -696,6 +729,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     </button>
 
                     <a
+                      onClick={e => e.stopPropagation()}
                       href={`https://wa.me/919480112897?text=${encodeURIComponent(
                         `Namaste Dr G. Sathyanarayana Raju ji, I am reading about ${localizedName} (${person.branches.slice(0, 4).join(
                           ', '
@@ -754,8 +788,14 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
       {/* Comprehensive Modal: Full Archival Biography, Contributions, and Primary Sources */}
       {activeModalPerson && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#0e121c] border-2 border-[#c99738] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative text-stone-200">
+        <div
+          onClick={() => setActiveModalPerson(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            className="bg-[#0e121c] border-2 border-[#c99738] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative text-stone-200"
+          >
             {/* Close Button */}
             <button
               onClick={() => setActiveModalPerson(null)}

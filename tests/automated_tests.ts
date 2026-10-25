@@ -1,5 +1,18 @@
 import { runMigrations } from '../server/migrate.ts';
 import { getDb, saveDb } from '../server/db.ts';
+import {
+  getCanonicalGenealogy,
+  getCanonicalClaims,
+  getCanonicalTimelineEvents,
+  getCanonicalLocations,
+  getCanonicalDocuments,
+  getCanonicalGallery,
+  getCanonicalInscriptions,
+  getCanonicalMonuments
+} from '../src/data/archivalSeedData.ts';
+import { getAllArticles } from '../src/data/articlesRepository.ts';
+import { getAllDocumentedFigures } from '../src/data/documentedFiguresRepository.ts';
+import { GENEALOGY_UI_TRANSLATIONS } from '../src/data/multilingualSeedTranslations.ts';
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
@@ -442,6 +455,147 @@ async function runTestSuite() {
     results.push({
       suite: 'Historical Rigor & Primary Citations',
       test: 'Epigraphic transcripts, scholarly references, and verification status integrity',
+      passed: false,
+      error: err.message
+    });
+  }
+
+  // Test 10: Complete 8-Language Seed & Static Repository Audit (Genealogy, Gajapathi Kings, Inscriptions, Monuments, Timeline, Maps, Docs, Gallery)
+  try {
+    const supportedLangs = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'] as const;
+    const enGenealogy = getCanonicalGenealogy('en');
+    const enClaims = getCanonicalClaims('en');
+    const enTimeline = getCanonicalTimelineEvents('en');
+    const enLocations = getCanonicalLocations('en');
+    const enDocuments = getCanonicalDocuments('en');
+    const enGallery = getCanonicalGallery('en');
+    const enInscriptions = getCanonicalInscriptions('en');
+    const enMonuments = getCanonicalMonuments('en');
+
+    for (const lang of supportedLangs) {
+      // 1. Genealogy UI & Nodes
+      const ui = GENEALOGY_UI_TRANSLATIONS[lang];
+      assert(!!ui && !!ui.legendTitle && !!ui.documentedBadge, `Missing GENEALOGY_UI_TRANSLATIONS for ${lang}`);
+      const genNodes = getCanonicalGenealogy(lang);
+      assert(genNodes.length === 9, `Expected 9 genealogy nodes for ${lang}, got ${genNodes.length}`);
+      for (let i = 0; i < genNodes.length; i++) {
+        assert(!!genNodes[i].name && !!genNodes[i].notes, `Empty genealogy node fields in ${lang}`);
+        if (lang !== 'en') {
+          assert(genNodes[i].name !== enGenealogy[i].name, `Genealogy name not translated for ${genNodes[i].id} in ${lang}`);
+          assert(genNodes[i].notes !== enGenealogy[i].notes, `Genealogy notes not translated for ${genNodes[i].id} in ${lang}`);
+        }
+      }
+
+      // 2. Scholarly Claims
+      const claims = getCanonicalClaims(lang);
+      assert(claims.length === 3, `Expected 3 claims for ${lang}`);
+      for (let i = 0; i < claims.length; i++) {
+        if (lang !== 'en') {
+          assert(claims[i].claim_statement !== enClaims[i].claim_statement, `Claim statement not translated for ${claims[i].id} in ${lang}`);
+        }
+      }
+
+      // 3. Timeline Events
+      const timeline = getCanonicalTimelineEvents(lang);
+      assert(timeline.length >= 11, `Expected >= 11 timeline events for ${lang}`);
+      if (lang !== 'en') {
+        assert(timeline[0].title !== enTimeline[0].title, `Timeline title not translated in ${lang}`);
+      }
+
+      // 4. Locations / Maps
+      const locs = getCanonicalLocations(lang);
+      assert(locs.length >= 6, `Expected >= 6 locations for ${lang}`);
+      if (lang !== 'en') {
+        assert(locs[0].name !== enLocations[0].name, `Location name not translated in ${lang}`);
+      }
+
+      // 5. Documents & Gallery
+      const docs = getCanonicalDocuments(lang);
+      assert(docs.length >= 2, `Expected >= 2 documents for ${lang}`);
+      const gal = getCanonicalGallery(lang);
+      assert(gal.length >= 7, `Expected >= 7 gallery items for ${lang}`);
+      if (lang !== 'en') {
+        assert(docs[0].title !== enDocuments[0].title, `Document title not translated in ${lang}`);
+        assert(gal[0].title !== enGallery[0].title, `Gallery title not translated in ${lang}`);
+      }
+
+      // 6. Inscriptions & Monuments (all 3 inscriptions and 4 monuments)
+      const inscs = getCanonicalInscriptions(lang);
+      assert(inscs.length >= 3, `Expected >= 3 inscriptions for ${lang}`);
+      const mons = getCanonicalMonuments(lang);
+      assert(mons.length >= 4, `Expected >= 4 monuments for ${lang}`);
+      if (lang !== 'en') {
+        for (let i = 0; i < inscs.length; i++) {
+          assert(inscs[i].name !== enInscriptions[i].name, `Inscription ${inscs[i].id} name not translated in ${lang}`);
+        }
+        for (let i = 0; i < mons.length; i++) {
+          assert(mons[i].name !== enMonuments[i].name, `Monument ${mons[i].id} name not translated in ${lang}`);
+        }
+      }
+
+      // 7. Articles & Documented Figures (including all 7 Gajapathi monarchs)
+      const arts = getAllArticles(lang);
+      const figs = getAllDocumentedFigures(lang);
+      assert(arts.length >= 7, `Expected >= 7 canonical articles for ${lang}, got ${arts.length}`);
+      assert(figs.length >= 14, `Expected >= 14 canonical figures for ${lang}, got ${figs.length}`);
+      if (lang !== 'en') {
+        const enArts = getAllArticles('en');
+        const enFigs = getAllDocumentedFigures('en');
+        for (let i = 0; i < arts.length; i++) {
+          assert(arts[i].original_title !== enArts[i].original_title, `Article ${arts[i].id} title not translated in ${lang}`);
+        }
+        for (let i = 0; i < figs.length; i++) {
+          assert(figs[i].name !== enFigs[i].name, `Figure ${figs[i].id} name not translated in ${lang}`);
+          assert(figs[i].biography !== enFigs[i].biography, `Figure ${figs[i].id} biography not translated in ${lang}`);
+        }
+      }
+    }
+
+    results.push({
+      suite: 'Multilingual 8-Language System',
+      test: 'Complete 8-language coverage across Genealogy, Gajapathi Kings, Inscriptions, Monuments, Timeline, Maps, Docs & Gallery',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Multilingual 8-Language System',
+      test: 'Complete 8-language coverage across Genealogy, Gajapathi Kings, Inscriptions, Monuments, Timeline, Maps, Docs & Gallery',
+      passed: false,
+      error: err.message
+    });
+  }
+
+  // Test 11: Backend Content API ?lang= Localization Verification
+  try {
+    const endpoints = [
+      { path: '/api/content/genealogy?lang=te', key: 'genealogy', field: 'name' },
+      { path: '/api/content/claims?lang=hi', key: 'claims', field: 'claim_statement' },
+      { path: '/api/content/timeline?lang=or', key: 'events', field: 'title' },
+      { path: '/api/content/locations?lang=kn', key: 'locations', field: 'name' },
+      { path: '/api/content/inscriptions?lang=ta', key: 'inscriptions', field: 'name' },
+      { path: '/api/content/monuments?lang=mr', key: 'monuments', field: 'name' },
+      { path: '/api/content/documents?lang=bn', key: 'documents', field: 'title' },
+      { path: '/api/content/gallery?lang=te', key: 'gallery', field: 'title' }
+    ];
+
+    for (const ep of endpoints) {
+      const res = await fetch(`${BASE_URL}${ep.path}`);
+      assert(res.status === 200, `Expected 200 for ${ep.path}, got ${res.status}`);
+      const data = await res.json();
+      const arr = data[ep.key];
+      assert(Array.isArray(arr) && arr.length > 0, `Expected non-empty array ${ep.key} from ${ep.path}`);
+      assert(typeof arr[0][ep.field] === 'string' && arr[0][ep.field].length > 0, `Expected localized ${ep.field} from ${ep.path}`);
+    }
+
+    results.push({
+      suite: 'Multilingual 8-Language System',
+      test: 'Backend API ?lang= localization for genealogy, claims, timeline, maps, inscriptions, monuments, docs & gallery',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Multilingual 8-Language System',
+      test: 'Backend API ?lang= localization for genealogy, claims, timeline, maps, inscriptions, monuments, docs & gallery',
       passed: false,
       error: err.message
     });

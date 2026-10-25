@@ -1,4 +1,5 @@
 export type LanguageCode = 'en' | 'hi' | 'te' | 'kn' | 'ta' | 'mr' | 'or' | 'bn';
+export type SupportedLanguage = LanguageCode;
 
 export interface LanguageOption {
   code: LanguageCode;

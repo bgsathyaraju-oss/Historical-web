@@ -21,7 +21,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="relative shrink-0">
               <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#e8c872] shadow-xl ring-2 ring-[#580014]">
                 <img
-                  src="/assets/dr_g_sathyanarayana_raju.png"
+                  src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
                   alt={t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
                   className="w-full h-full object-cover object-top"
                 />

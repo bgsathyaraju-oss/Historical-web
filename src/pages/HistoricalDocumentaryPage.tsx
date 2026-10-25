@@ -1,24 +1,142 @@
 import React, { useState, useEffect } from 'react';
-import { Article } from '../types';
+import { Article, LanguageCode } from '../types';
+
+const DOC_PAGE_UI: Record<LanguageCode, {
+  catAll: string;
+  catOdra: string;
+  catGajapathi: string;
+  catDynasties: string;
+  catKings: string;
+  catInscriptions: string;
+  catCulture: string;
+  readBtn: string;
+  viewingLabel: string;
+  openModalBtn: string;
+  emptySelect: string;
+  closeMonograph: string;
+}> = {
+  en: {
+    catAll: 'All Categories',
+    catOdra: 'Odra Desha & Geography',
+    catGajapathi: 'Gajapathi Kings & Empire',
+    catDynasties: 'Dynasties & Lineage',
+    catKings: 'Kings & Progenitors',
+    catInscriptions: 'Inscriptions & Epigraphy',
+    catCulture: 'Culture & Community',
+    readBtn: 'Read',
+    viewingLabel: 'Viewing:',
+    openModalBtn: 'Open Full Monograph Modal',
+    emptySelect: 'Select an article from the documentary archive to read its full empirical investigation.',
+    closeMonograph: 'Close Monograph'
+  },
+  hi: {
+    catAll: 'सभी श्रेणियाँ',
+    catOdra: 'ओड्र देश और भूगोल',
+    catGajapathi: 'गजपति राजा और साम्राज्य',
+    catDynasties: 'राजवंश और वंशावली',
+    catKings: 'राजा और आदि-पुरुष',
+    catInscriptions: 'शिलालेख और पुरालेख',
+    catCulture: 'संस्कृति और समुदाय',
+    readBtn: 'पढ़ें',
+    viewingLabel: 'अवलोकन:',
+    openModalBtn: 'पूर्ण मोनोग्राफ विंडो खोलें',
+    emptySelect: 'पूर्ण ऐतिहासिक शोध पढ़ने के लिए बाएँ पैनल से किसी लेख का चयन करें।',
+    closeMonograph: 'मोनोग्राफ बंद करें'
+  },
+  te: {
+    catAll: 'అన్ని విభాగాలు',
+    catOdra: 'ఓడ్ర దేశం & భౌగోళికత',
+    catGajapathi: 'గజపతి రాజులు & సామ్రాజ్యం',
+    catDynasties: 'రాజవంశాలు & వంశావళి',
+    catKings: 'రాజులు & ఆది పురుషులు',
+    catInscriptions: 'శాసనాలు & ఎపిగ్రఫీ',
+    catCulture: 'సంస్కృతి & సమాజం',
+    readBtn: 'చదవండి',
+    viewingLabel: 'చూస్తున్నది:',
+    openModalBtn: 'పూర్తి మోనోగ్రాఫ్ విండో తెరవండి',
+    emptySelect: 'పూర్తి పరిశోధనా వ్యాసాన్ని చదవడానికి జాబితా నుండి ఒక వ్యాసాన్ని ఎంచుకోండి.',
+    closeMonograph: 'మోనోగ్రాఫ్ మూసివేయండి'
+  },
+  kn: {
+    catAll: 'ಎಲ್ಲಾ ವರ್ಗಗಳು',
+    catOdra: 'ಓಡ್ರ ದೇಶ ಮತ್ತು ಭೂಗೋಳ',
+    catGajapathi: 'ಗಜಪತಿ ರಾಜರು ಮತ್ತು ಸಾಮ್ರಾಜ್ಯ',
+    catDynasties: 'ರಾಜವಂಶಗಳು ಮತ್ತು ವಂಶಾವಳಿ',
+    catKings: 'ರಾಜರು ಮತ್ತು ಆದಿಪುರುಷರು',
+    catInscriptions: 'ಶಾಸನಗಳು ಮತ್ತು ಎಪಿಗ್ರಫಿ',
+    catCulture: 'ಸಂಸ್ಕೃತಿ ಮತ್ತು ಸಮುದಾಯ',
+    readBtn: 'ಓದಿ',
+    viewingLabel: 'ವೀಕ್ಷಿಸಲಾಗುತ್ತಿದೆ:',
+    openModalBtn: 'ಪೂರ್ಣ ಮೊನೊಗ್ರಾಫ್ ವಿಂಡೋ ತೆರೆಯಿರಿ',
+    emptySelect: 'ಸಂಪೂರ್ಣ ಸಂಶೋಧನಾ ಲೇಖನವನ್ನು ಓದಲು ಪಟ್ಟಿಯಿಂದ ಲೇಖನವನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
+    closeMonograph: 'ಮೊನೊಗ್ರಾಫ್ ಮುಚ್ಚಿ'
+  },
+  ta: {
+    catAll: 'அனைத்து பிரிவுகள்',
+    catOdra: 'ஒட்டர தேசம் & புவியியல்',
+    catGajapathi: 'கஜபதி மன்னர்கள் & பேரரசு',
+    catDynasties: 'வம்சங்கள் & வம்சாவளி',
+    catKings: 'மன்னர்கள் & முன்னோடிகள்',
+    catInscriptions: 'கல்வெட்டுகள் & சாசனங்கள்',
+    catCulture: 'கலாச்சாரம் & சமூகம்',
+    readBtn: 'படிக்க',
+    viewingLabel: 'பார்க்கப்படுகிறது:',
+    openModalBtn: 'முழு ஆய்வுக் கட்டுரை சாளரத்தைத் திற',
+    emptySelect: 'முழுமையான வரலாற்று ஆய்வைப் படிக்க பட்டியலிலிருந்து ஒரு கட்டுரையைத் தேர்ந்தெடுக்கவும்.',
+    closeMonograph: 'ஆய்வுக் கட்டுரையை மூடு'
+  },
+  mr: {
+    catAll: 'सर्व श्रेणी',
+    catOdra: 'ओड्र देश आणि भूगोल',
+    catGajapathi: 'गजपती राजे आणि साम्राज्य',
+    catDynasties: 'राजवंश आणि वंशावळ',
+    catKings: 'राजे आणि पूर्वज',
+    catInscriptions: 'शिलालेख आणि कोरीव लेख',
+    catCulture: 'संस्कृती आणि समुदाय',
+    readBtn: 'वाचा',
+    viewingLabel: 'पाहत आहे:',
+    openModalBtn: 'पूर्ण मोनोग्राफ विंडो उघडा',
+    emptySelect: 'संपूर्ण संशोधन लेख वाचण्यासाठी यादीतून एक लेख निवडा.',
+    closeMonograph: 'मोनोग्राफ बंद करा'
+  },
+  or: {
+    catAll: 'ସମସ୍ତ ବିଭାଗ',
+    catOdra: 'ଓଡ଼୍ର ଦେଶ ଓ ଭୂଗୋଳ',
+    catGajapathi: 'ଗଜପତି ରାଜା ଓ ସାମ୍ରାଜ୍ୟ',
+    catDynasties: 'ରାଜବଂଶ ଓ ବଂଶାବଳୀ',
+    catKings: 'ରାଜା ଓ ଆଦିପୁରୁଷ',
+    catInscriptions: 'ଶିଳାଲେଖ ଓ ଅଭିଲେଖ',
+    catCulture: 'ସଂସ୍କୃତି ଓ ସମାଜ',
+    readBtn: 'ପଢ଼ନ୍ତୁ',
+    viewingLabel: 'দেখୁଛନ୍ତି:',
+    openModalBtn: 'ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍ ୱିଣ୍ଡୋ ଖୋଲନ୍ତୁ',
+    emptySelect: 'ସମ୍ପୂର୍ଣ୍ଣ ଗବେଷଣା ପ୍ରବନ୍ଧ ପଢ଼ିବାକୁ ତାଲିକାରୁ ଗୋଟିଏ ପ୍ରବନ୍ଧ ବାଛନ୍ତୁ।',
+    closeMonograph: 'ମୋନୋଗ୍ରାଫ୍ ବନ୍ଦ କରନ୍ତୁ'
+  },
+  bn: {
+    catAll: 'সকল বিভাগ',
+    catOdra: 'ওড্র দেশ ও ভূগোল',
+    catGajapathi: 'গজপতি রাজা ও সাম্রাজ্য',
+    catDynasties: 'রাজবংশ ও বংশলতিকা',
+    catKings: 'রাজা ও আদিপুরুষ',
+    catInscriptions: 'শিলালিপি ও অভিলেখ',
+    catCulture: 'সংস্কৃতি ও সমাজ',
+    readBtn: 'পড়ুন',
+    viewingLabel: 'দেখছেন:',
+    openModalBtn: 'সম্পূর্ণ মনোগ্রাফ উইন্ডো খুলুন',
+    emptySelect: 'সম্পূর্ণ গবেষণা নিবন্ধটি পড়তে তালিকা থেকে একটি নিবন্ধ নির্বাচন করুন।',
+    closeMonograph: 'মনোগ্রাফ বন্ধ করুন'
+  }
+};
 import {
   BookOpen,
   Search,
-  Filter,
-  ShieldCheck,
   ChevronRight,
-  Calendar,
-  User,
-  Sparkles,
-  X,
-  Copy,
-  Check,
-  Share2,
-  Maximize2,
-  Scroll,
-  ArrowLeft
+  Maximize2
 } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { ArticleDetailView } from '../components/ArticleDetailView';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 import { useLanguage } from '../context/LanguageContext';
 import { getAllArticles } from '../data/articlesRepository';
 
@@ -29,6 +147,7 @@ interface DocumentaryPageProps {
 
 export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ initialArticleId, onNavigate }) => {
   const { language, t, translationManager, getArticleContent, getMetadataLabel } = useLanguage();
+  const ui = DOC_PAGE_UI[language] || DOC_PAGE_UI.en;
   
   // Guarantee immediate 100% visibility in any browser with zero network latency
   const initialArticles = getAllArticles(language);
@@ -43,7 +162,6 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
   const [isModalOpen, setIsModalOpen] = useState<boolean>(() => Boolean(initialArticleId));
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [copied, setCopied] = useState(false);
 
   // Synchronize articles on language change, with background server sync
   useEffect(() => {
@@ -74,42 +192,14 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
     }
   }, [initialArticleId, articles]);
 
-  // Handle ESC key to close modal and body scroll prevention
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsModalOpen(false);
-      }
-    };
-    if (isModalOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
-
-  const handleCopyLink = () => {
-    if (!selectedArticle) return;
-    const url = `${window.location.origin}${window.location.pathname}?article=${encodeURIComponent(selectedArticle.id)}`;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    });
-  };
-
   const categories = [
-    { key: 'all', label: 'All Categories' },
-    { key: 'Odra Desha & Regional History', label: 'Odra Desha & Geography' },
-    { key: 'Gajapathi Kingdom & Empire', label: 'Gajapathi Kings & Empire' },
-    { key: 'Dynasties and Genealogy', label: 'Dynasties & Lineage' },
-    { key: 'Kings and Queens', label: 'Kings & Progenitors' },
-    { key: 'Inscriptions and Archaeological Evidence', label: 'Inscriptions & Epigraphy' },
-    { key: 'Culture & Heritage', label: 'Culture & Community' }
+    { key: 'all', label: ui.catAll },
+    { key: 'Odra Desha & Regional History', label: ui.catOdra },
+    { key: 'Gajapathi Kingdom & Empire', label: ui.catGajapathi },
+    { key: 'Dynasties and Genealogy', label: ui.catDynasties },
+    { key: 'Kings and Queens', label: ui.catKings },
+    { key: 'Inscriptions and Archaeological Evidence', label: ui.catInscriptions },
+    { key: 'Culture & Heritage', label: ui.catCulture }
   ];
 
   const normQuery = (searchQuery || '').normalize('NFC').toLowerCase().trim();
@@ -140,6 +230,40 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
     );
   });
 
+  const modalItem: ContentDetailItem | null = selectedArticle
+    ? (() => {
+        const { title, summary, content } = getArticleContent(selectedArticle);
+        return {
+          id: selectedArticle.id,
+          badge: t.documentary?.badge || 'Suryavamsha Historical Monograph Treatise',
+          category: getMetadataLabel('category', selectedArticle.category) || selectedArticle.category,
+          title,
+          datesOrEra: selectedArticle.publication_date,
+          authorOrRuler: `Author / Compiler: ${selectedArticle.author_name}`,
+          imageUrl: selectedArticle.featured_image,
+          imageCaption: `${title} (${selectedArticle.category})`,
+          imageStyle: 'banner',
+          evidenceCategory: selectedArticle.evidence_category,
+          verificationStatus: selectedArticle.verification_status,
+          summary,
+          content,
+          sources: (selectedArticle.sources || []).map((src, i) => ({
+            id: src.id || `src-${i}`,
+            source_type: src.source_type,
+            title: src.title,
+            details: `${src.author_or_authority} • ${src.publication_or_location} (${src.year_or_era}) — ${src.citation_details}`,
+            verified: src.verified
+          })),
+          tags: selectedArticle.tags,
+          shareUrl: `${window.location.origin}${window.location.pathname}?article=${encodeURIComponent(selectedArticle.id)}`,
+          actionButton: {
+            label: t.nav?.inscriptions || 'Explore Epigraphic Corpus',
+            onClick: () => onNavigate('/inscriptions')
+          }
+        };
+      })()
+    : null;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
       {/* Page Header */}
@@ -156,7 +280,7 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
         </p>
       </div>
 
-      {/* Filter and Search Bar (Single, Non-Duplicated Toolbar) */}
+      {/* Filter and Search Bar */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#121622] border border-stone-800 shadow-md">
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
           {categories.map(cat => (
@@ -245,7 +369,7 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
                     <div className="flex items-center gap-2 shrink-0">
                       <span>{art.publication_date}</span>
                       <span className="inline-flex items-center gap-0.5 text-[#d4af37] text-[10px] font-semibold group-hover:translate-x-0.5 transition-transform">
-                        <span>Read</span>
+                        <span>{ui.readBtn}</span>
                         <ChevronRight className="w-3 h-3" />
                       </span>
                     </div>
@@ -262,16 +386,16 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3 bg-[#121622] p-3 rounded-2xl border border-stone-800">
                 <span className="text-xs text-stone-400 font-royal-heading">
-                  Viewing: <strong className="text-[#fae29c]">{getArticleContent(selectedArticle).title}</strong>
+                  {ui.viewingLabel} <strong className="text-[#fae29c]">{getArticleContent(selectedArticle).title}</strong>
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(true)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37]/60 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
-                  title="Open Full Popup Modal"
+                  title={ui.openModalBtn}
                 >
                   <Maximize2 className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span>Open Full Monograph Modal</span>
+                  <span>{ui.openModalBtn}</span>
                 </button>
               </div>
 
@@ -288,211 +412,21 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({ init
             </div>
           ) : (
             <div className="rounded-3xl bg-[#111520] border border-stone-800 p-12 text-center text-stone-400">
-              Select an article from the documentary archive to read its full empirical investigation.
+              {ui.emptySelect}
             </div>
           )}
         </div>
       </div>
 
-      {/* Centered, Responsive Modal Dialog for Selected Historical Monograph */}
-      {isModalOpen && selectedArticle && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="monograph-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              setIsModalOpen(false);
-            }
-          }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
-        >
-          <div className="bg-[#0e121c] border-2 border-[#c99738] rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl relative text-stone-200 overflow-hidden">
-            {/* Pinned Modal Header Bar (Ensures Close button is never scrolled away) */}
-            <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-3 bg-[#121622] rounded-t-2xl sm:rounded-t-3xl shrink-0">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <BookOpen className="w-5 h-5 text-[#d4af37] shrink-0" />
-                <div className="min-w-0">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#d4af37] block truncate">
-                    {t.documentary?.badge || 'Suryavamsha Historical Monograph Treatise'}
-                  </span>
-                  <h2 id="monograph-modal-title" className="text-sm sm:text-lg font-bold font-royal-heading text-[#fae29c] truncate">
-                    {getArticleContent(selectedArticle).title}
-                  </h2>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#161c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 transition-all cursor-pointer"
-                  title="Copy direct link to this monograph"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-[#d4af37]" />}
-                  <span className="hidden sm:inline">{copied ? 'Copied' : 'Share'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2 sm:p-2.5 rounded-xl bg-stone-900 hover:bg-[#580014] text-stone-300 hover:text-white border border-stone-700 hover:border-[#d4af37] transition-all cursor-pointer"
-                  aria-label="Close dialog (Escape)"
-                  title="Close (Escape)"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Scrollable Content Container (Smooth internal scroll on mobile & desktop) */}
-            <div className="p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 scrollbar-thin">
-              {/* Monograph Header / Metadata Banner */}
-              <div className="space-y-3 border-b border-stone-800 pb-5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-3 py-0.5 rounded-full bg-stone-900 border border-stone-800">
-                    {getMetadataLabel('category', selectedArticle.category) || selectedArticle.category}
-                  </span>
-                  <EvidenceBadge category={selectedArticle.evidence_category} size="sm" />
-                  <span className="text-emerald-400 font-semibold text-xs flex items-center gap-1 bg-stone-900 px-2.5 py-0.5 rounded-full border border-stone-800">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{selectedArticle.verification_status}</span>
-                  </span>
-                </div>
-
-                <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7] leading-tight">
-                  {getArticleContent(selectedArticle).title}
-                </h3>
-
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-stone-400">
-                  <span className="flex items-center gap-1.5 text-stone-300">
-                    <User className="w-3.5 h-3.5 text-[#d4af37]" />
-                    <span>Author / Compiler: <strong className="text-[#fae29c]">{selectedArticle.author_name}</strong></span>
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#d4af37]" />
-                    <span>Published: {selectedArticle.publication_date}</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Featured Image if available */}
-              {selectedArticle.featured_image && (
-                <figure className="relative rounded-2xl overflow-hidden border border-[#c99738]/40 shadow-xl bg-stone-950">
-                  <img
-                    src={selectedArticle.featured_image}
-                    alt={getArticleContent(selectedArticle).title}
-                    className="w-full h-56 sm:h-72 md:h-80 object-cover"
-                  />
-                  <figcaption className="p-3 bg-stone-950/90 border-t border-stone-800/80 text-xs text-stone-300 flex items-center justify-between">
-                    <span className="text-[#d4af37] font-semibold">Corroborated Historical Artifact / Location</span>
-                    <span className="text-stone-400 truncate max-w-xs">{getArticleContent(selectedArticle).title}</span>
-                  </figcaption>
-                </figure>
-              )}
-
-              {/* Executive Summary / Abstract */}
-              <div className="p-5 rounded-2xl bg-gradient-to-r from-[#20050c]/80 via-[#180309]/80 to-[#121622] border-l-4 border-[#d4af37] border-y border-r border-stone-800/80 text-stone-200 shadow-inner space-y-1.5">
-                <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37] flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Executive Introduction & Historical Scope</span>
-                </div>
-                <p className="font-royal-serif text-xs sm:text-sm leading-relaxed text-[#fcedc7]/95">
-                  {getArticleContent(selectedArticle).summary}
-                </p>
-              </div>
-
-              {/* Complete Monograph Body Content (Never Truncated) */}
-              <div className="space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                  <BookOpen className="w-4 h-4 text-[#d4af37]" />
-                  <span>Full Monograph Treatise & Archival Documentation</span>
-                </h4>
-                <div className="p-5 sm:p-6 rounded-2xl bg-[#0c0f17] border border-stone-800/90 font-royal-serif text-xs sm:text-sm text-stone-300 leading-relaxed space-y-4 whitespace-pre-line">
-                  {getArticleContent(selectedArticle).content}
-                </div>
-              </div>
-
-              {/* Primary Sources & Citations */}
-              {selectedArticle.sources && selectedArticle.sources.length > 0 && (
-                <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                    <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
-                    <span>Primary Inscriptions, Citations & Sources ({selectedArticle.sources.length})</span>
-                  </h4>
-                  <div className="space-y-2">
-                    {selectedArticle.sources.map((src, i) => (
-                      <div
-                        key={src.id || i}
-                        className="p-3.5 rounded-xl bg-[#141926] border border-stone-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
-                      >
-                        <div className="space-y-0.5">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-semibold text-[#d4af37] uppercase bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
-                              {src.source_type}
-                            </span>
-                            <span className="font-bold text-stone-200">{src.title}</span>
-                          </div>
-                          <p className="text-stone-400 text-[11px]">
-                            {src.author_or_authority} • {src.publication_or_location} ({src.year_or_era}) — {src.citation_details}
-                          </p>
-                        </div>
-                        {src.verified && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-semibold bg-emerald-950/40 border border-emerald-800 px-2 py-0.5 rounded-full shrink-0">
-                            <Check className="w-3 h-3" /> Verified Source
-                          </span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Tags & Thematic Keywords */}
-              {selectedArticle.tags && selectedArticle.tags.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-stone-800">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading block">
-                    Thematic Keywords & Epigraphic Tags:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedArticle.tags.map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#182030] text-[#fae29c] border border-[#c99738]/30"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Pinned Modal Footer */}
-            <div className="p-4 sm:p-5 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 bg-[#121622] rounded-b-2xl sm:rounded-b-3xl shrink-0">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  onNavigate('/inscriptions');
-                }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#182030] hover:bg-[#20293d] text-[#fae29c] border border-[#c99738]/40 transition-all cursor-pointer"
-              >
-                <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span>{t.nav?.inscriptions || 'Explore Epigraphic Corpus'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="px-5 py-2 rounded-xl text-xs font-bold bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37] transition-all cursor-pointer shadow-md active:scale-95"
-              >
-                Close Monograph
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Shared Reusable Content Detail Modal */}
+      <ContentDetailModal
+        item={modalItem}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        closeLabel={ui.closeMonograph}
+      />
     </div>
   );
 };
+
 

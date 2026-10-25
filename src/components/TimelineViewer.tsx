@@ -1,22 +1,124 @@
 import React, { useState } from 'react';
-import { HistoricalEvent } from '../types';
-import { Calendar, AlertCircle, BookOpen, ShieldCheck, MapPin } from 'lucide-react';
+import { HistoricalEvent, LanguageCode } from '../types';
+import { Calendar, AlertCircle, BookOpen, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { ContentDetailModal, ContentDetailItem } from './ContentDetailModal';
 
 interface TimelineViewerProps {
   events: HistoricalEvent[];
 }
 
+const TIMELINE_VIEWER_UI: Record<
+  LanguageCode,
+  {
+    dateLabel: string;
+    epochLabel: string;
+    devLabel: string;
+    viewDossierBtn: string;
+  }
+> = {
+  en: {
+    dateLabel: 'Chronological Date',
+    epochLabel: 'Historical Epoch',
+    devLabel: 'Political & Historical Development',
+    viewDossierBtn: 'View Complete Chronological Dossier'
+  },
+  hi: {
+    dateLabel: 'कालानुक्रमिक तिथि',
+    epochLabel: 'ऐतिहासिक युग',
+    devLabel: 'राजनीतिक एवं ऐतिहासिक विकास',
+    viewDossierBtn: 'संपूर्ण कालानुक्रमिक विवरण देखें'
+  },
+  te: {
+    dateLabel: 'చారిత్రక తేదీ / కాలం',
+    epochLabel: 'చారిత్రక యుగం',
+    devLabel: 'రాజకీయ & చారిత్రక పరిణామం',
+    viewDossierBtn: 'పూర్తి చారిత్రక వివరాలు చూడండి'
+  },
+  kn: {
+    dateLabel: 'ಕಾಲಾನುಕ್ರಮ ದಿನಾಂಕ',
+    epochLabel: 'ಐತಿಹಾಸಿಕ ಯುಗ',
+    devLabel: 'ರಾಜಕೀಯ ಮತ್ತು ಐತಿಹಾಸಿಕ ಬೆಳವಣಿಗೆ',
+    viewDossierBtn: 'ಸಂಪೂರ್ಣ ಕಾಲಾನುಕ್ರಮ ವಿವರ ನೋಡಿ'
+  },
+  ta: {
+    dateLabel: 'காலவரிசைத் தேதி',
+    epochLabel: 'வரலாற்று சகாப்தம்',
+    devLabel: 'அரசியல் மற்றும் வரலாற்று வளர்ச்சி',
+    viewDossierBtn: 'முழு காலவரிசை ஆவணம் காண்க'
+  },
+  mr: {
+    dateLabel: 'कालानुक्रमिक तारीख',
+    epochLabel: 'ऐतिहासिक युग',
+    devLabel: 'राजकीय आणि ऐतिहासिक घडामोडी',
+    viewDossierBtn: 'संपूर्ण कालानुक्रमिक तपशील पहा'
+  },
+  or: {
+    dateLabel: 'କାଳକ୍ରମିକ ସମୟ',
+    epochLabel: 'ଐତିହାସିକ ଯୁଗ',
+    devLabel: 'ରାଜନୈତିକ ଓ ଐତିହାସିକ ଘଟଣାକ୍ରମ',
+    viewDossierBtn: 'ସମ୍ପୂର୍ଣ୍ଣ କାଳକ୍ରମିକ ବିବରଣୀ ଦେଖନ୍ତୁ'
+  },
+  bn: {
+    dateLabel: 'কালানুক্রমিক তারিখ',
+    epochLabel: 'ঐতিহাসিক যুগ',
+    devLabel: 'রাজনৈতিক ও ঐতিহাসিক বিকাশ',
+    viewDossierBtn: 'সম্পূর্ণ কালানুক্রমিক বিবরণ দেখুন'
+  }
+};
+
 export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
-  const { t } = useLanguage();
-  const [selectedEvent, setSelectedEvent] = useState<HistoricalEvent | null>(null);
+  const { t, language } = useLanguage();
+  const ui = TIMELINE_VIEWER_UI[language] || TIMELINE_VIEWER_UI.en;
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState('');
+
+  const selectedEvent = selectedEventId ? events.find(e => e.id === selectedEventId) || null : null;
 
   const filteredEvents = events.filter(e =>
     e.title.toLowerCase().includes(searchFilter.toLowerCase()) ||
     e.year_text.toLowerCase().includes(searchFilter.toLowerCase()) ||
     e.rulers_involved.toLowerCase().includes(searchFilter.toLowerCase())
   );
+
+  const buildEventModalItem = (item: HistoricalEvent | null): ContentDetailItem | null => {
+    if (!item) return null;
+    const sections: NonNullable<ContentDetailItem['sections']> = [
+      {
+        heading: t.timeline.evidenceLabel || 'Corroborating Monuments & Inscriptions',
+        type: 'text',
+        content: item.monuments_inscriptions
+      }
+    ];
+    if (item.uncertainty_notes) {
+      sections.push({
+        heading: t.timeline.methodologyLabel || 'Historiographical & Methodological Notes',
+        type: 'quote',
+        content: item.uncertainty_notes
+      });
+    }
+    return {
+      id: item.id,
+      title: item.title,
+      subtitle: `${t.timeline.rulerLabel}: ${item.rulers_involved}`,
+      badge: `${item.year_text} • ${item.period}`,
+      verificationStatus: 'Documented Chronological Record',
+      metadata: [
+        { label: ui.dateLabel, value: item.year_text },
+        { label: ui.epochLabel, value: item.period },
+        { label: t.timeline.rulerLabel || 'Rulers Involved', value: item.rulers_involved }
+      ],
+      fullText: item.political_development,
+      fullTextLabel: ui.devLabel,
+      sections,
+      sources: item.primary_sources
+        ? item.primary_sources.split(';').map(s => s.trim()).filter(Boolean).map(src => ({
+            title: src,
+            type: t.timeline.citationsLabel || 'Primary Historical Source'
+          }))
+        : []
+    };
+  };
 
   return (
     <div className="w-full space-y-6">
@@ -50,7 +152,15 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
 
             {/* Event Card */}
             <div
-              onClick={() => setSelectedEvent(selectedEvent?.id === item.id ? null : item)}
+              onClick={() => setSelectedEventId(item.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedEventId(item.id);
+                }
+              }}
               className="p-5 rounded-2xl bg-[#131724] border border-stone-800/90 hover:border-[#c99738]/60 hover:bg-[#181e2e] transition-all cursor-pointer shadow-md"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
@@ -79,7 +189,7 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
                 </span>
               </div>
 
-              {/* Uncertainty Notes & Primary Sources (Expandable or Always visible) */}
+              {/* Uncertainty Notes & Primary Sources */}
               <div className="mt-3 pt-3 border-t border-stone-800/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                 <div className="flex items-start gap-2 text-stone-400">
                   <BookOpen className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
@@ -99,10 +209,23 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
                   </div>
                 )}
               </div>
+
+              <div className="mt-3 pt-2 flex justify-end">
+                <span className="text-[11px] font-semibold text-[#e8c872] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                  <span>{ui.viewDossierBtn}</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </div>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Detailed Timeline Event Modal */}
+      <ContentDetailModal
+        item={buildEventModalItem(selectedEvent)}
+        onClose={() => setSelectedEventId(null)}
+      />
     </div>
   );
 };

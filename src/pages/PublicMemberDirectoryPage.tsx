@@ -2,22 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { UserProfile } from '../types';
 import { Users, Search, Filter, MapPin, Briefcase, GraduationCap, Globe, Shield, Heart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { CANONICAL_MEMBERS } from '../data/archivalSeedData';
 
 export const PublicMemberDirectoryPage: React.FC = () => {
   const { user } = useAuth();
-  const [members, setMembers] = useState<UserProfile[]>([]);
+  const [members, setMembers] = useState<UserProfile[]>(CANONICAL_MEMBERS);
   const [search, setSearch] = useState('');
   const [stateFilter, setStateFilter] = useState('All');
   const [selectedMember, setSelectedMember] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
   useEffect(() => {
     fetch('/api/community/directory')
-      .then(r => r.json())
-      .then(d => setMembers(d.members || []))
-      .catch(console.error)
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => {
+        if (d && Array.isArray(d.members) && d.members.length > 0) {
+          setMembers(d.members);
+        }
+      })
+      .catch(() => {
+        // Fallback to CANONICAL_MEMBERS when running on static GitHub Pages
+      })
       .finally(() => setLoading(false));
   }, []);
 

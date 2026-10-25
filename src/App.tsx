@@ -60,9 +60,29 @@ function getNormalizedAppPath(rawPath: string): string {
   return path || '/';
 }
 
+function consumeSpaRedirect(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = sessionStorage.getItem('spa-redirect');
+    if (!raw) return;
+    sessionStorage.removeItem('spa-redirect');
+    const parsed = JSON.parse(raw) as { path?: string; query?: string; hash?: string };
+    const normalizedPath = getNormalizedAppPath(parsed.path || '/');
+    const query = parsed.query || '';
+    const hash = parsed.hash || '';
+    const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+    const cleanPath = normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`;
+    const fullUrl = `${basePath}${cleanPath}${query}${hash}`;
+    window.history.replaceState({ path: fullUrl }, '', fullUrl);
+  } catch {
+    // Ignore malformed sessionStorage payload
+  }
+}
+
 function AppContent() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
     if (typeof window === 'undefined') return '/';
+    consumeSpaRedirect();
     return getNormalizedAppPath(window.location.pathname);
   });
   const [searchParam, setSearchParam] = useState<string | null>(() => {
@@ -129,7 +149,7 @@ function AppContent() {
         return <OdraDeshaPage onNavigate={navigateTo} />;
       case '/gajapathi-kings':
       case '/dynasties':
-        return <GajapathiKingdomPage onNavigate={navigateTo} />;
+        return <GajapathiKingdomPage onNavigate={navigateTo} initialItemId={searchParam} />;
       case '/kings-queens':
       case '/documented-historical-figures':
       case '/historical-figures':
@@ -138,9 +158,9 @@ function AppContent() {
       case '/prominent-persons':
       case '/community-figures':
       case '/prominent-figures':
-        return <CommunityProminentPersonsPage onNavigate={navigateTo} />;
+        return <CommunityProminentPersonsPage onNavigate={navigateTo} initialPersonId={searchParam} />;
       case '/historical-persons':
-        return <CommunityHeritagePage onNavigate={navigateTo} initialTab="figures" />;
+        return <CommunityHeritagePage onNavigate={navigateTo} initialTab="figures" initialItemId={searchParam} />;
       case '/genealogy':
         return <RoyalGenealogyPage onNavigate={navigateTo} />;
       case '/maps':
@@ -148,14 +168,14 @@ function AppContent() {
       case '/timeline':
         return <HistoricalTimelinePage onNavigate={navigateTo} />;
       case '/inscriptions':
-        return <InscriptionsPage onNavigate={navigateTo} />;
+        return <InscriptionsPage onNavigate={navigateTo} initialInscriptionId={searchParam} />;
       case '/temples-monuments':
         return <TemplesMonumentsPage onNavigate={navigateTo} />;
       case '/documents':
         return <HistoricalDocumentsPage />;
       case '/research':
       case '/articles':
-        return <ResearchArticlesPage onNavigate={navigateTo} />;
+        return <ResearchArticlesPage onNavigate={navigateTo} initialArticleId={searchParam} />;
       case '/gallery':
       case '/media':
         return <HistoricalGalleryPage />;
@@ -167,12 +187,13 @@ function AppContent() {
       case '/references':
         return <HistoricalReferencesPage />;
       case '/community-heritage':
-        return <CommunityHeritagePage onNavigate={navigateTo} />;
+        return <CommunityHeritagePage onNavigate={navigateTo} initialItemId={searchParam} />;
       case '/community-activities':
         return <CommunityActivitiesPage onNavigate={navigateTo} />;
       case '/events':
         return <EventsAnnouncementsPage onNavigate={navigateTo} />;
       case '/directory':
+      case '/members':
         return <PublicMemberDirectoryPage />;
       case '/register':
         return <MemberRegistrationPage onNavigate={navigateTo} />;

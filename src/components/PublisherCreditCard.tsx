@@ -20,7 +20,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
   const { t } = useLanguage();
   const whatsappGreeting = t.publisher?.whatsappGreeting || 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal';
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
-  const imageSrc = "/assets/dr_g_sathyanarayana_raju.png";
+  const imageSrc = `${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`;
 
   const designedByText = t.publisher?.designedAndPublishedBy || 'WebSite Design and Published by';
   const publisherName = t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju';

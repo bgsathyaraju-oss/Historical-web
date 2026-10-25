@@ -3,6 +3,7 @@ import { HistoricalEvent } from '../types';
 import { Calendar, Scroll, BookOpen, AlertCircle } from 'lucide-react';
 import { TimelineViewer } from '../components/TimelineViewer';
 import { useLanguage } from '../context/LanguageContext';
+import { getCanonicalTimelineEvents } from '../data/archivalSeedData';
 
 interface HistoricalTimelinePageProps {
   onNavigate?: (path: string) => void;
@@ -10,14 +11,17 @@ interface HistoricalTimelinePageProps {
 
 export const HistoricalTimelinePage: React.FC<HistoricalTimelinePageProps> = ({ onNavigate }) => {
   const { t, language } = useLanguage();
-  const [events, setEvents] = useState<HistoricalEvent[]>([]);
+  const [events, setEvents] = useState<HistoricalEvent[]>(() => getCanonicalTimelineEvents(language));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setEvents(getCanonicalTimelineEvents(language));
     fetch(`/api/content/timeline?lang=${language}`)
-      .then(r => r.json())
-      .then(d => setEvents(d.events || []))
-      .catch(console.error)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d?.events && d.events.length > 0) setEvents(d.events);
+      })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, [language]);
 

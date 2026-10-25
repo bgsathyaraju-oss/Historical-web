@@ -1,76 +1,276 @@
-import React from 'react';
-import { Award, BookOpen, Users, HeartHandshake, Calendar, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Award, BookOpen, Users, Calendar, ArrowRight } from 'lucide-react';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
+import { useLanguage } from '../context/LanguageContext';
+import { SupportedLanguage } from '../types';
 
 interface CommunityActivitiesPageProps {
   onNavigate: (path: string) => void;
 }
 
-export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = ({ onNavigate }) => {
+const PAGE_HEADERS: Record<SupportedLanguage, { badge: string; title: string; subtitle: string; viewDetails: string }> = {
+  en: {
+    badge: 'Educational & Cultural Outreach',
+    title: 'Community Activities & Heritage Initiatives',
+    subtitle: 'Educational scholarships, manuscript digitization drives, youth historical literacy workshops, and annual heritage tours connecting families with their ancestral roots.',
+    viewDetails: 'View Initiative Details'
+  },
+  hi: {
+    badge: 'शैक्षिक और सांस्कृतिक पहल',
+    title: 'सामुदायिक गतिविधियाँ और विरासत पहल',
+    subtitle: 'शैक्षिक छात्रवृत्ति, पांडुलिपि डिजिटलीकरण अभियान, युवा ऐतिहासिक साक्षरता कार्यशालाएं और वार्षिक विरासत यात्राएं जो परिवारों को उनकी पैतृक जड़ों से जोड़ती हैं।',
+    viewDetails: 'पहल का विवरण देखें'
+  },
+  te: {
+    badge: 'విద్యా & సాంస్కృతిక కార్యక్రమాలు',
+    title: 'సామాజిక కార్యక్రమాలు & వారసత్వ చొరవలు',
+    subtitle: 'విద్యా స్కాలర్‌షిప్‌లు, తాళపత్ర డిజిటైజేషన్ డ్రైవ్‌లు, యువత చారిత్రక అవగాహన వర్క్‌షాప్‌లు మరియు కుటుంబాలను వారి పూర్వీకుల మూలాలతో అనుసంధానించే వార్షిక వారసత్వ యాత్రలు.',
+    viewDetails: 'కార్యక్రమ వివరాలు చూడండి'
+  },
+  kn: {
+    badge: 'ಶೈಕ್ಷಣಿಕ ಮತ್ತು ಸಾಂಸ್ಕೃತಿಕ ಕಾರ್ಯಕ್ರಮಗಳು',
+    title: 'ಸಮುದಾಯ ಚಟುವಟಿಕೆಗಳು ಮತ್ತು ಪರಂಪರೆಯ ಉಪಕ್ರಮಗಳು',
+    subtitle: 'ಶೈಕ್ಷಣಿಕ ವಿದ್ಯಾರ್ಥಿವೇತನಗಳು, ಹಸ್ತಪ್ರತಿ ಡಿಜಿಟಲೀಕರಣ ಅಭಿಯಾನಗಳು, ಯುವ ಐತಿಹಾಸಿಕ ಸಾಕ್ಷರತಾ ಕಾರ್ಯಾಗಾರಗಳು ಮತ್ತು ಕುಟುಂಬಗಳನ್ನು ಅವರ ಪೂರ್ವಜರ ಬೇರುಗಳೊಂದಿಗೆ ಬೆಸೆಯುವ ವಾರ್ಷಿಕ ಪರಂಪರೆಯ ಪ್ರವಾಸಗಳು.',
+    viewDetails: 'ಉಪಕ್ರಮದ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ'
+  },
+  ta: {
+    badge: 'கல்வி மற்றும் கலாச்சார முன்னெடுப்புகள்',
+    title: 'சமூக செயல்பாடுகள் & பாரம்பரிய முயற்சிகள்',
+    subtitle: 'கல்வி உதவித்தொகைகள், ஓலைச்சுவடி எண்மயமாக்கல் இயக்கங்கள், இளைஞர் வரலாற்று விழிப்புணர்வு பயிலரங்குகள் மற்றும் குடும்பங்களை அவர்களின் பூர்வீக வேர்களுடன் இணைக்கும் வருடாந்திர பாரம்பரியப் பயணங்கள்.',
+    viewDetails: 'முயற்சி விவரங்களைக் காண்க'
+  },
+  mr: {
+    badge: 'शैक्षणिक आणि सांस्कृतिक उपक्रम',
+    title: 'सामुदायिक उपक्रम आणि वारसा मोहिमा',
+    subtitle: 'शैक्षणिक शिष्यवृत्ती, हस्तलिखित डिजिटायझेशन मोहीम, युवा ऐतिहासिक साक्षरता कार्यशाळा आणि कुटुंबांना त्यांच्या पूर्वजांच्या मुळांशी जोडणाऱ्या वार्षिक वारसा सहली.',
+    viewDetails: 'उपक्रमाचा तपशील पहा'
+  },
+  or: {
+    badge: 'ଶୈକ୍ଷିକ ଏବଂ ସାଂସ୍କୃତିକ ପଦକ୍ଷେପ',
+    title: 'ସାମୁଦାୟିକ କାର୍ଯ୍ୟକ୍ରମ ଏବଂ ଐତିହ୍ୟ ଅଭିଯାନ',
+    subtitle: 'ଶିକ୍ଷା বୃତ୍ତି, ତାଳପତ୍ର ପୋଥି ଡିଜିଟାଇଜେସନ୍ ଅଭିଯାନ, ଯୁବ ଐତିହାସିକ ସାକ୍ଷରତା କର୍ମଶାଳା ଏବଂ ପରିବାରଗୁଡ଼ିକୁ ସେମାନଙ୍କ ପୈତୃକ ମୂଳ ସହିତ ଯୋଡ଼ୁଥିବା ବାର୍ଷିକ ଐତିହ୍ୟ ଯାତ୍ରା।',
+    viewDetails: 'ଅଭିଯାନ ବିବରଣୀ ଦେଖନ୍ତୁ'
+  },
+  bn: {
+    badge: 'শিক্ষামূলক ও সাংস্কৃতিক উদ্যোগ',
+    title: 'সামাজিক কার্যক্রম ও ঐতিহ্যবাহী উদ্যোগ',
+    subtitle: 'শিক্ষাবৃত্তি, পাণ্ডুলিপি ডিজিটাইজেশন অভিযান, যুব ঐতিহাসিক সাক্ষরতা কর্মশালা এবং পরিবারগুলোকে তাদের পৈতৃক শিকড়ের সাথে যুক্ত করার বার্ষিক ঐতিহ্য ভ্রমণ।',
+    viewDetails: 'উদ্যোগের বিবরণ দেখুন'
+  }
+};
+
+export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = () => {
+  const { language } = useLanguage();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const hdr = PAGE_HEADERS[language] || PAGE_HEADERS.en;
+
+  const activities = [
+    {
+      id: 'act-manuscript-preservation',
+      icon: BookOpen,
+      iconStyle: 'bg-[#580014] text-[#d4af37]',
+      title: {
+        en: 'Digital Manuscript Preservation Drive',
+        hi: 'डिजिटल पांडुलिपि संरक्षण अभियान',
+        te: 'డిజిటల్ తాళపత్ర పరిరక్షణ ఉద్యమం',
+        kn: 'ಡಿಜಿಟಲ್ ಹಸ್ತಪ್ರತಿ ಸಂರಕ್ಷಣಾ ಅಭಿಯಾನ',
+        ta: 'டிஜிட்டல் ஓலைச்சுவடி பாதுகாப்பு இயக்கம்',
+        mr: 'डिजिटल हस्तलिखित जतन मोहीम',
+        or: 'ଡିଜିଟାଲ୍ ତାଳପତ୍ର ପୋଥି ସଂରକ୍ଷଣ ଅଭିଯାନ',
+        bn: 'ডিজিটাল পাণ্ডুলিপি সংরক্ষণ অভিযান'
+      }[language],
+      badge: 'Archival Conservation Initiative',
+      summary: {
+        en: 'Equipping trained local volunteers with high-resolution macro photography kits to digitize family-held palm-leaf manuscripts and copper-plates in rural settlements before physical degradation occurs.',
+        hi: 'ग्रामीण बस्तियों में परिवारों के पास संरक्षित ताड़पत्र पांडुलिपियों और ताम्रपत्रों के भौतिक क्षरण से पहले उन्हें डिजिटल रूप देने के लिए प्रशिक्षित स्थानीय स्वयंसेवकों को उच्च-रिज़ॉल्यूशन मैक्रो फोटोग्राफी किट से लैस करना।',
+        te: 'గ్రామీణ ప్రాంతాల్లో కుటుంబాల వద్ద ఉన్న తాళపత్ర గ్రంథాలు మరియు తామ్రశాసనాలను భౌతికంగా పాడైపోకముందే డిజిటైజ్ చేయడానికి శిక్షణ పొందిన స్థానిక వాలంటీర్లకు హై-రిజల్యూషన్ మాక్రో ఫోటోగ్రఫీ కిట్‌లను అందించడం.',
+        kn: 'ಗ್ರಾಮೀಣ ವಸতিಗಳಲ್ಲಿ ಕುಟುಂಬಗಳು ಹೊಂದಿರುವ ತಾಳೆಗರಿ ಹಸ್ತಪ್ರತಿಗಳು ಮತ್ತು ತಾಮ್ರಪಟಗಳನ್ನು ಭೌತಿಕವಾಗಿ ಹಾಳಾಗುವ ಮೊದಲು ಡಿಜಿಟಲೀಕರಿಸಲು ತರಬೇತಿ ಪಡೆದ ಸ್ಥಳೀಯ ಸ್ವಯಂಸೇವಕರಿಗೆ ಹೈ-ರೆಸಲ್ಯೂಶನ್ ಮ್ಯಾಕ್ರೋ ಫೋಟೋಗ್ರಫಿ ಕಿಟ್‌ಗಳನ್ನು ಒದಗಿಸುವುದು.',
+        ta: 'கிராமப்புற குடியிருப்புகளில் குடும்பங்களிடம் உள்ள ஓலைச்சுவடிகள் மற்றும் செப்பேடுகள் சிதைவதற்கு முன்பே அவற்றை எண்மயமாக்க பயிற்சி பெற்ற உள்ளூர் தன்னார்வலர்களுக்கு உயர்தர மேக்ரோ புகைப்படக் கருவிகளை வழங்குதல்.',
+        mr: 'ग्रामीण भागातील कुटुंबांकडे जतन केलेल्या ताडपत्र हस्तलिखिते आणि ताम्रपटांचे भौतिक नुकसान होण्यापूर्वी त्यांचे डिजिटायझेशन करण्यासाठी प्रशिक्षित स्थानिक स्वयंसेवकांना हाय-रिझोल्यूशन मॅक्रो फोटोग्राफी किट्स देणे.',
+        or: 'ଗ୍ରାମାଞ୍ଚଳରେ ପରିବାର ପାଖରେ ଥିବା ତାଳପତ୍ର ପୋଥି ଏବଂ ତାମ୍ରଫଳକଗୁଡ଼ିକ ନଷ୍ଟ ହେବା ପୂର୍ବରୁ ସେଗୁଡ଼ିକୁ ଡିଜିଟାଇଜ୍ କରିବା ପାଇଁ ପ୍ରଶିକ୍ଷିତ ସ୍ଥାନୀୟ ସ୍ୱେଚ୍ଛାସେବীମାନଙ୍କୁ ହାଇ-ରିଜୋଲ୍ୟୁସନ୍ ମାକ୍ରୋ ଫଟୋଗ୍ରାଫି କିଟ୍ ପ୍ରଦାନ କରିବା।',
+        bn: 'গ্রামীণ জনপদে পরিবারগুলোর কাছে সংরক্ষিত তালপাতার পাণ্ডুলিপি এবং তাম্রশাসন ভৌতভাবে নষ্ট হওয়ার আগেই ডিজিটাইজ করার জন্য প্রশিক্ষিত স্থানীয় স্বেচ্ছাসেবকদের হাই-রেজোলিউশন ম্যাক্রো ফটোগ্রাফি কিট প্রদান করা।'
+      }[language],
+      content: {
+        en: 'Many families across Odisha, Andhra Pradesh, Telangana, Karnataka, Tamil Nadu, and Maharashtra preserve heirloom palm-leaf horoscopes, vamsavali scrolls, and copper-plate grants. Our Digital Manuscript Preservation Drive trains regional volunteers in non-destructive macro photography, archival cataloguing, and palaeographic transcription so that fragile records are permanently preserved in the community digital repository while remaining in the custody of their rightful owners.',
+        hi: 'ओडिशा, आंध्र प्रदेश, तेलंगाना, कर्नाटक, तमिलनाडु और महाराष्ट्र में कई परिवार पैतृक ताड़पत्र कुंडलियां, वंशावली स्क्रॉल और ताम्रपत्र अनुदान सुरक्षित रखते हैं। हमारा डिजिटल पांडुलिपि संरक्षण अभियान क्षेत्रीय स्वयंसेवकों को गैर-विनाशकारी मैक्रो फोटोग्राफी, अभिलेखीय सूचीकरण और पुरालिपि प्रतिलेखन में प्रशिक्षित करता है ताकि नाजुक अभिलेख अपने वास्तविक मालिकों के पास रहते हुए सामुदायिक डिजिटल कोष में स्थायी रूप से संरक्षित रहें।',
+        te: 'ఒడిశా, ఆంధ్రప్రదేశ్, తెలంగాణ, కర్ణాటక, తమిళనాడు మరియు మహారాష్ట్ర వ్యాప్తంగా అనేక కుటుంబాలు వారసత్వ తాళపత్ర జాతకాలు, వంశావళి పత్రాలు మరియు తామ్రశాసనాలను భద్రపరుస్తున్నాయి. మా డిజిటల్ తాళపత్ర పరిరక్షణ ఉద్యమం ప్రాంతీయ వాలంటీర్లకు మాక్రో ఫోటోగ్రఫీ మరియు పురాతన లిపి లిప్యంతరీకరణలో శిక్షణనిస్తుంది.',
+        kn: 'ಒಡಿಶಾ, ಆಂಧ್ರಪ್ರದೇಶ, ತೆಲಂಗಾಣ, ಕರ್ನಾಟಕ, ತಮಿಳುನಾಡು ಮತ್ತು ಮಹಾರಾಷ್ಟ್ರದಾದ್ಯಂತ ಅನೇಕ ಕುಟುಂಬಗಳು ಪೂರ್ವಜರ ತಾಳೆಗರಿ ಜಾತಕಗಳು, ವಂಶಾವಳಿ சுರುಳಿಗಳು ಮತ್ತು ತಾಮ್ರಪಟಗಳನ್ನು ಸಂರಕ್ಷಿಸಿವೆ. ನಮ್ಮ ಡಿಜಿಟಲ್ ಹಸ್ತಪ್ರತಿ ಸಂರಕ್ಷಣಾ ಅಭಿಯಾನವು ಪ್ರಾದೇಶಿಕ ಸ್ವಯಂಸೇವಕರಿಗೆ ಮ್ಯಾಕ್ರೋ ಫೋಟೋಗ್ರಫಿ ಮತ್ತು ಲಿಪ್ಯಂತರಣದಲ್ಲಿ ತರಬೇತಿ ನೀಡುತ್ತದೆ.',
+        ta: 'ஒடிசா, ஆந்திரப் பிரதேசம், தெலுங்கானா, கர்நாடகா, தமிழ்நாடு மற்றும் மகாராஷ்டிரா முழுவதும் பல குடும்பங்கள் பரம்பரை ஓலைச்சுவடிகள், வம்சாவளி சுருள்கள் மற்றும் செப்பேடுகளைப் பாதுகாத்து வருகின்றன. எமது எண்மயமாக்கல் இயக்கம் தன்னார்வலர்களுக்குப் பயிற்சி அளித்து இவற்றை ஆவணப்படுத்துகிறது.',
+        mr: 'ओडिशा, आंध्र प्रदेश, तेलंगणा, कर्नाटक, तामिळनाडू आणि महाराष्ट्रातील अनेक कुटुंबे वडिलोपार्जित ताडपत्र कुंडल्या, वंशावळ आणि ताम्रपट जतन करतात. आमची डिजिटल हस्तलिखित जतन मोहीम स्वयंसेवकांना मॅक्रो फोटोग्राफी आणि लिप्यंतरणाचे प्रशिक्षण देते.',
+        or: 'ଓଡ଼ିଶା, ଆନ୍ଧ୍ରପ୍ରଦେଶ, ତେଲେଙ୍ଗାନା, କର୍ଣ୍ଣାଟକ, ତାମିଲନାଡୁ ଏବଂ ମହାରାଷ୍ଟ୍ରର ଅନେକ ପରିବାର ପୈତୃକ ତାଳପତ୍ର ଜାତକ, ବଂଶାବଳୀ ଏବଂ ତାମ୍ରଫଳକ ସଂରକ୍ଷଣ କରି ରଖିଛନ୍ତି। ଆମର ଡିଜିଟାଲ୍ ପୋଥି ସଂରକ୍ଷଣ ଅଭିଯାନ ଆଞ୍ଚଳିକ ସ୍ୱେଚ୍ଛାସେବୀମାନଙ୍କୁ ମାକ୍ରୋ ଫଟୋଗ୍ରାଫି ଏବଂ ଲିপ୍ୟନ୍ତରଣରେ ପ୍ରଶିକ୍ଷଣ ଦେଇଥାଏ।',
+        bn: 'ওড়িশা, অন্ধ্রপ্রদেশ, তেলেঙ্গানা, কর্ণাটক, তামিলনাড়ু এবং মহারাষ্ট্র জুড়ে বহু পরিবার পৈতৃক তালপাতার কুণ্ডলী, বংশাবলী এবং তাম্রশাসন সংরক্ষণ করে। আমাদের ডিজিটাল পাণ্ডুলিপি সংরক্ষণ অভিযান আঞ্চলিক স্বেচ্ছাসেবকদের ম্যাক্রো ফটোগ্রাফি এবং লিপ্যন্তরে প্রশিক্ষণ দেয়।'
+      }[language]
+    },
+    {
+      id: 'act-research-fellowships',
+      icon: Award,
+      iconStyle: 'bg-stone-800 text-[#d4af37]',
+      title: {
+        en: 'Historical Research Fellowships',
+        hi: 'ऐतिहासिक शोध फेलोशिप',
+        te: 'చారిత్రక పరిశోధన ఫెలోషిప్‌లు',
+        kn: 'ಐತಿಹಾಸಿಕ ಸಂಶೋಧನಾ ಫೆಲೋಶಿಪ್‌ಗಳು',
+        ta: 'வரலாற்று ஆராய்ச்சி உதவித்தொகைகள்',
+        mr: 'ऐतिहासिक संशोधन फेलोशिप',
+        or: 'ଐତିହାସିକ ଗବେଷଣା ଫେଲୋସିପ୍',
+        bn: 'ঐতিহাসিক গবেষণা ফেলোশিপ'
+      }[language],
+      badge: 'Academic Grant Program',
+      summary: {
+        en: 'Financial grants supporting graduate and doctoral students transcribing unpublished epigraphs of the Suryavamshi rulers, regional dialect variants, and medieval Odra administrative terminology.',
+        hi: 'सूर्यवंशी शासकों के अप्रकाशित शिलालेखों, क्षेत्रीय बोली रूपों और मध्यकालीन ओड्र प्रशासनिक शब्दावली का प्रतिलेखन करने वाले स्नातकोत्तर और डॉक्टरेट छात्रों को वित्तीय अनुदान।',
+        te: 'సూర్యవంశ పాలకుల అప్రకటిత శాసనాలు, ప్రాంతీయ భాషా రూపాలు మరియు మధ్యయుగ ఓడ్ర పరిపాలనా పదజాలాన్ని లిప్యంతరీకరించే పరిశోధక విద్యార్థులకు ఆర్థిక గ్రాంట్లు.',
+        kn: 'ಸೂರ್ಯವಂಶದ ಅರಸರ ಅಪ್ರಕಟಿತ ಶಾಸನಗಳು, ಪ್ರಾದೇಶಿಕ ಉಪಭಾಷೆಗಳು ಮತ್ತು ಮಧ್ಯಕಾಲೀನ ಓಡ್ರ ಆಡಳಿತಾತ್ಮಕ ಪದಕೋಶವನ್ನು ಲಿಪ್ಯಂತರ ಮಾಡುವ ಸಂಶೋಧನಾ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಆರ್ಥಿಕ ಅನುದಾನ.',
+        ta: 'சூர்யவம்ச மன்னர்களின் பதிப்பிக்கப்படாத கல்வெட்டுகள் மற்றும் இடைக்கால ஒட்ர நிர்வாகச் சொற்களை ஆய்வு செய்யும் முதுகலை மற்றும் முனைவர் பட்ட மாணவர்களுக்கான நிதி நல்கைகள்.',
+        mr: 'सूर्यवंशी शासकांचे अप्रकाशित शिलालेख आणि मध्ययुगीन ओड्र प्रशासकीय परिभाषेचा अभ्यास करणाऱ्या पदव्युत्तर आणि पीएच.डी. विद्यार्थ्यांना आर्थिक अनुदान.',
+        or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଶାସକମାନଙ୍କର ଅପ୍ରକାଶିତ ଶିଳାଲେଖ ଏବଂ ମଧ୍ୟযୁଗୀୟ ଓଡ୍ର ପ୍ରଶାସନିକ ଶବ୍ଦାବଳୀ ଉପରେ ଗବେଷଣା କରୁଥିବା ସ୍ନାତକୋତ୍ତର ଏବଂ ପିଏଚ୍.ଡି. ଛାତ୍ରଛାତ୍ରୀଙ୍କ ପାଇଁ ଆର୍ଥିକ ଅନୁଦାନ।',
+        bn: 'সূর্যবংশী শাসকদের অপ্রকাশিত শিলালিপি এবং মধ্যযুগীয় ওড্র প্রশাসনিক পরিভাষা নিয়ে গবেষণারত স্নাতকোত্তর ও ডক্টরাল শিক্ষার্থীদের আর্থিক অনুদান।'
+      }[language],
+      content: {
+        en: 'Our Historical Research Fellowships provide stipends and archival travel support for M.Phil. and Ph.D. scholars working in Indian History, Epigraphy, Linguistics, and Archaeology. Priority areas include translating unedited temple inscriptions at Simhachalam, Srikurmam, and Draksharama, and documenting the socio-economic history of medieval fort garrisons and hydraulic guilds.',
+        hi: 'हमारी ऐतिहासिक शोध फेलोशिप भारतीय इतिहास, पुरालेखशास्त्र, भाषाविज्ञान और पुरातत्व में काम करने वाले एम.फिल. और पीएच.डी. शोधार्थियों को वजीफा और अभिलेखीय यात्रा सहायता प्रदान करती है। प्राथमिकता वाले क्षेत्रों में सिंहाचलम, श्रीकूर्मम और द्राक्षाराम के मंदिर शिलालेखों का अनुवाद शामिल है।',
+        te: 'భారతీయ చరిత్ర, శాసన పరిశోధన, భాషాశాస్త్రం మరియు పురావస్తు శాస్త్రంలో పనిచేస్తున్న ఎం.ఫిల్ మరియు పిహెచ్.డి పరిశోధకులకు మా చారిత్రక పరిశోధన ఫెలోషిప్‌లు స్టైపెండ్‌లు మరియు ప్రయాణ సహాయాన్ని అందిస్తాయి. సింహాచలం, శ్రీకూర్మం మరియు ద్రాక్షారామం శాసనాల అనువాదానికి ప్రాధాన్యత ఇవ్వబడుతుంది.',
+        kn: 'ನಮ್ಮ ಐತಿಹಾಸಿಕ ಸಂಶೋಧನಾ ಫೆಲೋಶಿಪ್‌ಗಳು ಭಾರತೀಯ ಇತಿಹಾಸ, ಶಾಸನಶಾಸ್ತ್ರ, ಭಾಷಾಶಾಸ್ತ್ರ ಮತ್ತು ಪುರಾತತ್ತ್ವ ಶಾಸ್ತ್ರದಲ್ಲಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿರುವ ಎಂ.ಫಿಲ್ ಮತ್ತು ಪಿಎಚ್.ಡಿ ಸಂಶೋಧಕರಿಗೆ ಶಿಷ್ಯವೇತನ ಮತ್ತು ಪ್ರಯಾಣ ಬೆಂಬಲವನ್ನು ನೀಡುತ್ತವೆ.',
+        ta: 'இந்திய வரலாறு, கல்வெட்டியல், மொழியியல் மற்றும் தொல்லியலில் பணிபுரியும் எம்.பில் மற்றும் பிஎச்.டி ஆய்வாளர்களுக்கு எமது ஆராய்ச்சி உதவித்தொகை திட்டம் நிதியுதவி மற்றும் பயண ஆதரவை வழங்குகிறது.',
+        mr: 'आमची ऐतिहासिक संशोधन फेलोशिप भारतीय इतिहास, पुरालेखशास्त्र, भाषाशास्त्र आणि पुरातत्त्वशास्त्रात काम करणाऱ्या एम.फिल. आणि पीएच.डी. संशोधकांना शिष्यवृत्ती आणि प्रवास साहाय्य प्रदान करते.',
+        or: 'ଆମର ଐତିହାସିକ ଗବେଷଣା ଫେଲୋସିପ୍ ଭାରତୀୟ ଇତିହାସ, ଶିଳାଲେଖ ବିଜ୍ଞାନ, ଭାଷାତତ୍ତ୍ୱ ଏବଂ ପ୍ରତ୍ନତତ୍ତ୍ୱରେ କାର୍ଯ୍ୟ କରୁଥିବା ଏମ୍.ଫିଲ୍ ଏବଂ ପିଏଚ୍.ଡି. ଗବେଷକମାନଙ୍କୁ ବୃତ୍ତି ଓ ଯାତ୍ରା ସହାୟତା ପ୍ରଦାନ କରେ।',
+        bn: 'আমাদের ঐতিহাসিক গবেষণা ফেলোশিপ ভারতীয় ইতিহাস, প্রত্নলিপিবিদ্যা, ভাষাতত্ত্ব এবং প্রত্নতত্ত্বে কর্মরত এম.ফিল. ও পিএইচ.ডি. গবেষকদের বৃত্তি ও আর্কাইভাল ভ্রমণ সহায়তা প্রদান করে।'
+      }[language]
+    },
+    {
+      id: 'act-heritage-tours',
+      icon: Calendar,
+      iconStyle: 'bg-stone-800 text-[#d4af37]',
+      title: {
+        en: 'Annual Heritage Exploration Tours',
+        hi: 'वार्षिक विरासत अन्वेषण यात्राएँ',
+        te: 'వార్షిక వారసత్వ అన్వేషణ యాత్రలు',
+        kn: 'ವಾರ್ಷಿಕ ಪರಂಪರೆಯ ಅನ್ವೇಷಣಾ ಪ್ರವಾಸಗಳು',
+        ta: 'வருடாந்திர பாரம்பரிய ஆய்வுப் பயணங்கள்',
+        mr: 'वार्षिक वारसा शोध सहली',
+        or: 'ବାର୍ଷିକ ଐତିହ୍ୟ ଅନ୍ୱେଷଣ ଯାତ୍ରା',
+        bn: 'বার্ষিক ঐতিহ্য অন্বেষণ ভ্রমণ'
+      }[language],
+      badge: 'On-Site Field Expeditions',
+      summary: {
+        en: 'Guided multi-day heritage caravans visiting Barabati Fort, Puri, Konark, Kondavidu, and Udayagiri with leading academic epigraphists and architectural historians.',
+        hi: 'प्रमुख अकादमिक पुरालेखवेत्ताओं और स्थापत्य इतिहासकारों के साथ बाराबती किला, पुरी, कोणार्क, कोंडावीडु और उदयगिरि का दौरा करने वाले बहु-दिवसीय विरासत कारवां।',
+        te: 'ప్రముఖ శాసన పరిశోధకులు మరియు వాస్తు చరిత్రకారులతో కలిసి బారాబతి కోట, పూరీ, కోణార్క్, కొండవీడు మరియు ఉదయగిరిని సందర్శించే బహుళ-రోజుల వారసత్వ యాత్రలు.',
+        kn: 'ಪ್ರಮುಖ ಶಾಸನತಜ್ಞರು ಮತ್ತು ವಾಸ್ತುಶಿಲ್ಪ ಇತಿಹಾಸಕಾರರೊಂದಿಗೆ ಬಾರಾಬತಿ ಕೋಟೆ, ಪುರಿ, ಕೋನಾರ್ಕ್, ಕೊಂಡವೀಡು ಮತ್ತು ಉದಯಗಿರಿಯನ್ನು ಭೇಟಿ ಮಾಡುವ ಬಹು-ದಿನಗಳ ಪರಂಪರೆಯ ಪ್ರವಾಸಗಳು.',
+        ta: 'முன்னணி கல்வெட்டு அறிஞர்கள் மற்றும் கட்டிடக்கலை வரலாற்றாசிரியர்களுடன் பாராபதி கோட்டை, பூரி, கொனார்க், கொண்டவீடு மற்றும் உதயகிரியைப் பார்வையிடும் பாரம்பரியப் பயணங்கள்.',
+        mr: 'प्रमुख पुरालेखतज्ज्ञ आणि स्थापत्य इतिहासकारांसह बाराबती किल्ला, पुरी, कोणार्क, कोंडावीडू आणि उदयगिरीला भेट देणाऱ्या बहु-दिवसीय वारसा सहली.',
+        or: 'ପ୍ରମୁଖ ଶିଳାଲେଖ ବିଶେଷଜ୍ଞ ଏବଂ ସ୍ଥାପତ୍ୟ ଇତିହାସକାରମାନଙ୍କ ସହିତ ବାରବାଟୀ ଦୁର୍ଗ, ପୁରୀ, କୋଣାର୍କ, କୋଣ୍ଡାଭିଡୁ ଏବଂ ଉଦୟଗିରି ପରିଦର୍ଶନ କରୁଥିବା ବହୁ-ଦିବସୀୟ ଐତିହ୍ୟ ଯାତ୍ରା।',
+        bn: 'বিশিষ্ট প্রত্নলিপিবিদ এবং স্থাপত্য ইতিহাসবিদদের সাথে বারাবাটি দুর্গ, পুরী, কোনার্ক, কোন্ডাভিডু এবং উদয়গিরি পরিদর্শনকারী বহু-দিনের ঐতিহ্য ক্যারাভান।'
+      }[language],
+      content: {
+        en: 'Each winter, the Foundation organizes guided heritage expeditions across the historic Kalinga-Utkala and Andhra corridors. Participants walk the ramparts of Barabati Fort, Udayagiri, and Kondavidu, inspect original stone inscriptions in situ, and engage in on-site seminars led by historians and archaeologists.',
+        hi: 'प्रत्येक सर्दियों में, फाउंडेशन ऐतिहासिक कलिंग-उत्कल और आंध्र गलियारों में निर्देशित विरासत अभियानों का आयोजन करता है। प्रतिभागी बाराबती किले, उदयगिरि और कोंडावीडु की प्राचीरों का भ्रमण करते हैं और मूल शिलालेखों का प्रत्यक्ष निरीक्षण करते हैं।',
+        te: 'ప్రతి శీతాకాలంలో, ఫౌండేషన్ చారిత్రక కళింగ-ఉత్కళ మరియు ఆంధ్ర కారిడార్లలో మార్గదర్శక వారసత్వ యాత్రలను నిర్వహిస్తుంది. పాల్గొనేవారు బారాబతి కోట, ఉదయగిరి మరియు కొండవీడు కోటలను సందర్శించి, అసలు శిలాశాసనాలను ప్రత్యక్షంగా పరిశీలిస్తారు.',
+        kn: 'ಪ್ರತಿ ಚಳಿಗಾಲದಲ್ಲಿ ಪ್ರತಿಷ್ಠಾನವು ಐತಿಹಾಸಿಕ ಕಳಿಂಗ-ಉತ್ಕಲ ಮತ್ತು ಆಂಧ್ರ ಕಾರಿಡಾರ್‌ಗಳಲ್ಲಿ ಮಾರ್ಗದರ್ಶಿತ ಪರಂಪರೆಯ ಯಾತ್ರೆಗಳನ್ನು ಆಯೋಜಿಸುತ್ತದೆ. ಭಾಗವಹಿಸುವವರು ಬಾರಾಬತಿ ಕೋಟೆ, ಉದಯಗಿರಿ ಮತ್ತು ಕೊಂಡವೀಡು ಕೋಟೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ ಮೂಲ ಶಿಲಾಶಾಸನಗಳನ್ನು ಸ್ಥಳದಲ್ಲೇ ಪರಿಶೀಲಿಸುತ್ತಾರೆ.',
+        ta: 'ஒவ்வொரு குளிர்காலத்திலும், வரலாற்றுச் சிறப்புமிக்க கலிங்க-உத்கல மற்றும் ஆந்திர வழித்தடங்களில் வழிகாட்டப்பட்ட பாரம்பரியப் பயணங்களை அறக்கட்டளை ஏற்பாடு செய்கிறது.',
+        mr: 'प्रत्येक हिवाळ्यात, फाउंडेशन ऐतिहासिक कलिंग-उत्कल आणि आंध्र कॉरिडॉरमध्ये मार्गदर्शित वारसा मोहिमांचे आयोजन करते. सहभागी बाराबती किल्ला, उदयगिरी आणि कोंडावीडूच्या तटबंदीला भेट देऊन मूळ शिलालेखांचे निरीक्षण करतात.',
+        or: 'ପ୍ରତି ଶୀତଋତୁରେ ଫାଉଣ୍ଡେସନ୍ ଐତିହାସିକ କଳିଙ୍ଗ-ଉତ୍କଳ ଏବଂ ଆନ୍ଧ୍ର କରିଡରରେ ମାର୍ଗଦର୍ଶିତ ଐତିହ୍ୟ ଅଭିଯାନ ଆୟୋଜନ କରିଥାଏ। ଅଂଶଗ୍ରହଣକାରୀମାନେ ବାରବାଟୀ ଦୁର୍ଗ, ଉଦୟଗିରି ଏବଂ କୋଣ୍ଡାଭିଡୁ ପରିଦର୍ଶନ କରି ମୂଳ ଶିଳାଲେଖଗୁଡ଼ିକର ନିରୀକ୍ଷଣ କରନ୍ତି।',
+        bn: 'প্রতি শীতকালে ফাউন্ডেশন ঐতিহাসিক কলিঙ্গ-উৎকল ও অন্ধ্র করিডোর জুড়ে গাইডেড হেরিটেজ অভিযানের আয়োজন করে। অংশগ্রহণকারীরা বারাবাটি দুর্গ, উদয়গিরি ও কোন্ডাভিডু পরিদর্শন করেন এবং মূল শিলালিপি প্রত্যক্ষ করেন।'
+      }[language]
+    },
+    {
+      id: 'act-fraternal-forums',
+      icon: Users,
+      iconStyle: 'bg-stone-800 text-[#d4af37]',
+      title: {
+        en: 'Community Matrimonial & Fraternal Forums',
+        hi: 'सामुदायिक भ्रातृ एवं पारिवारिक मंच',
+        te: 'సామాజిక సౌభ్రాతృత్వ & కుటుంబ వేదికలు',
+        kn: 'ಸಮುದಾಯ ಭ್ರಾತೃತ್ವ ಮತ್ತು ಕುಟುಂಬ ವೇದಿಕೆಗಳು',
+        ta: 'சமூக சகோதரத்துவ & குடும்ப மன்றங்கள்',
+        mr: 'सामुदायिक बंधुभाव आणि कौटुंबिक मंच',
+        or: 'ସାମୁଦାୟିକ ଭ୍ରାତୃତ୍ୱ ଏବଂ ପାରିବାରିକ ମଞ୍ଚ',
+        bn: 'সামাজিক ভ্রাতৃত্ব ও পারিবারিক ফোরাম'
+      }[language],
+      badge: 'Pan-Indian Community Network',
+      summary: {
+        en: 'Verified, secure communication networks allowing community families across state borders to connect respectfully while honoring traditional gotra and kula lineages.',
+        hi: 'पारंपरिक गोत्र और कुल वंशावलियों का सम्मान करते हुए राज्य की सीमाओं के पार सामुदायिक परिवारों को सम्मानपूर्वक जोड़ने वाला सत्यापित, सुरक्षित संचार नेटवर्क।',
+        te: 'సాంప్రదాయ గోత్ర మరియు కుల వంశాలను గౌరవిస్తూ రాష్ట్ర సరిహద్దుల గుండా కమ్యూనిటీ కుటుంబాలు పరస్పరం గౌరవప్రదంగా అనుసంధానమయ్యే సురక్షిత నెట్‌వర్క్.',
+        kn: 'ಸಾಂಪ್ರದಾಯಿಕ ಗೋತ್ರ ಮತ್ತು ಕುಲ ಪರಂಪರೆಯನ್ನು ಗೌರವಿಸುತ್ತಾ ರಾಜ್ಯಗಳ ಗಡಿಗಳನ್ನು ಮೀರಿ ಸಮುದಾಯದ ಕುಟುಂಬಗಳು ಪರಸ್ಪರ ಸಂಪರ್ಕಿಸಲು ಅನುವು ಮಾಡಿಕೊಡುವ ಸುರಕ್ಷಿತ ಜಾಲ.',
+        ta: 'பாரம்பரிய கோத்திரம் மற்றும் குல மரபுகளை மதித்து, மாநில எல்லைகளைக் கடந்து சமூகக் குடும்பங்கள் பாதுகாப்பாக இணைய உதவும் சரிபார்க்கப்பட்ட தொடர்பு தளம்.',
+        mr: 'पारंपारिक गोत्र आणि कुल वंशावळींचा आदर राखून राज्यांच्या सीमांपलीकडील समाज बांधवांना जोडणारे सुरक्षित व सत्यापित संवाद जाळे.',
+        or: 'ପାରମ୍ପରିକ ଗୋତ୍ର ଏବଂ କୁଳ ବଂଶାବଳୀର ସମ୍ମାନ ରଖି ରାଜ୍ୟ ସୀମା ଆରପାରିରେ ଥିବା ସାମୁଦାୟିକ ପରିବାରଗୁଡ଼ିକୁ ପରସ୍ପର ସହ ଯୋଡ଼ୁଥିବା ସୁରକ୍ଷିତ ଯୋଗାଯୋଗ ନେଟୱାର୍କ।',
+        bn: 'ঐতিহ্যবাহী গোত্র এবং কুল বংশধারাকে সম্মান জানিয়ে রাজ্যের সীমানা ছাড়িয়ে সম্প্রদায়ের পরিবারগুলোকে যুক্ত করার নিরাপদ ও যাচাইকৃত যোগাযোগ নেটওয়ার্ক।'
+      }[language],
+      content: {
+        en: 'By connecting regional associations of Suryavamsha Odiyaraju Kshatriya, Oad-Rajput, Od-Khandayat, VaddeRajulu, and Wadar families across India, our fraternal forums foster educational mentorship, youth career guidance, and cultural solidarity while respecting privacy and traditional gotra records.',
+        hi: 'पूरे भारत में सूर्यवंश ओडियाराजु क्षत्रिय, ओड-राजपूत, ओड-खंडायत, वड्डेराजुलु और वडार परिवारों के क्षेत्रीय संगठनों को जोड़कर, हमारे भ्रातृ मंच गोपनीयता और पारंपरिक गोत्र अभिलेखों का सम्मान करते हुए शैक्षिक मार्गदर्शन, युवा कैरियर परामर्श और सांस्कृतिक एकजुटता को बढ़ावा देते हैं।',
+        te: 'భారతదేశం అంతటా ఉన్న సూర్యవంశ ఒడియరాజు క్షత్రియ, ఓడ్-రాజ్‌పుత్, ఓడ్-ఖండాయత్, వడ్డెరాజులు మరియు వడార్ కుటుంబాల ప్రాంతీయ సంఘాలను అనుసంధానించడం ద్వారా, మా సౌభ్రాతృత్వ వేదికలు విద్యా మార్గదర్శకత్వం, యువత కెరీర్ గైడెన్స్ మరియు సాంస్కృతిక ఐక్యతను పెంపొందిస్తాయి.',
+        kn: 'ಭಾರತದಾದ್ಯಂತ ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ, ಓಡ್-ರಜಪೂತ್, ಓಡ್-ಖಂಡಾಯತ್, ವಡ್ಡೇರಾಜುಲು ಮತ್ತು ವಡಾರ್ ಕುಟುಂಬಗಳ ಪ್ರಾದೇಶಿಕ ಸಂಘಗಳನ್ನು ಬೆಸೆಯುವ ಮೂಲಕ, ನಮ್ಮ ಭ್ರಾತೃತ್ವ ವೇದಿಕೆಗಳು ಶೈಕ್ಷಣಿಕ ಮಾರ್ಗದರ್ಶನ, ಯುವ ವೃತ್ತಿ ಸಲಹೆ ಮತ್ತು ಸಾಂಸ್ಕೃತಿಕ ಒಗ್ಗಟ್ಟನ್ನು ಉತ್ತೇಜಿಸುತ್ತವೆ.',
+        ta: 'இந்தியா முழுவதும் உள்ள சூர்யவம்ச ஒடியராஜு க்ஷத்ரிய, ஓட்-ராஜ்புத், ஓட்-கண்டாயத், வட்டெராஜுலு மற்றும் வடார் குடும்பங்களின் பிராந்திய சங்கங்களை இணைப்பதன் மூலம், எமது சகோதரத்துவ மன்றங்கள் கல்வி வழிகாட்டல் மற்றும் கலாச்சார ஒற்றுமையை வளர்க்கின்றன.',
+        mr: 'संपूर्ण भारतातील सूर्यवंश ओडियाराजू क्षत्रिय, ओड-राजपूत, ओड-खंडायत, वड्डेराजुलू आणि वडार कुटुंबांच्या प्रादेशिक संघटनांना जोडून आमचे मंच शैक्षणिक मार्गदर्शन, युवा करिअर समुपदेशन आणि सांस्कृतिक एकजूट वाढवतात.',
+        or: 'ସମଗ୍ର ଭାରତରେ ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ, ଓଡ୍-ରାଜପୁତ, ଓଡ୍-ଖଣ୍ଡାୟତ, ଭड्डେରାଜୁଲୁ ଏବଂ ୱାଡାର ପରିବାରର ଆଞ୍ଚଳିକ ସଂଘଗୁଡ଼ିକୁ ଯୋଡ଼ି ଆମର ଭ୍ରାତୃତ୍ୱ ମଞ୍ଚ ଶୈକ୍ଷିକ ମାର୍ଗଦର୍ଶନ, ଯୁବ କ୍ୟାରିୟର ପରାମର୍ଶ ଏବଂ ସାଂସ୍କୃତିକ ଏକତାକୁ ସୁଦୃଢ଼ କରେ।',
+        bn: 'সমগ্র ভারত জুড়ে সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয়, ওড-রাজপুত, ওড-খণ্ডায়েত, ভড্ডেরাজুলু এবং ওয়াদার পরিবারগুলোর আঞ্চলিক সংগঠনকে যুক্ত করে আমাদের ভ্রাতৃত্ব ফোরাম শিক্ষামূলক মেন্টরশিপ, যুব ক্যারিয়ার নির্দেশনা এবং সাংস্কৃতিক সংহতি বৃদ্ধি করে।'
+      }[language]
+    }
+  ];
+
+  const activeActivity = selectedId ? activities.find(a => a.id === selectedId) : null;
+  const modalItem: ContentDetailItem | null = activeActivity
+    ? {
+        id: activeActivity.id,
+        title: activeActivity.title,
+        subtitle: hdr.title,
+        badge: activeActivity.badge,
+        summary: activeActivity.summary,
+        content: activeActivity.content
+      }
+    : null;
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       {/* Header */}
       <div className="border-b border-stone-800 pb-6 space-y-2">
         <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
           <Award className="w-4 h-4" />
-          <span>Educational & Cultural Outreach</span>
+          <span>{hdr.badge}</span>
         </div>
         <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
-          Community Activities & Heritage Initiatives
+          {hdr.title}
         </h1>
         <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
-          Educational scholarships, manuscript digitization drives, youth historical literacy workshops, and annual heritage tours connecting families with their ancestral roots.
+          {hdr.subtitle}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-          <div className="p-3 w-fit rounded-xl bg-[#580014] text-[#d4af37]">
-            <BookOpen className="w-6 h-6" />
-          </div>
-          <h3 className="font-royal-heading font-bold text-lg text-stone-100">
-            Digital Manuscript Preservation Drive
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-            Equipping trained local volunteers with high-resolution macro photography kits to digitize family-held palm-leaf manuscripts and copper-plates in rural settlements before physical degradation occurs.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-          <div className="p-3 w-fit rounded-xl bg-stone-800 text-[#d4af37]">
-            <Award className="w-6 h-6" />
-          </div>
-          <h3 className="font-royal-heading font-bold text-lg text-stone-100">
-            Historical Research Fellowships
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-            Financial grants supporting graduate and doctoral students transcribing unpublished epigraphs of the Suryavamshi rulers, regional dialect variants, and medieval Odra administrative terminology.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-          <div className="p-3 w-fit rounded-xl bg-stone-800 text-[#d4af37]">
-            <Calendar className="w-6 h-6" />
-          </div>
-          <h3 className="font-royal-heading font-bold text-lg text-stone-100">
-            Annual Heritage Exploration Tours
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-            Guided multi-day heritage caravans visiting Barabati Fort, Puri, Konark, Kondavidu, and Udayagiri with leading academic epigraphists and architectural historians.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-          <div className="p-3 w-fit rounded-xl bg-stone-800 text-[#d4af37]">
-            <Users className="w-6 h-6" />
-          </div>
-          <h3 className="font-royal-heading font-bold text-lg text-stone-100">
-            Community Matrimonial & Fraternal Forums
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-            Verified, secure communication networks allowing community families across state borders to connect respectfully while honoring traditional gotra and kula lineages.
-          </p>
-        </div>
+        {activities.map(act => {
+          const Icon = act.icon;
+          return (
+            <div
+              key={act.id}
+              onClick={() => setSelectedId(act.id)}
+              className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 cursor-pointer transition-all group flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className={`p-3 w-fit rounded-xl ${act.iconStyle}`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                  {act.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+                  {act.summary}
+                </p>
+              </div>
+              <div className="pt-2 text-xs font-semibold text-[#e8c872] flex items-center gap-1">
+                <span>{hdr.viewDetails}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+            </div>
+          );
+        })}
       </div>
+
+      <ContentDetailModal item={modalItem} onClose={() => setSelectedId(null)} />
     </div>
   );
 };
+
+

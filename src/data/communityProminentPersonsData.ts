@@ -2691,7 +2691,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Digital Portal Publisher Credit Register & Legal Heritage Notices',
       'Direct Community Outreach Register (+91 9480112897)'
     ],
-    imageUrl: '/assets/dr_g_sathyanarayana_raju.png'
+    imageUrl: `${import.meta.env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`
   }
 ];
 

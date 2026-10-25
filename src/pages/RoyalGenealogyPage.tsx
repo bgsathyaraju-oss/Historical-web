@@ -4,27 +4,37 @@ import { Crown, ShieldCheck, Scroll, Info, AlertTriangle, BookOpen } from 'lucid
 import { GenealogyTree } from '../components/GenealogyTree';
 import { ClaimCard } from '../components/ClaimCard';
 import { useLanguage } from '../context/LanguageContext';
+import { getCanonicalGenealogy, getCanonicalClaims } from '../data/archivalSeedData';
 
 interface RoyalGenealogyPageProps {
   onNavigate: (path: string) => void;
 }
 
 export const RoyalGenealogyPage: React.FC<RoyalGenealogyPageProps> = ({ onNavigate }) => {
-  const { t } = useLanguage();
-  const [nodes, setNodes] = useState<GenealogyNode[]>([]);
-  const [claims, setClaims] = useState<HistoricalClaim[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { t, language } = useLanguage();
+  const [nodes, setNodes] = useState<GenealogyNode[]>(() => getCanonicalGenealogy(language));
+  const [claims, setClaims] = useState<HistoricalClaim[]>(() => getCanonicalClaims(language));
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const localGen = getCanonicalGenealogy(language);
+    const localClaims = getCanonicalClaims(language);
+    setNodes(localGen);
+    setClaims(localClaims);
+
     Promise.all([
-      fetch('/api/content/genealogy').then(r => r.json()),
-      fetch('/api/content/claims').then(r => r.json())
+      fetch(`/api/content/genealogy?lang=${language}`).then(r => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(`/api/content/claims?lang=${language}`).then(r => (r.ok ? r.json() : null)).catch(() => null)
     ]).then(([genData, claimsData]) => {
-      setNodes(genData.genealogy || []);
-      setClaims(claimsData.claims || []);
-    }).catch(console.error)
+      if (genData?.genealogy && genData.genealogy.length > 0) {
+        setNodes(genData.genealogy);
+      }
+      if (claimsData?.claims && claimsData.claims.length > 0) {
+        setClaims(claimsData.claims);
+      }
+    }).catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [language]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">

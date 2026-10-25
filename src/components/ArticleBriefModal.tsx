@@ -36,13 +36,118 @@ const LANGUAGE_LABELS: Record<LanguageCode, { label: string; native: string }> =
   bn: { label: 'Bengali', native: 'বাংলা' }
 };
 
+const BRIEF_MODAL_UI: Record<
+  LanguageCode,
+  {
+    headerBadge: string;
+    headerSub: string;
+    langLabel: string;
+    byAuthor: string;
+    execBrief: string;
+    highlightsHeading: string;
+    sourcesHeading: (count: number) => string;
+    closeBtn: string;
+    readFullBtn: string;
+  }
+> = {
+  en: {
+    headerBadge: 'Brief Research Information',
+    headerSub: 'Multilingual Archival Summary',
+    langLabel: 'Language:',
+    byAuthor: 'By',
+    execBrief: 'Executive Brief Information',
+    highlightsHeading: 'Core Historical Highlights',
+    sourcesHeading: count => `Primary Citations & Archaeological Sources (${count})`,
+    closeBtn: 'Close',
+    readFullBtn: 'Read Full Documented Narrative'
+  },
+  hi: {
+    headerBadge: 'संक्षिप्त शोध जानकारी',
+    headerSub: 'बहुभाषी अभिलेखीय सारांश',
+    langLabel: 'भाषा:',
+    byAuthor: 'लेखक:',
+    execBrief: 'कार्यकारी संक्षिप्त विवरण',
+    highlightsHeading: 'प्रमुख ऐतिहासिक बिंदु',
+    sourcesHeading: count => `प्राथमिक उद्धरण एवं पुरातात्विक स्रोत (${count})`,
+    closeBtn: 'बंद करें',
+    readFullBtn: 'संपूर्ण प्रलेखित शोध लेख पढ़ें'
+  },
+  te: {
+    headerBadge: 'సంక్షిప్త పరిశోధనా సమాచారం',
+    headerSub: 'బహుభాషా చారిత్రక సారాంశం',
+    langLabel: 'భాష:',
+    byAuthor: 'రచయిత:',
+    execBrief: 'ప్రధాన సారాంశ వివరాలు',
+    highlightsHeading: 'కీలక చారిత్రక అంశాలు',
+    sourcesHeading: count => `ప్రాథమిక శాసన & పురావస్తు ఆధారాలు (${count})`,
+    closeBtn: 'మూసివేయండి',
+    readFullBtn: 'పూర్తి పరిశోధనా వ్యాసం చదవండి'
+  },
+  kn: {
+    headerBadge: 'ಸಂಕ್ಷಿಪ್ತ ಸಂಶೋಧನಾ ಮಾಹಿತಿ',
+    headerSub: 'ಬಹುಭಾಷಾ ದಾಖಲೆ ಸಾರಾಂಶ',
+    langLabel: 'ಭಾಷೆ:',
+    byAuthor: 'ಲೇಖಕರು:',
+    execBrief: 'ಮುಖ್ಯ ಸಾರಾಂಶ ಮಾಹಿತಿ',
+    highlightsHeading: 'ಪ್ರಮುಖ ಐತಿಹಾಸಿಕ ಮುಖ್ಯಾಂಶಗಳು',
+    sourcesHeading: count => `ಪ್ರಾಥಮಿಕ ಉಲ್ಲೇಖಗಳು ಮತ್ತು ಪುರಾತತ್ವ ಆಕರಗಳು (${count})`,
+    closeBtn: 'ಮುಚ್ಚಿ',
+    readFullBtn: 'ಸಂಪೂರ್ಣ ಸಂಶೋಧನಾ ಲೇಖನ ಓದಿ'
+  },
+  ta: {
+    headerBadge: 'சுருக்கமான ஆராய்ச்சித் தகவல்',
+    headerSub: 'பன்மொழி ஆவணச் சுருக்கம்',
+    langLabel: 'மொழி:',
+    byAuthor: 'ஆசிரியர்:',
+    execBrief: 'முதன்மைச் சுருக்கத் தகவல்',
+    highlightsHeading: 'முக்கிய வரலாற்றுச் சிறப்பம்சங்கள்',
+    sourcesHeading: count => `முதன்மை மேற்கோள்கள் & தொல்லியல் ஆதாரங்கள் (${count})`,
+    closeBtn: 'மூடுக',
+    readFullBtn: 'முழு ஆய்வுக் கட்டுரையைப் படிக்க'
+  },
+  mr: {
+    headerBadge: 'संक्षिप्त संशोधन माहिती',
+    headerSub: 'बहुभाषिक अभिलेखीय सारांश',
+    langLabel: 'भाषा:',
+    byAuthor: 'लेखक:',
+    execBrief: 'मुख्य संक्षिप्त माहिती',
+    highlightsHeading: 'प्रमुख ऐतिहासिक मुद्दे',
+    sourcesHeading: count => `प्राथमिक संदर्भ आणि पुरातत्त्वीय स्रोत (${count})`,
+    closeBtn: 'बंद करा',
+    readFullBtn: 'संपूर्ण संशोधन लेख वाचा'
+  },
+  or: {
+    headerBadge: 'ସଂକ୍ଷିପ୍ତ ଗବେଷଣା ସୂଚନା',
+    headerSub: 'ବହୁଭାଷୀ ଅଭିଲେଖୀୟ ସାରାଂଶ',
+    langLabel: 'ଭାଷା:',
+    byAuthor: 'ଲେଖକ:',
+    execBrief: 'ମୁଖ୍ୟ ସାରାଂଶ ବିବରଣୀ',
+    highlightsHeading: 'ପ୍ରମୁଖ ଐତିହାସିକ ବିନ୍ଦୁ',
+    sourcesHeading: count => `ପ୍ରାଥମିକ ଉଦ୍ଧୃତି ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଉତ୍ସ (${count})`,
+    closeBtn: 'ବନ୍ଦ କରନ୍ତୁ',
+    readFullBtn: 'ସମ୍ପୂର୍ଣ୍ଣ ଗବେଷଣା ପ୍ରବନ୍ଧ ପଢ଼ନ୍ତୁ'
+  },
+  bn: {
+    headerBadge: 'সংক্ষিপ্ত গবেষণা তথ্য',
+    headerSub: 'বহুভাষিক আর্কাইভাল সারাংশ',
+    langLabel: 'ভাষা:',
+    byAuthor: 'লেখক:',
+    execBrief: 'কার্যনির্বাহী সংক্ষিপ্ত বিবরণ',
+    highlightsHeading: 'প্রধান ঐতিহাসিক দিকসমূহ',
+    sourcesHeading: count => `প্রাথমিক উদ্ধৃতি ও প্রত্নতাত্ত্বিক উৎস (${count})`,
+    closeBtn: 'বন্ধ করুন',
+    readFullBtn: 'সম্পূর্ণ গবেষণা প্রবন্ধ পড়ুন'
+  }
+};
+
 export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
   article,
   isOpen,
   onClose,
   onReadFull
 }) => {
-  const { language, setLanguage, getArticleContent, getMetadataLabel, translateText } = useLanguage();
+  const { language, setLanguage, getArticleContent, getMetadataLabel } = useLanguage();
+  const ui = BRIEF_MODAL_UI[language] || BRIEF_MODAL_UI.en;
 
   // Close on Escape key press
   useEffect(() => {
@@ -61,16 +166,16 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
 
   if (!isOpen || !article) return null;
 
-  const { title, summary, isTranslated } = getArticleContent(article);
+  const { title, summary } = getArticleContent(article);
   const localizedCategory = getMetadataLabel('category', article.category) || article.category;
 
   // Extract key highlight bullet sentences from summary and content
   const highlightBullets = useMemo(() => {
     if (!summary) return [];
     const sentences = summary
-      .split(/(?<=[.?!])\s+/)
+      .split(/(?<=[.?!।])\s+/)
       .map(s => s.trim())
-      .filter(s => s.length > 20);
+      .filter(s => s.length > 15);
     return sentences.slice(0, 3);
   }, [summary]);
 
@@ -91,10 +196,10 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             </span>
             <div>
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading block">
-                Brief Research Information
+                {ui.headerBadge}
               </span>
               <span className="text-xs text-stone-400 font-medium">
-                Multilingual Archival Summary
+                {ui.headerSub}
               </span>
             </div>
           </div>
@@ -102,7 +207,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
           <button
             onClick={onClose}
             className="p-2 rounded-xl text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition-colors cursor-pointer"
-            aria-label="Close modal"
+            aria-label={ui.closeBtn}
           >
             <X className="w-5 h-5" />
           </button>
@@ -111,7 +216,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
         {/* 8-Multilingual Quick Switcher Ribbon */}
         <div className="px-5 py-2.5 bg-[#0b0e17] border-b border-stone-800 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
           <span className="text-[11px] font-semibold text-stone-400 shrink-0 uppercase tracking-wider">
-            Language:
+            {ui.langLabel}
           </span>
           <div className="flex items-center gap-1 sm:gap-1.5">
             {(['en', 'te', 'or', 'hi', 'kn', 'ta', 'mr', 'bn'] as LanguageCode[]).map((langCode) => {
@@ -159,7 +264,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             </h2>
             <div className="mt-2 flex items-center gap-2 text-xs text-stone-400">
               <User className="w-3.5 h-3.5 text-[#d4af37]" />
-              <span>By {article.author_name}</span>
+              <span>{ui.byAuthor} {article.author_name}</span>
               <span>•</span>
               <span className="text-[#e8c872]">{article.verification_status}</span>
             </div>
@@ -181,7 +286,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
           <div className="p-5 rounded-2xl bg-[#141926] border border-[#c99738]/40 space-y-3 shadow-lg">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#fae29c]">
               <Sparkles className="w-4 h-4 text-[#d4af37]" />
-              <span>Executive Brief Information</span>
+              <span>{ui.execBrief}</span>
             </div>
             <p className="text-sm sm:text-base text-stone-200 leading-relaxed font-royal-serif">
               {summary}
@@ -193,7 +298,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             <div className="space-y-2">
               <h4 className="text-xs font-bold uppercase tracking-wider text-stone-300 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-[#d4af37]" />
-                <span>Core Historical Highlights</span>
+                <span>{ui.highlightsHeading}</span>
               </h4>
               <div className="space-y-2">
                 {highlightBullets.map((bullet, idx) => (
@@ -214,7 +319,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             <div className="space-y-2.5 pt-2 border-t border-stone-800">
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
                 <Layers className="w-4 h-4" />
-                <span>Primary Citations & Archaeological Sources ({article.sources.length})</span>
+                <span>{ui.sourcesHeading(article.sources.length)}</span>
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {article.sources.map((src, idx) => (
@@ -264,7 +369,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-xs font-semibold text-stone-300 hover:text-stone-100 hover:bg-stone-800 rounded-xl transition-colors cursor-pointer"
           >
-            Close
+            {ui.closeBtn}
           </button>
 
           <button
@@ -274,7 +379,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             }}
             className="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-[#997022] via-[#c99738] to-[#e8c872] text-[#290106] hover:brightness-110 shadow-lg flex items-center gap-2 cursor-pointer transition-transform hover:scale-[1.02]"
           >
-            <span>Read Full Documented Narrative</span>
+            <span>{ui.readFullBtn}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

@@ -1,14 +1,212 @@
-import React from 'react';
-import { Compass, MapPin, Landmark, BookOpen, Scroll, ShieldCheck, ArrowRight } from 'lucide-react';
-import { EvidenceBadge } from '../components/EvidenceBadge';
+import React, { useState } from 'react';
+import { Compass, Landmark, Scroll, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 
 interface OdraDeshaPageProps {
   onNavigate: (path: string) => void;
 }
 
+const ODRA_DEEP_DIVE: Record<string, {
+  utkalaCore: string;
+  kalingaCore: string;
+  trikalingaCore: string;
+  evolutionTitle: string;
+  evolutionBadge: string;
+  p1: string;
+  p2: string;
+  p3: string;
+  mapsBtn: string;
+  inscriptionsBtn: string;
+}> = {
+  en: {
+    utkalaCore: 'Core Centers: Jajpur, Balasore coastal strip',
+    kalingaCore: 'Core Centers: Kalinganagara, Srikakulam, Simhachalam',
+    trikalingaCore: 'Core Centers: Kalahandi, Koraput, Sambalpur',
+    evolutionTitle: 'Epigraphic Evolution of the Odra Identity',
+    evolutionBadge: 'Verified Epigraphic & Classical Chronicle',
+    p1: 'The earliest historical attestations of the Odra people occur in classical Indian literature, including the Mahabharata, the Natyashastra of Bharata Muni (which distinguishes the Odra-Magadhi style of theatre and dance), and the Puranas. Pliny the Elder in his 1st-century CE Naturalis Historia identifies the Oretes inhabiting the country near Mount Maleus.',
+    p2: 'In 639 CE, the celebrated Chinese Buddhist pilgrim Xuanzang (Hiuen Tsang) traversed the realm of Wu-T’u (Odra). He recorded that the climate was temperate, the people tall and intrepid with dark complexions, and noted the famous port city of Charitra (Che-li-ta-lo) on the southeastern shore, from which merchant vessels departed for Sinhala (Sri Lanka) and the South Seas.',
+    p3: 'By the 15th century, during the reign of Kapilendra Deva Gajapathi, "Odra-Rajya" had transformed into the sovereign core of a subcontinent-wide empire. Kapilendra Deva’s copper-plate grants, such as the Veligalani charter (1458 CE), refer explicitly to the administration of Odra officers across the southern military forts of Kondavidu, Vinukonda, and Udayagiri.',
+    mapsBtn: 'Explore Historical Maps of Odra Desha',
+    inscriptionsBtn: 'View Odra Inscription Records'
+  },
+  hi: {
+    utkalaCore: 'प्रमुख केंद्र: जाजपुर, बालासोर तटीय पट्टी',
+    kalingaCore: 'प्रमुख केंद्र: कलिंगनगर, श्रीकाकुलम, सिंहाचलम',
+    trikalingaCore: 'प्रमुख केंद्र: कालाहांडी, कोरापुट, संबलपुर',
+    evolutionTitle: 'ओड्र पहचान का अभिलेखीय एवं ऐतिहासिक विकास',
+    evolutionBadge: 'प्रमाणित अभिलेखीय एवं शास्त्रीय इतिवृत्त',
+    p1: 'ओड्र जनसमूह के प्राचीनतम ऐतिहासिक प्रमाण महाभारत, भरत मुनि के नाट्यशास्त्र (ओड्र-मागधी शैली) और पुराणों में मिलते हैं। प्रथम शताब्दी ईस्वी में रोमन इतिहासकार प्लिनी ने माउंट मालेउस के निकट ओरेतेस (ओड्र) निवासियों का उल्लेख किया है।',
+    p2: '639 ईस्वी में प्रसिद्ध चीनी यात्री ह्वेनसांग (युआन च्वांग) ने वू-तू (ओड्र देश) की यात्रा की। उन्होंने यहां की समृद्ध कृषि, विद्या केंद्रों और दक्षिण-पूर्वी तट पर स्थित प्रसिद्ध बंदरगाह चरित्रपुर (चे-ली-ता-लो) का वर्णन किया, जहां से श्रीलंका और दक्षिण-पूर्व एशिया के लिए जहाज चलते थे।',
+    p3: '15वीं शताब्दी में सम्राट कपिलेंद्र देव गजपति के शासनकाल में "ओड्र-राज्य" एक विशाल साम्राज्य का केंद्र बन गया। वेलिगलनी ताम्रपत्र (1458 ई.) सहित कई अभिलेखों में कोंडावीडु, विनुकोंडा और उदयगिरि के दुर्गों में ओड्र सेनापतियों के प्रशासन का स्पष्ट उल्लेख है।',
+    mapsBtn: 'ओड्र देश के ऐतिहासिक मानचित्र देखें',
+    inscriptionsBtn: 'ओड्र शिलालेख अभिलेख देखें'
+  },
+  te: {
+    utkalaCore: 'ప్రధాన కేంద్రాలు: జాజ్‌పూర్, బాలాసోర్ తీర ప్రాంతం',
+    kalingaCore: 'ప్రధాన కేంద్రాలు: కళింగనగరం, శ్రీకాకుళం, సింహాచలం',
+    trikalingaCore: 'ప్రధాన కేంద్రాలు: కలహండి, కోరాపుట్, సంబల్‌పూర్',
+    evolutionTitle: 'ఓడ్ర చారిత్రక గుర్తింపు యొక్క శాసన పరిణామ క్రమం',
+    evolutionBadge: 'ధృవీకరించబడిన శాసన & చారిత్రక ఆధారం',
+    p1: 'మహాభారతం, భరతముని నాట్యశాస్త్రం (ఓడ్ర-మాగధి శైలి) మరియు పురాణాలలో ఓడ్ర ప్రజల గురించిన ప్రాచీన చారిత్రక ఆధారాలు లభిస్తాయి. క్రీ.శ. 1వ శతాబ్దంలో ప్లినీ తన నేచురలిస్ హిస్టోరియాలో ఓరెటెస్ (ఓడ్రులు) ప్రజలను పేర్కొన్నారు.',
+    p2: 'క్రీ.శ. 639లో ప్రముఖ చైనా బౌద్ధ యాత్రికుడు హ్యూయెన్ త్సాంగ్ వు-తు (ఓడ్ర దేశం) లో పర్యటించారు. సారవంతమైన భూమి, విద్యా కేంద్రాలు మరియు ఆగ్నేయ తీరంలోని ప్రసిద్ధ నౌకాశ్రయ నగరం చరిత్రపురం (చే-లి-తా-లో) గురించి ఆయన నమోదు చేశారు.',
+    p3: '15వ శతాబ్దంలో కపిలేంద్ర దేవ గజపతి పాలనలో "ఓడ్ర-రాజ్యం" ఉపఖండ స్థాయి సామ్రాజ్యానికి కేంద్రబిందువుగా మారింది. వెలిగలని తామ్రశాసనం (1458 CE) వంటి శాసనాలు కొండవీడు, వినుకొండ, ఉదయగిరి దుర్గాలలో ఓడ్ర సేనానుల పాలనను స్పష్టంగా పేర్కొంటున్నాయి.',
+    mapsBtn: 'ఓడ్ర దేశ చారిత్రక పటాలను చూడండి',
+    inscriptionsBtn: 'ఓడ్ర శాసన రికార్డులను చూడండి'
+  },
+  kn: {
+    utkalaCore: 'ಪ್ರಮುಖ ಕೇಂದ್ರಗಳು: ಜಾಜ್‌ಪುರ, ಬಾಲಾಸೋರ್ ಕರಾವಳಿ',
+    kalingaCore: 'ಪ್ರಮುಖ ಕೇಂದ್ರಗಳು: ಕಳಿಂಗನಗರ, ಶ್ರೀಕಾಕುಳಂ, ಸಿಂಹಾಚಲಂ',
+    trikalingaCore: 'ಪ್ರಮುಖ ಕೇಂದ್ರಗಳು: ಕಲಹಂಡಿ, ಕೋರಾಪುಟ್, ಸಂಬಲ್‌ಪುರ',
+    evolutionTitle: 'ಓಡ್ರ ಗುರುತಿನ ಶಾಸನಾತ್ಮಕ ಮತ್ತು ಐತಿಹಾಸಿಕ ವಿಕಾಸ',
+    evolutionBadge: 'ದೃಢೀಕೃತ ಶಾಸನ ಮತ್ತು ಶಾಸ್ತ್ರೀಯ ದಾಖಲೆ',
+    p1: 'ಮಹಾಭಾರತ, ಭರತಮುನಿಯ ನಾಟ್ಯಶಾಸ್ತ್ರ (ಓಡ್ರ-ಮಾಗಧಿ ಶೈಲಿ) ಮತ್ತು ಪುರಾಣಗಳಲ್ಲಿ ಓಡ್ರ ಜನರ ಪ್ರಾಚೀನ ಉಲ್ಲೇಖಗಳಿವೆ. ಕ್ರಿ.ಶ. 1ನೇ ಶತಮಾನದ ಪ್ಲಿನಿಯ ಬರಹಗಳಲ್ಲಿ ಓಡ್ರರ ಉಲ್ಲೇಖವಿದೆ.',
+    p2: 'ಕ್ರಿ.ಶ. 639ರಲ್ಲಿ ಚೀನೀ ಯಾತ್ರಿಕ ಹ್ಯೂಯೆನ್ ತ್ಸಾಂಗ್ ಓಡ್ರ ದೇಶಕ್ಕೆ (ವು-ತು) ಭೇಟಿ ನೀಡಿ, ಇಲ್ಲಿನ ಸಮೃದ್ಧ ಕೃಷಿ, ವಿದ್ಯಾಕೇಂದ್ರಗಳು ಮತ್ತು ಪ್ರಸಿದ್ಧ ಚರಿತ್ರಪುರ ಬಂದರಿನ ಬಗ್ಗೆ ದಾಖಲಿಸಿದ್ದಾನೆ.',
+    p3: '15ನೇ ಶತಮಾನದಲ್ಲಿ ಕಪಿಲೇಂದ್ರ ದೇವ ಗಜಪತಿಯ ಆಳ್ವಿಕೆಯಲ್ಲಿ ಓಡ್ರ-ರಾಜ್ಯವು ಬೃಹತ್ ಸಾಮ್ರಾಜ್ಯದ ಕೇಂದ್ರವಾಯಿತು. ವೆಲಿಗಲನಿ ತಾಮ್ರಶಾಸನವು (1458 CE) ಕೊಂಡವೀಡು ಮತ್ತು ಉದಯಗಿರಿ ಕೋಟೆಗಳಲ್ಲಿ ಓಡ್ರ ಸೇನಾಪತಿಗಳ ಆಡಳಿತವನ್ನು ದೃಢಪಡಿಸುತ್ತದೆ.',
+    mapsBtn: 'ಓಡ್ರ ದೇಶದ ಐತಿಹಾಸಿಕ ನಕ್ಷೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+    inscriptionsBtn: 'ಓಡ್ರ ಶಾಸನ ದಾಖಲೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ'
+  },
+  ta: {
+    utkalaCore: 'முக்கிய மையங்கள்: ஜாஜ்பூர், பாலாசோர் கடற்கரை',
+    kalingaCore: 'முக்கிய மையங்கள்: கலிங்கநகரம், ஸ்ரீகாகுளம், சிம்மாசலம்',
+    trikalingaCore: 'முக்கிய மையங்கள்: கலஹண்டி, கோராபுட், சம்பல்பூர்',
+    evolutionTitle: 'ஒட்ர அடையாளத்தின் கல்வெட்டு மற்றும் வரலாற்று பரிணாமம்',
+    evolutionBadge: 'சரிபார்க்கப்பட்ட கல்வெட்டு ஆவணம்',
+    p1: 'மகாபாரதம், பரத முனிவரின் நாட்டிய சாஸ்திரம் மற்றும் புராணங்களில் ஒட்ர மக்களின் பண்டைய வரலாற்றுக் குறிப்புகள் உள்ளன. கி.பி. 1ஆம் நூற்றாண்டில் பிளினி ஒட்ர மக்களைக் குறிப்பிடுகிறார்.',
+    p2: 'கி.பி. 639இல் சீனப் பயணி யுவான் சுவாங் ஒட்ர தேசத்திற்கு (வு-து) வருகை தந்து, அதன் வளமான வேளாண்மை மற்றும் சரித்திரபுரா துறைமுகத்தை விவரித்துள்ளார்.',
+    p3: '15ஆம் நூற்றாண்டில் கபிலேந்திர தேவ கஜபதியின் ஆட்சியில் ஒட்ர ராஜ்யம் பேரரசின் மையமாக விளங்கியது. வெலிகலானி செப்பேடுகள் (கி.பி. 1458) கொண்டவீடு மற்றும் உதயகிரி கோட்டைகளில் ஒட்ர தளபதிகளின் நிர்வாகத்தைக் குறிப்பிடுகின்றன.',
+    mapsBtn: 'ஒட்ர தேசத்தின் வரலாற்று வரைபடங்களைக் காண்க',
+    inscriptionsBtn: 'ஒட்ர கல்வெட்டு ஆவணங்களைக் காண்க'
+  },
+  mr: {
+    utkalaCore: 'प्रमुख केंद्रे: जाजपूर, बालासोर किनारपट्टी',
+    kalingaCore: 'प्रमुख केंद्रे: कलिंगनगर, श्रीकाकुलम, सिंहाचलम',
+    trikalingaCore: 'प्रमुख केंद्रे: कालाहांडी, कोरापुट, संबलपूर',
+    evolutionTitle: 'ओड्र अस्मितेचा शिलालेखीय आणि ऐतिहासिक विकास',
+    evolutionBadge: 'प्रमाणित शिलालेख आणि ऐतिहासिक नोंद',
+    p1: 'महाभारत, भरतमुनींचे नाट्यशास्त्र आणि पुराणांमध्ये ओड्र लोकांचे प्राचीन उल्लेख आढळतात. पहिल्या शतकातील प्लिनीच्या ग्रंथातही ओड्र लोकांचा उल्लेख आहे.',
+    p2: 'इ.स. ६३९ मध्ये चिनी प्रवासी ह्युएन त्सांगने ओड्र देशाला (वू-तू) भेट दिली आणि येथील समृद्ध शेती व चरित्रपूर बंदराचे वर्णन केले.',
+    p3: '१५ व्या शतकात सम्राट कपिलेंद्र देव गजपतीच्या काळात ओड्र-राज्य एका महासाम्राज्याचे केंद्र बनले. वेलिगलनी ताम्रपटात (१४५८ ई.) कोंडावीडु आणि उदयगिरी किल्ल्यांवरील ओड्र अधिकाऱ्यांच्या प्रशासनाची नोंद आहे.',
+    mapsBtn: 'ओड्र देशाचे ऐतिहासिक नकाशे पहा',
+    inscriptionsBtn: 'ओड्र शिलालेख नोंदी पहा'
+  },
+  or: {
+    utkalaCore: 'ମୁଖ୍ୟ କେନ୍ଦ୍ର: ଯାଜପୁର, ବାଲେଶ୍ୱର ଉପକୂଳ',
+    kalingaCore: 'ମୁଖ୍ୟ କେନ୍ଦ୍ର: କଳିଙ୍ଗନଗର, ଶ୍ରୀକାକୁଲମ, ସିଂହାଚଳମ',
+    trikalingaCore: 'ମୁଖ୍ୟ କେନ୍ଦ୍ର: କଳାହାଣ୍ଡି, କୋରାପୁଟ, ସମ୍ବଲପୁର',
+    evolutionTitle: 'ଓଡ଼୍ର ପରିଚୟର ଶିଳାଲେଖ ଓ ଐତିହାସିକ କ୍ରମବିକାଶ',
+    evolutionBadge: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ଶାସ୍ତ୍ରୀୟ ଇତିବୃତ୍ତ',
+    p1: 'ମହାଭାରତ, ଭରତ ମୁନିଙ୍କ ନାଟ୍ୟଶାସ୍ତ୍ର (ଓଡ଼୍ର-ମାଗଧୀ ରୀତି) ଏବଂ ପୁରାଣରେ ଓଡ଼୍ର জাতির ପ୍ରାଚୀନତମ ଉଲ୍ଲେଖ ମିଳେ। ପ୍ରଥମ ଶତାବ୍ଦୀରେ ପ୍ଲିନି ଓଡ଼୍ର ଅଧିବାସୀଙ୍କ ବିଷୟରେ ଲେଖିଥିଲେ।',
+    p2: '୬୩୯ ଖ୍ରୀଷ୍ଟାବ୍ଦରେ ଚୀନ ପରିବ୍ରାଜକ ହୁଏନସାଂ ଓଡ଼୍ର ଦେଶ (ୱୁ-ତୁ) ଭ୍ରମଣ କରି ଏখানକାର ସମୃଦ୍ଧ କୃଷି, ବିଦ୍ୟାକେନ୍ଦ୍ର ଓ ପ୍ରସିଦ୍ଧ ଚରିତ୍ରପୁର ବନ୍ଦର ବିଷୟରେ ବର୍ଣ୍ଣନା କରିଥିଲେ।',
+    p3: 'ପଞ୍ଚଦଶ ଶତାବ୍ଦୀରେ ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବ ଗଜପତିଙ୍କ ଶାସନ କାଳରେ "ଓଡ଼୍ର-ରାଜ୍ୟ" ଏକ ବିଶାଳ ସାମ୍ରାଜ୍ୟର କେନ୍ଦ୍ରଭୂମି ପାଲଟିଥିଲା। ଭେଲିଗାଲାନି ତାମ୍ରଶାସନ (୧୪୫୮ ଖ୍ରୀ.) କୋଣ୍ଡାଭିଡୁ ଓ ଉଦୟଗିରି ଦୁର୍ଗରେ ଓଡ଼୍ର ସେନାପତିଙ୍କ ଶାସନକୁ ପ୍ରମାଣିତ କରେ।',
+    mapsBtn: 'ଓଡ଼୍ର ଦେଶର ଐତିହାସିକ ମାନଚିତ୍ର ଦେଖନ୍ତୁ',
+    inscriptionsBtn: 'ଓଡ଼୍ର ଶିଳାଲେଖ ଅଭିଲେଖ ଦେଖନ୍ତୁ'
+  },
+  bn: {
+    utkalaCore: 'প্রধান কেন্দ্র: জাজপুর, বালেশ্বর উপকূল',
+    kalingaCore: 'প্রধান কেন্দ্র: কলিঙ্গনগর, শ্রীকাকুলাম, সিংহাচলম',
+    trikalingaCore: 'প্রধান কেন্দ্র: কালাহান্ডি, কোরাপুট, সম্বলপুর',
+    evolutionTitle: 'ওড্র পরিচয়ের শিলালিপি ও ঐতিহাসিক বিবর্তন',
+    evolutionBadge: 'প্রমাণিত শিলালিপি ও ধ্রুপদী ইতিবৃত্ত',
+    p1: 'মহাভারত, ভরত মুনির নাট্যশাস্ত্র (ওড্র-মাগধী রীতি) এবং পুরাণে ওড্র জনগোষ্ঠীর প্রাচীনতম উল্লেখ পাওয়া যায়। প্রথম শতাব্দীতে প্লিনি ওড্র অধিবাসীদের কথা উল্লেখ করেছেন।',
+    p2: '৬৩৯ খ্রিস্টাব্দে চীনা পরিব্রাজক হিউয়েন সাং ওড্র দেশ (উ-তু) ভ্রমণ করে এখানকার সমৃদ্ধ কৃষি, শিক্ষাকেন্দ্র ও চরিত্রপুর বন্দরের বিবরণ দিয়েছেন।',
+    p3: 'পঞ্চদশ শতাব্দীতে সম্রাট কপিলেন্দ্র দেব গজপতির শাসনকালে "ওড্র-রাজ্য" এক বিশাল সাম্রাজ্যের কেন্দ্রে পরিণত হয়। ভেলিগালানি তাম্রশাসনে (১৪৫৮ খ্রি.) কোন্ডাভিডু ও উদয়গিরি দুর্গে ওড্র সেনাপতিদের প্রশাসনের উল্লেখ রয়েছে।',
+    mapsBtn: 'ওড্র দেশের ঐতিহাসিক মানচিত্র দেখুন',
+    inscriptionsBtn: 'ওড্র শিলালিপি নথি দেখুন'
+  }
+};
+
 export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const loc = ODRA_DEEP_DIVE[language] || ODRA_DEEP_DIVE.en;
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const regionalItems = [
+    {
+      id: 'region-odra',
+      icon: Compass,
+      iconStyle: 'bg-[#580014] text-[#d4af37]',
+      title: t.odraDesha.odraTitle,
+      desc: t.odraDesha.odraDesc,
+      core: t.odraDesha.coreRulers,
+      fullText: `${t.odraDesha.odraDesc}\n\n${loc.p3}`,
+      sources: [
+        { title: 'Xuanzang (Hiuen Tsang), Si-Yu-Ki: Buddhist Records of the Western World (639 CE)' },
+        { title: 'Veligalani Copper Plate Grant of Kapilendra Deva (1458 CE)' }
+      ]
+    },
+    {
+      id: 'region-utkala',
+      icon: Landmark,
+      iconStyle: 'bg-stone-800 text-stone-300',
+      title: t.odraDesha.utkalaTitle,
+      desc: t.odraDesha.utkalaDesc,
+      core: loc.utkalaCore,
+      fullText: `${t.odraDesha.utkalaDesc}\n\n${loc.p1}`,
+      sources: [
+        { title: 'Bhauma-Kara & Somavamshi Copper-Plate Grants of Viraja (Jajpur)' },
+        { title: 'N.K. Sahu, History of Orissa, Utkal University Press' }
+      ]
+    },
+    {
+      id: 'region-kalinga',
+      icon: ShieldCheck,
+      iconStyle: 'bg-stone-800 text-stone-300',
+      title: t.odraDesha.kalingaTitle,
+      desc: t.odraDesha.kalingaDesc,
+      core: loc.kalingaCore,
+      fullText: `${t.odraDesha.kalingaDesc}\n\n${loc.p2}`,
+      sources: [
+        { title: 'Hathigumpha Inscription of Emperor Kharavela (Udayagiri)' },
+        { title: 'South Indian Inscriptions (SII), Simhachalam & Srikurmam Records' }
+      ]
+    },
+    {
+      id: 'region-trikalinga',
+      icon: Scroll,
+      iconStyle: 'bg-stone-800 text-stone-300',
+      title: t.odraDesha.trikalingaTitle,
+      desc: t.odraDesha.trikalingaDesc,
+      core: loc.trikalingaCore,
+      fullText: `${t.odraDesha.trikalingaDesc}\n\n${loc.p3}`,
+      sources: [
+        { title: 'Epigraphia Indica: Trikalingadhipati Royal Titles in Eastern Ganga & Gajapathi Charters' }
+      ]
+    }
+  ];
+
+  const modalItem: ContentDetailItem | null = (() => {
+    if (!selectedId) return null;
+    if (selectedId === 'odra-epigraphic-evolution') {
+      return {
+        id: 'odra-epigraphic-evolution',
+        title: loc.evolutionTitle,
+        subtitle: t.odraDesha.title,
+        badge: loc.evolutionBadge,
+        era: '1st Century CE – 16th Century CE',
+        content: `${loc.p1}\n\n${loc.p2}\n\n${loc.p3}`,
+        sources: [
+          { title: 'Natyashastra of Bharata Muni & Mahabharata Bhishma Parva' },
+          { title: 'Xuanzang, Si-Yu-Ki (639 CE)' },
+          { title: 'Veligalani Copper-Plate Grant of Kapilendra Deva (1458 CE), Epigraphia Indica Vol. XXXIII' }
+        ]
+      };
+    }
+    const reg = regionalItems.find(r => r.id === selectedId);
+    if (!reg) return null;
+    return {
+      id: reg.id,
+      title: reg.title,
+      subtitle: t.odraDesha.regionsTitle,
+      badge: t.odraDesha.badge,
+      location: reg.core,
+      summary: reg.desc,
+      content: reg.fullText,
+      sources: reg.sources
+    };
+  })();
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Hero Header */}
@@ -39,102 +237,75 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800 space-y-3">
-            <div className="p-2 w-fit rounded-lg bg-[#580014] text-[#d4af37]">
-              <Compass className="w-5 h-5" />
-            </div>
-            <h3 className="font-royal-heading font-bold text-base text-stone-100">
-              {t.odraDesha.odraTitle}
-            </h3>
-            <p className="text-xs text-stone-400 leading-relaxed">
-              {t.odraDesha.odraDesc}
-            </p>
-            <div className="pt-2 text-[11px] text-[#e8c872] font-semibold">
-              {t.odraDesha.coreRulers}
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800 space-y-3">
-            <div className="p-2 w-fit rounded-lg bg-stone-800 text-stone-300">
-              <Landmark className="w-5 h-5" />
-            </div>
-            <h3 className="font-royal-heading font-bold text-base text-stone-100">
-              {t.odraDesha.utkalaTitle}
-            </h3>
-            <p className="text-xs text-stone-400 leading-relaxed">
-              {t.odraDesha.utkalaDesc}
-            </p>
-            <div className="pt-2 text-[11px] text-[#e8c872] font-semibold">
-              Core Centers: Jajpur, Balasore coastal strip
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800 space-y-3">
-            <div className="p-2 w-fit rounded-lg bg-stone-800 text-stone-300">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <h3 className="font-royal-heading font-bold text-base text-stone-100">
-              {t.odraDesha.kalingaTitle}
-            </h3>
-            <p className="text-xs text-stone-400 leading-relaxed">
-              {t.odraDesha.kalingaDesc}
-            </p>
-            <div className="pt-2 text-[11px] text-[#e8c872] font-semibold">
-              Core Centers: Kalinganagara, Srikakulam, Simhachalam
-            </div>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800 space-y-3">
-            <div className="p-2 w-fit rounded-lg bg-stone-800 text-stone-300">
-              <Scroll className="w-5 h-5" />
-            </div>
-            <h3 className="font-royal-heading font-bold text-base text-stone-100">
-              {t.odraDesha.trikalingaTitle}
-            </h3>
-            <p className="text-xs text-stone-400 leading-relaxed">
-              {t.odraDesha.trikalingaDesc}
-            </p>
-            <div className="pt-2 text-[11px] text-[#e8c872] font-semibold">
-              Core Centers: Kalahandi, Koraput, Sambalpur
-            </div>
-          </div>
+          {regionalItems.map(reg => {
+            const Icon = reg.icon;
+            return (
+              <div
+                key={reg.id}
+                onClick={() => setSelectedId(reg.id)}
+                className="p-5 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 cursor-pointer transition-all group flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className={`p-2 w-fit rounded-lg ${reg.iconStyle}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                    {reg.title}
+                  </h3>
+                  <p className="text-xs text-stone-400 leading-relaxed">
+                    {reg.desc}
+                  </p>
+                </div>
+                <div className="pt-2 text-[11px] text-[#e8c872] font-semibold">
+                  {reg.core}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Deep Dive Historical Narrative */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-[#111520] border border-[#c99738]/40 space-y-6">
+      <div
+        onClick={() => setSelectedId('odra-epigraphic-evolution')}
+        className="p-6 sm:p-8 rounded-3xl bg-[#111520] border border-[#c99738]/40 hover:border-[#c99738] space-y-6 cursor-pointer transition-all"
+      >
         <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
-          Epigraphic Evolution of the Odra Identity
+          {loc.evolutionTitle}
         </h3>
         <div className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed space-y-4">
-          <p>
-            The earliest historical attestations of the Odra people occur in classical Indian literature, including the Mahabharata, the Natyashastra of Bharata Muni (which distinguishes the Odra-Magadhi style of theatre and dance), and the Puranas. Pliny the Elder in his 1st-century CE <em>Naturalis Historia</em> identifies the <em>Oretes</em> inhabiting the country near Mount Maleus.
-          </p>
-          <p>
-            In 639 CE, the celebrated Chinese Buddhist pilgrim Xuanzang (Hiuen Tsang) traversed the realm of <em>Wu-T’u</em> (Odra). He recorded that the climate was temperate, the people tall and intrepid with dark complexions, and noted the famous port city of Charitra (Che-li-ta-lo) on the southeastern shore, from which merchant vessels departed for Sinhala (Sri Lanka) and the South Seas.
-          </p>
-          <p>
-            By the 15th century, during the reign of Kapilendra Deva Gajapathi, "Odra-Rajya" had transformed into the sovereign core of a subcontinent-wide empire. Kapilendra Deva’s copper-plate grants, such as the Veligalani charter (1458 CE), refer explicitly to the administration of Odra officers across the southern military forts of Kondavidu, Vinukonda, and Udayagiri.
-          </p>
+          <p>{loc.p1}</p>
+          <p>{loc.p2}</p>
+          <p>{loc.p3}</p>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-stone-800">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-stone-800">
           <button
-            onClick={() => onNavigate('/maps')}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5"
+            onClick={e => {
+              e.stopPropagation();
+              onNavigate('/maps');
+            }}
+            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
           >
-            <span>Explore Historical Maps of Odra Desha</span>
+            <span>{loc.mapsBtn}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
           <button
-            onClick={() => onNavigate('/inscriptions')}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5"
+            onClick={e => {
+              e.stopPropagation();
+              onNavigate('/inscriptions');
+            }}
+            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
           >
-            <span>View Odra Inscription Records</span>
+            <span>{loc.inscriptionsBtn}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
+
+      <ContentDetailModal item={modalItem} onClose={() => setSelectedId(null)} />
     </div>
   );
 };
+
+

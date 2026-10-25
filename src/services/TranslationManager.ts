@@ -264,10 +264,20 @@ export class TranslationManager {
       // 1. Fallback to cache if available
       const fallback = this.getFromLocalStorage<Article[]>(cacheKey);
       if (fallback && fallback.length > 0) return fallback;
-      // 2. Fallback to built-in canonical repository so articles NEVER fail in any browser
+      // 2. Fallback to built-in canonical repository so articles NEVER fail on static GitHub Pages
       const repoFallback = getAllArticles(lang);
       if (repoFallback && repoFallback.length > 0) {
-        return repoFallback;
+        let filtered = repoFallback;
+        if (options.category && options.category !== 'All') {
+          filtered = filtered.filter(a => a.category.toLowerCase() === options.category!.toLowerCase());
+        }
+        if (options.tag) {
+          filtered = filtered.filter(a => a.tags.some(t => t.toLowerCase() === options.tag!.toLowerCase()));
+        }
+        if (options.status && options.status !== 'All') {
+          filtered = filtered.filter(a => a.verification_status.toLowerCase() === options.status!.toLowerCase());
+        }
+        return filtered;
       }
       throw err;
     }
@@ -298,7 +308,6 @@ export class TranslationManager {
     try {
       const res = await fetch(`/api/content/articles/${encodeURIComponent(idOrSlug)}?lang=${lang}`);
       if (!res.ok) {
-        if (res.status === 404) return null;
         throw new Error(`HTTP ${res.status}: Failed to fetch article`);
       }
       const data = await res.json();
@@ -306,14 +315,15 @@ export class TranslationManager {
       if (article) {
         this.inMemorySingleArticle.set(cacheKey, { data: article, timestamp: Date.now() });
         this.writeToLocalStorage(cacheKey, article);
+        return article;
       }
-      return article;
-    } catch (err: any) {
+      return getArticleByIdOrSlug(idOrSlug, lang);
+    } catch {
       const fallback = this.getFromLocalStorage<Article>(cacheKey);
       if (fallback) return fallback;
       const repoFallback = getArticleByIdOrSlug(idOrSlug, lang);
       if (repoFallback) return repoFallback;
-      throw err;
+      return null;
     }
   }
 
