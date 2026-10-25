@@ -46,6 +46,24 @@ export interface MultilingualText {
   bn: string;
 }
 
+export type ProminentRoleCategory =
+  | 'Historical Rulers & Sovereigns'
+  | 'Military Commanders & Martial Figures'
+  | 'Scholars, Saints & Cultural Figures'
+  | 'Civic Engineers & Community Leaders';
+
+export type ProminentStateRegion =
+  | 'Odisha'
+  | 'Karnataka'
+  | 'Andhra Pradesh'
+  | 'Tamil Nadu'
+  | 'Deccan, Maharashtra & North';
+
+export type HistoricalVerificationBasis =
+  | 'Documented Historical & Epigraphic Record'
+  | 'Community Tradition, Puranic & Ballad Chronicle'
+  | 'Contemporary Archival & Community Leadership';
+
 export interface ProminentPerson {
   id: string;
   name: MultilingualText;
@@ -2692,8 +2710,402 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Direct Community Outreach Register (+91 9480112897)'
     ],
     imageUrl: `${import.meta.env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`
+  },
+
+  // 21. Prince Virabhadra Deva Gajapathi (Reused from Verified Repository — Karnataka & Andhra Pradesh)
+  {
+    id: 'virabhadra_deva_gajapathi',
+    name: {
+      en: 'Prince Virabhadra Deva Gajapathi',
+      hi: 'राजकुमार वीरभद्र देव गजपति',
+      te: 'యువరాజు వీరభద్ర దేవ గజపతి',
+      kn: 'ಯುವರಾಜ ವೀರಭದ್ರ ದೇವ ಗಜಪತಿ',
+      ta: 'இளவரசர் வீரபத்ர தேவ கஜபதி',
+      mr: 'राजकुमार वीरभद्र देव गजपती',
+      or: 'ରାଜକୁମାର ବୀରଭଦ୍ର ଦେବ ଗଜପତି',
+      bn: 'রাজকুমার বীরভদ্র দেব গজপতি'
+    },
+    titles: {
+      en: 'Royal Gajapathi Governor of Kondavidu & Provincial Nayaka of Malebennur (Karnataka)',
+      hi: 'कोंडावीडु के गजपति राज्यपाल एवं मलेबेन्नूर (कर्नाटक) के प्रांतीय प्रशासक',
+      te: 'కొండవీడు దుర్గ గజపతి రాజప్రతినిధి & మలెబెన్నూరు (కర్ణాటక) ప్రాంతీయ పాలకుడు',
+      kn: 'ಕೊಂಡವೀಡು ಕೋಟೆಯ ಗಜಪತಿ ರಾಜ್ಯಪಾಲ ಮತ್ತು ಮಲೆಬೆನ್ನೂರು (ಕರ್ನಾಟಕ) ಪ್ರಾಂತ್ಯದ ನಾಯಕ',
+      ta: 'கொண்டவீடு கோட்டையின் கஜபதி ஆளுநர் & மாலெபென்னூர் (கர்நாடகா) மாகாணத் தலைவர்',
+      mr: 'कोंडावीडूचे गजपती राज्यपाल आणि मलेबेन्नूर (कर्नाटक) प्रांताचे प्रशासक',
+      or: 'କୋଣ୍ଡାଭିଡୁ ଦୁର୍ଗର ଗଜପତି ରାଜ୍ୟପାଳ ଓ ମାଲେବେନ୍ନୁର (କର୍ଣ୍ଣାଟକ) ପ୍ରାନ୍ତୀୟ ଶାସକ',
+      bn: 'কোন্ডাভিডু দুর্গের গজপতি রাজ্যপাল ও মালেবেন্নুর (কর্ণাটক) প্রাদেশিক শাসক'
+    },
+    branches: [
+      'Gajapathis',
+      'Suryavamsha Kshatriya',
+      'Suryavamshi Kshatriya',
+      'Odiyaraju',
+      'Vadiyarajulu',
+      'OddeRajulu',
+      'VaddeRajulu',
+      'Od-Kshatriya'
+    ],
+    era: {
+      en: 'Early 16th Century CE (Active c. 1509 – 1516 CE)',
+      hi: '16वीं शताब्दी ईस्वी का प्रारंभ (सक्रिय लगभग 1509 – 1516 ई.)',
+      te: '16వ శతాబ్దం ప్రారంభం (క్రీ.శ. 1509 – 1516)',
+      kn: '೧೬ನೇ ಶತಮಾನದ ಆರಂಭ (ಕ್ರಿ.ಶ. 1509 – 1516)',
+      ta: 'கி.பி. 16 ஆம் நூற்றாண்டின் முற்பகுதி (கி.பி. 1509 – 1516)',
+      mr: '१६ व्या शतकाची सुरुवात (इ.स. १५०९ – १५१६)',
+      or: '୧୬ଶ ଶତାବ୍ଦୀର ପ୍ରାରମ୍ଭ (ଖ୍ରୀ. ୧୫୦୯ – ୧୫୧୬)',
+      bn: '১৬শ শতাব্দীর সূচনা (খ্রিস্টাব্দ ১৫০৯ – ১৫১৬)'
+    },
+    region: {
+      en: 'Karnataka (Malebennur, Davanagere), Andhra Pradesh (Kondavidu) & Odisha',
+      hi: 'कर्नाटक (मलेबेन्नूर, दावणगेरे), आंध्र प्रदेश (कोंडावीडु) एवं ओडिशा',
+      te: 'కర్ణాటక (మలెబెన్నూరు, దావణగెరె), ఆంధ్రప్రదేశ్ (కొండవీడు) & ఒడిశా',
+      kn: 'ಕರ್ನಾಟಕ (ಮಲೆಬೆನ್ನೂರು, ದಾವಣಗೆರೆ), ಆಂಧ್ರಪ್ರದೇಶ (ಕೊಂಡವೀಡು) ಮತ್ತು ಒಡಿಶಾ',
+      ta: 'கர்நாடகா (மாலெபென்னூர், தாவண்கரே), ஆந்திரப் பிரதேசம் (கொண்டவீடு) & ஒடிசா',
+      mr: 'कर्नाटक (मलेबेन्नूर, दावणगेरे), आंध्र प्रदेश (कोंडावीडू) व ओडिशा',
+      or: 'କର୍ଣ୍ଣାଟକ (ମାଲେବେନ୍ନୁର, ଦାବଣଗେରେ), ଆନ୍ଧ୍ର ପ୍ରଦେଶ (କୋଣ୍ଡାଭିଡୁ) ଓ ଓଡ଼ିଶା',
+      bn: 'কর্ণাটক (মালেবেন্নুর, দাবণগেরে), অন্ধ্রপ্রদেশ (কোন্ডাভিডু) ও ওড়িশা'
+    },
+    badge: 'Documented Royal Governor (Karnataka & Andhra)',
+    summary: {
+      en: 'Son of Emperor Prataparudra Deva Gajapathi. Epigraphically attested as the royal commander of Kondavidu Fort in Andhra and subsequently appointed by Emperor Krishnadevaraya as provincial governor at Malebennur in Davanagere district, Karnataka (1516 CE inscription), providing direct epigraphic proof of Suryavamsha Gajapathi royal presence in central Karnataka.',
+      hi: 'सम्राट प्रतापरुद्र देव गजपति के पुत्र। आंध्र के कोंडावीडु किले के राजकीय सेनापति रहे और तत्पश्चात सम्राट कृष्णदेवराय द्वारा कर्नाटक के दावणगेरे जिले के मलेबेन्नूर में प्रांतीय गवर्नर नियुक्त किए गए (1516 ई. का कन्नड़ शिलालेख), जो मध्य कर्नाटक में सूर्यवंशी गजपति उपस्थिति का प्रत्यक्ष अभिलेखीय प्रमाण है।',
+      te: 'గజపతి చక్రవర్తి ప్రతాపరుద్ర దేవుని కుమారుడు. ఆంధ్రలోని కొండవీడు దుర్గ రక్షకునిగా సేవలందించి, ఆపై శ్రీకృష్ణదేవరాయల కాలంలో కర్ణాటకలోని దావణగెరె జిల్లా మలెబెన్నూరు రాజప్రతినిధిగా నియమితులయ్యారు (1516 CE కన్నడ శిలాశాసనం). కర్ణాటకలో సూర్యవంశ గజపతి రాజుల ప్రత్యక్ష ఉనికికి ఇది ప్రామాణిక శాసనాధారం.',
+      kn: 'ಸಾಮ್ರಾಟ್ ಪ್ರತಾಪರುದ್ರ ದೇವ ಗಜಪತಿಯ ಪುತ್ರ. ಆಂಧ್ರದ ಕೊಂಡವೀಡು ಕೋಟೆಯ ದಂಡನಾಯಕರಾಗಿ ಸೇವೆ ಸಲ್ಲಿಸಿ, ನಂತರ ಶ್ರೀಕೃಷ್ಣದೇವರಾಯರಿಂದ ಕರ್ನಾಟಕದ ದಾವಣಗೆರೆ ಜಿಲ್ಲೆಯ ಮಲೆಬೆನ್ನೂರು ಪ್ರಾಂತ್ಯದ ನಾಯಕರಾಗಿ ನೇಮಕಗೊಂಡರು (ಕ್ರಿ.ಶ. 1516 ರ ಮಲೆಬೆನ್ನೂರು ಕನ್ನಡ ಶಾಸನ). ಇದು ಕರ್ನಾಟಕದಲ್ಲಿ ಒಡಿಯರಾಜು/ಗಜಪತಿ ರಾಜಮನೆತನದ ನೇರ ಶಾಸನಾಧಾರವಾಗಿದೆ.',
+      ta: 'கஜபதி பேரரசர் பிரதாபருத்ர தேவரின் புதல்வர். ஆந்திராவின் கொண்டவீடு கோட்டைத் தளபதியாகப் பணியாற்றி, பின்னர் கிருஷ்ணதேவராயரால் கர்நாடகாவின் தாவண்கரே மாவட்டத்திலுள்ள மாலெபென்னூர் ஆளுநராக நியமிக்கப்பட்டார் (கி.பி. 1516 கல்வெட்டு).',
+      mr: 'सम्राट प्रतापरुद्र देव गजपतींचे पुत्र. आंध्रमधील कोंडावीडू किल्ल्याचे सेनापती आणि नंतर सम्राट कृष्णदेवराय यांच्या काळात कर्नाटकातील दावणगेरे जिल्ह्यातील मलेबेन्नूरचे प्रांतीय शासक (इ.स. १५१६ चा शिलालेख).',
+      or: 'ସମ୍ରାଟ ପ୍ରତାପରୁଦ୍ର ଦେବ ଗଜପତିଙ୍କ ପୁତ୍ର। ଆନ୍ଧ୍ରର କୋଣ୍ଡାଭିଡୁ ଦୁର୍ଗର ସେନାପତି ଏବଂ ପରବର୍ତ୍ତୀ କାଳରେ କର୍ଣ୍ଣାଟକର ଦାବଣଗେରେ ଜିଲ୍ଲା ଅନ୍ତର୍ଗତ ମାଲେବେନ୍ନୁରର ପ୍ରାନ୍ତୀୟ ଶାସକ ଭାବେ ୧୫୧୬ ଖ୍ରୀଷ୍ଟାବ୍ଦର କନ୍ନଡ଼ ଶିଳାଲେଖରେ ପ୍ରମାଣିତ।',
+      bn: 'সম্রাট প্রতাপরুদ্র দেব গজপতির পুত্র। অন্ধ্রের কোন্ডাভিডু দুর্গের সেনাপতি এবং পরবর্তীতে কর্ণাটকের দাবণগেরে জেলার মালেবেন্নুরের প্রাদেশিক শাসক হিসেবে ১৫১৬ খ্রিস্টাব্দের কন্নড় শিলালিপিতে প্রত্যয়িত।'
+    },
+    biography: {
+      en: 'Prince Virabhadra Deva Gajapathi commanded the strategic hill fortress of Kondavidu in Guntur (Andhra Pradesh) during the reign of his father, Emperor Prataparudra Deva. Following the 1515 CE siege of Kondavidu, Emperor Krishnadevaraya of Vijayanagara treated the royal Gajapathi prince with high chivalric honor and conferred upon him the governorship (Nayakachara) of Malebennur in the Tungabhadra valley of Karnataka. A dated Kannada stone inscription (1516 CE, Epigraphia Carnatica Vol. XI, Davanagere 107) records tax exemptions and temple endowments granted by "Gajapati Prataparudra Maharaya’s son Virabhadra Maharaya" in Karnataka.',
+      hi: 'राजकुमार वीरभद्र देव गजपति ने अपने पिता सम्राट प्रतापरुद्र देव के शासनकाल में गुंटूर (आंध्र प्रदेश) के सामरिक कोंडावीडु दुर्ग की कमान संभाली। 1515 ई. की संधि व सम्मान के पश्चात विजयनगर सम्राट कृष्णदेवराय ने उन्हें कर्नाटक की तुंगभद्रा घाटी में स्थित मलेबेन्नूर का प्रांतीय शासन सौंपा। 1516 ई. का कन्नड़ शिलालेख (एपिग्राफिया कर्नाटिका, खंड XI) कर्नाटक में उनके मंदिर अनुदानों को प्रमाणित करता है।',
+      te: 'యువరాజు వీరభద్ర దేవ గజపతి తన తండ్రి ప్రతాపరుద్ర దేవుని పాలనలో గుంటూరు సమీపంలోని కొండవీడు దుర్గానికి అధిపతిగా వ్యవహరించారు. 1515 CE తర్వాత విజయనగర చక్రవర్తి శ్రీకృష్ణదేవరాయలు ఆయనను రాచమర్యాదలతో గౌరవించి కర్ణాటకలోని తుంగభద్ర లోయలో ఉన్న మలెబెన్నూరు ప్రాంత పాలకునిగా నియమించారు. క్రీ.శ. 1516 నాటి మలెబెన్నూరు కన్నడ శిలాశాసనం (Epigraphia Carnatica Vol. XI) కర్ణాటకలో ఆయన చేసిన దానధర్మాలను స్పష్టంగా నమోదు చేసింది.',
+      kn: 'ಯುವರಾಜ ವೀರಭದ್ರ ದೇವ ಗಜಪತಿಯು ತನ್ನ ತಂದೆ ಸಾಮ್ರಾಟ್ ಪ್ರತಾಪರುದ್ರ ದೇವನ ಕಾಲದಲ್ಲಿ ಕೊಂಡವೀಡು ಕೋಟೆಯ ಅಧিপತಿಯಾಗಿದ್ದನು. ಕ್ರಿ.ಶ. 1515 ರ ನಂತರ ವಿಜಯನಗರ ಸಾಮ್ರಾಟ್ ಶ್ರೀಕೃಷ್ಣದೇವರಾಯನು ಇವರನ್ನು ಗೌರವಿಸಿ ಕರ್ನಾಟಕದ ತುಂಗಭದ್ರಾ ಕಣಿವೆಯ ಮಲೆಬೆನ್ನೂರು ಪ್ರಾಂತ್ಯದ ಆಡಳಿತವನ್ನು ನೀಡಿದನು. ಕ್ರಿ.ಶ. 1516 ರ ಮಲೆಬೆನ್ನೂರು ಕನ್ನಡ ಶಾಸನವು (Epigraphia Carnatica Vol. XI) "ಗಜಪತಿ ಪ್ರತಾಪರುದ್ರ ಮಹಾರಾಯರ ಕುಮಾರ ವೀರಭದ್ರ ಮಹಾರಾಯ" ನೀಡಿದ ದಾನಗಳನ್ನು ದಾಖಲಿಸಿದೆ.',
+      ta: 'இளவரசர் வீரபத்ர தேவ கஜபதி தனது தந்தை பிரதாபருத்ர தேவரின் ஆட்சியின் போது கொண்டவீடு கோட்டையின் தளபதியாக விளங்கினார். கி.பி. 1515-க்குப் பிறகு விஜயநகரப் பேரரசர் கிருஷ்ணதேவராயரால் கர்நாடகாவின் மாலெபென்னூர் பகுதியின் ஆளுநராக நியமிக்கப்பட்டார். கி.பி. 1516-ஆம் ஆண்டின் மாலெபென்னூர் கன்னடக் கல்வெட்டு (Epigraphia Carnatica Vol. XI) இவரது அறக்கொடைகளைப் பதிவு செய்துள்ளது.',
+      mr: 'राजकुमार वीरभद्र देव गजपती यांनी कोंडावीडू किल्ल्याचे नेतृत्व केले आणि नंतर विजयनगर सम्राट कृष्णदेवराय यांच्या काळात कर्नाटकातील मलेबेन्नूर प्रांताचे शासन सांभाळले. इ.स. १५१६ चा कन्नड शिलालेख (Epigraphia Carnatica Vol. XI) त्यांच्या कर्नाटकातील दानांची नोंद करतो.',
+      or: 'ରାଜକୁମାର ବୀରଭଦ୍ର ଦେବ ଗଜପତି ପିତା ସମ୍ରାଟ ପ୍ରତାପରୁଦ୍ର ଦେବଙ୍କ ଶାସନ କାଳରେ କୋଣ୍ଡାଭିଡୁ ଦୁର୍ଗର ଅଧିପତି ଥିଲେ। ୧୫୧୫ ଖ୍ରୀଷ୍ଟାବ୍ଦ ପରେ ବିଜୟନଗର ସମ୍ରାଟ କୃଷ୍ଣଦେବରାୟଙ୍କ ସମୟରେ ସେ କର୍ଣ୍ଣାଟକର ତୁଙ୍ଗଭଦ୍ରା ଉପତ୍ୟକାସ୍ଥିତ ମାଲେବେନ୍ନୁରର ଶାସনଭାର ଗ୍ରହଣ କରିଥିଲେ (୧୫୧୬ ଖ୍ରୀ. ଶିଳାଲେଖ)।',
+      bn: 'রাজকুমার বীরভদ্র দেব গজপতি পিতা সম্রাট প্রতাপরুদ্র দেবের আমলে কোন্ডাভিডু দুর্গের অধিপতি ছিলেন। ১৫১৫ খ্রিস্টাব্দের পর বিজয়নগর সম্রাট কৃষ্ণদেবরায়ের আমলে তিনি কর্ণাটকের তুঙ্গভদ্রা উপত্যকার মালেবেন্নুরের শাসনভার গ্রহণ করেন (১৫১৬ খ্রি. শিলালিপি)।'
+    },
+    majorContributions: [
+      {
+        en: 'Commanded the southern imperial bastion of Kondavidu Fort in Andhra Pradesh before serving as provincial ruler at Malebennur in Karnataka.',
+        hi: 'आंध्र प्रदेश के कोंडावीडु दुर्ग की कमान संभाली और कर्नाटक के मलेबेन्नूर में प्रांतीय शासक के रूप में कार्य किया।',
+        te: 'ఆంధ్రప్రదేశ్‌లోని కొండవీడు దుర్గానికి సారథ్యం వహించి, కర్ణాటకలోని మలెబెన్నూరులో ప్రాంతీయ పాలకునిగా సేవలందించారు.',
+        kn: 'ಆಂಧ್ರದ ಕೊಂಡವೀಡು ಕೋಟೆಯ ನಾಯಕತ್ವ ವಹಿಸಿ, ಕರ್ನಾಟಕದ ಮಲೆಬೆನ್ನೂರಿನಲ್ಲಿ ಪ್ರಾಂತ್ಯೀಯ ಆಡಳಿತ ನಡೆಸಿದರು.',
+        ta: 'ஆந்திராவின் கொண்டவீடு கோட்டையை வழிநடத்தி, கர்நாடகாவின் மாலெபென்னூரில் ஆளுநராகப் பணியாற்றினார்.',
+        mr: 'कोंडावीडू किल्ल्याचे नेतृत्व केले आणि कर्नाटकातील मलेबेन्नूर येथे प्रांतीय शासक म्हणून कार्य केले.',
+        or: 'ଆନ୍ଧ୍ରର କୋଣ୍ଡାଭିଡୁ ଦୁର୍ଗର ନେତୃତ୍ୱ ନେବା ସହ କର୍ଣ୍ଣାଟକର ମାଲେବେନ୍ନୁରରେ ପ୍ରାନ୍ତୀୟ ଶାସକ ଥିଲେ।',
+        bn: 'অন্ধ্রের কোন্ডাভিডু দুর্গের নেতৃত্ব দেন এবং কর্ণাটকের মালেবেন্নুরে প্রাদেশিক শাসক হিসেবে দায়িত্ব পালন করেন।'
+      },
+      {
+        en: 'Issued the 1516 CE Malebennur Kannada stone inscription in Davanagere, Karnataka, establishing a primary epigraphic bridge between Odisha, Andhra, and Karnataka.',
+        hi: 'कर्नाटक के दावणगेरे में 1516 ई. का मलेबेन्नूर कन्नड़ शिलालेख जारी किया, जो ओडिशा, आंध्र और कर्नाटक के बीच प्रत्यक्ष अभिलेखीय सेतु है।',
+        te: 'కర్ణాటకలోని దావణగెరెలో క్రీ.శ. 1516 నాటి మలెబెన్నూరు కన్నడ శిలాశాసనాన్ని వేయించి, ఒడిశా-ఆంధ్ర-కర్ణాటక చారిత్రక బంధాన్ని శాసనబద్ధం చేశారు.',
+        kn: 'ದಾವಣಗೆರೆಯ ಮಲೆಬೆನ್ನೂರಿನಲ್ಲಿ ಕ್ರಿ.ಶ. 1516 ರ ಕನ್ನಡ ಶಾಸನವನ್ನು ಹೊರಡಿಸಿ ಒಡಿಶಾ, ಆಂಧ್ರ ಮತ್ತು ಕರ್ನಾಟಕದ ನಡುವೆ ಶಾಸನಬದ್ಧ ಸೇತುವೆಯನ್ನು ನಿರ್ಮಿಸಿದರು.',
+        ta: 'கி.பி. 1516 மாலெபென்னூர் கன்னடக் கல்வெட்டின் மூலம் ஒடிசா, ஆந்திரா மற்றும் கர்நாடகா இடையிலான வரலாற்றுத் தொடர்பை உறுதிப்படுத்தினார்.',
+        mr: 'इ.स. १५१६ चा मलेबेन्नूर कन्नड शिलालेख कोरून ओडिशा, आंध्र आणि कर्नाटक यांमधील ऐतिहासिक दुवा प्रस्थापित केला.',
+        or: '୧୫୧୬ ଖ୍ରୀଷ୍ଟାବ୍ଦର ମାଲେବେନ୍ନୁର କନ୍ନଡ଼ ଶିଳାଲେଖ ଦ୍ୱାରା ଓଡ଼ିଶା, ଆନ୍ଧ୍ର ଓ କର୍ଣ୍ଣାଟକ ମଧ୍ୟରେ ପ୍ରତ୍ୟକ୍ଷ ଐତିହାସିକ ସେତୁ ସ୍ଥାପନ କରିଥିଲେ।',
+        bn: '১৫১৬ খ্রিস্টাব্দের মালেবেন্নুর কন্নড় শিলালিপির মাধ্যমে ওড়িশা, অন্ধ্র ও কর্ণাটকের মধ্যে প্রত্যক্ষ ঐতিহাসিক সেতুবন্ধন স্থাপন করেন।'
+      }
+    ],
+    evidenceSources: [
+      'Malebennur Kannada Stone Inscription (1516 CE), Epigraphia Carnatica, Vol. XI (Davanagere 107)',
+      'Kondavidu Fort Epigraphic Records & Vijayanagara Amar-Nayaka Registers',
+      'R. Subrahmanyam, "The Suryavamsi Gajapatis of Orissa" (Andhra University, 1957)'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&auto=format&fit=crop&q=80'
+  },
+
+  // 22. Mahakavi Sarala Dasa (Reused from Verified Repository — 15th-Century Scholar & Soldier, Odisha)
+  {
+    id: 'mahakavi_sarala_dasa',
+    name: {
+      en: 'Mahakavi Sarala Dasa (Siddheswara Parida)',
+      hi: 'महाकवि सारला दास (सिद्धेश्वर परिडा)',
+      te: 'మహాకవి సారళా దాసు (సిద్ధేశ్వర పరిడా)',
+      kn: 'ಮಹಾಕವಿ ಸಾರಲಾ ದಾಸ (ಸಿದ್ಧೇಶ್ವರ ಪರಿಡಾ)',
+      ta: 'மகாகவி சரளா தாசர் (சித்தேஸ்வர பரிதா)',
+      mr: 'महाकवी सारला दास (सिद्धेश्वर परिडा)',
+      or: 'ଆଦିକବି ସାରଳା ଦାସ (ସିଦ୍ଧେଶ୍ୱର ପରିଡ଼ା)',
+      bn: 'মহাকবি সারলা দাস (সিদ্ধেশ্বর পরিডা)'
+    },
+    titles: {
+      en: 'Adikavi of Odia Literature, 15th-Century Soldier-Scholar of the Gajapathi Era',
+      hi: 'उड़िया साहित्य के आदिकवि एवं गजपति काल के 15वीं सदी के सैनिक-विद्वान',
+      te: 'ఒడియా సాహిత్య ఆదికవి & గజపతి కాలపు 15వ శతాబ్దపు సైనిక-పండితుడు',
+      kn: 'ಒಡಿಯಾ ಸಾಹಿತ್ಯದ ಆದಿಕವಿ ಮತ್ತು ೧೫ನೇ ಶತಮಾನದ ಗಜಪತಿ ಕಾಲದ ಸೈನಿಕ-ವಿದ್ವಾಂಸ',
+      ta: 'ஒடிய இலக்கியத்தின் ஆதிகவி & 15-ஆம் நூற்றாண்டு கஜபதி காலப் படைவீரர்-புலவர்',
+      mr: 'ओडिया साहित्याचे आदिकवी आणि १५ व्या शतकातील गजपती काळातील सैनिक-विद्वान',
+      or: 'ଓଡ଼ିଆ ସାହିତ୍ୟର ଆଦିକବି ତଥା ଗଜପତି ଯୁଗର ୧୫ଶ ଶତାବ୍ଦୀର ସୈନିକ-ପଣ୍ଡିତ',
+      bn: 'ওড়িয়া সাহিত্যের আদিকবি ও ১৫শ শতাব্দীর গজপতি যুগের সৈনিক-পণ্ডিত'
+    },
+    branches: [
+      'Od',
+      'Odra',
+      'Od-Khandayaths',
+      'Oda-Chasa',
+      'paikas',
+      'Kalinga',
+      'Utkala',
+      'Gajapathis'
+    ],
+    era: {
+      en: '15th Century CE (Contemporary of Emperor Kapilendra Deva, c. 1435 – 1466 CE)',
+      hi: '15वीं शताब्दी ईस्वी (सम्राट कपिलेन्द्र देव के समकालीन, लगभग 1435 – 1466 ई.)',
+      te: '15వ శతాబ్దం (కపిలేంద్ర దేవుని సమకాలికుడు, క్రీ.శ. 1435 – 1466)',
+      kn: '೧೫ನೇ ಶತಮಾನ (ಸಾಮ್ರಾಟ್ ಕಪಿಲೇಂದ್ರ ದೇವನ ಸಮಕಾಲೀನ, ಕ್ರಿ.ಶ. 1435 – 1466)',
+      ta: 'கி.பி. 15 ஆம் நூற்றாண்டு (கபிலேந்திர தேவரின் சமகாலத்தவர், கி.பி. 1435 – 1466)',
+      mr: '१५ वे शतक (सम्राट कपिलेन्द्र देवांचे समकालीन, इ.स. १४३५ – १४६६)',
+      or: '୧୫ଶ ଶତାବ୍ଦୀ (ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ସମসামୟିକ, ଖ୍ରୀ. ୧୪୩୫ – ୧୪୬୬)',
+      bn: '১৫শ শতাব্দী (সম্রাট কপিলেন্দ্র দেবের সমসাময়িক, খ্রি. ১৪৩৫ – ১৪৬৬)'
+    },
+    region: {
+      en: 'Odisha (Jhankad / Kanakapura, Jagatsinghpur & Cuttack)',
+      hi: 'ओडिशा (झंकड़ / कनकपुर, जगतसिंहपुर एवं कटक)',
+      te: 'ఒడిశా (ఝంకడ్ / కనకపుర, జగత్‌సింగ్‌పూర్ & కటక్)',
+      kn: 'ಒಡಿಶಾ (ಝಂಕಡ್ / ಕನಕಪುರ, ಜಗತ್‌ಸಿಂಗ್‌ಪುರ ಮತ್ತು ಕಟಕ್)',
+      ta: 'ஒடிசா (ஜங்கட் / கனகபுரா, ஜகத்சிங்பூர் & கட்டாக்)',
+      mr: 'ओडिशा (झंकड / कनकपूर, जगतसिंगपूर व कटक)',
+      or: 'ଓଡ଼ିଶା (ଝଙ୍କଡ଼ / କନକପୁର, ଜଗତସିଂହପୁର ଓ କଟକ)',
+      bn: 'ওড়িশা (ঝঙ্কড় / কনকপুর, জগৎসিংহপুর ও কটক)'
+    },
+    badge: '15th-Century Scholar & Literary Pioneer',
+    summary: {
+      en: 'Revered as the Adikavi (First Poet) of Odia literature and a contemporary soldier-scholar during Emperor Kapilendra Deva’s reign. Born in the agrarian-martial Odra community of Jhankad (Odisha), he composed the monumental Odia Mahabharata, Vilanka Ramayana, and Chandi Purana, recording valuable historical details of the Suryavamsha Gajapathi campaigns.',
+      hi: 'उड़िया साहित्य के आदिकवि और सम्राट कपिलेन्द्र देव के शासनकाल के सैनिक-विद्वान। झंकड़ (ओडिशा) में जन्मे सारला दास ने उड़िया महाभारत, बिलंका रामायण और चंडी पुराण की रचना की, जिनमें सूर्यवंशी गजपति अभियानों के महत्वपूर्ण ऐतिहासिक विवरण दर्ज हैं।',
+      te: 'ఒడియా సాహిత్య ఆదికవి మరియు కపిలేంద్ర దేవుని కాలపు సైనిక-పండితుడు. ఒడిశాలోని ఝంకడ్‌లో జన్మించిన ఆయన ఒడియా మహాభారతం, విలంక రామాయణం మరియు చండీ పురాణాలను రచించి, సూర్యవంశ గజపతి దండయాత్రల చారిత్రక విశేషాలను నమోదు చేశారు.',
+      kn: 'ಒಡಿಯಾ ಸಾಹಿತ್ಯದ ಆದಿಕವಿ ಮತ್ತು ಸಾಮ್ರಾಟ್ ಕಪಿಲೇಂದ್ರ ದೇವನ ಕಾಲದ ಸೈನಿಕ-ವಿದ್ವಾಂಸ. ಒಡಿಯಾ ಮಹಾಭಾರತ, ವಿಲಂಕಾ ರಾಮಾಯಣ ಮತ್ತು ಚಂಡಿ ಪುರಾಣಗಳನ್ನು ರಚಿಸಿ ಗಜಪತಿ ಯುಗದ ಐತಿಹಾಸಿಕ ವಿವರಗಳನ್ನು ದಾಖಲಿಸಿದ್ದಾರೆ.',
+      ta: 'ஒடிய இலக்கியத்தின் ஆதிகவியும் கபிலேந்திர தேவர் காலத்துப் படைவீரர்-புலவருமான இவர், ஒடிய மகாபாரதம், விலங்கா ராமாயணம் மற்றும் சண்டி புராணத்தை இயற்றி கஜபதி கால வரலாற்றைப் பதிவு செய்தார்.',
+      mr: 'ओडिया साहित्याचे आदिकवी आणि सम्राट कपिलेन्द्र देवांच्या काळातील सैनिक-विद्वान. त्यांनी ओडिया महाभारत, विलंक रामायण आणि चंडी पुराणाची रचना करून गजपती मोहिमांचे ऐतिहासिक संदर्भ नोंदवले.',
+      or: 'ଓଡ଼ିଆ ସାହିତ୍ୟର ଆଦିକବି ତଥା ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ସମসামୟିକ ସୈନିକ-ପଣ୍ଡିତ। ସେ ଓଡ଼ିଆ ମହାଭାରତ, ବିଲଙ୍କା ରାମାୟଣ ଓ ଚଣ୍ଡୀ ପୁରାଣ ରଚନା କରି ଗଜପତି ଯୁଗର ଅମୂଲ୍ୟ ଐତିହାସିକ ତଥ୍ୟ লিପିବଦ୍ଧ କରିଛନ୍ତି।',
+      bn: 'ওড়িয়া সাহিত্যের আদিকবি এবং সম্রাট কপিলেন্দ্র দেবের সমসাময়িক সৈনিক-পণ্ডিত। তিনি ওড়িয়া মহাভারত, বিলঙ্কা রামায়ণ ও চণ্ডী পুরাণ রচনা করে গজপতি যুগের ঐতিহাসিক তথ্য লিপিবদ্ধ করেন।'
+    },
+    biography: {
+      en: 'Originally named Siddheswara Parida, Sarala Dasa served as a soldier in the Gajapathi army of Maharaja Kapilendra Deva during the 15th century, marching across Kalinga and the Deccan. Devoted to Goddess Sarala of Jhankad, he democratized classical Sanskrit epics into the spoken Odia language of the people, praising Emperor Kapilendra Deva in the Sabha Parva and Adi Parva of his Mahabharata.',
+      hi: 'मूल नाम सिद्धेश्वर परिडा से जाने गए सारला दास ने 15वीं शताब्दी में महाराजा कपिलेन्द्र देव की गजपति सेना में सैनिक के रूप में सेवा की। झंकड़ की माँ सारला के अनन्य भक्त के रूप में उन्होंने महाभारत के आदिपर्व और सभापर्व में सम्राट कपिलेन्द्र देव के शासन का प्रत्यक्ष उल्लेख किया।',
+      te: 'సిద్ధేశ్వర పరిడా అనే అసలు పేరు గల సారళా దాసు 15వ శతాబ్దంలో మహారాజా కపిలేంద్ర దేవుని గజపతి సైన్యంలో సైనికునిగా పనిచేశారు. ఝంకడ్‌లోని సారళా దేవి ఆశీస్సులతో ఆయన రచించిన ఒడియా మహాభారతంలోని ఆదిపర్వం, సభాపర్వాలలో కపిలేంద్ర దేవుని పాలనను ప్రత్యక్షంగా ప్రశంసించారు.',
+      kn: 'ಸಿದ್ಧೇಶ್ವರ ಪರಿಡಾ ಎಂಬ ಮೂಲ ಹೆಸರಿನ ಸಾರಲಾ ದಾಸರು ೧೫ನೇ ಶತಮಾನದಲ್ಲಿ ಮಹಾರಾಜ ಕಪಿಲೇಂದ್ರ ದೇವನ ಗಜಪತಿ ಸೈನ್ಯದಲ್ಲಿ ಸೈನಿಕರಾಗಿ ಸೇವೆ ಸಲ್ಲಿಸಿದರು. ತಮ್ಮ ಮಹಾಭಾರತದ ಆದಿಪರ್ವ ಮತ್ತು ಸಭಾಪರ್ವದಲ್ಲಿ ಕಪಿಲೇಂದ್ರ ದೇವನ ಆಳ್ವಿಕೆಯನ್ನು ಉಲ್ಲೇಖಿಸಿದ್ದಾರೆ.',
+      ta: 'சித்தேஸ்வர பரிதா என்ற இயற்பெயர் கொண்ட சரளா தாசர், 15-ஆம் நூற்றாண்டில் மகாராஜா கபிலேந்திர தேவரின் கஜபதிப் படையில் வீரராகப் பணியாற்றினார். தனது மகாபாரதத்தின் ஆதிபர்வத்தில் கபிலேந்திர தேவரின் ஆட்சியைப் போற்றியுள்ளார்.',
+      mr: 'सिद्धेश्वर परिडा हे मूळ नाव असलेल्या सारला दास यांनी १५ व्या शतकात महाराजा कपिलेन्द्र देवांच्या गजपती सैन्यात सैनिक म्हणून सेवा केली आणि महाभारताच्या आदिपर्वात त्यांच्या राजवटीचा प्रत्यक्ष उल्लेख केला.',
+      or: 'ସିଦ୍ଧେଶ୍ୱର ପରିଡ଼ା ନାମରେ ଜନ୍ମିତ ସାରଳା ଦାସ ୧୫ଶ ଶତାବ୍ଦୀରେ ମହାରାଜା କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ଗଜପତି ସେନାରେ ଜଣେ ସୈନିକ ଭାବେ ଯୋଗ ଦେଇଥିଲେ ଏବଂ ନିଜ ମହାଭାରତର ଆଦିପର୍ବ ଓ ସଭାପର୍ବରେ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ଶାସନର ପ୍ରତ୍ୟକ୍ଷ ବର୍ଣ୍ଣନା କରିଛନ୍ତି।',
+      bn: 'সিদ্ধেশ্বর পরিডা নামে জন্মগ্রহণকারী সারলা দাস ১৫শ শতাব্দীতে মহারাজা কপিলেন্দ্র দেবের গজপতি সেনাবাহিনীতে সৈনিক হিসেবে দায়িত্ব পালন করেন এবং তাঁর মহাভারতের আদিপর্বে কপিলেন্দ্র দেবের শাসনের প্রত্যক্ষ বিবরণ দেন।'
+    },
+    majorContributions: [
+      {
+        en: 'Authored the 15th-century Odia Mahabharata, Vilanka Ramayana, and Chandi Purana during Emperor Kapilendra Deva’s reign.',
+        hi: 'सम्राट कपिलेन्द्र देव के शासनकाल में 15वीं सदी के उड़िया महाभारत, बिलंका रामायण और चंडी पुराण की रचना की।',
+        te: 'కపిలేంద్ర దేవుని పాలనా కాలంలో ఒడియా మహాభారతం, విలంక రామాయణం మరియు చండీ పురాణాలను రచించారు.',
+        kn: 'ಸಾಮ್ರಾಟ್ ಕಪಿಲೇಂದ್ರ ದೇವನ ಆಳ್ವಿಕೆಯಲ್ಲಿ ಒಡಿಯಾ ಮಹಾಭಾರತ, ವಿಲಂಕಾ ರಾಮಾಯಣ ಮತ್ತು ಚಂಡಿ ಪುರಾಣಗಳನ್ನು ರಚಿಸಿದರು.',
+        ta: 'கபிலேந்திர தேவர் ஆட்சியின் போது ஒடிய மகாபாரதம், விலங்கா ராமாயணம் மற்றும் சண்டி புராணத்தை இயற்றினார்.',
+        mr: 'सम्राट कपिलेन्द्र देवांच्या काळात ओडिया महाभारत, विलंक रामायण आणि चंडी पुराण रचले.',
+        or: 'ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ଶାସନ କାଳରେ ଓଡ଼ିଆ ମହାଭାରତ, ବିଲଙ୍କା ରାମାୟଣ ଓ ଚଣ୍ଡୀ ପୁରାଣ ରଚନା କରିଥିଲେ।',
+        bn: 'সম্রাট কপিলেন্দ্র দেবের শাসনকালে ওড়িয়া মহাভারত, বিলঙ্কা রামায়ণ ও চণ্ডী পুরাণ রচনা করেন।'
+      },
+      {
+        en: 'Preserved primary literary eyewitness accounts of the martial ethos, Paika/Khandayat soldiery, and southern expeditions of medieval Odisha.',
+        hi: 'मध्यकालीन ओडिशा की सामरिक परंपराओं, पाइका/खंडायत सैनिकों और दक्षिणी अभियानों का प्रत्यक्ष साहित्यिक विवरण संरक्षित किया।',
+        te: 'మధ్యయుగ ఒడిశా సైనిక సంప్రదాయాలను మరియు దక్షిణ దండయాత్రల విశేషాలను సమకాలీన సాహిత్య ఆధారాలుగా భద్రపరిచారు.',
+        kn: 'ಮಧ್ಯಕಾಲೀನ ಒಡಿಶಾದ ಸೈನಿಕ ಪರಂಪರೆ ಮತ್ತು ದಕ್ಷಿಣ ದಂಡಯಾತ್ರೆಗಳ ಸಮಕಾಲೀನ ಸಾಹಿತ್ಯಿಕ ದಾಖಲೆಗಳನ್ನು ಉಳಿಸಿದರು.',
+        ta: 'இடைக்கால ஒடிசாவின் படை மரபுகள் மற்றும் தென்னிந்தியப் படையெடுப்புகளின் சமகால இலக்கியச் சான்றுகளைப் பதிவு செய்தார்.',
+        mr: 'मध्ययुगीन ओडिशाच्या लढाऊ परंपरा आणि दक्षिणेतील मोहिमांचे समकालीन साहित्यिक पुरावे जतन केले.',
+        or: 'ମଧ୍ୟଯୁଗୀୟ ଓଡ଼ିଶାର ସାମରିକ ପରମ୍ପରା ଓ ଦକ୍ଷିଣ ଅଭିଯାନର ସମসামୟିକ ସାହିତ୍ୟିକ ପ୍ରମାଣ ସଂରକ୍ଷିତ କରିଥିଲେ।',
+        bn: 'মধ্যযুগীয় ওড়িশার সামরিক ঐতিহ্য ও দক্ষিণ অভিযানের সমসাময়িক সাহিত্যিক প্রমাণ সংরক্ষণ করেন।'
+      }
+    ],
+    evidenceSources: [
+      'Sarala Mahabharata (Adi Parva & Sabha Parva manuscripts, Odisha State Museum, Bhubaneswar)',
+      'Dr. Krishna Chandra Panigrahi, "Sarala Dasa" (Sahitya Akademi Monograph, 1975)',
+      'K.C. Panigrahi, "History of Orissa (Hindu Period)" (1981)'
+    ],
+    imageUrl: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&auto=format&fit=crop&q=80'
   }
 ];
+
+export interface PersonClassificationMetadata {
+  roleCategory: ProminentRoleCategory;
+  regionalStates: ProminentStateRegion[];
+  verificationBasis: HistoricalVerificationBasis;
+  epistemicNote: MultilingualText;
+}
+
+export function getPersonClassificationMetadata(personId: string): PersonClassificationMetadata {
+  const documentedNote: MultilingualText = {
+    en: 'Documented Historical Figure: Reign, campaigns, or deeds are attested in primary stone inscriptions, copper-plate grants, or state archival records; community traditions honor their broader cultural and ancestral legacy.',
+    hi: 'प्रमाणित ऐतिहासिक व्यक्तित्व: इनका शासन, अभियान या कार्य प्राथमिक शिलालेखों, ताम्रपत्रों या राजकीय अभिलेखों में प्रमाणित हैं; सामुदायिक परंपराएं इनकी व्यापक सांस्कृतिक विरासत का सम्मान करती हैं।',
+    te: 'చారిత్రక & శాసన ఆధారిత వ్యక్తిత్వం: వీరి పాలన, దండయాత్రలు లేదా కార్యాలు ప్రాథమిక శిలాశాసనాలు, తామ్రపత్రాలు లేదా ప్రభుత్వ పురావస్తు రికార్డులలో నమోదయ్యాయి.',
+    kn: 'ದೃಢೀಕೃತ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿತ್ವ: ಇವರ ಆಳ್ವಿಕೆ ಮತ್ತು ಕಾರ್ಯಗಳು ಪ್ರಾಥಮಿಕ ಶಿಲಾಶಾಸನಗಳು ಹಾಗೂ ತಾಮ್ರಪತ್ರಗಳಲ್ಲಿ ದಾಖಲಾಗಿವೆ.',
+    ta: 'ஆவணப்படுத்தப்பட்ட வரலாற்று ஆளுமை: இವರது ஆட்சி மற்றும் பணிகள் முதன்மைக் கல்வெட்டுகள் மற்றும் செப்பேடுகளில் உறுதிப்படுத்தப்பட்டுள்ளன.',
+    mr: 'प्रमाणित ऐतिहासिक व्यक्तिमत्त्व: यांची कारकीर्द व कार्य प्राथमिक शिलालेख आणि ताम्रपटांमध्ये नोंदवलेले आहे.',
+    or: 'ପ୍ରମାଣିତ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ: ଏମାନଙ୍କର ଶାସନ ଓ କୀର୍ତ୍ତି ପ୍ରାଥମିକ ଶିଳାଲେଖ ଓ ତାମ୍ରଫଳକରେ ପ୍ରମାଣିତ।',
+    bn: 'প্রত্যয়িত ঐতিহাসিক ব্যক্তিত্ব: এঁদের শাসন ও কীর্তি প্রাথমিক শিলালিপি ও তাম্রশাসনে নথিবদ্ধ।'
+  };
+
+  const traditionNote: MultilingualText = {
+    en: 'Sacred / Traditional Chronicle Figure: Preserved in Puranic texts, regional heroic ballads (Veera Gathalu), or community oral chronicles; presented as revered cultural and lineage heritage rather than contemporary epigraphic biography.',
+    hi: 'पौराणिक / पारंपरिक गाथा व्यक्तित्व: पौराणिक ग्रंथों, क्षेत्रीय वीरगाथाओं या सामुदायिक मौखिक इतिहास में संरक्षित; इन्हें समकालीन शिलालेखीय जीवनी के बजाय पूज्य सांस्कृतिक व वंश-विरासत के रूप में प्रस्तुत किया गया है।',
+    te: 'పురాణ / సాంప్రదాయ వీరగాథా వ్యక్తిత్వం: పురాణ గ్రంథాలు, ప్రాంతీయ వీరగాథలు (వీరగాథలు) మరియు సామాజిక మౌఖిక చరిత్రలలో భద్రపరచబడిన ఆరాధ్య వారసత్వం.',
+    kn: 'ಪುರಾಣ / ಸಾಂಪ್ರದಾಯಿಕ ವೀರಗಾಥೆ ವ್ಯಕ್ತಿತ್ವ: ಪುರಾಣ ಗ್ರಂಥಗಳು ಮತ್ತು ಪ್ರಾದೇಶಿಕ ಜನಪದ ವೀರಗಾಥೆಗಳಲ್ಲಿ ಉಳಿದುಬಂದಿರುವ ಪೂಜ್ಯ ಪರಂಪರೆ.',
+    ta: 'புராண / பாரம்பரிய வீரகாவிய ஆளுமை: புராண நூல்கள் மற்றும் பிராந்திய வீர காவியங்களில் போற்றப்படும் பாரம்பரிய மரபு.',
+    mr: 'पौराणिक / पारंपरिक वीरगाथा व्यक्तिमत्त्व: पौराणिक ग्रंथ आणि प्रादेशिक वीरगाथांमध्ये जतन केलेला पूज्य सांस्कृतिक वारसा.',
+    or: 'ପୌରାଣିକ / ପାରମ୍ପରିକ ବୀରଗାଥା ବ୍ୟକ୍ତିତ୍ୱ: ପୌରାଣିକ ଗ୍ରନ୍ଥ ଓ ଆଞ୍ଚଳିକ ବୀରଗାଥାରେ ସଂରକ୍ଷିତ ପୂଜ୍ୟ ସାଂସ୍କୃତିକ ଐତିହ୍ୟ।',
+    bn: 'পৌরাণিক / ঐতিহ্যবাহী বীরগাথা ব্যক্তিত্ব: পৌরাণিক গ্রন্থ ও আঞ্চলিক বীরগাথায় সংরক্ষিত পূজ্য সাংস্কৃতিক ঐতিহ্য।'
+  };
+
+  const contemporaryNote: MultilingualText = {
+    en: 'Contemporary Community Leader & Archival Scholar: Documented through modern field surveys, published epigraphic compilations, and community heritage organization.',
+    hi: 'समकालीन सामुदायिक नेतृत्व एवं अभिलेखीय शोधकर्ता: आधुनिक क्षेत्रीय सर्वेक्षणों, प्रकाशित अभिलेख संकलनों और सामुदायिक संगठन द्वारा प्रमाणित।',
+    te: 'సమకాలీన సమాజ నాయకుడు & పరిశోధకుడు: ఆధునిక క్షేత్రస్థాయి పరిశోధనలు మరియు డిజిటల్ పురావస్తు సంకలనాల ద్వారా నమోదైన వ్యక్తిత్వం.',
+    kn: 'ಸಮಕಾಲೀನ ಸಮುದಾಯ ನಾಯಕ ಮತ್ತು ಸಂಶೋಧಕ: ಆಧುನಿಕ ಕ್ಷೇತ್ರ ಸಮೀಕ್ಷೆ ಮತ್ತು ಶಾಸನ ಸಂಗ್ರಹಣೆಯಿಂದ ಗುರುತಿಸಲ್ಪಟ್ಟವರು.',
+    ta: 'தற்கால சமூகத் தலைவர் & ஆவண ஆய்வாளர்: நவீன கள ஆய்வுகள் மற்றும் கல்வெட்டுத் தொகுப்புப் பணிகள் மூலம் அறியப்படுபவர்.',
+    mr: 'समकालीन समाज नेते व संशोधक: आधुनिक क्षेत्रीय सर्वेक्षण आणि ऐतिहासिक दस्तऐवज संकलनाद्वारे परिचित.',
+    or: 'ସମକାଳୀନ ସମାଜ ନେତା ଓ ଗବେଷକ: ଆଧୁନିକ କ୍ଷେତ୍ର ସର୍ବେକ୍ଷଣ ଓ ଶିଳାଲେଖ ଦସ୍ତାବିଜୀକରଣ ଦ୍ୱାରା ପ୍ରମାଣିତ।',
+    bn: 'সমকালীন সমাজ নেতা ও গবেষক: আধুনিক ক্ষেত্র সমীক্ষা ও শিলালিপি সংকলনের মাধ্যমে নথিবদ্ধ।'
+  };
+
+  const map: Record<string, PersonClassificationMetadata> = {
+    kapilendra_deva: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh', 'Karnataka', 'Tamil Nadu'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    kumara_hamvira_deva: {
+      roleCategory: 'Military Commanders & Martial Figures',
+      regionalStates: ['Odisha', 'Andhra Pradesh', 'Tamil Nadu', 'Karnataka'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    baxi_jagabandhu: {
+      roleCategory: 'Military Commanders & Martial Figures',
+      regionalStates: ['Odisha'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    jayee_rajguru: {
+      roleCategory: 'Scholars, Saints & Cultural Figures',
+      regionalStates: ['Odisha'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    chodaganga_deva: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    purushottama_deva: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh', 'Tamil Nadu'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    prataparudra_deva: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    raja_bhagiratha: {
+      roleCategory: 'Civic Engineers & Community Leaders',
+      regionalStates: ['Deccan, Maharashtra & North', 'Odisha', 'Andhra Pradesh', 'Karnataka', 'Tamil Nadu'],
+      verificationBasis: 'Community Tradition, Puranic & Ballad Chronicle',
+      epistemicNote: traditionNote
+    },
+    samrat_sagara: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Deccan, Maharashtra & North', 'Odisha', 'Andhra Pradesh', 'Karnataka', 'Tamil Nadu'],
+      verificationBasis: 'Community Tradition, Puranic & Ballad Chronicle',
+      epistemicNote: traditionNote
+    },
+    mata_jasma_devi: {
+      roleCategory: 'Scholars, Saints & Cultural Figures',
+      regionalStates: ['Deccan, Maharashtra & North'],
+      verificationBasis: 'Community Tradition, Puranic & Ballad Chronicle',
+      epistemicNote: traditionNote
+    },
+    siddharameshwara: {
+      roleCategory: 'Scholars, Saints & Cultural Figures',
+      regionalStates: ['Karnataka', 'Deccan, Maharashtra & North'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    emperor_kharavela: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh', 'Tamil Nadu'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    peddintlamma_thalli: {
+      roleCategory: 'Scholars, Saints & Cultural Figures',
+      regionalStates: ['Andhra Pradesh', 'Odisha'],
+      verificationBasis: 'Community Tradition, Puranic & Ballad Chronicle',
+      epistemicNote: traditionNote
+    },
+    kolani_rudra_deva: {
+      roleCategory: 'Military Commanders & Martial Figures',
+      regionalStates: ['Andhra Pradesh'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    mukunda_deva: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    narasimha_deva_i: {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    queen_balanagamma: {
+      roleCategory: 'Scholars, Saints & Cultural Figures',
+      regionalStates: ['Andhra Pradesh', 'Karnataka'],
+      verificationBasis: 'Community Tradition, Puranic & Ballad Chronicle',
+      epistemicNote: traditionNote
+    },
+    raja_bhoja_parmar: {
+      roleCategory: 'Civic Engineers & Community Leaders',
+      regionalStates: ['Deccan, Maharashtra & North'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    prince_balavaddiraju: {
+      roleCategory: 'Military Commanders & Martial Figures',
+      regionalStates: ['Andhra Pradesh', 'Karnataka'],
+      verificationBasis: 'Community Tradition, Puranic & Ballad Chronicle',
+      epistemicNote: traditionNote
+    },
+    dr_g_sathyanarayana_raju: {
+      roleCategory: 'Civic Engineers & Community Leaders',
+      regionalStates: ['Odisha', 'Karnataka', 'Andhra Pradesh', 'Tamil Nadu', 'Deccan, Maharashtra & North'],
+      verificationBasis: 'Contemporary Archival & Community Leadership',
+      epistemicNote: contemporaryNote
+    },
+    virabhadra_deva_gajapathi: {
+      roleCategory: 'Military Commanders & Martial Figures',
+      regionalStates: ['Karnataka', 'Andhra Pradesh', 'Odisha'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    },
+    mahakavi_sarala_dasa: {
+      roleCategory: 'Scholars, Saints & Cultural Figures',
+      regionalStates: ['Odisha'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    }
+  };
+
+  return (
+    map[personId] || {
+      roleCategory: 'Historical Rulers & Sovereigns',
+      regionalStates: ['Odisha', 'Andhra Pradesh'],
+      verificationBasis: 'Documented Historical & Epigraphic Record',
+      epistemicNote: documentedNote
+    }
+  );
+}
 
 export function getPersonsByBranch(branch: CommunityBranch | 'all'): ProminentPerson[] {
   if (branch === 'all') {

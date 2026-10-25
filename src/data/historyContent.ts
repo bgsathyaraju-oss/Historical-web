@@ -29,11 +29,25 @@ export interface HistoricalFigureSummary {
   canonical_sources: string[];
 }
 
+export type DesignationGroup =
+  | 'Dynastic and lineage designations'
+  | 'Regional community designations'
+  | 'Historical, martial, and traditional titles';
+
+export type EpistemicClassification =
+  | 'Documented Epigraphic & Historical Designation'
+  | 'Regional Ethnonym & Gazetteer Record'
+  | 'Community Tradition & Lineage Claim';
+
 export interface CommunitySynonym {
   id: string;
   title: string;
   native_scripts: Record<string, string>;
   category: 'Royal Nobility' | 'Kshatriya Martial' | 'Civic & Water Engineering' | 'Regional Dialectal Shift' | 'Classical Epigraphic Root';
+  designation_group: DesignationGroup;
+  geographical_association: string;
+  epistemic_classification: EpistemicClassification;
+  epistemic_note: MultilingualText;
   primary_regions: string[];
   prominent_states: string[];
   linguistic_origin: string;
@@ -522,30 +536,288 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
 // 2. COMMUNITY SYNONYMS & DESIGNATIONS REPOSITORY
 // ---------------------------------------------------------------------------
 export const COMMUNITY_SYNONYMS: CommunitySynonym[] = [
+  // =========================================================================
+  // CATEGORY A: DYNASTIC AND LINEAGE DESIGNATIONS
+  // =========================================================================
   {
-    id: 'syn_oad_rajputh',
-    title: 'Oad-Rajputh / Oad-Rajput',
+    id: 'syn_suryavamshi',
+    title: 'Suryavamshi',
     native_scripts: {
-      Devanagari: 'ओड राजपूत / ओड-राजपूत',
-      Nastaliq: 'اوڈ راجپوت',
-      Gurmukhi: 'ਓਡ ਰਾਜਪੂਤ',
-      Gujarati: 'ઓડ રાજપૂત'
+      Devanagari: 'सूर्यवंशी',
+      Telugu: 'సూర్యవంశీ / సూర్యవంశం',
+      Kannada: 'ಸೂರ್ಯವಂಶಿ',
+      Tamil: 'சூர்யவம்ஷி',
+      Odia: 'ସୂର୍ଯ୍ୟବଂଶୀ',
+      Bengali: 'সূর্যবংশী'
     },
-    category: 'Kshatriya Martial',
-    primary_regions: ['Northern Plains', 'Western Arid Zone', 'Thar Desert Fringe', 'Malwa Corridor'],
-    prominent_states: ['Rajasthan', 'Gujarat', 'Punjab', 'Haryana', 'Sindh (historical)', 'Delhi NCR', 'Madhya Pradesh'],
-    linguistic_origin: 'Derived from ancient Prakrit "Odda" combined with Sanskrit "Rajaputra" (Son of the King / Rajput).',
+    category: 'Royal Nobility',
+    designation_group: 'Dynastic and lineage designations',
+    geographical_association: 'Pan-Indian (Odisha, Andhra Pradesh, Karnataka, Tamil Nadu & Northern India)',
+    epistemic_classification: 'Documented Epigraphic & Historical Designation',
+    epistemic_note: {
+      en: 'Documented in Gajapathi royal copper plates (Veligalani, 1458 CE) as the imperial dynasty’s lineage; invoked in community genealogies as an ancestral solar-lineage identity.',
+      hi: 'गजपति ताम्रपत्रों (वेलिगलानी, 1458 ई.) में राजवंश के रूप में प्रमाणित; सामुदायिक वंशावलियों में पैतृक सूर्यवंशी पहचान के रूप में मान्य।',
+      te: 'గజపతి రాజుల తామ్రపత్ర శాసనాలలో (వెలిగలని, 1458 CE) రాజవంశ నామంగా నమోదైంది; సామాజిక వంశావళి సంప్రదాయాలలో పూర్వీక సూర్యవంశ గుర్తింపుగా పేర్కొనబడుతుంది.',
+      kn: 'ಗಜಪತಿ ತಾಮ್ರশಾಸನಗಳಲ್ಲಿ ರಾಜವಂಶವಾಗಿ ದಾಖಲಾಗಿದೆ; ಸಮುದಾಯದ ವಂಶಾವಳಿ ಸಂಪ್ರದಾಯಗಳಲ್ಲಿ ಪೂರ್ವಜರ ಸೂರ್ಯವಂಶ ಗುರುತಾಗಿ ಬಳಕೆಯಲ್ಲಿದೆ.',
+      ta: 'கஜபதி செப்பேடுகளில் அரச வம்சமாகப் பதிவு செய்யப்பட்டுள்ளது; சமூக மரபுகளில் சூரிய வம்ச அடையாளமாகக் கருதப்படுகிறது.',
+      mr: 'गजपती ताम्रपटांमध्ये राजवंश म्हणून नोंदवलेले; समाजाच्या वंशावळीत सूर्यवंशी ओळख म्हणून जपले जाते.',
+      or: 'ଗଜପତି ତାମ୍ରଫଳକରେ (୧୪୫୮ খ୍ରୀ.) ରାଜବଂଶ ଭାବେ ପ୍ରମାଣିତ ଏବଂ ସାମୁଦାୟିକ ପରମ୍ପରାରେ ପୂର୍ବପୁରୁଷ ସୂର୍ଯ୍ୟବଂଶ ପରିଚୟ।',
+      bn: 'গজপতি তাম্রশাসনে (১৪৫৮ খ্রি.) রাজবংশ হিসেবে নথিবদ্ধ এবং সম্প্রদায়ের বংশপরম্পরায় সূর্যবংশীয় পরিচয় হিসেবে প্রচলিত।'
+    },
+    primary_regions: ['Utkala-Kalinga', 'Coastal Andhra & Rayalaseema', 'Karnataka Plateau', 'Pan-Indian Corridors'],
+    prominent_states: ['Odisha', 'Andhra Pradesh', 'Telangana', 'Karnataka', 'Tamil Nadu', 'Maharashtra'],
+    linguistic_origin: 'Sanskrit compound "Surya" (Sun) + "Vamshi" (of the lineage/dynasty of the Solar Race).',
     historical_role: {
-      en: 'Defenders of frontiers, hereditary master fortress and moat excavators (Chittorgarh, Mehrangarh, Jaisalmer), and preservers of martial Kshatriya customs under medieval dynasties.',
-      hi: 'सीमाओं के रक्षक, ऐतिहासिक किलों व खाइयों के निर्माता (चित्तौड़गढ़, मेहरानगढ़, जैसलमेर) एवं क्षत्रिय परंपराओं के संरक्षक।',
-      te: 'సరిహద్దుల రక్షకులు, చారిత్రక రాజపుత్ర దుర్గాలు, కందకాలు మరియు కోటల నిర్మాతలు.',
-      kn: 'ಗಡಿ ರಕ್ಷಕರು, ಚಾರಿತ್ರಿಕ ಕೋಟೆಗಳು ಮತ್ತು ಕಂದಕಗಳ ನುರಿತ ನಿರ್ಮಾತೃಗಳು.',
-      ta: 'எல்லைக் காவலர்கள் மற்றும் வரலாற்று சிறப்புமிக்க கோட்டைகளை அமைத்த சத்திரிய மரபினர்.',
-      mr: 'सीमा रक्षक, ऐतिहासिक किल्ले व खंदक निर्माते आणि क्षत्रिय संस्कृतीचे रक्षक.',
-      or: 'ସୀମାନ୍ତ ରକ୍ଷକ, ଐତିହାସିକ ଦୁର୍ଗ ନିର୍ମାତା ଓ କ୍ଷତ୍ରିୟ ପରମ୍ପରାର ଧାରକ।',
-      bn: 'সীমান্ত রক্ষক, ঐতিহাসিক দুর্গ ও পরিখা নির্মাতা এবং ক্ষত্রিয় সংস্কৃতির ধারক।'
+      en: 'Denotes affiliation with the ancient Solar Dynasty (Suryavamsha). Historically attested in the titles of the Suryavamsha Gajapathi monarchs of Odisha and preserved in community lineage traditions across peninsular and northern India.',
+      hi: 'प्राचीन सूर्यवंश से संबद्धता दर्शाने वाली वंश-संज्ञा। ओडिशा के सूर्यवंशी गजपति सम्राटों के अभिलेखों में प्रमाणित तथा प्रायद्वीपीय व उत्तर भारत की सामुदायिक परंपराओं में संरक्षित।',
+      te: 'ప్రాచీన సూర్యవంశానికి చెందిన వంశ నామం. ఒడిశా సూర్యవంశ గజపతి చక్రవర్తుల శాసనాలలో నమోదై, దక్షిణ మరియు ఉత్తర భారత సామాజిక సంప్రదాయాలలో కొనసాగుతున్న వారసత్వ గుర్తింపు.',
+      kn: 'ಪ್ರಾಚೀನ ಸೂರ್ಯವಂಶದ ಪರಂಪರೆಯನ್ನು ಸೂಚಿಸುವ ವಂಶನಾಮ. ಒಡಿಶಾದ ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಅರಸರ ಶಾಸನಗಳಲ್ಲಿ ಉಲ್ಲೇಖಿತವಾಗಿದ್ದು ಸಮುದಾಯದ ಪರಂಪರೆಯಲ್ಲಿ ಉಳಿದುಬಂದಿದೆ.',
+      ta: 'பண்டைய சூரிய வம்சத் தொடர்பைக் குறிக்கும் மரபுப் பெயர். ஒடிசாவின் சூர்யவம்ச கஜபதி மன்னர்களின் கல்வெட்டுகளிலும் சமூக வம்சாவளி மரபுகளிலும் இடம்பெறுகிறது.',
+      mr: 'प्राचीन सूर्यवंशाशी संबंधित वंश-संज्ञा. ओडिशाच्या सूर्यवंशी गजपती सम्राटांच्या शिलालेखांत प्रमाणित आणि सामाजिक परंपरेत जतन केलेले नाव.',
+      or: 'ପ୍ରାଚୀନ ସୂର୍ଯ୍ୟବଂଶ ସହ ସମ୍পୃକ୍ତ ବଂଶଗତ ପରିଚୟ। ଓଡ଼ିଶାର ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସମ୍ରାଟଙ୍କ ଶିଳାଲେଖରେ ପ୍ରମାଣିତ ଓ ସାମୁଦାୟିକ ପରମ୍ପରାରେ ସଂରକ୍ଷିତ।',
+      bn: 'প্রাচীন সূর্যবংশের সাথে সম্পর্কিত বংশগত নাম। ওড়িশার সূর্যবংশী গজপতি সম্রাটদের শিলালিপিতে প্রত্যয়িত এবং সামাজিক ঐতিহ্যে সংরক্ষিত।'
     },
-    sacred_associations: ['Mata Jasma Devi', 'Samrat Sagara', 'Maharshi Bhagiratha', 'Sri Rama']
+    sacred_associations: ['Surya Deva (Konark)', 'Sri Rama', 'Samrat Sagara', 'Maharshi Bhagiratha']
+  },
+  {
+    id: 'syn_sagaravamshi',
+    title: 'SagaraVamshi',
+    native_scripts: {
+      Devanagari: 'सगरवंशी',
+      Telugu: 'సగరవంశీ',
+      Kannada: 'ಸಗರವಂಶಿ',
+      Tamil: 'சகரவம்ஷி',
+      Odia: 'ସଗରବଂଶୀ',
+      Bengali: 'সগরবংশী'
+    },
+    category: 'Royal Nobility',
+    designation_group: 'Dynastic and lineage designations',
+    geographical_association: 'Deccan, Andhra Pradesh, Telangana, Karnataka, Maharashtra & Northern Plains',
+    epistemic_classification: 'Community Tradition & Lineage Claim',
+    epistemic_note: {
+      en: 'Grounded in Puranic cosmology (Ramayana Bala Kanda, Bhagavata Purana) and venerated in traditional community genealogies linking oceanic and hydraulic excavation traditions to Emperor Sagara.',
+      hi: 'पौराणिक आख्यानों (रामायण बालकांड, भागवत पुराण) एवं पारंपरिक सामुदायिक वंशावलियों पर आधारित, जो जल-संरक्षण परंपरा को चक्रवर्ती सम्राट सगर से जोड़ती हैं।',
+      te: 'పురాణ గాథలు (వాల్మీకి రామాయణం బాలకాండ) మరియు సామాజిక వంశావళి సంప్రదాయాల ఆధారంగా చక్రవర్తి సగరునితో జల-నిర్మాణ వారసత్వాన్ని అనుసంధానించే సాంప్రదాయ నామం.',
+      kn: 'ಪುರಾಣ ಆಕರಗಳು (ರಾಮಾಯಣ ಬಾಲಕಾಂಡ) ಮತ್ತು ಸಮುದಾಯದ ಸಾಂಪ್ರದಾಯಿಕ ವಂಶಾವಳಿಗಳಲ್ಲಿ ಚಕ್ರವರ್ತಿ ಸಗರನಿಗೆ ಜಲ-ನಿರ್ಮಾಣ ಪರಂಪರೆಯನ್ನು ಬೆಸೆಯುವ ವಂಶನಾಮ.',
+      ta: 'புராண மரபுகள் (இராமாயணம் பாலகாண்டம்) மற்றும் சக்கரவர்த்தி சகரருடன் நீரியல் மரபை இணைக்கும் சமூக வம்சாவளி நம்பிக்கைகளின் அடிப்படையிலான பெயர்.',
+      mr: 'पौराणिक संदर्भ (रामायण बालकांड) आणि चक्रवर्ती सम्राट सगर यांच्याशी जल-स्थापत्य परंपरा जोडणाऱ्या पारंपरिक वंशावळीवर आधारित संज्ञा.',
+      or: 'ପୌରାଣିକ ଗ୍ରନ୍ଥ (ରାମାୟଣ ବାଳକାଣ୍ଡ) ଓ ସମ୍ରାଟ ସଗରଙ୍କ ସହ ଜଳ-ଖନନ ପରମ୍ପରାକୁ ଯୋଡ଼ୁଥିବା ପାରମ୍ପରିକ ବଂଶାବଳୀ ଆଧାରିତ ପରିଚୟ।',
+      bn: 'পৌরাণিক কাহিনী (রামায়ণ বালকাণ্ড) এবং সম্রাট সগরের সাথে জল-খনন ঐতিহ্যকে যুক্ত করা সম্প্রদায়ের বংশগত পরম্পরার নাম।'
+    },
+    primary_regions: ['Deccan Plateau', 'Krishna-Godavari Basin', 'Northern & Western Plains'],
+    prominent_states: ['Andhra Pradesh', 'Telangana', 'Karnataka', 'Maharashtra', 'Rajasthan', 'Gujarat'],
+    linguistic_origin: 'Sanskrit lineage name referring to descendants/followers of Solar Emperor Sagara ("Sagara" + "Vamshi").',
+    historical_role: {
+      en: 'Traditional lineage designation honoring Chakravarti Samrat Sagara and Maharshi Bhagiratha, whose Puranic excavation of the ocean bed (Sagara) and descent of the Ganga inspire the community’s hereditary ethos as master reservoir and canal builders.',
+      hi: 'चक्रवर्ती सम्राट सगर और महर्षि भगीरथ की स्मृति में प्रयुक्त पारंपरिक वंश-संज्ञा, जिनका सागर-खनन और गंगा-अवतरण आख्यान समाज की ऐतिहासिक जलाशय व नहर निर्माण परंपरा का आदर्श माना जाता है।',
+      te: 'చక్రవర్తి సగరుడు మరియు మహర్షి భగీరథుల జ్ఞాపకార్థం వ్యవహరించే సాంప్రదాయ వంశ నామం. సముద్ర తవ్వకం మరియు గంగావతరణ గాథలు ఈ సమాజపు చారిత్రక తటాక, కాలువల నిర్మాణ నైపుణ్యానికి స్ఫూర్తిగా నిలిచాయి.',
+      kn: 'ಚಕ್ರವರ್ತಿ ಸಗರ ಮತ್ತು ಮಹರ್ಷಿ ಭಗೀರಥರ ಪರಂಪರೆಯನ್ನು ಸ್ಮರಿಸುವ ವಂಶನಾಮ; ಕೆರೆ, ಕಾಲುವೆ ಮತ್ತು ಜಲಾಶಯ ನಿರ್ಮಾಣ ಪರಂಪರೆಗೆ ಪ್ರೇರಣೆಯಾಗಿದೆ.',
+      ta: 'சக்கரவர்த்தி சகரர் மற்றும் பகீரத முனிவரின் மரபைப் போற்றும் பாரம்பரிய வம்சப் பெயர்; ஏரிகள் மற்றும் கால்வாய்கள் அமைக்கும் வரலாற்றுப் பணிக்கு ஆதாரமாகக் கருதப்படுகிறது.',
+      mr: 'चक्रवर्ती सम्राट सगर आणि महर्षि भगीरथ यांचा वारसा सांगणारी पारंपरिक वंश-संज्ञा; तलाव व कालवे उभारणीच्या ऐतिहासिक कार्याशी संबंधित.',
+      or: 'ଚକ୍ରବର୍ତ୍ତୀ ସମ୍ରାଟ ସଗର ଓ ମହର୍ଷି ଭଗୀରଥଙ୍କ ସ୍ମୃତିରେ ବ୍ୟବହୃତ ପାରମ୍ପରିକ ବଂଶ ନାମ, ଯାହା ଜଳାଶୟ ଓ କେନାଲ ନିର୍ମାଣ ପରମ୍ପରାର ପ୍ରেরଣା।',
+      bn: 'চক্রবর্তী সম্রাট সগর ও মহর্ষি ভগীরথের স্মৃতিবাহী ঐতিহ্যবাহী বংশনাম, যা জলাশয় ও খাল নির্মাণের ঐতিহাসিক পরম্পরার প্রেরণা।'
+    },
+    sacred_associations: ['Samrat Sagara', 'Maharshi Bhagiratha', 'Goddess Ganga', 'Surya Deva']
+  },
+  {
+    id: 'syn_raghuvamshi',
+    title: 'RaghuVamshi',
+    native_scripts: {
+      Devanagari: 'रघुवंशी',
+      Telugu: 'రఘువంశీ',
+      Kannada: 'ರಘುವಂಶಿ',
+      Tamil: 'ரகுவம்ஷி',
+      Odia: 'ରଘୁବଂଶୀ',
+      Bengali: 'রঘুবংশী'
+    },
+    category: 'Royal Nobility',
+    designation_group: 'Dynastic and lineage designations',
+    geographical_association: 'Pan-Indian (Odisha, Andhra Pradesh, Karnataka & Northern India)',
+    epistemic_classification: 'Community Tradition & Lineage Claim',
+    epistemic_note: {
+      en: 'Classical Sanskrit solar-lineage title (House of Raghu and Sri Rama) invoked in royal eulogies (Prashastis) of Suryavamsha rulers and preserved in community ancestral traditions.',
+      hi: 'सूर्यवंशी शासकों की प्रशस्तियों में प्रयुक्त शास्त्रीय रघुकुल उपाधि तथा सामुदायिक कुल-परंपराओं में श्रीराम के वंश से संबद्ध पहचान।',
+      te: 'సూర్యవంశ రాజుల ప్రశస్తులలో మరియు సామాజిక కుల-వంశావళి సంప్రదాయాలలో రఘుమహారాజు, శ్రీరాముని సూర్యవంశ శాఖగా పేర్కొనబడే సాంప్రదాయ నామం.',
+      kn: 'ಸೂರ್ಯವಂಶದ ರಾಜಪ್ರಶಸ್ತಿಗಳಲ್ಲಿ ಮತ್ತು ಸಮುದಾಯದ ಕುಲಪರಂಪರೆಯಲ್ಲಿ ರಘುಕುಲ ಹಾಗೂ ಶ್ರೀರಾಮನ ವಂಶ ಶಾಖೆಯಾಗಿ ಗುರುತಿಸಲಾಗುವ ಹೆಸರು.',
+      ta: 'சூரிய வம்ச மன்னர்களின் மெய்க்கீர்த்திகளிலும் சமூக வம்சாவளி மரபுகளிலும் இரகு குலம் மற்றும் ஸ்ரீராமரின் மரபைக் குறிக்கும் பெயர்.',
+      mr: 'सूर्यवंशी राजांच्या प्रशस्तींमध्ये आणि समाजाच्या कुल-परंपरेत रघुकुल व प्रभू श्रीरामांच्या वंशाशी संबंधित मानली जाणारी संज्ञा.',
+      or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଶାସକଙ୍କ ପ୍ରଶସ୍ତି ଏବଂ ସାମୁଦାୟିକ କୁଳ-ପରମ୍ପରାରେ ରଘୁକୁଳ ଓ ଶ୍ରୀରାମଙ୍କ ବଂଶଧର ଭାବେ ବ୍ୟବହୃତ ପରିଚୟ।',
+      bn: 'সূর্যবংশীয় শাসকদের প্রশস্তি এবং সম্প্রদায়ের কুল-ঐতিহ্যে রঘুকুল ও শ্রীরামের বংশধারা নির্দেশক নাম।'
+    },
+    primary_regions: ['Utkala-Kalinga', 'Coastal Andhra', 'Deccan Plateau', 'Gangetic & Northern Belt'],
+    prominent_states: ['Odisha', 'Andhra Pradesh', 'Telangana', 'Karnataka', 'Uttar Pradesh', 'Madhya Pradesh'],
+    linguistic_origin: 'Sanskrit dynastic patronymic from King Raghu of the Ikshvaku/Solar dynasty, immortalized in Kalidasa’s Raghuvamsham.',
+    historical_role: {
+      en: 'Signifies the Raghu sub-lineage of the Suryavamsha (Solar Race) culminating in Lord Sri Rama. Invoked in Gajapathi temple endowments ("Sri Rama Rajya" ideals) and in community gotra and kula-purana traditions.',
+      hi: 'सूर्यवंश की रघुकुल शाखा (प्रभु श्रीराम का वंश) का सूचक। गजपति अभिलेखों और समाज की गोत्र व कुल-पुराण परंपराओं में आदरपूर्वक प्रयुक्त।',
+      te: 'సూర్యవంశంలోని రఘుకుల శాఖను (శ్రీరాముని వంశాన్ని) సూచించే నామం. గజపతి శాసన ప్రశస్తులలో మరియు సామాజిక గోత్ర, కులపురాణ సంప్రదాయాలలో గౌరవంగా వ్యవహరించబడుతుంది.',
+      kn: 'ಸೂರ್ಯವಂಶದ ರಘುಕುಲ ಶಾಖೆಯನ್ನು (ಶ್ರೀರಾಮನ ವಂಶ) ಸೂಚಿಸುವ ಪದ. ಗಜಪತಿ ಶಾಸನ ಪ್ರಶಸ್ತಿಗಳಲ್ಲಿ ಮತ್ತು ಸಮುದಾಯದ ಕುಲಪುರಾಣಗಳಲ್ಲಿ ಉಲ್ಲೇಖಿತವಾಗಿದೆ.',
+      ta: 'சூரிய வம்சத்தின் இரகு குலக் கிளையைக் (ஸ்ரீராமரின் வம்சம்) குறிக்கும் பெயர். கஜபதி கல்வெட்டுப் புகழுரைகளிலும் குலபுராண மரபுகளிலும் போற்றப்படுகிறது.',
+      mr: 'सूर्यवंशातील रघुकुल शाखेचे (प्रभू श्रीरामांचे कुल) निदर्शक नाव. गजपती प्रशस्ती आणि समाजाच्या कुलपुराण परंपरेत आढळते.',
+      or: 'ସୂର୍ଯ୍ୟବଂଶର ରଘୁକୁଳ ଶାଖା (ପ୍ରଭୁ ଶ୍ରୀରାମଙ୍କ ବଂଶ) ସୂଚକ ନାମ, ଯାହା ଗଜପତି ପ୍ରଶସ୍ତି ଓ କୁଳ-ପୁରାଣ ପରମ୍ପରାରେ ବର୍ଣ୍ଣିତ।',
+      bn: 'সূর্যবংশের রঘুকুল শাখা (প্রভু শ্রীরামের বংশ) নির্দেশক নাম, যা গজপতি প্রশস্তি ও কুলপুরাণ ঐতিহ্যে ব্যবহৃত।'
+    },
+    sacred_associations: ['Lord Sri Rama (Kodanda Rama)', 'King Raghu', 'Ikshvaku', 'Surya Deva']
+  },
+  {
+    id: 'syn_od_oad_odra',
+    title: 'Od / Oad / Odra',
+    native_scripts: {
+      Devanagari: 'ओड / ओड्र / औड्र',
+      Odia: 'ଓଡ଼ / ଓଡ଼୍ର / ଔଡ୍ର',
+      Telugu: 'ఓడ్ / ఓడ్ర / ఔడ్ర',
+      Bengali: 'ওড / ওড্র / ঔড্র'
+    },
+    category: 'Classical Epigraphic Root',
+    designation_group: 'Dynastic and lineage designations',
+    geographical_association: 'Ancient Odra Desha (Odisha) & Pan-Indian Historical Corridors',
+    epistemic_classification: 'Documented Epigraphic & Historical Designation',
+    epistemic_note: {
+      en: 'Attested in classical Sanskrit texts (Mahabharata, Manusmriti, Natyashastra) and medieval copper-plate charters as the historical ethnonym and territorial name of Odra Desha.',
+      hi: 'महाभारत, मनुस्मृति, नाट्यशास्त्र और मध्यकालीन ताम्रपत्रों में ओड्र देश के ऐतिहासिक क्षेत्रीय व जातीय नाम के रूप में प्रमाणित।',
+      te: 'మహాభారతం, మనుస్మృతి, నాట్యశాస్త్రం మరియు మధ్యయుగ తామ్రపత్ర శాసనాలలో ఓడ్ర దేశపు చారిత్రక నామంగా నిర్ధారించబడింది.',
+      kn: 'ಮಹಾಭಾರತ, ಮನುಸ್ಮೃತಿ, ನಾಟ್ಯಶಾಸ್ತ್ರ ಮತ್ತು ತಾಮ್ರಶಾಸನಗಳಲ್ಲಿ ಓಡ್ರ ದೇಶದ ಐತಿಹಾಸಿಕ ಹೆಸರಾಗಿ ದಾಖಲಾಗಿದೆ.',
+      ta: 'மகாபாரதம், மனுஸ்மிருதி, நாட்டியசாஸ்திரம் மற்றும் செப்பேடுகளில் ஒட்ர தேசத்தின் வரலாற்றுப் பெயராகப் பதிவு செய்யப்பட்டுள்ளது.',
+      mr: 'महाभारत, मनुस्मृती, नाट्यशास्त्र आणि मध्ययुगीन ताम्रपटांमध्ये ओड्र देशाचे ऐतिहासिक नाव म्हणून प्रमाणित.',
+      or: 'ମହାଭାରତ, ମନୁସ୍ମୃତି, ନାଟ୍ୟଶାସ୍ତ୍ର ଓ ମଧ୍ୟযୁଗୀୟ ତାମ୍ରଫଳକରେ ଓଡ଼୍ର ଦେଶର ଐତିହାସିକ ନାମ ଭାବେ ପ୍ରମାଣିତ।',
+      bn: 'মহাভারত, মনুস্মৃতি, নাট্যশাস্ত্র ও মধ্যযুগীয় তাম্রশাসনে ওড্র দেশের ঐতিহাসিক নাম হিসেবে প্রত্যয়িত।'
+    },
+    primary_regions: ['Pan-Indian Civilizational Substratum', 'Gangetic Belt', 'Central India', 'Eastern Seaboard'],
+    prominent_states: ['All Indian States & Trans-Indus Diaspora'],
+    linguistic_origin: 'Attested in the Mahabharata, Manusmriti, Natyashastra, and Pliny the Elder’s Naturalis Historia ("Oretes").',
+    historical_role: {
+      en: 'The primordial civilizational root from which Odra Desha, the Odia language, and the far-reaching diaspora across the subcontinent derive their historical terminology.',
+      hi: 'वह आदिम सभ्यतामूलक संज्ञा जिससे ओड्र देश, उड़िया भाषा और उपमहाद्वीप में विस्तृत संबंधित समुदाय अपनी ऐतिहासिक शब्दावली प्राप्त करते हैं।',
+      te: 'మహాభారతం, ప్రాచీన శాసనాలలో పేర్కొనబడిన మూల నామం, దీని నుండే ఓడ్ర దేశం మరియు వివిధ ప్రాంతీయ నామాలు ఉద్భవించాయి.',
+      kn: 'ಮಹಾಭಾರತ ಮತ್ತು ಪ್ರಾಚೀನ ಶಾಸನಗಳಲ್ಲಿ ಉಲ್ಲೇಖಿತವಾದ ಮೂಲ ಸಂಸ್ಕೃತಿ ಹೆಸರು.',
+      ta: 'பண்டைய காவியங்கள் மற்றும் கல்வெட்டுகளில் குறிப்பிடப்படும் ஆதி மூலப் பெயர்.',
+      mr: 'महाभारत आणि प्राचीन शिलालेखांत उल्लेखलेली मूळ ऐतिहासिक संज्ञा.',
+      or: 'ମହାଭାରତ ଓ ପ୍ରାଚୀନ ଶିଳାଲେଖରେ ବର୍ଣ୍ଣିତ ମୂଳ ପରିଚୟ ଯେଉଁଥିରୁ ଓଡ଼୍ର ଦେଶ ଓ ଭାଷାର ନାମକରଣ ହୋଇଛି।',
+      bn: 'মহাভারত ও প্রাচীন শিলালিপিতে উল্লেখিত মূল ঐতিহাসিক জাতিবাচক নাম।'
+    },
+    sacred_associations: ['Surya (The Sun God)', 'Ganga Mata', 'Lord Jagannatha', 'Mahameghavahana Kharavela']
+  },
+
+  // =========================================================================
+  // CATEGORY B: REGIONAL COMMUNITY DESIGNATIONS
+  // =========================================================================
+  {
+    id: 'syn_odisha_kshatriya',
+    title: 'Odisha Kshatriya',
+    native_scripts: {
+      Odia: 'ଓଡ଼ିଶା କ୍ଷତ୍ରିୟ',
+      Devanagari: 'ओडिशा क्षत्रिय',
+      Telugu: 'ఒడిశా క్షత్రియ',
+      Kannada: 'ಒಡಿಶಾ ಕ್ಷತ್ರಿಯ',
+      Tamil: 'ஒடிசா க்ஷத்திரிய',
+      Bengali: 'ওড়িশা ক্ষত্রিয়'
+    },
+    category: 'Royal Nobility',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Odisha',
+    epistemic_classification: 'Documented Epigraphic & Historical Designation',
+    epistemic_note: {
+      en: 'Regional designation associated with Odisha (ancient Odra / Utkala / Kalinga), referring to martial and ruling Kshatriya lineages of the Mahanadi basin and coastal Odisha.',
+      hi: 'ओडिशा (प्राचीन ओड्र / उत्कल / कलिंग) से संबद्ध क्षेत्रीय संज्ञा, जो महानदी बेसिन और तटीय ओडिशा की सामरिक व शासक क्षत्रिय परंपराओं को दर्शाती है।',
+      te: 'ఒడిశా (ప్రాచీన ఓడ్ర / ఉత్కళ / కళింగ) ప్రాంతానికి చెందిన ప్రాంతీయ నామం; మహానది లోయ మరియు తీర ఒడిశా క్షత్రియ యోధ పరంపరను సూచిస్తుంది.',
+      kn: 'ಒಡಿಶಾ (ಪ್ರಾಚೀನ ಓಡ್ರ / ಉತ್ಕಳ / ಕಳಿಂಗ) ಪ್ರದೇಶಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಪ್ರಾದೇಶಿಕ ನಾಮ; ಮಹಾನದಿ ಕಣಿವೆ ಮತ್ತು ಕರಾವಳಿ ಒಡಿಶಾದ ಕ್ಷತ್ರಿಯ ಪರಂಪರೆಯನ್ನು ಸೂಚಿಸುತ್ತದೆ.',
+      ta: 'ஒடிசா (பண்டைய ஒட்ர / உத்கல / கலிங்க) பகுதியுடன் தொடர்புடைய பிராந்தியப் பெயர்; மகாநதி மற்றும் கடற்கரை ஒடிசாவின் சத்திரிய மரபுகளைக் குறிக்கிறது.',
+      mr: 'ओडिशा (प्राचीन ओड्र / उत्कल / कलिंग) प्रदेशाशी संबंधित प्रादेशिक नाव; महानदी खोरे व किनारी ओडिशातील क्षत्रिय परंपरेचे निदर्शक.',
+      or: 'ଓଡ଼ିଶା (ପ୍ରାଚୀନ ଓଡ଼୍ର / ଉତ୍କଳ / କଳିଙ୍ଗ) ଅଞ୍ଚଳ ସହ ସମ୍ପୃକ୍ତ ଆଞ୍ଚଳିକ ପରିଚୟ, ଯାହା ମହାନଦୀ ଉପତ୍ୟକା ଓ ଉପକୂଳ ଓଡ଼ିଶାର କ୍ଷତ୍ରିୟ ପରମ୍ପରାକୁ ବୁଝାଏ।',
+      bn: 'ওড়িশা (প্রাচীন ওড্র / উৎকল / কলিঙ্গ) অঞ্চলের সাথে যুক্ত আঞ্চলিক নাম, যা মহানদী অববাহিকা ও উপকূলীয় ওড়িশার ক্ষত্রিয় ঐতিহ্য নির্দেশ করে।'
+    },
+    primary_regions: ['Coastal Odisha', 'Mahanadi Delta', 'Cuttack-Puri-Khurda Belt', 'Ganjam & Kalinga Highlands'],
+    prominent_states: ['Odisha'],
+    linguistic_origin: 'Regional compound combining "Odisha" (derived from Odra Vishaya) with Sanskrit "Kshatriya".',
+    historical_role: {
+      en: 'Represents the regional Kshatriya heritage of Odisha (Odra Desha), historically encompassing royal retainers, fort commanders (Garhjat and Kataka), and landed martial lineages (Khandayats and Paika-Kshatriya traditions) under the Eastern Ganga and Gajapathi realms.',
+      hi: 'ओडिशा (ओड्र देश) की क्षेत्रीय क्षत्रिय विरासत का प्रतिनिधित्व करता है, जिसमें पूर्वी गंग और गजपति साम्राज्यों के अधीन कटक व गढ़जात दुर्गों के सैन्य नायक और सामरिक वंश शामिल रहे हैं।',
+      te: 'ఒడిశా (ఓడ్ర దేశం) ప్రాంతీయ క్షత్రియ వారసత్వాన్ని సూచిస్తుంది; తూర్పు గంగ మరియు గజపతి సామ్రాజ్యాల కాలంలో కటక్ మరియు దుర్గాల సైనిక నాయకులు, క్షత్రియ యోధ వంశాలను ఇది ప్రతిబింబిస్తుంది.',
+      kn: 'ಒಡಿಶಾದ (ಓಡ್ರ ದೇಶ) ಪ್ರಾದೇಶಿಕ ಕ್ಷತ್ರಿಯ ಪರಂಪರೆಯನ್ನು ಪ್ರತಿನಿಧಿಸುತ್ತದೆ; ಪೂರ್ವ ಗಂಗ ಮತ್ತು ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯಗಳ ಅಡಿಯಲ್ಲಿ ಕೋಟೆ ದಂಡನಾಯಕರು ಮತ್ತು ಯೋಧ ಪರಂಪರೆಯನ್ನು ಒಳಗೊಂಡಿದೆ.',
+      ta: 'ஒடிசாவின் (ஒட்ர தேசம்) பிராந்திய சத்திரிய மரபைக் குறிக்கிறது; கீழைக் கங்கர் மற்றும் கஜபதி ஆட்சியில் கோட்டைத் தளபதிகளாகவும் படைவீரர்களாகவும் விளங்கிய மரபினர்.',
+      mr: 'ओडिशाच्या (ओड्र देश) प्रादेशिक क्षत्रिय वारशाचे प्रतिनिधित्व करते; पूर्व गंग आणि गजपती राजवटीतील दुर्गप्रमुख व लढाऊ घराण्यांचा यात समावेश होतो.',
+      or: 'ଓଡ଼ିଶା (ଓଡ଼୍ର ଦେଶ)ର ଆଞ୍ଚଳିକ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟର ପ୍ରତିനിଧିତ୍ୱ କରେ, ଯାହା ଗଙ୍ଗ ଓ ଗଜପତି ଶାସନ କାଳର ଦୁର୍ଗପତି ଏବଂ ସାମରିକ କ୍ଷତ୍ରିୟ ବଂଶଧରଙ୍କୁ ସୂଚାଏ।',
+      bn: 'ওড়িশার (ওড্র দেশ) আঞ্চলিক ক্ষত্রিয় ঐতিহ্যের প্রতিনিধিত্ব করে, যা পূর্ব গঙ্গ ও গজপতি আমলের দুর্গাপতি এবং সামরিক ক্ষত্রিয় বংশগুলোকে নির্দেশ করে।'
+    },
+    sacred_associations: ['Lord Jagannatha (Puri)', 'Surya Deva (Konark)', 'Maa Biraja (Jajpur)', 'Lingaraja (Bhubaneswar)']
+  },
+  {
+    id: 'syn_odiyaraju_karnataka',
+    title: 'Odiyaraju in Karnataka',
+    native_scripts: {
+      Kannada: 'ಒಡಿಯರಾಜು (ಕರ್ನಾಟಕ)',
+      Telugu: 'ఒడియరాజు (కర్ణాటక)',
+      Devanagari: 'ओडियाराजू (कर्नाटक)',
+      Tamil: 'ஒடியராஜு (கர்நாடகா)',
+      Odia: 'ଓଡ଼ିଆରାଜୁ (କର୍ଣ୍ଣାଟକ)'
+    },
+    category: 'Royal Nobility',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Karnataka',
+    epistemic_classification: 'Regional Ethnonym & Gazetteer Record',
+    epistemic_note: {
+      en: 'Documented regional community designation in Karnataka; community traditions and regional histories connect this group with medieval Odra/Gajapathi military movements and fortress settlements across Karnataka.',
+      hi: 'कर्नाटक में प्रचलित क्षेत्रीय समुदाय संज्ञा; सामुदायिक परंपराएं और क्षेत्रीय इतिहास इसे मध्यकालीन ओड्र/गजपति सैन्य अभियानों व दुर्ग बस्तियों से जोड़ते हैं।',
+      te: 'కర్ణాటకలో గుర్తింపు పొందిన ప్రాంతీయ సామాజిక నామం; మధ్యయుగ ఓడ్ర/గజపతి సైనిక కదలికలు మరియు కోటల రక్షణ ఒప్పందాలతో ఈ సమాజం చారిత్రక అనుబంధాన్ని కలిగి ఉంది.',
+      kn: 'ಕರ್ನಾಟಕದಲ್ಲಿ ಬಳಕೆಯಲ್ಲಿರುವ ಪ್ರಾದೇಶಿಕ ಸಮುದಾಯದ ಹೆಸರು; ಮಧ್ಯಕಾಲೀನ ಓಡ್ರ/ಗಜಪತಿ ಸೈನಿಕ ಸಂಚಾರ ಮತ್ತು ಕೋಟೆ ನೆಲೆಗಳೊಂದಿಗೆ ಈ ಸಮುದಾಯದ ಪರಂಪರೆ ಗುರುತಿಸಿಕೊಂಡಿದೆ.',
+      ta: 'கர்நாடகாவில் வழங்கப்படும் பிராந்திய சமூகப் பெயர்; இடைக்கால ஒட்ர/கஜபதி படை நகர்வுகள் மற்றும் கோட்டைக் குடியேற்றங்களுடன் தொடர்புடையதாகக் கருதப்படுகிறது.',
+      mr: 'कर्नाटकातील प्रादेशिक समाज-संज्ञा; स्थानिक परंपरा व इतिहास या समाजाला मध्ययुगीन ओड्र/गजपती लष्करी मोहिमा आणि किल्ल्यांच्या वसाहतींशी जोडतात.',
+      or: 'କର୍ଣ୍ଣାଟକରେ ପ୍ରଚଳିତ ଆଞ୍ଚଳିକ ସମୁଦାୟ ନାମ; ଆଞ୍ଚଳିକ ଇତିହାସ ଓ ପରମ୍ପରା ଏହାକୁ ମଧ୍ୟଯୁଗୀୟ ଓଡ଼୍ର/ଗଜପତି ସାମରିକ ଅଭିଯାନ ସହ ଯୋଡ଼ିଥାଏ।',
+      bn: 'কর্ণাটকে প্রচলিত আঞ্চলিক সম্প্রদায়গত নাম; আঞ্চলিক ইতিহাস ও ঐতিহ্য একে মধ্যযুগীয় ওড্র/গজপতি সামরিক অভিযানের সাথে যুক্ত করে।'
+    },
+    primary_regions: ['Southern & Central Karnataka', 'Mysore-Mandya-Tumkur Belt', 'Chitradurga-Davanagere Corridor', 'Tungabhadra Basin'],
+    prominent_states: ['Karnataka'],
+    linguistic_origin: 'Kannada/Dravidian regional compound: "Odiya" (relating to Odra/Odisha) + "Raju" (royal/martial title).',
+    historical_role: {
+      en: 'Regional designation used in Karnataka for families preserving Kshatriya martial customs, fortress stewardship, and royal lineage traditions connected with Odra/Gajapathi historical migrations into the Karnataka plateau.',
+      hi: 'कर्नाटक पठार में बसे उन परिवारों के लिए प्रयुक्त क्षेत्रीय नाम जो ओड्र/गजपति ऐतिहासिक प्रवास, दुर्ग संरक्षण और क्षत्रिय परंपराओं को सहेजे हुए हैं।',
+      te: 'కర్ణాటక పీఠభూమిలో స్థిరపడి క్షత్రియ ఆచారాలు, కోటల రక్షణ మరియు ఓడ్ర/గజపతి చారిత్రక వలసల జ్ఞాపకాలను నిలుపుకున్న కుటుంబాలకు కర్ణాటకలో వాడే ప్రాంతీయ నామం.',
+      kn: 'ಕರ್ನಾಟಕ ಪ್ರಸ್ಥಭೂಮಿಯಲ್ಲಿ ನೆಲೆಸಿ ಕ್ಷತ್ರಿಯ ಸಂಪ್ರದಾಯ, ಕೋಟೆ ರಕ್ಷಣೆ ಮತ್ತು ಓಡ್ರ/ಗజಪತಿ ಐತಿಹಾಸಿಕ ಪರಂಪರೆಯನ್ನು ಉಳಿಸಿಕೊಂಡಿರುವ ಕುಟುಂಬಗಳ ಪ್ರಾದೇಶಿಕ ಹೆಸರು.',
+      ta: 'கர்நாடக பீடபூமியில் குடியேறி சத்திரிய மரபுகளையும் கோட்டைப் பாதுகாப்பு வரலாற்றையும் போற்றும் சமூகத்தினரின் பிராந்தியப் பெயர்.',
+      mr: 'कर्नाटक पठारावर स्थायिक झालेल्या आणि क्षत्रिय परंपरा व दुर्गसंरक्षणाचा वारसा जपणाऱ्या कुटुंबांसाठी कर्नाटकात वापरले जाणारे प्रादेशिक नाव.',
+      or: 'କର୍ଣ୍ଣାଟକ ମାଳଭୂମିରେ ବସବାସ କରୁଥିବା ଏବଂ କ୍ଷତ୍ରିୟ ପରମ୍ପରା ଓ ଓଡ଼୍ର/ଗଜପତି ଐତିହାସିକ ସ୍ମୃତି ବହନ କରୁଥିବା ପରିବାରଙ୍କ ଆଞ୍ଚଳିକ ନାମ।',
+      bn: 'কর্ণাটক মালভূমিতে বসবাসরত এবং ক্ষত্রিয় প্রথা ও ওড্র/গজপতি ঐতিহাসিক স্মৃতি বহনকারী পরিবারগুলোর আঞ্চলিক নাম।'
+    },
+    sacred_associations: ['Sri Rama', 'Chamundeshwari', 'Shivayogi Siddharameshwara', 'Lord Venkateshwara']
+  },
+  {
+    id: 'syn_ottar',
+    title: 'Ottar',
+    native_scripts: {
+      Tamil: 'ஒட்டர்',
+      Malayalam: 'ഒട്ടർ',
+      Telugu: 'ఒట్టర్',
+      Kannada: 'ಒಟ್ಟರ್',
+      Devanagari: 'ओट्टर'
+    },
+    category: 'Regional Dialectal Shift',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Tamil Nadu',
+    epistemic_classification: 'Regional Ethnonym & Gazetteer Record',
+    epistemic_note: {
+      en: 'Attested in Tamil inscriptions, copper plates, and Madras Presidency administrative records as the standard Tamil phonetic rendering of "Odda / Odra" in Tamil Nadu.',
+      hi: 'तमिल शिलालेखों, ताम्रपत्रों और मद्रास प्रेसीडेंसी के अभिलेखों में तमिलनाडु के भीतर "ओड्डा / ओड्र" के तमिल ध्वन्यात्मक रूप के रूप में दर्ज।',
+      te: 'తమిళనాడులోని శాసనాలు, తామ్రపత్రాలు మరియు మద్రాసు ప్రెసిడెన్సీ రికార్డులలో "ఒడ్డ / ఓడ్ర" శబ్దానికి తమిళ రూపంగా నమోదైన ప్రాంతీయ నామం.',
+      kn: 'ತಮಿಳುನಾಡಿನ ಶಾಸನಗಳು ಮತ್ತು ಮದ್ರಾಸ್ ಪ್ರೆಸಿಡೆನ್ಸಿ ದಾಖಲೆಗಳಲ್ಲಿ "ಒಡ್ಡ / ಓಡ್ರ" ಪದದ ತಮಿಳು ರೂಪವಾಗಿ ದಾಖಲಾದ ಪ್ರಾದೇಶಿಕ ಹೆಸರು.',
+      ta: 'தமிழகக் கல்வெட்டுகள், செப்பேடுகள் மற்றும் மதராஸ் மாகாண ஆவணங்களில் "ஒட்ட / ஒட்ர" என்பதன் தமிழ் வடிவமாகப் பதிவாகியுள்ள பிராந்தியப் பெயர்.',
+      mr: 'तमिळनाडूतील शिलालेख आणि मद्रास प्रेसिडेन्सीच्या नोंदींमध्ये "ओड्डा / ओड्र" या शब्दाचे तमिळ रूप म्हणून नोंदवलेले नाव.',
+      or: 'ତାମିଲନାଡୁର ଶିଳାଲେଖ ଓ ମାଡ୍ରାସ୍ ପ୍ରେସିଡେନ୍ସି ଦସ୍ତାବିଜରେ "ଓଡ୍ଡ / ଓଡ଼୍ର" ଶବ୍ଦର ତାମିଲ ରୂପ ଭାବେ লিପିବଦ୍ଧ ଆଞ୍ଚଳିକ ନାମ।',
+      bn: 'তামিলনাড়ুর শিলালিপি ও মাদ্রাজ প্রেসিডেন্সির নথিতে "ওড্ড / ওড্র" শব্দের তামিল রূপ হিসেবে নথিবদ্ধ আঞ্চলিক নাম।'
+    },
+    primary_regions: ['Kongu Nadu', 'Kaveri Delta (Tiruchirappalli, Thanjavur)', 'Madurai-Dindigul-Tirunelveli Corridor', 'Tondaimandalam'],
+    prominent_states: ['Tamil Nadu'],
+    linguistic_origin: 'Tamil orthographical and phonological rule where voiced retroflex "dd" (Odda) is written and pronounced as "tt" (Ottar).',
+    historical_role: {
+      en: 'Regional community designation in Tamil Nadu. Historically associated with fortress masonry, deep stone-well excavation, tank construction, and settlements established during medieval southern campaigns and Nayaka-era infrastructure expansion across Tamil country.',
+      hi: 'तमिलनाडु में प्रचलित क्षेत्रीय समुदाय नाम। मध्यकालीन दक्षिणी अभियानों और नायक काल के दौरान किलों के निर्माण, गहरे पत्थर के कुओं और सिंचाई तालाबों के खनन से ऐतिहासिक रूप से जुड़ा हुआ।',
+      te: 'తమిళనాడులోని ప్రాంతీయ సామాజిక నామం. మధ్యయుగ దక్షిణ దండయాత్రలు మరియు నాయక రాజుల కాలంలో కోటల నిర్మాణం, రాతి బావులు మరియు సాగునీటి చెరువుల తవ్వకంతో చారిత్రక సంబంధం కలిగి ఉంది.',
+      kn: 'ತಮಿಳುನಾಡಿನ ಪ್ರಾದೇಶಿಕ ಸಮುದಾಯದ ಹೆಸರು. ಮಧ್ಯಕಾಲೀನ ದಕ್ಷಿಣ ದಂಡಯಾತ್ರೆಗಳು ಮತ್ತು ನಾಯಕ ಅರಸರ ಕಾಲದಲ್ಲಿ ಕೋಟೆ ನಿರ್ಮಾಣ, ಕಲ್ಲಿನ ಬಾವಿಗಳು ಮತ್ತು ಕೆರೆಗಳ ನಿರ್ಮಾಣದೊಂದಿಗೆ ಗುರುತಿಸಿಕೊಂಡಿದೆ.',
+      ta: 'தமிழ்நாட்டில் வழங்கப்படும் பிராந்திய சமூகப் பெயர். இடைக்காலத் தென்னிந்தியப் படையெடுப்புகள் மற்றும் நாயக்கர் காலத்தில் கோட்டைக் கட்டுமானம், கற்கிணறுகள் மற்றும் பாசன ஏரிகள் அமைத்த வரலாற்றுடன் தொடர்புடையது.',
+      mr: 'तमिळनाडूतील प्रादेशिक समाज नाव. मध्ययुगीन मोहिमा आणि नायक काळात किल्ले बांधणी, दगडी विहिरी व सिंचन तलावांच्या निर्मितीशी ऐतिहासिकदृष्ट्या संबंधित.',
+      or: 'ତାମିଲନାଡୁର ଆଞ୍ଚଳିକ ସମୁଦାୟ ନାମ, ଯାହା ମଧ୍ୟଯୁଗୀୟ ଦକ୍ଷିଣ ଅଭିଯାନ ଓ ନାୟକ ଶାସନ କାଳରେ ଦୁର୍ଗ ନିର୍ମାଣ, ପଥର କୂଅ ଓ ଜଳାଶୟ ଖନନ ସହ ଜଡ଼ିତ।',
+      bn: 'তামিলনাড়ুর আঞ্চলিক সম্প্রদায়গত নাম, যা মধ্যযুগীয় দক্ষিণ ভারত অভিযান ও নায়ক আমলে দুর্গ নির্মাণ, পাথরের কুয়ো ও জলাশয় খননের সাথে যুক্ত।'
+    },
+    sacred_associations: ['Ranganathaswamy (Srirangam)', 'Meenakshi Sundareswarar', 'Murugan', 'Karuppasamy']
   },
   {
     id: 'syn_od_kshatriya',
@@ -557,12 +829,25 @@ export const COMMUNITY_SYNONYMS: CommunitySynonym[] = [
       Bengali: 'ওড ক্ষত্রিয় / ওড্র ক্ষত্রিয়'
     },
     category: 'Royal Nobility',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Odisha, Eastern India & Pan-Indian Diaspora',
+    epistemic_classification: 'Documented Epigraphic & Historical Designation',
+    epistemic_note: {
+      en: 'Derived from classical Sanskrit references to the Kshatriyas of Odra Desha (Manusmriti 10.44) and Eastern Ganga / Gajapathi historical traditions.',
+      hi: 'ओड्र देश के क्षत्रियों के शास्त्रीय संस्कृत उल्लेखों (मनुस्मृति 10.44) और पूर्वी गंग / गजपति ऐतिहासिक परंपराओं से व्युत्पन्न।',
+      te: 'ఓడ్ర దేశ క్షత్రియుల ప్రాచీన సంస్కృత ప్రస్తావనలు (మనుస్మృతి 10.44) మరియు తూర్పు గంగ / గజపతి చారిత్రక సంప్రదాయాల నుండి ఉద్భవించింది.',
+      kn: 'ಓಡ್ರ ದೇಶದ ಕ್ಷತ್ರಿಯರ ಪ್ರಾಚೀನ ಸಂಸ್ಕೃತ ಉಲ್ಲೇಖಗಳು ಮತ್ತು ಪೂರ್ವ ಗಂಗ / ಗಜಪತಿ ಐತಿಹಾಸಿಕ ಪರಂಪರೆಯಿಂದ ಬಂದಿದೆ.',
+      ta: 'ஒட்ர தேசத்து சத்திரியர்கள் குறித்த பண்டைய சமஸ்கிருதக் குறிப்புகள் மற்றும் கங்க / கஜபதி வரலாற்று மரபுகளிலிருந்து தோன்றியது.',
+      mr: 'ओड्र देशातील क्षत्रियांच्या प्राचीन संस्कृत संदर्भांमधून (मनुस्मृती १०.४४) आणि गंग / गजपती ऐतिहासिक परंपरेतून आलेले नाव.',
+      or: 'ଓଡ଼୍ର ଦେଶର କ୍ଷତ୍ରିୟଙ୍କ ଶାସ୍ତ୍ରୀୟ ସଂସ୍କୃତ ଉଲ୍ଲେଖ (ମନୁସ୍ମୃତି ୧୦.୪୪) ଓ ଗଙ୍ଗ/ଗଜପତି ଐତିହାସିକ ପରମ୍ପରାରୁ ଉদ্ଭୂତ।',
+      bn: 'ওড্র দেশের ক্ষত্রিয়দের শাস্ত্রীয় সংস্কৃত উল্লেখ (মনুস্মৃতি ১০.৪৪) এবং পূর্ব গঙ্গ / গজপতি ঐতিহাসিক পরম্পরা থেকে উদ্ভূত।'
+    },
     primary_regions: ['Coastal Odisha', 'Mahanadi Basin', 'Utkala Plains', 'National Diaspora'],
     prominent_states: ['Odisha', 'Andhra Pradesh', 'West Bengal', 'Jharkhand'],
     linguistic_origin: 'Direct classical derivation from Odra Desha / Audra Vishaya in ancient Sanskrit epigraphs.',
     historical_role: {
-      en: 'Heirs to the sovereign Vedic ruling varna of Odra Desha, associated with the royal houses of Varanasi Kataka (Cuttack) and the Suryavamsha Gajapathi emperors.',
-      hi: 'प्राचीन ओड्र देश के शासक वर्ण के उत्तराधिकारी, जो कटक के सूर्यवंशी गजपति सम्राटों के साथ राजसी संबंध साझा करते हैं।',
+      en: 'Heirs to the ruling martial traditions of Odra Desha, associated in historical traditions with the royal houses of Varanasi Kataka (Cuttack) and the Suryavamsha Gajapathi era.',
+      hi: 'प्राचीन ओड्र देश की शासक व सामरिक परंपराओं के उत्तराधिकारी, जिनका ऐतिहासिक संबंध कटक के राजघराने और सूर्यवंशी गजपति काल से जोड़ा जाता है।',
       te: 'ప్రాచీన ఓడ్ర దేశ క్షత్రియ పాలక వర్గం, సూర్యవంశ గజపతుల వారసత్వాన్ని స్మరించే రాజ వంశీకులు.',
       kn: 'ಪ್ರಾಚೀನ ಓಡ್ರ ದೇಶದ ರಾಜಮನೆತನಗಳ ವಾರಸುದಾರರು ಮತ್ತು ಸೂರ್ಯವಂಶಿ ಕ್ಷತ್ರಿಯರು.',
       ta: 'பண்டைய ஒட்ர தேசத்தின் ஆளும் சத்திரிய வம்ச வழித்தோன்றல்கள்.',
@@ -573,30 +858,6 @@ export const COMMUNITY_SYNONYMS: CommunitySynonym[] = [
     sacred_associations: ['Lord Jagannatha', 'Surya Deva (Konark)', 'Emperor Kharavela', 'Kapilendra Deva']
   },
   {
-    id: 'syn_odderajulu',
-    title: 'OddeRajulu / VaddeRajulu / Vadiyarajulu',
-    native_scripts: {
-      Telugu: 'ఒడ్డేరాజులు / వడ్డేరాజులు / వడియరాజులు',
-      Kannada: 'ಒಡ್ಡೇರಾಜುಲು / ವಡ್ಡೇರಾಜುಲು',
-      Devanagari: 'ओड्डेराजुलु / वड्डेराजुलु / वडियाराजुलु'
-    },
-    category: 'Royal Nobility',
-    primary_regions: ['Coastal Andhra Delta', 'Rayalaseema Tablelands', 'Telangana Plateau', 'Eastern Ghats Foothills'],
-    prominent_states: ['Andhra Pradesh', 'Telangana', 'Karnataka borderlands'],
-    linguistic_origin: 'Telugu adaptation combining "Odde / Vadde" (Odra) with the royal title "Rajulu" / "Raju" (King / Ruler).',
-    historical_role: {
-      en: 'Gajapathi military viceroys, garrison fort governors, and territorial commanders stationed at Kondavidu, Bellamkonda, Vinukonda, and Srisailam during imperial southern campaigns.',
-      hi: 'गजपति सेना के महापात्र, दुर्ग रक्षक एवं सैन्य अधिकारी जो कोंडावीडु, बेल्लमकोंडा और श्रीशैलम जैसे सामरिक किलों में पदस्थापित थे।',
-      te: 'గజపతి సామ్రాజ్య సేనాపతులు, కొండవీడు, బెల్లంకొండ, వినుకొండ, ఉదయగిరి దుర్గ రక్షకులుగా సేవలందించిన వీర వంశీకులు.',
-      kn: 'ಗಜಪತಿ ಸೇನಾ ನಾಯಕರು ಮತ್ತು ದಕ್ಷಿಣದ ಪ್ರಮುಖ ಕೋಟೆಗಳ ರಕ್ಷಕರಾಗಿದ್ದ ರಾಜಮನೆತನದ ಶೂರರು.',
-      ta: 'கொண்டவீடு மற்றும் உதயகிரி கோட்டைகளில் பணியாற்றிய கஜபதி படைகளின் தளபதிகள்.',
-      mr: 'कोंडावीडु आणि बेल्लमकोंडा किल्ल्यांचे संरक्षण करणारे गजपतींचे शूर सेनापती.',
-      or: 'ଗଜପତି ସାମ୍ରାଜ୍ୟର ଦକ୍ଷିଣ ବିଜୟ କାଳରେ କୋଣ୍ଡାଭିଡୁ ଓ ବିନୁକୋଣ୍ଡା ଦୁର୍ଗ ରକ୍ଷା କରିଥିବା ସେନାପତି।',
-      bn: 'গজপতি সাম্রাজ্যের দক্ষিণ ভারত অভিযানের সেনানায়ক ও দুর্গ অধিপতি।'
-    },
-    sacred_associations: ['Sri Rama (Kodanda Rama)', 'Samrat Sagara', 'Srisailam Mallikarjuna', 'Narasimha Swamy']
-  },
-  {
     id: 'syn_odde_vadde',
     title: 'Odde / Vadde',
     native_scripts: {
@@ -605,6 +866,19 @@ export const COMMUNITY_SYNONYMS: CommunitySynonym[] = [
       Devanagari: 'ओड्डे / वड्डे'
     },
     category: 'Civic & Water Engineering',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Andhra Pradesh, Telangana & Eastern Karnataka',
+    epistemic_classification: 'Regional Ethnonym & Gazetteer Record',
+    epistemic_note: {
+      en: 'Documented in Vijayanagara and Telugu stone inscriptions (e.g., Vodda-ula, Odda-rotlu) and regional gazetteers across Andhra Pradesh, Telangana, and Karnataka.',
+      hi: 'विजयनगर व तेलुगु शिलालेखों तथा आंध्र प्रदेश, तेलंगाना और कर्नाटक के क्षेत्रीय गजेटियरों में प्रमाणित।',
+      te: 'విజయనగర మరియు తెలుగు శిలాశాసనాలలో (ఉదా. వొడ్డ-ఉల, ఒడ్డ-రోట్లు) మరియు ఆంధ్రప్రదేశ్, తెలంగాణ, కర్ణాటక గెజిటీర్లలో నమోదైంది.',
+      kn: 'ವಿಜಯನಗರ ಮತ್ತು ತೆಲುಗು ಶಾಸನಗಳಲ್ಲಿ ಹಾಗೂ ಆಂಧ್ರ, ತೆಲಂಗಾಣ ಮತ್ತು ಕರ್ನಾಟಕದ ಗೆಜೆಟಿಯರ್‌ಗಳಲ್ಲಿ ದಾಖಲಾಗಿದೆ.',
+      ta: 'விஜயநகர மற்றும் தெலுங்கு கல்வெட்டுகளிலும் ஆந்திரா, தெலுங்கானா, கர்நாடக அரசிதழ்களிலும் பதிவு செய்யப்பட்டுள்ளது.',
+      mr: 'विजयनगर व तेलुगू शिलालेखांत आणि आंध्र प्रदेश, तेलंगणा व कर्नाटकातील गॅझेटिअरमध्ये नोंदवलेले.',
+      or: 'ବିଜୟନଗର ଓ ତେଲୁଗୁ ଶିଳାଲେଖ ଏବଂ ଆନ୍ଧ୍ର, ତେଲେଙ୍ଗାନା ଓ କର୍ଣ୍ଣାଟକ ଗେଜେଟିୟରରେ ପ୍ରମାଣିତ।',
+      bn: 'বিজয়নগর ও তেলুগু শিলালিপি এবং অন্ধ্রপ্রদেশ, তেলেঙ্গানা ও কর্ণাটকের গেজেটিয়ারে নথিবদ্ধ।'
+    },
     primary_regions: ['Krishna-Godavari Inter-fluvial Plains', 'Tungabhadra Basin', 'Palar Catchment'],
     prominent_states: ['Andhra Pradesh', 'Telangana', 'Eastern Karnataka'],
     linguistic_origin: 'Dravidian phonetic shift replacing the initial Sanskrit "O" with the soft voiced labial "Vo/Va".',
@@ -629,12 +903,25 @@ export const COMMUNITY_SYNONYMS: CommunitySynonym[] = [
       Telugu: 'వడ్డార్'
     },
     category: 'Civic & Water Engineering',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Karnataka & Maharashtra',
+    epistemic_classification: 'Regional Ethnonym & Gazetteer Record',
+    epistemic_note: {
+      en: 'Attested in Kannada and Marathi historical records, Solapur Siddharameshwara chronicles, and Bombay/Mysore Presidency ethnographic surveys.',
+      hi: 'कन्नड़ व मराठी ऐतिहासिक अभिलेखों, सोलापुर के संत सिद्धरामेश्वर चरित्र और बॉम्बे/मैसूर गजेटियरों में प्रमाणित।',
+      te: 'కన్నడ, మరాఠీ చారిత్రక రికార్డులు, సోలాపూర్ సిద్ధరామేశ్వర చరిత్ర మరియు మైసూర్/బాంబే గెజిటీర్లలో నమోదైంది.',
+      kn: 'ಕನ್ನಡ ಮತ್ತು ಮರಾಠಿ ಐತಿಹಾಸಿಕ ದಾಖಲೆಗಳು, ಸೊಲ್ಲಾಪುರ ಸಿದ್ಧರಾಮೇಶ್ವರ ಚರಿತ್ರೆ ಮತ್ತು ಮೈಸೂರು ಗೆಜೆಟಿಯರ್‌ಗಳಲ್ಲಿ ದಾಖಲಾಗಿದೆ.',
+      ta: 'கன்னடம் மற்றும் மராட்டிய வரலாற்று ஆவணங்கள் மற்றும் சோலாப்பூர் சித்தராமேஸ்வரர் வரலாற்றில் பதிவு செய்யப்பட்டுள்ளது.',
+      mr: 'कन्नड व मराठी ऐतिहासिक दस्तऐवज, सोलापूरचे शिवयोगी सिद्धरामेश्वर चरित्र आणि गॅझेटिअरमध्ये प्रमाणित.',
+      or: 'କନ୍ନଡ଼ ଓ ମରାଠୀ ଐତିହାସିକ ଦସ୍ତାବିଜ ଏବଂ ସୋଲାପୁର ସିଦ୍ଧରାମେଶ୍ୱର ଚରିତରେ ପ୍ରମାଣିତ।',
+      bn: 'কন্নড় ও মারাঠি ঐতিহাসিক নথি এবং সোলাপুর সিদ্ধরামেশ্বর চরিতে প্রত্যয়িত।'
+    },
     primary_regions: ['Northern Karnataka Plateau', 'Marathwada', 'Western Ghats Foothills', 'Solapur Basin'],
     prominent_states: ['Karnataka', 'Maharashtra', 'Goa', 'Northern Andhra borders'],
     linguistic_origin: 'Kannada and Marathi evolution of the Prakrit ethnonym Odda.',
     historical_role: {
-      en: 'Famed monumental stone cutters, fortress builders, well diggers, and water conservationists closely linked with Shivayogi Siddharameshwara and Maratha defensive fortifications.',
-      hi: 'प्रसिद्ध पाषाण-शिल्पी, दुर्ग-निर्माता और कुआं-तालाब खनक, जिनका गहरा ऐतिहासिक संबंध सोलापुर के संत सिद्धरामेश्वर और मराठा किलों से है।',
+      en: 'Famed monumental stone cutters, fortress builders, well diggers, and water conservationists closely linked with Shivayogi Siddharameshwara and Deccan defensive fortifications.',
+      hi: 'प्रसिद्ध पाषाण-शिल्पी, दुर्ग-निर्माता और कुआं-तालाब खनक, जिनका गहरा ऐतिहासिक संबंध सोलापुर के संत सिद्धरामेश्वर और दक्कन के किलों से है।',
       te: 'సోలాపూర్ సిద్ధరామేశ్వరుని తటాకాల నిర్మాణం, కోటలు మరియు రాతి గనుల తవ్వకంలో ప్రసిద్ధి చెందిన శిల్ప వీరులు.',
       kn: 'ಕಲ್ಲು ಒಡೆಯುವ, ಕೋಟೆ-ಕೊತ್ತಲಗಳನ್ನು ಕಟ್ಟುವ ಮತ್ತು ಸಿದ್ಧರಾಮೇಶ್ವರರ ಕೆರೆ-ಬಾವಿಗಳನ್ನು ನಿರ್ಮಿಸಿದ ಕಾಯಕಜೀವಿಗಳು.',
       ta: 'கோட்டைகள், படிக்கிணறுகள் மற்றும் பாறை சிற்பங்களை வடித்த திறமையான சிற்பிகள்.',
@@ -652,45 +939,190 @@ export const COMMUNITY_SYNONYMS: CommunitySynonym[] = [
       Malayalam: 'ഒడ్డർ'
     },
     category: 'Regional Dialectal Shift',
+    designation_group: 'Regional community designations',
+    geographical_association: 'Tamil Nadu & Kerala',
+    epistemic_classification: 'Regional Ethnonym & Gazetteer Record',
+    epistemic_note: {
+      en: 'Recorded in South Indian inscriptions and colonial census monographs as the anglicized/Dravidian spelling alongside Tamil "Ottar".',
+      hi: 'दक्षिण भारतीय अभिलेखों और जनगणना विवरणिकाओं में तमिल "ओट्टर" के समानांतर दर्ज क्षेत्रीय नाम।',
+      te: 'దక్షిణ భారత శాసనాలు మరియు జనాభా గణన గ్రంథాలలో తమిళ "ఒట్టర్" తో పాటు నమోదైన ప్రాంతీయ నామం.',
+      kn: 'ದಕ್ಷಿಣ ಭಾರತದ ಶಾಸನಗಳು ಮತ್ತು ಜನಗಣತಿ ದಾಖಲೆಗಳಲ್ಲಿ ತಮಿಳಿನ "ಒಟ್ಟರ್" ಜೊತೆಗೆ ದಾಖಲಾದ ಹೆಸರು.',
+      ta: 'தென்னிந்தியக் கல்வெட்டுகள் மற்றும் மக்கள்தொகை ஆவணங்களில் "ஒட்டர்" என்பதன் ஆங்கில/திராவிட வடிவமாகப் பதிவான பெயர்.',
+      mr: 'दक्षिण भारतीय शिलालेख आणि जनगणना अहवालांमध्ये तमिळ "ओट्टर" सोबत नोंदवलेले नाव.',
+      or: 'ଦକ୍ଷିଣ ଭାରତୀୟ ଶିଳାଲେଖ ଓ ଜନଗଣନା ଦସ୍ତାବିଜରେ ତାମିଲ "ଓଟ୍ଟାର" ସହ ଲିପିବଦ୍ଧ ନାମ।',
+      bn: 'দক্ষিণ ভারতীয় শিলালিপি ও জনগণনা নথিতে তামিল "ওট্টার"-এর সমান্তরালে নথিবদ্ধ নাম।'
+    },
     primary_regions: ['Kongu Nadu', 'Kaveri Basin', 'Southern Carnatic'],
     prominent_states: ['Tamil Nadu', 'Kerala', 'Southern Andhra'],
-    linguistic_origin: 'Tamil phonological rendering of the northern Prakrit ethnonym Odda.',
+    linguistic_origin: 'Tamil/Dravidian phonological rendering of the northern Prakrit ethnonym Odda.',
     historical_role: {
-      en: 'Settled in the Kaveri delta following Gajapathi Kumara Hamvira Deva’s 1464 CE expedition to Srirangam, pioneering deep stone wells and irrigation tanks across Kongu country.',
-      hi: '1464 ई. में हम्मीर देव गजपति के कावेरी अभियान के पश्चात तमिलनाडु में बसे, जिन्होंने कोंगू क्षेत्र में गहरे कुओं और तालाबों का निर्माण किया।',
-      te: '1464 లో గజపతి హంవీర దేవుని కావేరీ దండయాత్రల ద్వారా తమిళనాడులో స్థిరపడి, బావులు, చెరువులను నిర్మించిన శాఖ.',
-      kn: 'ಗಜಪತಿ ಹಂವೀರ ದೇವನ ಕಾವೇರಿ ದಂಡಯಾತ್ರೆಯ ನಂತರ ತಮಿಳುನಾಡಿನಲ್ಲಿ ನೆಲೆಸಿ ಕೃಷಿ ಜಲಾಶಯಗಳನ್ನು ನಿರ್ಮಿಸಿದವರು.',
-      ta: 'கி.பி. 1464-ல் கஜபதி இளவரசர் ஹம்வீர தேவரின் படையெடுப்பின் போது தமிழகத்தில் குடியேறி ஏரிகளை அமைத்தவர்கள்.',
-      mr: '१४६४ मधील हम्मीर देव गजपतींच्या स्वारीनंतर तमिळनाडूमध्ये स्थायिक झालेले विहिरी व तलाव निर्माते.',
-      or: '୧୪୬୪ରେ କୁମାର ହମ୍ବୀର ଦେବଙ୍କ କାବେରୀ ଅଭିଯାନ ସମୟରେ ତାମିଲନାଡୁରେ ବସବାସ କରିଥିବା ଓଡ଼୍ର ବଂଶଧର।',
-      bn: '১৪৬৪ খ্রিষ্টাব্দে গজপতি কুমার হাম্বীর দেবের অভিযানের সময় তামিলনাড়ুতে বসতি স্থাপনকারী সমাজ।'
+      en: 'Settled in the Kaveri delta and Kongu country during medieval southern military and architectural expansions, pioneering deep stone wells and irrigation tanks.',
+      hi: 'मध्यकालीन दक्षिणी सैन्य और स्थापत्य विस्तार के दौरान कावेरी डेल्टा व कोंगू क्षेत्र में बसे, जिन्होंने गहरे कुओं और तालाबों का निर्माण किया।',
+      te: 'మధ్యయుగ దక్షిణ భారత విస్తరణలలో భాగంగా కావేరీ డెల్టా మరియు తమిళనాడులో స్థిరపడి, బావులు, చెరువులను నిర్మించిన శాఖ.',
+      kn: 'ಮಧ್ಯಕಾಲೀನ ದಕ್ಷಿಣ ಭಾರತದ ವಿಸ್ತರಣೆಯ ಸಮಯದಲ್ಲಿ ತಮಿಳುನಾಡಿನಲ್ಲಿ ನೆಲೆಸಿ ಕೃಷಿ ಜಲಾಶಯಗಳನ್ನು ನಿರ್ಮಿಸಿದವರು.',
+      ta: 'காவிரி டெல்டா மற்றும் கொங்கு நாட்டில் குடியேறி ஆழமான கற்கிணறுகள் மற்றும் பாசன ஏரிகளை அமைத்தவர்கள்.',
+      mr: 'कावेरी खोरे आणि कोंगू प्रदेशात स्थायिक झालेले दगडी विहिरी व तलाव निर्माते.',
+      or: 'କାବେରୀ ଉପତ୍ୟକା ଓ ତାମିଲନାଡୁରେ ବସବାସ କରି ପଥର କୂଅ ଓ ଜଳାଶୟ ନିର୍ମାଣ କରିଥିବା ଶାଖା।',
+      bn: 'কাবেরী বদ্বীপ ও তামিলনাড়ুতে বসতি স্থাপনকারী পাথরের কুয়ো ও জলাশয় নির্মাতা সমাজ।'
     },
     sacred_associations: ['Ranganathaswamy (Srirangam)', 'Maharshi Bhagiratha', 'Murugan', 'Mariamman']
   },
+
+  // =========================================================================
+  // CATEGORY C: HISTORICAL, MARTIAL, AND TRADITIONAL TITLES
+  // =========================================================================
   {
-    id: 'syn_od_oad_odra',
-    title: 'Od / Oad / Odra',
+    id: 'syn_vadde_gajapathirajulu',
+    title: 'Vadde-GajapathiRajulu',
     native_scripts: {
-      Devanagari: 'ओड / ओड्र / औड्र',
-      Odia: 'ଓଡ଼ / ଓଡ଼୍ର / ଔଡ୍ର',
-      Telugu: 'ఓడ్ / ఓడ్ర / ఔడ్ర',
-      Bengali: 'ওড / ওড্র / ঔড্র'
+      Telugu: 'వడ్డే-గజపతిరాజులు',
+      Kannada: 'ವಡ್ಡೇ-ಗಜಪತಿರಾಜುಲು',
+      Devanagari: 'वड्डे-गजपतिराजुलु',
+      Tamil: 'வட்டே-கஜபதிராஜுலு',
+      Odia: 'ଭଡ୍ଡେ-ଗଜପତିରାଜୁଲୁ'
     },
-    category: 'Classical Epigraphic Root',
-    primary_regions: ['Pan-Indian Civilizational Substratum', 'Gangetic Belt', 'Central India', 'Eastern Seaboard'],
-    prominent_states: ['All Indian States & Trans-Indus Diaspora'],
-    linguistic_origin: 'Attested in the Mahabharata, Manusmriti, Natyashastra, and Pliny the Elder’s Naturalis Historia ("Oretes").',
+    category: 'Royal Nobility',
+    designation_group: 'Historical, martial, and traditional titles',
+    geographical_association: 'Andhra Pradesh, Telangana & Karnataka Borderlands',
+    epistemic_classification: 'Community Tradition & Lineage Claim',
+    epistemic_note: {
+      en: 'Compound traditional and martial title preserved in Telugu and Deccan community lineages; links the regional Vadde/Odde identity with ancestral service and royal descent claims from the Suryavamsha Gajapathi era (1434–1541 CE). While Gajapathi sovereignty in Andhra forts (Kondavidu, Udayagiri) is epigraphically documented, specific family genealogies are preserved primarily through community records and oral chronicles.',
+      hi: 'तेलुगु और दक्कन के सामुदायिक वंशों में संरक्षित संयुक्त पारंपरिक व सामरिक उपाधि; यह क्षेत्रीय वड्डे/ओड्डे पहचान को सूर्यवंशी गजपति काल (1434–1541 ई.) की सैन्य सेवा और वंश परंपरा से जोड़ती है। आंध्र के किलों में गजपति शासन शिलालेखों से प्रमाणित है, जबकि पारिवारिक वंशावलियाँ मुख्यतः सामुदायिक अभिलेखों में सुरक्षित हैं।',
+      te: 'తెలుగు మరియు దక్కన్ ప్రాంతీయ వంశాలలో నిలిచి ఉన్న సాంప్రదాయ, వీర బిరుదు నామం; ఇది వడ్డే/ఒడ్డే ప్రాంతీయ గుర్తింపును సూర్యవంశ గజపతి కాలపు (1434–1541 CE) సైనిక దుర్గ సేవతో మరియు రాజవంశ సంప్రదాయాలతో అనుసంధానిస్తుంది. ఆంధ్ర దుర్గాలలో (కొండవీడు, ఉదయగిరి) గజపతుల పాలన శాసనాల ద్వారా రుజువైనప్పటికీ, నిర్దిష్ట కుటుంబ వంశావళులు ప్రధానంగా సామాజిక సంప్రదాయాలలో భద్రపరచబడ్డాయి.',
+      kn: 'ತೆಲುಗು ಮತ್ತು ದಖನ್ ಸಮುದಾಯದ ವಂಶಗಳಲ್ಲಿ ಉಳಿದುಬಂದಿರುವ ಸಾಂಪ್ರದಾಯಿಕ ಮತ್ತು ವೀರ ಬಿರುದು; ವಡ್ಡೇ/ಒಡ್ಡೇ ಗುರುತನ್ನು ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಕಾಲದ (1434–1541 CE) ಕೋಟೆ ಸೇನಾ ಸೇವೆ ಮತ್ತು ವಂಶ ಪರಂಪರೆಯೊಂದಿಗೆ ಬೆಸೆಯುತ್ತದೆ.',
+      ta: 'தெலுங்கு மற்றும் தக்காண சமூக மரபுகளில் போற்றப்படும் பாரம்பரிய மற்றும் வீரப் பட்டம்; வட்டே/ஒட்டே அடையாளத்தை சூர்யவம்ச கஜபதி கால (கி.பி. 1434–1541) கோட்டைப் படைச் சேவை மற்றும் வம்ச மரபுகளுடன் இணைக்கிறது.',
+      mr: 'तेलुगू आणि दख्खनमधील समाजात जपलेली पारंपरिक व लढाऊ पदवी; वड्डे/ओड्डे ओळखीला सूर्यवंशी गजपती काळातील (१४३४–१५४१) दुर्गसेवा आणि वंश परंपरेशी जोडते.',
+      or: 'ତେଲୁଗୁ ଓ ଦାକ୍ଷିଣାତ୍ୟ ସମାଜରେ ପ୍ରଚଳିତ ପାରମ୍ପରିକ ତଥା ସାମରିକ ଉପାଧି, ଯାହା ଭଡ୍ଡେ/ଓଡ୍ଡେ ପରିଚୟକୁ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି କାଳର (୧୪୩୪–୧୫୪୧) ଦକ୍ଷିଣ ଦୁର୍ଗ ସେବା ଓ ବଂଶ ପରମ୍ପରା ସହ ଯୋଡ଼ିଥାଏ।',
+      bn: 'তেলুগু ও দাক্ষিণাত্যের সমাজে প্রচলিত ঐতিহ্যবাহী ও সামরিক উপাধি, যা ভড্ডে/ওড্ডে পরিচয়কে সূর্যবংশী গজপতি আমলের (১৪৩৪–১৫৪১ খ্রি.) দুর্গ সেবা ও বংশ পরম্পরার সাথে যুক্ত করে।'
+    },
+    primary_regions: ['Coastal Andhra (Guntur, Krishna, Prakasam, Nellore)', 'Rayalaseema', 'Telangana', 'Eastern Karnataka'],
+    prominent_states: ['Andhra Pradesh', 'Telangana', 'Karnataka'],
+    linguistic_origin: 'Hyphenated Telugu-Sanskrit compound title: "Vadde" (Odra/Odde) + "Gajapathi" (Lord of Elephants) + "Rajulu" (Kshatriya Rulers/Lords).',
     historical_role: {
-      en: 'The primordial civilizational root from which Odra Desha, the Odia language, and the far-reaching diaspora across the subcontinent derive their identity.',
-      hi: 'वह आदिम सभ्यतामूलक संज्ञा जिससे ओड्र देश, उड़िया भाषा और पूरे उपमहाद्वीप में विस्तृत सभी उप-शाखाएं अपनी पहचान प्राप्त करती हैं।',
-      te: 'మహాభారతం, ప్రాచీన శాసనాలలో పేర్కొనబడిన మూల జాతి నామం, దీని నుండే సమగ్ర ఓడ్ర దేశం, సంస్కృతి ఉద్భవించాయి.',
-      kn: 'ಮಹಾಭಾರತ ಮತ್ತು ಪ್ರಾಚೀನ ಶಾಸನಗಳಲ್ಲಿ ಉಲ್ಲೇಖಿತವಾದ ಮೂಲ ಸಂಸ್ಕೃತಿ ಹೆಸರು.',
-      ta: 'பண்டைய காவியங்கள் மற்றும் கல்வெட்டுகளில் குறிப்பிடப்படும் ஆதி மூலப் பெயர்.',
-      mr: 'महाभारत आणि प्राचीन शिलालेखांत उल्लेखलेली मूळ ऐतिहासिक संज्ञा.',
-      or: 'ମହାଭାରତ ଓ ପ୍ରାଚୀନ ଶିଳାଲେଖରେ ବର୍ଣ୍ଣିତ ମୂଳ ପରିଚୟ ଯେଉଁଥିରୁ ଓଡ଼୍ର ଦେଶ ଓ ଜାତିର ସୃଷ୍ଟି।',
-      bn: 'মহাভারত ও প্রাচীন শিলালিপিতে উল্লেখিত মূল ঐতিহাসিক জাতিবাচক নাম।'
+      en: 'Retained as an honorific martial and dynastic title by families tracing their heritage to the southern military garrisons, fort commanders, and royal detachments stationed across Kondavidu, Udayagiri, Bellamkonda, and Vinukonda during the Suryavamsha Gajapathi empire.',
+      hi: 'उन परिवारों द्वारा धारित सम्मानजनक सामरिक व राजवंशीय उपाधि जो अपनी विरासत को सूर्यवंशी गजपति साम्राज्य के दौरान कोंडावीडु, उदयगिरि, बेल्लमकोंडा और विनुकोंडा में तैनात दक्षिणी सैन्य टुकड़ियों और दुर्ग नायकों से जोड़ते हैं।',
+      te: 'సూర్యవంశ గజపతి సామ్రాజ్య కాలంలో కొండవీడు, ఉదయగిరి, బెల్లంకొండ, వినుకొండ దుర్గాలలో నియమితులైన సైనిక నాయకులు మరియు రాజబంధువుల వారసత్వాన్ని స్మరించుకుంటూ ఈ సమాజ కుటుంబాలు ధరించే గౌరవ క్షత్రియ బిరుదు నామం.',
+      kn: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಕಾಲದಲ್ಲಿ ಕೊಂಡವೀಡು, ಉದಯಗಿರಿ, ಬೆಲ್ಲಂಕೊಂಡ ಮತ್ತು ವಿನುಕೊಂಡ ಕೋಟೆಗಳಲ್ಲಿ ನಿಯೋಜಿತರಾಗಿದ್ದ ಸೇನಾ ನಾಯಕರ ಪರಂಪರೆಯನ್ನು ಸ್ಮರಿಸುವ ಗೌರವಯುತ ಕ್ಷತ್ರಿಯ ಬಿರುದು.',
+      ta: 'சூர்யவம்ச கஜபதி பேரரசின் போது கொண்டவீடு, உதயகிரி, பெல்லம்கொண்டா மற்றும் வினுகொண்டா கோட்டைகளில் பணியாற்றிய படைத்தளபதிகளின் மரபைப் போற்றும் கௌரவப் பட்டம்.',
+      mr: 'सूर्यवंशी गजपती साम्राज्याच्या काळात कोंडावीडू, उदयगिरी, बेल्लमकोंडा आणि विनुकोंडा किल्ल्यांवर नियुक्त सेनापतींचा वारसा सांगणारी सन्माननीय लढाऊ पदवी.',
+      or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟ କାଳରେ କୋଣ୍ଡାଭିଡୁ, ଉଦୟଗିରି, ବେଲ୍ଲମକୋଣ୍ଡା ଓ ବିନୁକୋଣ୍ଡା ଦୁର୍ଗରେ ନିୟୋଜିତ ସେନାପତି ଓ ରାଜবংশୀୟଙ୍କ ସ୍ମୃତି ବହନ କରୁଥିବା ସମ୍ମାନଜନକ ଉପାଧି।',
+      bn: 'সূর্যবংশী গজপতি সাম্রাজ্যের সময় কোন্ডাভিডু, উদয়গিরি, বেল্লমকোন্ডা ও বিনুকোন্ডা দুর্গে নিযুক্ত সেনাপতিদের ঐতিহ্যবাহী সম্মানসূচক সামরিক উপাধি।'
     },
-    sacred_associations: ['Surya (The Sun God)', 'Ganga Mata', 'Lord Jagannatha', 'Mahameghavahana Kharavela']
+    sacred_associations: ['Lord Jagannatha', 'Srisailam Mallikarjuna', 'Simhachalam Narasimha', 'Kodanda Rama']
+  },
+  {
+    id: 'syn_odda_nayakkar_tn',
+    title: 'Odda-Nayakkar in Tamil Nadu',
+    native_scripts: {
+      Tamil: 'ஒட்ட-நாயக்கர் (தமிழ்நாடு)',
+      Telugu: 'ఒడ్డ-నాయక్కర్ (తమిళనాడు)',
+      Kannada: 'ಒಡ್ಡ-ನಾಯ್ಕರ್ (ತಮಿಳುನಾಡು)',
+      Devanagari: 'ओड्डा-नायक्कर (तमिलनाडु)',
+      Odia: 'ଓଡ୍ଡ-ନାୟକ୍କର (ତାମିଲନାଡୁ)'
+    },
+    category: 'Kshatriya Martial',
+    designation_group: 'Historical, martial, and traditional titles',
+    geographical_association: 'Tamil Nadu',
+    epistemic_classification: 'Documented Epigraphic & Historical Designation',
+    epistemic_note: {
+      en: 'Historical martial and chieftaincy title in Tamil Nadu combining "Odda" (Odra) with "Nayakkar / Nayaka" (military commander/governor under Vijayanagara and Madurai/Tanjore Nayaka polities). Documented in South Indian historical and ethnographic records.',
+      hi: 'तमिलनाडु में प्रचलित ऐतिहासिक सामरिक व नायकत्व उपाधि जो "ओड्डा" (ओड्र) को "नायक्कर / नायक" (विजयनगर एवं मदुरै/तंजावुर नायक शासन में सैन्य कमांडर) से जोड़ती है। दक्षिण भारतीय ऐतिहासिक व नृवंशविज्ञान अभिलेखों में दर्ज।',
+      te: 'తమిళనాడులో "ఒడ్డ" (ఓడ్ర) మరియు "నాయక్కర్ / నాయక" (విజయనగర, మధురై/తంజావూరు నాయక పాలనలో సైనిక అధిపతి) పదాల కలయికతో ఏర్పడిన చారిత్రక సైనిక బిరుదు. దక్షిణ భారత చారిత్రక రికార్డులలో నమోదైంది.',
+      kn: 'ತಮಿಳುನಾಡಿನಲ್ಲಿ "ಒಡ್ಡ" (ಓಡ್ರ) ಮತ್ತು "ನಾಯ್ಕರ್ / ನಾಯಕ" (ಸೇನಾ ನಾಯಕ/ಪಾಳೆಯಗಾರ) ಪದಗಳ ಸಂಯೋಜನೆಯ ಐತಿಹಾಸಿಕ ವೀರ ಬಿರುದು.',
+      ta: 'தமிழ்நாட்டில் "ஒட்ட" (ஒட்ர) என்பதோடு "நாயக்கர் / நாயக்க" (விஜயநகர மற்றும் மதுரை/தஞ்சை நாயக்கர் காலப் படைத்தளபதி/பாளையத் தலைவர்) என்ற பட்டத்தை இணைக்கும் வரலாற்று மறவர் பட்டம்.',
+      mr: 'तमिळनाडूमध्ये "ओड्डा" (ओड्र) आणि "नायक्कर / नायक" (लष्करी प्रमुख) यांचा संयोग असलेली ऐतिहासिक लढाऊ पदवी.',
+      or: 'ତାମିଲନାଡୁରେ "ଓଡ୍ଡ" (ଓଡ଼୍ର) ସହିତ "ନାୟକ୍କର / ନାୟକ" (ସେନାପତି) ଯୁକ୍ତ ଐତିହାସିକ ସାମରିକ ଉପାଧି।',
+      bn: 'তামিলনাড়ুতে "ওড্ড" (ওড্র) এবং "নায়ক্কর / নায়ক" (সেনাপতি/শাসক) যুক্ত ঐতিহাসিক সামরিক উপাধি।'
+    },
+    primary_regions: ['Madurai-Dindigul-Theni Belt', 'Kongu Nadu (Coimbatore, Erode, Tiruppur)', 'Tiruchirappalli-Thanjavur Corridor', 'Southern Tamil Nadu'],
+    prominent_states: ['Tamil Nadu'],
+    linguistic_origin: 'Dravidian-Sanskrit martial title: "Odda" (of Odra origin) + Tamil/Telugu honorific "Nayakkar" (from Sanskrit Nayaka, military leader).',
+    historical_role: {
+      en: 'Denotes the historical martial, palaiyakkarar-retainer, and fortification-commanding leadership stratum among Odda/Ottar communities in Tamil Nadu during the Gajapathi southern expeditions (1463–1464 CE) and the subsequent Vijayanagara and Madurai Nayaka periods.',
+      hi: 'गजपति दक्षिणी अभियानों (1463–1464 ई.) और परवर्ती विजयनगर व मदुरै नायक काल के दौरान तमिलनाडु में दुर्ग निर्माण और सैन्य नेतृत्व करने वाले ओड्डा/ओट्टर नायकों की ऐतिहासिक उपाधि।',
+      te: 'గజపతి దక్షిణ దండయాత్రలు (1463–1464 CE) మరియు ఆపై విజయనగర, మధురై నాయక రాజుల కాలంలో తమిళనాడులో కోటల రక్షణ, నిర్మాణం మరియు సైనిక నాయకత్వం వహించిన వర్గాన్ని సూచించే చారిత్రక బిరుదు.',
+      kn: 'ಗಜಪತಿ ದಕ್ಷಿಣ ದಂಡಯಾತ್ರೆ (1463–1464 CE) ಮತ್ತು ನಂತರದ ವಿಜಯನಗರ ಹಾಗೂ ಮದುರೈ ನಾಯಕರ ಕಾಲದಲ್ಲಿ ತಮಿಳುನಾಡಿನಲ್ಲಿ ಕೋಟೆ ರಕ್ಷಣೆ ಮತ್ತು ಸೇನಾ ನಾಯಕತ್ವ ವಹಿಸಿದವರ ಐತಿಹಾಸಿಕ ಬಿರುದು.',
+      ta: 'கஜபதி தென்னிந்தியப் படையெடுப்புகள் (கி.பி. 1463–1464) மற்றும் விஜயநகர, மதுரை நாயக்கர் காலங்களில் தமிழகத்தில் கோட்டைப் பாதுகாப்பு, படைத் தலைமை மற்றும் நீர்ப்பாசனப் பணிகளை வழிநடத்திய மரபினரின் வரலாற்றுப் பட்டம்.',
+      mr: 'गजपतींच्या दक्षिणेतील मोहिमा (१४६३–१४६४) आणि त्यानंतरच्या विजयनगर व मदुरै नायक काळात तमिळनाडूत दुर्गसंरक्षण व लष्करी नेतृत्व करणाऱ्या प्रमुखांची पदवी.',
+      or: 'ଗଜପତିଙ୍କ ଦକ୍ଷିଣ ଅଭିଯାନ (୧୪୬୩–୧୪୬୪ খ୍ରୀ.) ଓ ପରବର୍ତ୍ତୀ ବିଜୟନଗର ତଥା ମଦୁରାଇ ନାୟକ କାଳରେ ତାମିଲନାଡୁରେ ଦୁର୍ଗ ରକ୍ଷା ଓ ସାମରିକ ନେତୃତ୍ୱ ନେଇଥିବା ବର୍ଗଙ୍କ ଉପାଧି।',
+      bn: 'গজপতিদের দক্ষিণ ভারত অভিযান (১৪৬৩–১৪৬৪ খ্রি.) এবং পরবর্তী বিজয়নগর ও মাদুরাই নায়ক আমলে তামিলনাড়ুতে দুর্গ রক্ষা ও সামরিক নেতৃত্বদানকারী গোষ্ঠীর উপাধি।'
+    },
+    sacred_associations: ['Ranganathaswamy (Srirangam)', 'Meenakshi Amman (Madurai)', 'Lord Murugan (Palani)', 'Jakkamma / Bommayya']
+  },
+  {
+    id: 'syn_oad_rajputh',
+    title: 'Oad-Rajputh / Oad-Rajput',
+    native_scripts: {
+      Devanagari: 'ओड राजपूत / ओड-राजपूत',
+      Nastaliq: 'اوڈ راجپوت',
+      Gurmukhi: 'ਓਡ ਰਾਜਪੂਤ',
+      Gujarati: 'ઓડ રાજપૂત'
+    },
+    category: 'Kshatriya Martial',
+    designation_group: 'Historical, martial, and traditional titles',
+    geographical_association: 'Rajasthan, Gujarat, Punjab, Haryana, Delhi & Northern Plains',
+    epistemic_classification: 'Community Tradition & Lineage Claim',
+    epistemic_note: {
+      en: 'Recorded in North-Western Indian ethnographic accounts and community chronicles linking Odra/Odda fortress engineers and martial clans with Rajput customs across Rajasthan, Gujarat, and Punjab.',
+      hi: 'उत्तर-पश्चिमी भारत के नृवंशविज्ञान विवरणों और सामुदायिक इतिहास में दर्ज, जो राजस्थान, गुजरात और पंजाब में ओड दुर्ग-निर्माताओं व सामरिक कुलों को राजपूत परंपराओं से जोड़ता है।',
+      te: 'రాజస్థాన్, గుజరాత్ మరియు పంజాబ్ ప్రాంతాలలో ఓడ్ దుర్గ నిర్మాతలు మరియు యోధ వంశాలను రాజపుత్ర సంప్రదాయాలతో అనుసంధానించే ఉత్తర భారత చారిత్రక, సామాజిక నామం.',
+      kn: 'ರಾಜಸ್ಥಾನ, ಗುಜರಾತ್ ಮತ್ತು ಪಂಜಾಬ್ ಪ್ರದೇಶಗಳಲ್ಲಿ ಓಡ್ ಕೋಟೆ ನಿರ್ಮಾಪಕರು ಮತ್ತು ಯೋಧ ಕುಲಗಳನ್ನು ರಜಪೂತ ಸಂಪ್ರದಾಯಗಳೊಂದಿಗೆ ಬೆಸೆಯುವ ಐತಿಹಾಸಿಕ ಹೆಸರು.',
+      ta: 'ராஜஸ்தான், குஜராத் மற்றும் பஞ்சாப் பகுதிகளில் ஓட் கோட்டைக் கலைஞர்கள் மற்றும் மறவர் குலங்களை ராஜபுத்திர மரபுகளுடன் இணைக்கும் பெயர்.',
+      mr: 'राजस्थान, गुजरात आणि पंजाबमधील ओड दुर्ग-निर्माते आणि लढाऊ कुळांना राजपूत परंपरेशी जोडणारी ऐतिहासिक संज्ञा.',
+      or: 'ରାଜସ୍ଥାନ, ଗୁଜରାଟ ଓ ପଞ୍ଜାବରେ ଓଡ଼ ଦୁର୍ଗ-ନିର୍ମାତା ଓ ସାମରିକ କୁଳଙ୍କୁ ରାଜପୁତ ପରମ୍ପରା ସହ ଯୋଡ଼ୁଥିବା ଐତିହାସିକ ଉପାଧି।',
+      bn: 'রাজস্থান, গুজরাট ও পাঞ্জাবে ওড দুর্গ-নির্মাতা ও সামরিক কুলগুলোকে রাজপুত ঐতিহ্যের সাথে যুক্ত করা ঐতিহাসিক উপাধি।'
+    },
+    primary_regions: ['Northern Plains', 'Western Arid Zone', 'Thar Desert Fringe', 'Malwa Corridor'],
+    prominent_states: ['Rajasthan', 'Gujarat', 'Punjab', 'Haryana', 'Sindh (historical)', 'Delhi NCR', 'Madhya Pradesh'],
+    linguistic_origin: 'Derived from ancient Prakrit "Odda" combined with Sanskrit "Rajaputra" (Son of the King / Rajput).',
+    historical_role: {
+      en: 'Defenders of frontiers, hereditary master fortress and moat excavators (Chittorgarh, Mehrangarh, Jaisalmer), and preservers of martial Kshatriya customs under medieval dynasties.',
+      hi: 'सीमाओं के रक्षक, ऐतिहासिक किलों व खाइयों के निर्माता (चित्तौड़गढ़, मेहरानगढ़, जैसलमेर) एवं क्षत्रिय परंपराओं के संरक्षक।',
+      te: 'సరిహద్దుల రక్షకులు, చారిత్రక రాజపుత్ర దుర్గాలు, కందకాలు మరియు కోటల నిర్మాతలు.',
+      kn: 'ಗಡಿ ರಕ್ಷಕರು, ಚಾರಿತ್ರಿಕ ಕೋಟೆಗಳು ಮತ್ತು ಕಂದಕಗಳ ನುರಿತ ನಿರ್ಮಾತೃಗಳು.',
+      ta: 'எல்லைக் காவலர்கள் மற்றும் வரலாற்று சிறப்புமிக்க கோட்டைகளை அமைத்த சத்திரிய மரபினர்.',
+      mr: 'सीमा रक्षक, ऐतिहासिक किल्ले व खंदक निर्माते आणि क्षत्रिय संस्कृतीचे रक्षक.',
+      or: 'ସୀମାନ୍ତ ରକ୍ଷକ, ଐତିହାସିକ ଦୁର୍ଗ ନିର୍ମାତା ଓ କ୍ଷତ୍ରିୟ ପରମ୍ପରାର ଧାରକ।',
+      bn: 'সীমান্ত রক্ষক, ঐতিহাসিক দুর্গ ও পরিখা নির্মাতা এবং ক্ষত্রিয় সংস্কৃতির ধারক।'
+    },
+    sacred_associations: ['Mata Jasma Devi', 'Samrat Sagara', 'Maharshi Bhagiratha', 'Sri Rama']
+  },
+  {
+    id: 'syn_odderajulu',
+    title: 'OddeRajulu / VaddeRajulu / Vadiyarajulu',
+    native_scripts: {
+      Telugu: 'ఒడ్డేరాజులు / వడ్డేరాజులు / వడియరాజులు',
+      Kannada: 'ಒಡ್ಡೇರಾಜುಲು / ವಡ್ಡೇರಾಜುಲು',
+      Devanagari: 'ओड्डेराजुलु / वड्डेराजुलु / वडियाराजुलु'
+    },
+    category: 'Royal Nobility',
+    designation_group: 'Historical, martial, and traditional titles',
+    geographical_association: 'Andhra Pradesh, Telangana & Karnataka Borderlands',
+    epistemic_classification: 'Regional Ethnonym & Gazetteer Record',
+    epistemic_note: {
+      en: 'Documented in Andhra and Rayalaseema regional histories, C.P. Brown manuscript collections, and district gazetteers as an honorific Kshatriya-aligned title used by Odde/Vadde ruling and martial lineages.',
+      hi: 'आंध्र और रायलसीमा के क्षेत्रीय इतिहास, सी.पी. ब्राउन पांडुलिपि संग्रह और जिला गजेटियरों में ओड्डे/वड्डे सामरिक व शासक वंशों की सम्मानजनक क्षत्रिय उपाधि के रूप में दर्ज।',
+      te: 'ఆంధ్ర మరియు రాయలసీమ ప్రాంతీయ చరిత్రలు, సి.పి. బ్రౌన్ తాళపత్ర సేకరణలు మరియు జిల్లా గెజిటీర్లలో ఒడ్డే/వడ్డే రాజ-యోధ వంశాల గౌరవ క్షత్రియ నామంగా నమోదైంది.',
+      kn: 'ಆಂಧ್ರ ಮತ್ತು ರಾಯಲಸೀಮೆ ಪ್ರಾದೇಶಿಕ ಇತಿಹಾಸ, ಸಿ.ಪಿ. ಬ್ರೌನ್ ಹಸ್ತಪ್ರತಿಗಳು ಮತ್ತು ಜಿಲ್ಲಾ ಗೆಜೆಟಿಯರ್‌ಗಳಲ್ಲಿ ದಾಖಲಾದ ಗೌರವಯುತ ಕ್ಷತ್ರಿಯ ಬಿರುದು.',
+      ta: 'ஆந்திரா மற்றும் ராயலசீமா வரலாற்று ஆவணங்கள், சி.பி. பிரவுன் சுவடிகள் மற்றும் மாவட்ட அரசிதழ்களில் பதிவான கௌரவ சத்திரியப் பட்டம்.',
+      mr: 'आंध्र आणि रायलसीमाच्या प्रादेशिक इतिहासात तसेच जिल्हा गॅझेटिअरमध्ये नोंदवलेली सन्माननीय क्षत्रिय पदवी.',
+      or: 'ଆନ୍ଧ୍ର ଓ ରାୟଲସୀମା ଆଞ୍ଚଳିକ ଇତିହାସ, ସି.ପି. ବ୍ରାଉନ୍ ପାଣ୍ଡୁଲିପି ଓ ଜିଲ୍ଲା ଗେଜେଟିୟରରେ ଲିପିବଦ୍ଧ ସମ୍ମାନଜନକ କ୍ଷତ୍ରିୟ ଉପାଧି।',
+      bn: 'অন্ধ্র ও রায়লসীমার আঞ্চলিক ইতিহাস, সি.পি. ব্রাউন পাণ্ডুলিপি এবং জেলা গেজেটিয়ারে নথিবদ্ধ সম্মানসূচক ক্ষত্রিয় উপাধি।'
+    },
+    primary_regions: ['Coastal Andhra Delta', 'Rayalaseema Tablelands', 'Telangana Plateau', 'Eastern Ghats Foothills'],
+    prominent_states: ['Andhra Pradesh', 'Telangana', 'Karnataka borderlands'],
+    linguistic_origin: 'Telugu adaptation combining "Odde / Vadde" (Odra) with the royal title "Rajulu" / "Raju" (King / Ruler).',
+    historical_role: {
+      en: 'Associated with Gajapathi military viceroys, garrison fort governors, and territorial commanders stationed at Kondavidu, Bellamkonda, Vinukonda, and Srisailam during medieval southern campaigns.',
+      hi: 'गजपति सेना के महापात्र, दुर्ग रक्षक एवं सैन्य अधिकारी जो कोंडावीडु, बेल्लमकोंडा और श्रीशैलम जैसे सामरिक किलों में पदस्थापित थे।',
+      te: 'గజపతి సామ్రాజ్య సేనాపతులు, కొండవీడు, బెల్లంకొండ, వినుకొండ, ఉదయగిరి దుర్గ రక్షకులుగా సేవలందించిన వీర వంశీకులు.',
+      kn: 'ಗಜಪತಿ ಸೇನಾ ನಾಯಕರು ಮತ್ತು ದಕ್ಷಿಣದ ಪ್ರಮುಖ ಕೋಟೆಗಳ ರಕ್ಷಕರಾಗಿದ್ದ ರಾಜಮನೆತನದ ಶೂರರು.',
+      ta: 'கொண்டவீடு மற்றும் உதயகிரி கோட்டைகளில் பணியாற்றிய கஜபதி படைகளின் தளபதிகள்.',
+      mr: 'कोंडावीडु आणि बेल्लमकोंडा किल्ल्यांचे संरक्षण करणारे गजपतींचे शूर सेनापती.',
+      or: 'ଗଜପତି ସାମ୍ରାଜ୍ୟର ଦକ୍ଷିଣ ବିଜୟ କାଳରେ କୋଣ୍ଡାଭିଡୁ ଓ ବିନୁକୋଣ୍ଡା ଦୁର୍ଗ ରକ୍ଷା କରିଥିବା ସେନାପତି।',
+      bn: 'গজপতি সাম্রাজ্যের দক্ষিণ ভারত অভিযানের সেনানায়ক ও দুর্গ অধিপতি।'
+    },
+    sacred_associations: ['Sri Rama (Kodanda Rama)', 'Samrat Sagara', 'Srisailam Mallikarjuna', 'Narasimha Swamy']
   }
 ];
 

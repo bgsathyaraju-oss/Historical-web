@@ -65,19 +65,346 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     setSelectedModalRef({ type: 'synonym', id: item.id });
   };
 
+  const synonymSectionLabels = React.useMemo(() => {
+    const dict: Record<
+      LanguageCode,
+      {
+        sectionTitle: string;
+        sectionSubtitle: string;
+        accuracyHeading: string;
+        accuracyBody: string;
+        filterAll: string;
+        groupDynastic: string;
+        groupDynasticDesc: string;
+        groupRegional: string;
+        groupRegionalDesc: string;
+        groupTitles: string;
+        groupTitlesDesc: string;
+        tableHeading: string;
+        tableSubheading: string;
+        colDesignation: string;
+        colCategory: string;
+        colGeography: string;
+        colEpistemic: string;
+        colSummary: string;
+        geoLabel: string;
+        statesLabel: string;
+        rootLabel: string;
+        epistemicLabel: string;
+        regionsBtn: string;
+        detailsBtn: string;
+        epistemicClasses: Record<string, string>;
+      }
+    > = {
+      en: {
+        sectionTitle: 'Synonyms, Regional Designations & Martial Titles',
+        sectionSubtitle:
+          'Categorized overview of dynastic lineages, regional community designations, and traditional martial titles across Odisha, Andhra Pradesh, Telangana, Karnataka, Tamil Nadu, and pan-Indian corridors.',
+        accuracyHeading: 'Historical Accuracy & Methodological Note',
+        accuracyBody:
+          'The designations below are presented as community-associated names, regional ethnonyms, or traditional titles according to their historical context. They are not claimed to be exact linguistic synonyms or to share a single uniform origin in every region; documented epigraphic and gazetteer records are explicitly distinguished from community traditions and ancestral lineage claims.',
+        filterAll: 'All Designations',
+        groupDynastic: 'Dynastic and lineage designations',
+        groupDynasticDesc:
+          'Ancestral solar-race (Suryavamsha) and classical Odra lineage identities invoked in royal inscriptions, Puranic traditions, and community genealogies.',
+        groupRegional: 'Regional community designations',
+        groupRegionalDesc:
+          'Geographically anchored community designations documented across Odisha, Karnataka, Tamil Nadu, Andhra Pradesh, Telangana, and Maharashtra.',
+        groupTitles: 'Historical, martial, and traditional titles',
+        groupTitlesDesc:
+          'Honorific martial, fortress-command, and chieftaincy titles preserved in regional histories, inscriptions, and community traditions.',
+        tableHeading: 'Structured Classification & Geographical Reference Table',
+        tableSubheading: 'Tap any row or card to open the full multilingual archival window with script attestations and sources.',
+        colDesignation: 'Name / Designation (Exact Spelling)',
+        colCategory: 'Category',
+        colGeography: 'Geographical Association',
+        colEpistemic: 'Historical Basis',
+        colSummary: 'Historical & Traditional Context',
+        geoLabel: 'Geographical Association:',
+        statesLabel: 'States:',
+        rootLabel: 'Linguistic Root:',
+        epistemicLabel: 'Historical Basis:',
+        regionsBtn: 'Regions',
+        detailsBtn: 'Details',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'Documented Epigraphic / Historical Record',
+          'Regional Ethnonym & Gazetteer Record': 'Regional Ethnonym & Gazetteer Record',
+          'Community Tradition & Lineage Claim': 'Community Tradition & Lineage Claim'
+        }
+      },
+      hi: {
+        sectionTitle: 'पर्यायवाची नाम, क्षेत्रीय पहचान एवं सामरिक उपाधियाँ',
+        sectionSubtitle:
+          'ओडिशा, आंध्र प्रदेश, तेलंगाना, कर्नाटक, तमिलनाडु और अखिल भारतीय क्षेत्रों में प्रचलित राजवंशीय नामों, क्षेत्रीय समुदाय संज्ञाओं और पारंपरिक सामरिक उपाधियों का वर्गीकृत विवरण।',
+        accuracyHeading: 'ऐतिहासिक प्रामाणिकता एवं कार्यप्रणाली टिप्पणी',
+        accuracyBody:
+          'नीचे दिए गए नाम उनके ऐतिहासिक संदर्भ के अनुसार समुदाय-संबद्ध नामों, क्षेत्रीय संज्ञाओं या पारंपरिक उपाधियों के रूप में प्रस्तुत किए गए हैं। प्रत्येक नाम को पूर्णतः समानार्थी या एक ही उत्पत्ति का मानने का दावा नहीं किया जाता; प्रमाणित शिलालेखों व गजेटियर साक्ष्यों को सामुदायिक परंपराओं और वंश-दावों से स्पष्ट रूप से अलग दर्शाया गया है।',
+        filterAll: 'सभी नाम व उपाधियाँ',
+        groupDynastic: 'राजवंशीय एवं वंश-परंपरा संज्ञाएँ (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'राजकीय अभिलेखों, पौराणिक परंपराओं और सामुदायिक वंशावलियों में उल्लिखित सूर्यवंशी एवं प्राचीन ओड्र वंश पहचान।',
+        groupRegional: 'क्षेत्रीय समुदाय संज्ञाएँ (Regional community designations)',
+        groupRegionalDesc:
+          'ओडिशा, कर्नाटक, तमिलनाडु, आंध्र प्रदेश, तेलंगाना और महाराष्ट्र में भौगोलिक रूप से प्रचलित क्षेत्रीय समुदाय नाम।',
+        groupTitles: 'ऐतिहासिक, सामरिक एवं पारंपरिक उपाधियाँ (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'क्षेत्रीय इतिहास, अभिलेखों और सामुदायिक परंपराओं में संरक्षित दुर्ग-रक्षा, नायकत्व एवं सम्मानजनक क्षत्रिय उपाधियाँ।',
+        tableHeading: 'वर्गीकृत एवं भौगोलिक संदर्भ तालिका',
+        tableSubheading: 'पूर्ण बहुभाषी विवरण और ऐतिहासिक स्रोत देखने के लिए किसी भी पंक्ति या कार्ड पर टैप करें।',
+        colDesignation: 'नाम / उपाधि (मूल वर्तनी)',
+        colCategory: 'श्रेणी',
+        colGeography: 'भौगोलिक संबद्धता',
+        colEpistemic: 'ऐतिहासिक आधार',
+        colSummary: 'ऐतिहासिक एवं पारंपरिक संदर्भ',
+        geoLabel: 'भौगोलिक संबद्धता:',
+        statesLabel: 'प्रमुख राज्य:',
+        rootLabel: 'भाषाई मूल:',
+        epistemicLabel: 'ऐतिहासिक आधार:',
+        regionsBtn: 'क्षेत्र',
+        detailsBtn: 'विवरण',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'प्रमाणित अभिलेखीय / ऐतिहासिक साक्ष्य',
+          'Regional Ethnonym & Gazetteer Record': 'क्षेत्रीय संज्ञा एवं गजेटियर अभिलेख',
+          'Community Tradition & Lineage Claim': 'सामुदायिक परंपरा एवं वंश दावा'
+        }
+      },
+      te: {
+        sectionTitle: 'పర్యాయ నామాలు, ప్రాంతీయ గుర్తింపులు & వీర బిరుదులు',
+        sectionSubtitle:
+          'ఒడిశా, ఆంధ్రప్రదేశ్, తెలంగాణ, కర్ణాటక, తమిళనాడు మరియు అఖిల భారత స్థాయిలో ఉన్న వంశ నామాలు, ప్రాంతీయ సామాజిక నామాలు మరియు సాంప్రదాయ వీర బిరుదుల వర్గీకృత వివరణ.',
+        accuracyHeading: 'చారిత్రక ప్రామాణికత & పరిశోధనా గమనిక',
+        accuracyBody:
+          'ఈ క్రింది నామాలు వాటి చారిత్రక సందర్భాన్ని బట్టి సమాజ అనుబంధ నామాలు, ప్రాంతీయ గుర్తింపులు లేదా సాంప్రదాయ బిరుదులుగా అందించబడ్డాయి. ప్రతి పేరు పూర్తిగా ఒకే అర్థం గల పర్యాయపదమని లేదా ప్రతి సమూహానికి ఒకే మూలం ఉందని యాంత్రికంగా నిర్ధారించబడలేదు; శాసన మరియు గెజిటీర్ ఆధారాలను సామాజిక సంప్రదాయాలు మరియు వంశావళి విశ్వాసాల నుండి స్పష్టంగా వేరు చేసి చూపడమైనది.',
+        filterAll: 'అన్ని నామాలు & బిరుదులు',
+        groupDynastic: 'వంశ మరియు కుల-పరంపర నామాలు (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'రాజ శాసనాలు, పురాణ గాథలు మరియు సామాజిక వంశావళులలో పేర్కొనబడిన సూర్యవంశ మరియు ప్రాచీన ఓడ్ర వంశ గుర్తింపులు.',
+        groupRegional: 'ప్రాంతీయ సామాజిక నామాలు (Regional community designations)',
+        groupRegionalDesc:
+          'ఒడిశా, కర్ణాటక, తమిళనాడు, ఆంధ్రప్రదేశ్, తెలంగాణ మరియు మహారాష్ట్రలలో భౌగోళికంగా స్థిరపడిన ప్రాంతీయ సామాజిక నామాలు.',
+        groupTitles: 'చారిత్రక, సైనిక మరియు సాంప్రదాయ బిరుదులు (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'ప్రాంతీయ చరిత్రలు, శాసనాలు మరియు సామాజిక సంప్రదాయాలలో నిలిచి ఉన్న దుర్గ రక్షణ, నాయకత్వ మరియు గౌరవ క్షత్రియ బిరుదులు.',
+        tableHeading: 'వర్గీకృత & భౌగోళిక సూచిక పట్టిక',
+        tableSubheading: 'పూర్తి బహుభాషా చారిత్రక వివరాలను చూడటానికి ఏదైనా వరుస లేదా కార్డుపై నొక్కండి.',
+        colDesignation: 'పేరు / బిరుదు (మూల స్పెల్లింగ్)',
+        colCategory: 'వర్గం',
+        colGeography: 'భౌగోళిక అనుబంధం',
+        colEpistemic: 'చారిత్రక ఆధారం',
+        colSummary: 'చారిత్రక & సాంప్రదాయ వివరణ',
+        geoLabel: 'భౌగోళిక అనుబంధం:',
+        statesLabel: 'రాష్ట్రాలు:',
+        rootLabel: 'భాషా మూలం:',
+        epistemicLabel: 'చారిత్రక ఆధారం:',
+        regionsBtn: 'ప్రాంతాలు',
+        detailsBtn: 'వివరాలు',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'శాసన / చారిత్రక ఆధారిత నామం',
+          'Regional Ethnonym & Gazetteer Record': 'ప్రాంతీయ నామం & గెజిటీర్ నమోదు',
+          'Community Tradition & Lineage Claim': 'సామాజిక సంప్రదాయం & వంశావళి గుర్తింపు'
+        }
+      },
+      kn: {
+        sectionTitle: 'ಪರ್ಯಾಯ ನಾಮಗಳು, ಪ್ರಾದೇಶಿಕ ಹೆಸರುಗಳು ಮತ್ತು ವೀರ ಬಿರುದುಗಳು',
+        sectionSubtitle:
+          'ಒಡಿಶಾ, ಆಂಧ್ರಪ್ರದೇಶ, ತೆಲಂಗಾಣ, ಕರ್ನಾಟಕ, ತಮಿಳುನಾಡು ಮತ್ತು ಅಖಿಲ ಭಾರತ ಮಟ್ಟದಲ್ಲಿರುವ ವಂಶನಾಮಗಳು, ಪ್ರಾದೇಶಿಕ ಸಮುದಾಯ ಹೆಸರುಗಳು ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ವೀರ ಬಿರುದುಗಳ ವರ್ಗೀಕೃತ ವಿವರಣೆ.',
+        accuracyHeading: 'ಐತಿಹಾಸಿಕ ನಿಖರತೆ ಮತ್ತು ಸಂಶೋಧನಾ ಸೂಚನೆ',
+        accuracyBody:
+          'ಇಲ್ಲಿ ನೀಡಲಾದ ಹೆಸರುಗಳನ್ನು ಅವುಗಳ ಐತಿಹಾಸಿಕ ಸಂದರ್ಭಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಸಮುದಾಯ-ಸಂಬಂಧಿತ ನಾಮಗಳು, ಪ್ರಾದೇಶಿಕ ಹೆಸರುಗಳು ಅಥವಾ ಸಾಂಪ್ರದಾಯಿಕ ಬಿರುದುಗಳಾಗಿ ಪ್ರಸ್ತುತಪಡಿಸಲಾಗಿದೆ. ಪ್ರತಿಯೊಂದು ಹೆಸರೂ ಯಾಂತ್ರಿಕವಾಗಿ ಒಂದೇ ಸಮಾನಾರ್ಥಕ ಪದವೆಂದು ಹೇಳದೆ, ದೃಢೀಕೃತ ಶಾಸನ/ಗೆಜೆಟಿಯರ್ ದಾಖಲೆಗಳನ್ನು ಸಮುದಾಯದ ಸಂಪ್ರದಾಯಗಳು ಮತ್ತು ವಂಶಾವಳಿ ನಂಬಿಕೆಗಳಿಂದ ಸ್ಪಷ್ಟವಾಗಿ ಪ್ರತ್ಯೇಕಿಸಲಾಗಿದೆ.',
+        filterAll: 'ಎಲ್ಲಾ ಹೆಸರುಗಳು',
+        groupDynastic: 'ರಾಜವಂಶ ಮತ್ತು ಪರಂಪರೆಯ ಹೆಸರುಗಳು (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'ರಾಜ ಶಾಸನಗಳು, ಪುರಾಣ ಪರಂಪರೆ ಮತ್ತು ಸಮುದಾಯದ ವಂಶಾವಳಿಗಳಲ್ಲಿ ಉಲ್ಲೇಖಿತವಾದ ಸೂರ್ಯವಂಶ ಮತ್ತು ಪ್ರಾಚೀನ ಓಡ್ರ ಪರಂಪರೆಯ ಹೆಸರುಗಳು.',
+        groupRegional: 'ಪ್ರಾದೇಶಿಕ ಸಮುದಾಯದ ಹೆಸರುಗಳು (Regional community designations)',
+        groupRegionalDesc:
+          'ಒಡಿಶಾ, ಕರ್ನಾಟಕ, ತಮಿಳುನಾಡು, ಆಂಧ್ರಪ್ರದೇಶ, ತೆಲಂಗಾಣ ಮತ್ತು ಮಹಾರಾಷ್ಟ್ರಗಳಲ್ಲಿ ಗುರುತಿಸಲ್ಪಟ್ಟ ಪ್ರಾದೇಶಿಕ ಸಮುದಾಯ ನಾಮಗಳು.',
+        groupTitles: 'ಐತಿಹಾಸಿಕ, ಸೇನಾ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ಬಿರುದುಗಳು (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'ಪ್ರಾದೇಶಿಕ ಇತಿಹಾಸ, ಶಾಸನಗಳು ಮತ್ತು ಸಮುದಾಯದ ಸಂಪ್ರದಾಯಗಳಲ್ಲಿ ಉಳಿದುಬಂದಿರುವ ಕೋಟೆ ರಕ್ಷಣೆ, ನಾಯಕತ್ವ ಮತ್ತು ಕ್ಷತ್ರಿಯ ಬಿರುದುಗಳು.',
+        tableHeading: 'ವರ್ಗೀಕೃತ ಮತ್ತು ಭೌಗೋಳಿಕ ಉಲ್ಲೇಖ ಕೋಷ್ಟಕ',
+        tableSubheading: 'ಸಂಪೂರ್ಣ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಯಾವುದೇ ಸಾಲು ಅಥವಾ ಕಾರ್ಡ್ ಮೇಲೆ ಟ್ಯಾಪ್ ಮಾಡಿ.',
+        colDesignation: 'ಹೆಸರು / ಬಿರುದು (ಮೂಲ ಕಾಗುಣಿತ)',
+        colCategory: 'ವರ್ಗ',
+        colGeography: 'ಭೌಗೋಳಿಕ ಸಂಬಂಧ',
+        colEpistemic: 'ಐತಿಹಾಸಿಕ ಆಧಾರ',
+        colSummary: 'ಐತಿಹಾಸಿಕ ಮತ್ತು ಸಾಂಪ್ರದಾಯಿಕ ಹಿನ್ನೆಲೆ',
+        geoLabel: 'ಭೌಗೋಳಿಕ ಸಂಬಂಧ:',
+        statesLabel: 'ರಾಜ್ಯಗಳು:',
+        rootLabel: 'ಭಾಷಾ ಮೂಲ:',
+        epistemicLabel: 'ಐತಿಹಾಸಿಕ ಆಧಾರ:',
+        regionsBtn: 'ಪ್ರದೇಶಗಳು',
+        detailsBtn: 'ವಿವರಗಳು',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'ದೃಢೀಕೃತ ಶಾಸನ / ಐತಿಹಾಸಿಕ ದಾಖಲೆ',
+          'Regional Ethnonym & Gazetteer Record': 'ಪ್ರಾದೇಶಿಕ ಹೆಸರು ಮತ್ತು ಗೆಜೆಟಿಯರ್ ದಾಖಲೆ',
+          'Community Tradition & Lineage Claim': 'ಸಮುದಾಯ ಸಂಪ್ರದಾಯ ಮತ್ತು ವಂಶ ಪರಂಪರೆ'
+        }
+      },
+      ta: {
+        sectionTitle: 'இணைப் பெயர்கள், பிராந்தியப் பெயர்கள் & வீரப் பட்டங்கள்',
+        sectionSubtitle:
+          'ஒடிசா, ஆந்திரப் பிரதேசம், தெலுங்கானா, கர்நாடகா, தமிழ்நாடு மற்றும் அகில இந்திய அளவில் வழங்கப்படும் வம்சப் பெயர்கள், பிராந்திய சமூகப் பெயர்கள் மற்றும் பாரம்பரிய வீரப் பட்டங்களின் வகைப்படுத்தப்பட்ட தொகுப்பு.',
+        accuracyHeading: 'வரலாற்றுத் துல்லியம் மற்றும் ஆய்வுக் குறிப்பு',
+        accuracyBody:
+          'கீழே உள்ள பெயர்கள் அவற்றின் வரலாற்றுச் சூழலுக்கு ஏற்ப சமூகத் தொடர்புடைய பெயர்கள், பிராந்தியப் பெயர்கள் அல்லது பாரம்பரியப் பட்டங்களாக வழங்கப்பட்டுள்ளன. ஒவ்வொரு பெயரும் முற்றிலும் ஒரே பொருள் கொண்டவை என்றோ ஒரே தோற்றம் கொண்டவை என்றோ கருதாமல், கல்வெட்டு மற்றும் அரசிதழ் சான்றுகள் சமூக மரபுகள் மற்றும் வம்சாவளி உரிமைகோரல்களிலிருந்து தெளிவாக வேறுபடுத்தப்பட்டுள்ளன.',
+        filterAll: 'அனைத்துப் பெயர்கள் & பட்டங்கள்',
+        groupDynastic: 'வம்ச மற்றும் மரபுப் பெயர்கள் (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'அரச கல்வெட்டுகள், புராண மரபுகள் மற்றும் சமூக வம்சாவளிகளில் போற்றப்படும் சூரிய வம்ச மற்றும் பண்டைய ஒட்ர மரபுப் பெயர்கள்.',
+        groupRegional: 'பிராந்திய சமூகப் பெயர்கள் (Regional community designations)',
+        groupRegionalDesc:
+          'ஒடிசா, கர்நாடகா, தமிழ்நாடு, ஆந்திரா, தெலுங்கானா மற்றும் மகாராஷ்டிராவில் வழங்கப்படும் பிராந்திய சமூகப் பெயர்கள்.',
+        groupTitles: 'வரலாற்று, மறவர் மற்றும் பாரம்பரியப் பட்டங்கள் (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'பிராந்திய வரலாறு, கல்வெட்டுகள் மற்றும் சமூக மரபுகளில் பாதுகாக்கப்பட்டுள்ள கோட்டைத் தலைமை மற்றும் வீரப் பட்டங்கள்.',
+        tableHeading: 'வகைப்படுத்தப்பட்ட & புவியியல் குறிப்பு அட்டவணை',
+        tableSubheading: 'முழு விவரங்களையும் காண எந்தவொரு வரிசையையோ அல்லது அட்டையையோ தொடவும்.',
+        colDesignation: 'பெயர் / பட்டம் (மூல எழுத்து வடிவம்)',
+        colCategory: 'வகை',
+        colGeography: 'புவியியல் தொடர்பு',
+        colEpistemic: 'வரலாற்று அடிப்படை',
+        colSummary: 'வரலாற்று மற்றும் பாரம்பரியச் சுருக்கம்',
+        geoLabel: 'புவியியல் தொடர்பு:',
+        statesLabel: 'மாநிலங்கள்:',
+        rootLabel: 'மொழி மூலம்:',
+        epistemicLabel: 'வரலாற்று அடிப்படை:',
+        regionsBtn: 'பகுதிகள்',
+        detailsBtn: 'விவரங்கள்',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'கல்வெட்டு / வரலாற்று ஆவணப் பதிவு',
+          'Regional Ethnonym & Gazetteer Record': 'பிராந்தியப் பெயர் & அரசிதழ் பதிவு',
+          'Community Tradition & Lineage Claim': 'சமூக மரபு & வம்சாவளி நம்பிக்கை'
+        }
+      },
+      mr: {
+        sectionTitle: 'पर्यायी नावे, प्रादेशिक ओळख आणि लढाऊ पदव्या',
+        sectionSubtitle:
+          'ओडिशा, आंध्र प्रदेश, तेलंगणा, कर्नाटक, तमिळनाडू आणि अखिल भारतीय स्तरावरील राजवंशीय नावे, प्रादेशिक समाज संज्ञा आणि पारंपरिक लढाऊ पदव्यांची वर्गीकृत मांडणी.',
+        accuracyHeading: 'ऐतिहासिक अचूकता आणि संशोधन टीप',
+        accuracyBody:
+          'खालील नावे त्यांच्या ऐतिहासिक संदर्भानुसार समाज-संबंधित नावे, प्रादेशिक संज्ञा किंवा पारंपरिक पदव्या म्हणून मांडली आहेत. प्रत्येक नाव तंतोतंत समानार्थी आहे किंवा सर्व गटांचा उगम एकच आहे असा दावा न करता, शिलालेख व गॅझेटिअरमधील ऐतिहासिक पुरावे आणि समाजाच्या पारंपरिक वंशावळी यांतील फरक स्पष्टपणे दर्शविला आहे.',
+        filterAll: 'सर्व नावे व पदव्या',
+        groupDynastic: 'राजवंश आणि वंश-परंपरा दर्शक नावे (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'राजकीय शिलालेख, पौराणिक संदर्भ आणि समाजाच्या वंशावळीत आढळणारी सूर्यवंशी व प्राचीन ओड्र वंश ओळख.',
+        groupRegional: 'प्रादेशिक समाज नावे (Regional community designations)',
+        groupRegionalDesc:
+          'ओडिशा, कर्नाटक, तमिळनाडू, आंध्र प्रदेश, तेलंगणा आणि महाराष्ट्रात प्रचलित असलेली प्रादेशिक समाज नावे.',
+        groupTitles: 'ऐतिहासिक, लढाऊ आणि पारंपरिक पदव्या (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'प्रादेशिक इतिहास, शिलालेख आणि सामाजिक परंपरेत जतन केलेल्या दुर्गप्रमुख, नायक व क्षत्रिय पदव्या.',
+        tableHeading: 'वर्गीकृत आणि भौगोलिक संदर्भ तक्ता',
+        tableSubheading: 'संपूर्ण बहुभाषिक माहिती पाहण्यासाठी कोणत्याही ओळीवर किंवा कार्डवर टॅप करा.',
+        colDesignation: 'नाव / पदवी (मूळ स्पेलिंग)',
+        colCategory: 'वर्ग',
+        colGeography: 'भौगोलिक संबंध',
+        colEpistemic: 'ऐतिहासिक आधार',
+        colSummary: 'ऐतिहासिक व पारंपरिक संदर्भ',
+        geoLabel: 'भौगोलिक संबंध:',
+        statesLabel: 'राज्ये:',
+        rootLabel: 'भाषिक मूळ:',
+        epistemicLabel: 'ऐतिहासिक आधार:',
+        regionsBtn: 'प्रदेश',
+        detailsBtn: 'तपशील',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'प्रमाणित शिलालेख / ऐतिहासिक नोंद',
+          'Regional Ethnonym & Gazetteer Record': 'प्रादेशिक संज्ञा व गॅझेटिअर नोंद',
+          'Community Tradition & Lineage Claim': 'सामाजिक परंपरा व वंश दावा'
+        }
+      },
+      or: {
+        sectionTitle: 'ପର୍ଯ୍ୟାୟବାଚୀ ନାମ, ଆଞ୍ଚଳିକ ପରିଚୟ ଓ ସାମରିକ ଉପାଧି',
+        sectionSubtitle:
+          'ଓଡ଼ିଶା, ଆନ୍ଧ୍ର ପ୍ରଦେଶ, ତେଲେଙ୍ଗାନା, କର୍ଣ୍ଣାଟକ, ତାମିଲନାଡୁ ଓ ସର୍ବଭାରତୀୟ ସ୍ତରରେ ପ୍ରଚଳିତ ରାଜବଂଶୀୟ ନାମ, ଆଞ୍ଚଳିକ ସମୁଦାୟ ପରିଚୟ ଏବଂ ପାରମ୍ପରିକ ସାମରିକ ଉପାଧିର ବର୍ଗୀକୃତ ବିବରଣୀ।',
+        accuracyHeading: 'ଐତିହାସିକ ସତ୍ୟতা ଓ ଗବେଷଣା ଟିପ୍ପଣୀ',
+        accuracyBody:
+          'ନିମ୍ନলিଖିତ ନାମଗୁଡ଼ିକ ସେମାନଙ୍କର ଐତିହାସିକ ପ୍ରସଙ୍ଗ ଅନୁযାୟୀ ସମୁଦାୟ-ସମ୍ପୃକ୍ତ ନାମ, ଆଞ୍ଚଳିକ ପରିଚୟ ବା ପାରମ୍ପରିକ ଉପାଧି ଭାବରେ ଉପସ୍ଥାପିତ ହୋଇଛି। ପ୍ରତ୍ୟେକ ନାମ ସମ୍ପୂର୍ଣ୍ଣ ସମାନାର୍ଥକ ବା ଗୋଟିଏ ମାତ୍ର ଉତ୍ପତ୍ତିର ବୋଲି ଦାବି ନକରି, ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ଗେଜେଟିୟର ତଥ୍ୟକୁ ସାମୁଦାୟିକ ପରମ୍ପରା ଓ ବଂଶ-ଦାବିଠାରୁ ସ୍ପଷ୍ଟ ଭାବେ ପୃଥକ କରାଯାଇଛି।',
+        filterAll: 'ସମସ୍ତ ନାମ ଓ ଉପାଧି',
+        groupDynastic: 'ରାଜବଂଶ ଓ ବଂଶ-ପରମ୍ପରା ସୂଚକ ନାମ (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'ରାଜକୀୟ ଶିଳାଲେଖ, ପୌରାଣିକ ପରମ୍ପରା ଓ ସାମୁଦାୟିକ ବଂଶାବଳୀରେ ଉଲ୍ଲେଖିତ ସୂର୍ଯ୍ୟବଂଶୀ ଏବଂ ପ୍ରାଚୀନ ଓଡ଼୍ର ବଂଶ ପରିଚୟ।',
+        groupRegional: 'ଆଞ୍ଚଳିକ ସମୁଦାୟ ନାମ (Regional community designations)',
+        groupRegionalDesc:
+          'ଓଡ଼ିଶା, କର୍ଣ୍ଣାଟକ, ତାମିଲନାଡୁ, ଆନ୍ଧ୍ର ପ୍ରଦେଶ, ତେଲେଙ୍ଗାନା ଓ ମହାରାଷ୍ଟ୍ରରେ ପ୍ରଚଳିତ ଆଞ୍ଚଳିକ ସମୁଦାୟ ପରିଚୟ।',
+        groupTitles: 'ଐତିହାସିକ, ସାମରିକ ଓ ପାରମ୍ପରିକ ଉପାଧି (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'ଆଞ୍ଚଳିକ ଇତିହାସ, ଶିଳାଲେଖ ଓ ସାମୁଦାୟିକ ପରମ୍ପରାରେ ସଂରକ୍ଷିତ ଦୁର୍ଗ-ରକ୍ଷা, ନାୟକତ୍ୱ ଓ କ୍ଷତ୍ରିୟ ଉପାଧି।',
+        tableHeading: 'ବର୍ଗୀକୃତ ଓ ଭୌଗୋଳିକ ସୂଚୀ ସାରଣୀ',
+        tableSubheading: 'ସମ୍ପୂର୍ଣ୍ଣ ବହୁଭାଷୀ ବିବରଣୀ ଦେଖିବା ପାଇଁ ଯେକୌଣସି ଧାଡ଼ି ବା କାର୍ଡ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ।',
+        colDesignation: 'ନାମ / ଉପାଧି (ମୂଳ ବନାନ)',
+        colCategory: 'ବର୍ଗ',
+        colGeography: 'ଭୌଗୋଳିକ ସମ୍ପର୍କ',
+        colEpistemic: 'ଐତିହାସିକ ଆଧାର',
+        colSummary: 'ଐତିହାସିକ ଓ ପାରମ୍ପରିକ ପ୍ରସଙ୍ଗ',
+        geoLabel: 'ଭୌଗୋଳିକ ସମ୍ପର୍କ:',
+        statesLabel: 'ରାଜ୍ୟ:',
+        rootLabel: 'ଭାଷାଗତ ମୂଳ:',
+        epistemicLabel: 'ଐତିହାସିକ ଆଧାର:',
+        regionsBtn: 'ଅଞ୍ଚଳ',
+        detailsBtn: 'ବିବରଣୀ',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'ପ୍ରମାଣିତ ଶିଳାଲେଖ / ଐତିହାସିକ ତଥ୍ୟ',
+          'Regional Ethnonym & Gazetteer Record': 'ଆଞ୍ଚଳିକ ନାମ ଓ ଗେଜେଟିୟର ଦସ୍ତାବିଜ',
+          'Community Tradition & Lineage Claim': 'ସାମୁଦାୟିକ ପରମ୍ପରା ଓ ବଂଶ ଦାବି'
+        }
+      },
+      bn: {
+        sectionTitle: 'সমার্থক নাম, আঞ্চলিক পরিচয় ও সামরিক উপাধি',
+        sectionSubtitle:
+          'ওড়িশা, অন্ধ্রপ্রদেশ, তেলেঙ্গানা, কর্ণাটক, তামিলনাড়ু ও সর্বভারতীয় স্তরে প্রচলিত রাজবংশীয় নাম, আঞ্চলিক সম্প্রদায়গত পরিচয় এবং ঐতিহ্যবাহী সামরিক উপাধির শ্রেণীবদ্ধ বিবরণ।',
+        accuracyHeading: 'ঐতিহাসিক প্রামাণ্যতা ও পদ্ধতিগত নোট',
+        accuracyBody:
+          'নিম্নলিখিত নামগুলো তাদের ঐতিহাসিক প্রেক্ষাপট অনুযায়ী সম্প্রদায়-সংশ্লিষ্ট নাম, আঞ্চলিক পরিচয় বা ঐতিহ্যবাহী উপাধি হিসেবে উপস্থাপিত হয়েছে। প্রতিটি নাম হুবহু সমার্থক বা একই উৎসজাত বলে দাবি না করে, প্রত্যয়িত শিলালিপি ও গেজেটিয়ার তথ্যকে সামাজিক ঐতিহ্য ও বংশগত দাবি থেকে স্পষ্টভাবে পৃথক করা হয়েছে।',
+        filterAll: 'সকল নাম ও উপাধি',
+        groupDynastic: 'রাজবংশ ও বংশ-পরম্পরা সূচক নাম (Dynastic and lineage designations)',
+        groupDynasticDesc:
+          'রাজকীয় শিলালিপি, পৌরাণিক ঐতিহ্য এবং বংশলতিকায় উল্লেখিত সূর্যবংশীয় ও প্রাচীন ওড্র বংশ পরিচয়।',
+        groupRegional: 'আঞ্চলিক সম্প্রদায়গত নাম (Regional community designations)',
+        groupRegionalDesc:
+          'ওড়িশা, কর্ণাটক, তামিলনাড়ু, অন্ধ্রপ্রদেশ, তেলেঙ্গানা ও মহারাষ্ট্রে প্রচলিত আঞ্চলিক সম্প্রদায়গত নাম।',
+        groupTitles: 'ঐতিহাসিক, সামরিক ও ঐতিহ্যবাহী উপাধি (Historical, martial, and traditional titles)',
+        groupTitlesDesc:
+          'আঞ্চলিক ইতিহাস, শিলালিপি ও সামাজিক পরম্পরায় সংরক্ষিত দুর্গ-রক্ষা, নায়কত্ব ও ক্ষত্রিয় উপাধি।',
+        tableHeading: 'শ্রেণীবদ্ধ ও ভৌগোলিক রেফারেন্স টেবিল',
+        tableSubheading: 'সম্পূর্ণ বহুভাষিক বিবরণ ও তথ্যসূত্র দেখতে যেকোনো সারি বা কার্ডে ট্যাপ করুন।',
+        colDesignation: 'নাম / উপাধি (মূল বানান)',
+        colCategory: 'বিভাগ',
+        colGeography: 'ভৌগোলিক সংযোগ',
+        colEpistemic: 'ঐতিহাসিক ভিত্তি',
+        colSummary: 'ঐতিহাসিক ও ঐতিহ্যবাহী প্রেক্ষাপট',
+        geoLabel: 'ভৌগোলিক সংযোগ:',
+        statesLabel: 'রাজ্যসমূহ:',
+        rootLabel: 'ভাষাগত মূল:',
+        epistemicLabel: 'ঐতিহাসিক ভিত্তি:',
+        regionsBtn: 'অঞ্চল',
+        detailsBtn: 'বিস্তারিত',
+        epistemicClasses: {
+          'Documented Epigraphic & Historical Designation': 'প্রত্যয়িত শিলালিপি / ঐতিহাসিক নথি',
+          'Regional Ethnonym & Gazetteer Record': 'আঞ্চলিক নাম ও গেজেটিয়ার নথি',
+          'Community Tradition & Lineage Claim': 'সামাজিক ঐতিহ্য ও বংশগত দাবি'
+        }
+      }
+    };
+    return dict[language] || dict.en;
+  }, [language]);
+
   const modalItem: ContentDetailItem | null = React.useMemo(() => {
     if (!selectedModalRef) return null;
     if (selectedModalRef.type === 'synonym') {
       const item = COMMUNITY_SYNONYMS.find(s => s.id === selectedModalRef.id);
       if (!item) return null;
+      const epistemicText = item.epistemic_note[language] || item.epistemic_note.en;
       return {
         id: item.id,
         title: item.title,
-        subtitle: `${item.category} • ${item.linguistic_origin}`,
-        badge: item.category,
-        location: item.prominent_states.join(', '),
-        content: item.historical_role[language] || item.historical_role.en,
+        subtitle: `${item.designation_group} • ${item.geographical_association}`,
+        badge: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification,
+        location: item.geographical_association,
+        content: `${item.historical_role[language] || item.historical_role.en}\n\n${synonymSectionLabels.epistemicLabel} ${epistemicText}`,
         metadata: [
+          { label: synonymSectionLabels.colCategory, value: item.designation_group },
+          { label: synonymSectionLabels.colGeography, value: item.geographical_association },
+          { label: synonymSectionLabels.colEpistemic, value: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification },
           { label: 'Linguistic Origin', value: item.linguistic_origin },
           { label: 'Primary Regions', value: item.primary_regions.join(', ') },
           { label: 'Prominent States', value: item.prominent_states.join(', ') }
@@ -147,7 +474,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       };
     }
     return null;
-  }, [selectedModalRef, language]);
+  }, [selectedModalRef, language, synonymSectionLabels]);
 
   useEffect(() => {
     const targetId =
@@ -198,12 +525,17 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     const term = searchTerm.toLowerCase();
     const matchesSearch =
       s.title.toLowerCase().includes(term) ||
+      s.geographical_association.toLowerCase().includes(term) ||
+      s.designation_group.toLowerCase().includes(term) ||
       s.primary_regions.some(r => r.toLowerCase().includes(term)) ||
       s.prominent_states.some(st => st.toLowerCase().includes(term)) ||
-      (s.historical_role[language] || s.historical_role.en).toLowerCase().includes(term);
+      (s.historical_role[language] || s.historical_role.en).toLowerCase().includes(term) ||
+      (s.epistemic_note[language] || s.epistemic_note.en).toLowerCase().includes(term);
 
     const matchesCategory =
-      synonymCategoryFilter === 'all' || s.category.toLowerCase().includes(synonymCategoryFilter.toLowerCase());
+      synonymCategoryFilter === 'all' ||
+      s.designation_group === synonymCategoryFilter ||
+      s.category.toLowerCase().includes(synonymCategoryFilter.toLowerCase());
 
     const matchesRegion =
       !selectedRegionId ||
@@ -380,105 +712,270 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       {/* TAB 1: COMMUNITY SYNONYMS & TITLES */}
       {/* ---------------------------------------------------------------------- */}
       {activeTab === 'synonyms' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h2 className="font-royal-heading font-bold text-2xl text-[#fcedc7]">
-                Synonyms, Regional Designations & Martial Titles
+        <div className="space-y-8">
+          {/* Section Title & Category Filter Pills */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
+                <Layers className="w-3.5 h-3.5" />
+                <span>Synonyms, Regional Designations & Martial Titles</span>
+              </div>
+              <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
+                {synonymSectionLabels.sectionTitle}
               </h2>
-              <p className="text-xs sm:text-sm text-stone-400">
-                Linguistic evolution from ancient Sanskrit <em>Odra / Audra</em> across northern, western, central, and southern India.
+              <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+                {synonymSectionLabels.sectionSubtitle}
               </p>
             </div>
 
             {/* Category filter pills */}
-            <div className="flex items-center gap-1 text-xs">
-              {['all', 'Royal', 'Kshatriya', 'Engineering', 'Shift'].map(cat => (
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              {[
+                { key: 'all', label: synonymSectionLabels.filterAll },
+                { key: 'Dynastic and lineage designations', label: synonymSectionLabels.groupDynastic.split(' (')[0] },
+                { key: 'Regional community designations', label: synonymSectionLabels.groupRegional.split(' (')[0] },
+                { key: 'Historical, martial, and traditional titles', label: synonymSectionLabels.groupTitles.split(' (')[0] }
+              ].map(cat => (
                 <button
-                  key={cat}
-                  onClick={() => setSynonymCategoryFilter(cat)}
-                  className={`px-2.5 py-1 rounded-lg capitalize cursor-pointer transition-colors ${
-                    synonymCategoryFilter === cat
-                      ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37]'
-                      : 'bg-stone-900 text-stone-400 hover:bg-stone-800'
+                  key={cat.key}
+                  onClick={() => setSynonymCategoryFilter(cat.key)}
+                  className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
+                    synonymCategoryFilter === cat.key
+                      ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
+                      : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
                   }`}
                 >
-                  {cat}
+                  {cat.label}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSynonyms.map(item => (
-              <div
-                key={item.id}
-                onClick={() => openSynonymModal(item)}
-                className="bg-[#121624] border border-[#c99738]/30 rounded-2xl p-6 space-y-4 hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.15)] cursor-pointer"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-royal-heading font-bold text-lg text-[#fae29c] group-hover:text-white transition-colors">
-                        {item.title}
-                      </h3>
-                      <div className="flex flex-wrap gap-1.5 mt-1">
-                        {Object.entries(item.native_scripts).map(([scriptName, scriptVal]) => (
-                          <span
-                            key={scriptName}
-                            className="text-[11px] font-mono text-[#d4af37] bg-stone-900/90 px-2 py-0.5 rounded border border-stone-800"
-                            title={scriptName}
-                          >
-                            {scriptVal}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-[10px] px-2 py-1 rounded bg-[#580014] text-[#fcedc7] font-semibold border border-[#d4af37]/30 whitespace-nowrap">
-                      {item.category}
+          {/* Epistemic & Historical Accuracy Banner */}
+          <div className="bg-gradient-to-r from-[#240610] via-[#141929] to-[#1a0912] border border-[#d4af37]/40 rounded-2xl p-4 sm:p-5 shadow-lg">
+            <div className="flex items-start gap-3">
+              <Shield className="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] uppercase tracking-wider">
+                  {synonymSectionLabels.accuracyHeading}
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                  {synonymSectionLabels.accuracyBody}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Categorized Cards Display (3 Distinct Historical Categories) */}
+          {(
+            [
+              {
+                groupKey: 'Dynastic and lineage designations',
+                heading: synonymSectionLabels.groupDynastic,
+                description: synonymSectionLabels.groupDynasticDesc,
+                icon: Crown
+              },
+              {
+                groupKey: 'Regional community designations',
+                heading: synonymSectionLabels.groupRegional,
+                description: synonymSectionLabels.groupRegionalDesc,
+                icon: MapPin
+              },
+              {
+                groupKey: 'Historical, martial, and traditional titles',
+                heading: synonymSectionLabels.groupTitles,
+                description: synonymSectionLabels.groupTitlesDesc,
+                icon: Shield
+              }
+            ] as const
+          ).map(group => {
+            const groupItems = filteredSynonyms.filter(item => item.designation_group === group.groupKey);
+            if (groupItems.length === 0) return null;
+            const GroupIcon = group.icon;
+
+            return (
+              <div key={group.groupKey} className="space-y-4 pt-2">
+                <div className="border-l-4 border-[#d4af37] pl-4 py-1 bg-[#121624]/60 rounded-r-xl">
+                  <div className="flex items-center gap-2">
+                    <GroupIcon className="w-4 h-4 text-[#d4af37] shrink-0" />
+                    <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c]">
+                      {group.heading}
+                    </h3>
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-[#580014] text-[#fcedc7] border border-[#d4af37]/40 font-semibold">
+                      {groupItems.length}
                     </span>
                   </div>
-
-                  <div className="space-y-1.5 text-xs text-stone-300">
-                    <div className="flex items-start gap-1.5 text-stone-400">
-                      <MapPin className="w-3.5 h-3.5 text-[#d4af37] shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-stone-300">States:</strong> {item.prominent_states.join(', ')}
-                      </div>
-                    </div>
-
-                    <div className="text-stone-400 text-[11px]">
-                      <strong className="text-stone-300">Linguistic Root:</strong> {item.linguistic_origin}
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-stone-300 leading-relaxed pt-1 border-t border-stone-800/80">
-                    {item.historical_role[language] || item.historical_role.en}
-                  </p>
+                  <p className="text-xs text-stone-400 mt-1">{group.description}</p>
                 </div>
 
-                <div className="pt-3 border-t border-stone-800/60 flex items-center justify-between text-[11px]">
-                  <span className="text-stone-400 truncate max-w-[180px]">
-                    🙏 {item.sacred_associations.slice(0, 2).join(' • ')}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={e => {
-                        e.stopPropagation();
-                        setActiveTab('geography');
-                        setSearchTerm(item.prominent_states[0] || '');
-                      }}
-                      className="text-stone-400 hover:text-[#d4af37] hover:underline font-medium cursor-pointer"
-                    >
-                      Regions
-                    </button>
-                    <span className="text-[#d4af37] font-semibold flex items-center gap-0.5">
-                      Details <ChevronRight className="w-3 h-3" />
-                    </span>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {groupItems.map(item => {
+                    const epistemicLabel =
+                      synonymSectionLabels.epistemicClasses[item.epistemic_classification] ||
+                      item.epistemic_classification;
+                    const isEpigraphic =
+                      item.epistemic_classification === 'Documented Epigraphic & Historical Designation';
+                    const isRegional =
+                      item.epistemic_classification === 'Regional Ethnonym & Gazetteer Record';
+
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => openSynonymModal(item)}
+                        className="bg-[#121624] border border-[#c99738]/35 rounded-2xl p-5 sm:p-6 space-y-4 hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.18)] cursor-pointer"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="font-royal-heading font-bold text-lg text-[#fae29c] group-hover:text-white transition-colors">
+                                {item.title}
+                              </h4>
+                              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                {Object.entries(item.native_scripts).map(([scriptName, scriptVal]) => (
+                                  <span
+                                    key={scriptName}
+                                    className="text-[11px] font-mono text-[#d4af37] bg-stone-900/90 px-2 py-0.5 rounded border border-stone-800"
+                                    title={scriptName}
+                                  >
+                                    {scriptVal}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <span className="text-[10px] px-2 py-1 rounded bg-[#580014] text-[#fcedc7] font-semibold border border-[#d4af37]/30 whitespace-nowrap shrink-0">
+                              {item.category}
+                            </span>
+                          </div>
+
+                          {/* Epistemic Distinction Pill */}
+                          <div>
+                            <span
+                              className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border ${
+                                isEpigraphic
+                                  ? 'bg-emerald-950/60 text-emerald-300 border-emerald-600/40'
+                                  : isRegional
+                                  ? 'bg-amber-950/60 text-amber-300 border-amber-600/40'
+                                  : 'bg-purple-950/60 text-purple-300 border-purple-500/40'
+                              }`}
+                            >
+                              <CheckCircle2 className="w-3 h-3 shrink-0" />
+                              <span>{epistemicLabel}</span>
+                            </span>
+                          </div>
+
+                          <div className="space-y-1.5 text-xs text-stone-300 bg-stone-900/60 p-3 rounded-xl border border-stone-800/80">
+                            <div className="flex items-start gap-1.5 text-stone-300">
+                              <MapPin className="w-3.5 h-3.5 text-[#d4af37] shrink-0 mt-0.5" />
+                              <div>
+                                <strong className="text-[#fae29c]">{synonymSectionLabels.geoLabel}</strong>{' '}
+                                <span className="font-semibold text-white">{item.geographical_association}</span>
+                              </div>
+                            </div>
+
+                            <div className="text-stone-400 text-[11px]">
+                              <strong className="text-stone-300">{synonymSectionLabels.rootLabel}</strong>{' '}
+                              {item.linguistic_origin}
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-stone-200 leading-relaxed pt-1">
+                            {item.historical_role[language] || item.historical_role.en}
+                          </p>
+
+                          <div className="text-[11px] text-stone-400 bg-[#0d101b] p-2.5 rounded-lg border border-stone-800/70 leading-relaxed">
+                            <strong className="text-[#d4af37]">{synonymSectionLabels.epistemicLabel}</strong>{' '}
+                            {item.epistemic_note[language] || item.epistemic_note.en}
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-stone-800/60 flex items-center justify-between text-[11px]">
+                          <span className="text-stone-400 truncate max-w-[180px]">
+                            🙏 {item.sacred_associations.slice(0, 2).join(' • ')}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                setActiveTab('geography');
+                                setSearchTerm(item.prominent_states[0] || '');
+                              }}
+                              className="text-stone-400 hover:text-[#d4af37] hover:underline font-medium cursor-pointer"
+                            >
+                              {synonymSectionLabels.regionsBtn}
+                            </button>
+                            <span className="text-[#d4af37] font-semibold flex items-center gap-0.5">
+                              {synonymSectionLabels.detailsBtn} <ChevronRight className="w-3 h-3" />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            ))}
+            );
+          })}
+
+          {/* Structured Reference Table (Responsive on Android Mobile & Desktop) */}
+          <div className="bg-[#121624] border border-[#c99738]/40 rounded-2xl overflow-hidden shadow-xl">
+            <div className="p-4 sm:p-6 bg-gradient-to-r from-[#260713] to-[#121624] border-b border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fcedc7]">
+                  {synonymSectionLabels.tableHeading}
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">{synonymSectionLabels.tableSubheading}</p>
+              </div>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 self-start sm:self-auto">
+                {filteredSynonyms.length} Designations
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[680px]">
+                <thead>
+                  <tr className="bg-stone-900/90 border-b border-stone-800 text-[11px] uppercase tracking-wider text-[#d4af37]">
+                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colDesignation}</th>
+                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colCategory}</th>
+                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colGeography}</th>
+                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colEpistemic}</th>
+                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colSummary}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-800/80 text-xs">
+                  {filteredSynonyms.map(item => (
+                    <tr
+                      key={`row_${item.id}`}
+                      onClick={() => openSynonymModal(item)}
+                      className="hover:bg-stone-900/70 transition-colors cursor-pointer group"
+                    >
+                      <td className="py-3.5 px-4 align-top font-bold text-[#fae29c] group-hover:text-white whitespace-nowrap">
+                        <div>{item.title}</div>
+                        <div className="text-[11px] font-normal text-stone-400 mt-0.5">
+                          {Object.values(item.native_scripts).slice(0, 2).join(' • ')}
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-4 align-top text-stone-300">
+                        <span className="inline-block px-2 py-0.5 rounded bg-stone-900 border border-stone-700 text-[11px] text-stone-200">
+                          {item.designation_group}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 align-top font-semibold text-stone-200">
+                        {item.geographical_association}
+                      </td>
+                      <td className="py-3.5 px-4 align-top text-stone-300">
+                        <span className="text-[11px] text-[#d4af37] font-medium">
+                          {synonymSectionLabels.epistemicClasses[item.epistemic_classification] ||
+                            item.epistemic_classification}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 align-top text-stone-300 max-w-md leading-relaxed">
+                        {item.historical_role[language] || item.historical_role.en}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
