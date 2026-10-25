@@ -149,8 +149,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/community-prominent-persons')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors">
+                <button onClick={() => onNavigate('/community-prominent-persons')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
                   {t.nav.communityProminentPersons || 'Community Prominent Persons'}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('/community-heritage')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                  {t.nav.communityHeritage || 'Community Heritage'}
                 </button>
               </li>
             </ul>
@@ -201,6 +206,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               Community & Legal
             </h4>
             <ul className="space-y-2 text-xs">
+              <li>
+                <button onClick={() => onNavigate('/community-heritage')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                  {t.nav.communityHeritage || 'Community Heritage'}
+                </button>
+              </li>
               <li>
                 <button onClick={() => onNavigate('/directory')} className="hover:text-[#e8c872] transition-colors">
                   {t.nav.directory}

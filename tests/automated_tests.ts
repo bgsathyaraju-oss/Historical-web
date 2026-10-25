@@ -13,6 +13,7 @@ import {
 import { getAllArticles } from '../src/data/articlesRepository.ts';
 import { getAllDocumentedFigures } from '../src/data/documentedFiguresRepository.ts';
 import { GENEALOGY_UI_TRANSLATIONS } from '../src/data/multilingualSeedTranslations.ts';
+import { translations } from '../src/i18n/translations.ts';
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
@@ -548,6 +549,13 @@ async function runTestSuite() {
           assert(figs[i].name !== enFigs[i].name, `Figure ${figs[i].id} name not translated in ${lang}`);
           assert(figs[i].biography !== enFigs[i].biography, `Figure ${figs[i].id} biography not translated in ${lang}`);
         }
+      }
+
+      // 8. Navigation & Footer Community Heritage label in all 8 languages
+      const navLabel = translations[lang].nav.communityHeritage;
+      assert(typeof navLabel === 'string' && navLabel.trim().length > 0, `Missing nav.communityHeritage for ${lang}`);
+      if (lang !== 'en') {
+        assert(navLabel !== translations.en.nav.communityHeritage, `nav.communityHeritage not translated for ${lang}`);
       }
     }
 
