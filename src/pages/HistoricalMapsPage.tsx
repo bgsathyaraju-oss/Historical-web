@@ -79,12 +79,24 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
   const buildCorridorModalItem = (reg: GeographicalSpreadRegion): ContentDetailItem => {
     const localizedTitle = reg.localized_region[language] || reg.region_name;
     const overview = reg.regional_overview[language] || reg.regional_overview.en;
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const corridorImageMap: Record<string, string> = {
+      geo_rajasthan_sindh_punjab: `${base}oad_hydraulic_stepwell.jpg`,
+      geo_gujarat: `${base}jasma_devi_sahasralinga.jpg`,
+      geo_maharashtra: `${base}shivayogi_siddharama_solapur.jpg`,
+      geo_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
+      geo_andhra_telangana: `${base}kondavidu_fort_hills.jpg`,
+      geo_tamil_nadu: `${base}srirangam_temple.jpg`,
+      geo_odisha: `${base}barabati_fort_gateway.jpg`
+    };
     return {
       id: reg.id,
       title: localizedTitle,
       subtitle: `States & Territories: ${reg.states_and_territories.join(', ')}`,
       badge: `Epoch: ${reg.migration_epoch_and_corridor}`,
       verificationStatus: 'Documented Historical Corridor',
+      imageUrl: corridorImageMap[reg.id] || `${base}odra_kalinga_map.jpg`,
+      imageLayout: 'banner',
       metadata: [
         { label: 'States & Territories', value: reg.states_and_territories.join(', ') },
         { label: 'Migration Epoch & Corridor', value: reg.migration_epoch_and_corridor },
@@ -118,7 +130,7 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
     subtitle: 'Ganges to Kaveri Hegemony (Zenith under Emperor Kapilendra Deva)',
     badge: 'Corroborated Cartographic Reconstruction',
     verificationStatus: 'Epigraphic Boundary Model',
-    imageUrl: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&auto=format&fit=crop&q=80',
+    imageUrl: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`,
     imageLayout: 'banner',
     metadata: [
       { label: 'Northern Frontier', value: 'Hooghly / Mandaran (Lower Bengal)' },

@@ -178,6 +178,7 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
 
   const modalItem: ContentDetailItem | null = (() => {
     if (!selectedId) return null;
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
     if (selectedId === 'odra-epigraphic-evolution') {
       return {
         id: 'odra-epigraphic-evolution',
@@ -185,6 +186,8 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
         subtitle: t.odraDesha.title,
         badge: loc.evolutionBadge,
         era: '1st Century CE – 16th Century CE',
+        imageUrl: `${base}hathigumpha_inscription.jpg`,
+        imageLayout: 'banner',
         content: `${loc.p1}\n\n${loc.p2}\n\n${loc.p3}`,
         sources: [
           { title: 'Natyashastra of Bharata Muni & Mahabharata Bhishma Parva' },
@@ -195,12 +198,20 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
     }
     const reg = regionalItems.find(r => r.id === selectedId);
     if (!reg) return null;
+    const regionImgMap: Record<string, string> = {
+      'region-odra': `${base}barabati_fort_gateway.jpg`,
+      'region-utkala': `${base}puri_jagannatha_temple.jpg`,
+      'region-kalinga': `${base}simhachalam_temple.jpg`,
+      'region-trikalinga': `${base}odra_kalinga_map.jpg`
+    };
     return {
       id: reg.id,
       title: reg.title,
       subtitle: t.odraDesha.regionsTitle,
       badge: t.odraDesha.badge,
       location: reg.core,
+      imageUrl: regionImgMap[reg.id] || `${base}odra_kalinga_map.jpg`,
+      imageLayout: 'banner',
       summary: reg.desc,
       content: reg.fullText,
       sources: reg.sources

@@ -899,6 +899,13 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
     if (selectedTarget.type === 'dossier') {
       const dossier = GAJAPATHI_DOSSIERS.find(d => d.id === selectedTarget.id);
       if (!dossier) return null;
+      const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
+      const dossierImgMap: Record<string, string> = {
+        'admin-nayankara': `${archiveBase}barabati_fort_gateway.jpg`,
+        'admin-revenue': `${archiveBase}copper_plate_charter.jpg`,
+        'military-gajasena': `${archiveBase}kondavidu_fort_hills.jpg`,
+        'culture-renaissance': `${archiveBase}puri_jagannatha_temple.jpg`
+      };
       return {
         id: dossier.id,
         title: dossier.title[language] || dossier.title.en,
@@ -908,6 +915,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         dynasty:
           DYNASTY_TRANSLATIONS.dyn_suryavamsha_gajapathi?.[language]?.name ||
           'Suryavamsha Gajapathi Empire',
+        imageUrl: dossierImgMap[dossier.id] || `${archiveBase}barabati_fort_gateway.jpg`,
+        imageLayout: 'banner',
         summary: dossier.summary[language] || dossier.summary.en,
         content: dossier.content[language] || dossier.content.en,
         sources: dossier.sources.map(s => ({ title: s })),
@@ -924,6 +933,12 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
       const origin = tr?.origin_region || dyn.enOrigin;
       const overview = tr?.overview || dyn.enOverview;
       const period = dyn.period[language] || dyn.period.en;
+      const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
+      const dynImgMap: Record<string, string> = {
+        dyn_suryavamsha_gajapathi: `${archiveBase}kapilendra_deva_portrait.jpg`,
+        dyn_eastern_ganga: `${archiveBase}konark_sun_temple_structure.jpg`,
+        dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`
+      };
 
       return {
         id: dyn.id,
@@ -933,6 +948,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         era: period,
         dynasty: name,
         location: capital,
+        imageUrl: dynImgMap[dyn.id] || `${archiveBase}barabati_fort_gateway.jpg`,
+        imageLayout: 'banner',
         summary: overview,
         content: overview,
         metadata: [
@@ -986,6 +1003,12 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
     if (selectedTarget.type === 'inscription') {
       const insc = gajapathiInscriptions.find(i => i.id === selectedTarget.id);
       if (!insc) return null;
+      const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
+      const inscImgMap: Record<string, string> = {
+        insc_veligalani_1458: `${archiveBase}copper_plate_charter.jpg`,
+        insc_lingaraja_1452: `${archiveBase}kapilendra_deva_lingaraja.jpg`,
+        insc_simhachalam_prataparudra: `${archiveBase}simhachalam_temple.jpg`
+      };
       return {
         id: insc.id,
         title: insc.name,
@@ -994,6 +1017,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         era: insc.era_or_date,
         dynasty: insc.dynasty,
         location: insc.location_found,
+        imageUrl: inscImgMap[insc.id] || `${archiveBase}copper_plate_charter.jpg`,
+        imageLayout: 'banner',
         summary: insc.historical_context,
         content: `${insc.english_translation}\n\n${insc.transcription_excerpt}`,
         metadata: [

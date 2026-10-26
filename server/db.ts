@@ -262,6 +262,7 @@ function initializeSeedData(): DatabaseSchema {
       state_or_province: 'Karnataka',
       district: 'Bengaluru Urban',
       city_town_village: 'Bengaluru',
+      profile_photo_url: '/assets/dr_g_sathyanarayana_raju.png',
       education: 'B.Tech in Computer Science, Independent Genealogy Researcher',
       profession: 'Software Engineer & Genealogist',
       current_work: 'Digital preservation of community palm-leaf manuscripts and family trees',
@@ -368,7 +369,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Transformed Odisha from a regional kingdom into the dominant imperial power of 15th-century eastern and peninsular India.',
       associated_places: ['Cuttack (Varanasi Kataka)', 'Puri', 'Bhubaneswar', 'Kondavidu', 'Simhachalam'],
       evidence_status: 'Documented Primary Evidence',
-      image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/kapilendra_deva_portrait.jpg',
       inscriptions_ids: ['insc_veligalani_1458', 'insc_lingaraja_1452', 'insc_simhachalam_1459'],
       citations: [
         'Epigraphia Indica, Vol. XXXIII, pp. 275–292 (Veligalani Copper Plates of Kapilendra Deva).',
@@ -395,7 +396,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Preserved the territorial integrity of the Gajapathi Empire and authored Sanskrit works including Abhinava Gitagovinda and Nama-malika.',
       associated_places: ['Puri', 'Cuttack', 'Kanchi', 'Kondavidu', 'Draksharama'],
       evidence_status: 'Documented Primary Evidence',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/purushottama_deva_kanchi.jpg',
       inscriptions_ids: ['insc_potavaram_1489', 'insc_puri_purushottama'],
       citations: [
         'Mukherjee, Prabhat, "The History of the Gajapati Kings of Orissa", Kitab Mahal, 1953.',
@@ -421,7 +422,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Promulgated the Sarasvati Vilasa, patronized the golden age of Vaishnava devotion in Odisha, and sustained imperial frontiers under relentless external pressures.',
       associated_places: ['Puri', 'Cuttack', 'Udayagiri', 'Kondapalli', 'Simhachalam'],
       evidence_status: 'Documented Primary Evidence',
-      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/prataparudra_deva.jpg',
       inscriptions_ids: ['insc_simhachalam_prataparudra', 'insc_kondapalli_1519'],
       citations: [
         'Sarasvati Vilasa (Sanskrit Legal Digest), ed. R. Shama Sastri, Mysore, 1927.',
@@ -447,7 +448,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Instrumental in establishing the military fame and territorial reach of the Suryavamsha Gajapathis throughout the Deccan and Tamil country.',
       associated_places: ['Kondavidu', 'Srisailam', 'Srirangam', 'Udayagiri'],
       evidence_status: 'Documented Primary Evidence',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/kumara_hamvira_warangal_srirangam.jpg',
       inscriptions_ids: ['insc_srisailam_hamvira', 'insc_srirangam_hamvira'],
       citations: [
         'Annual Reports on Indian Epigraphy (ARIE), 1937–38, No. 312.',
@@ -473,7 +474,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Revered by Oad-Rajputs, Od-Kshatriyas, and VaddeRajulu as the royal solar ancestor whose sons were the first grand excavators of the earth.',
       associated_places: ['Ayodhya', 'Gangasagar', 'Kapila Ashrama', 'Sagara Island'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/samrat_sagara_surya.jpg',
       inscriptions_ids: [],
       citations: [
         'Valmiki Ramayana, Balakanda, Sarga 38–41.',
@@ -500,7 +501,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Patron ancestor of water-engineering, reservoir excavation, and monumental persistence for Oad, Odde, and Waddar communities.',
       associated_places: ['Gangotri', 'Ayodhya', 'Haridwar', 'Prayagraj', 'Gangasagar'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/maharshi_bhagiratha_penance.jpg',
       inscriptions_ids: [],
       citations: [
         'Valmiki Ramayana, Balakanda, Sargas 42–44.',
@@ -527,7 +528,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Divine dynastic anchor and moral ideal of all Suryavamsha Kshatriya lineages.',
       associated_places: ['Ayodhya', 'Janakpur', 'Dandakaranya', 'Bhadrachalam', 'Rameswaram'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/sri_rama_sculpture.jpg',
       inscriptions_ids: [],
       citations: [
         'Valmiki Ramayana (Complete Critical Edition).',
@@ -554,7 +555,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Foremost ancient emperor of Kalinga-Odra, uniting supreme military conquest with monumental canal and rock excavation engineering.',
       associated_places: ['Udayagiri (Hathigumpha)', 'Khandagiri', 'Kalinganagari (Sisupalgarh)', 'Bhubaneswar'],
       evidence_status: 'Documented Primary Evidence',
-      image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/emperor_kharavela_udayagiri.jpg',
       inscriptions_ids: ['insc_hathigumpha_kharavela'],
       citations: [
         'Epigraphia Indica, Vol. XX, pp. 71–89 (Hathigumpha Inscription of Kharavela, ed. K.P. Jayaswal & R.D. Banerji).',
@@ -581,7 +582,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Supreme spiritual heroine and patron goddess of the Oad / Od / Oad-Rajput diaspora, celebrated in Gujarati Bhavai folk plays and community ballads.',
       associated_places: ['Patan (Gujarat)', 'Sahastralinga Talav', 'Malwa', 'Rajasthan'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/jasma_devi_sahasralinga.jpg',
       inscriptions_ids: [],
       citations: [
         'Forbes, Alexander Kinloch, "Ras Mala: Hindoo Annals of the Province of Goozerat", London, 1856.',
@@ -608,7 +609,7 @@ function initializeSeedData(): DatabaseSchema {
       historical_significance: 'Visionary saint-engineer whose monumental civic water reservoirs and egalitarian philosophy established an enduring spiritual bond with the Vaddar / Waddar / Od community.',
       associated_places: ['Solapur (Sonnalige)', 'Basavakalyan', 'Srisailam', 'Karnataka-Maharashtra borderland'],
       evidence_status: 'Documented Primary Evidence',
-      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/shivayogi_siddharama_solapur.jpg',
       inscriptions_ids: [],
       citations: [
         'Raghavanka, "Siddharama Charite" (Old Kannada Kavya, c. 1200 CE).',
@@ -644,7 +645,7 @@ function initializeSeedData(): DatabaseSchema {
         'Kondapalli & Kondavidu Perimeter'
       ],
       evidence_status: 'Traditional Lineage Record',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/peddintlamma_deity_kolletikota.jpg',
       inscriptions_ids: [],
       citations: [
         'Mackenzie Manuscripts & Local Kaifiyats (Kolletikota & Kaikaluru Kaifiyats).',
@@ -910,7 +911,7 @@ function initializeSeedData(): DatabaseSchema {
       summary: 'The historic capital of the Suryavamshi Gajapathis situated between the Mahanadi and Kathajodi rivers. Built originally in the 13th century and extensively refortified by Kapilendra Deva with a nine-story palace complex and deep moats.',
       archaeological_findings: 'Excavations by the Archaeological Survey of India (ASI) revealed a 30-pillar sandstone hall, 15th-century dressed stone defense ramparts, temple foundations, and Gajapathi coin hoards.',
       inscriptions_found: ['Barabati stone gateway epigraphs', 'Kataka copper-plate seal fragments'],
-      image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80'
+      image_url: '/assets/archive/barabati_fort_gateway.jpg'
     },
     {
       id: 'loc_puri_jagannatha',
@@ -922,7 +923,7 @@ function initializeSeedData(): DatabaseSchema {
       summary: 'Spiritual epicenter of the Gajapathi Empire where the kings served as the primary servitors (Adya Sevaka) performing the Chera Panhara (ceremonial sweeping of the chariots). Kapilendra Deva erected the massive outer boundary wall known as the Meghanada Pacheri.',
       archaeological_findings: 'Hundreds of inscriptions from Ganga and Suryavamsha periods carved onto the Jaya Vijaya doorway, Nata Mandapa pillars, and outer walls.',
       inscriptions_found: ['Kapilendra Deva Jaya-Vijaya doorway inscription (1436 CE)', 'Purushottama Deva dedication inscriptions'],
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+      image_url: '/assets/archive/puri_jagannatha_temple.jpg'
     },
     {
       id: 'loc_kondavidu_fort',
@@ -934,7 +935,7 @@ function initializeSeedData(): DatabaseSchema {
       summary: 'Strategic mountain redoubt captured by Kumara Hamvira Deva in 1454 CE, serving as the southern administrative headquarters and military capital of the Gajapathi viceroyalty.',
       archaeological_findings: 'Granite bastions, royal water reservoirs (Mutyala Cheruvu), weapon storage magazines, and epigraphic pillar inscriptions from the Gajapathi governors.',
       inscriptions_found: ['Hamvira Deva pillar grant', 'Gajapathi royal seal carvings on defense bastions'],
-      image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80'
+      image_url: '/assets/archive/kondavidu_fort_hills.jpg'
     },
     {
       id: 'loc_simhachalam',
@@ -946,7 +947,7 @@ function initializeSeedData(): DatabaseSchema {
       summary: 'One of the wealthiest and most patronized shrines under both Eastern Gangas and Suryavamsha Gajapathis. Contains numerous dedicatory records of Kapilendra, Purushottama, and Prataparudra Deva.',
       archaeological_findings: 'Over 500 stone epigraphs carved onto the sanctum and enclosure walls, detailed inventories of royal gold ornaments, land endowments, and dancing troupe dedications.',
       inscriptions_found: ['Prataparudra Deva Saka 1438 dedication', 'Kapilendra Deva Saka 1381 pillar epigraph'],
-      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80'
+      image_url: '/assets/archive/simhachalam_temple.jpg'
     },
     {
       id: 'loc_udayagiri_fort',
@@ -958,7 +959,7 @@ function initializeSeedData(): DatabaseSchema {
       summary: 'Impregnable eastern ghats bastion that guarded the southern perimeter of the Gajapathi kingdom until the famous siege by Krishna Deva Raya in 1514 CE.',
       archaeological_findings: 'Layered boulder defense walls, Balakrishna temple from which the famed icon was transported to Hampi, gateways, and granary structures.',
       inscriptions_found: ['Gajapathi defensive bastion inscriptions', 'Vijayanagara victory stelae'],
-      image_url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&auto=format&fit=crop&q=80'
+      image_url: '/assets/archive/udayagiri_fort_nellore.jpg'
     },
     {
       id: 'loc_kolleti_sarasu_fort',
@@ -970,7 +971,7 @@ function initializeSeedData(): DatabaseSchema {
       summary: 'Colossal natural freshwater lake and island water fortress situated between Krishna and Godavari deltas. Garrisoned by Gajapathi commanders and Odiyaraju warriors, protected by presiding warrior deity Sri Peddintlamma Thalli.',
       archaeological_findings: 'Ancient defensive island ramparts, boat landing jetties, medieval stone temple of Sri Peddintlamma Thalli, and Sri Gokarneshwara Swamy temple precinct.',
       inscriptions_found: ['Chalukya and Gajapathi coastal delta copper-plate records', 'Local Kaifiyat inscriptions'],
-      image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80'
+      image_url: '/assets/archive/kolleru_lake_citadel.jpg'
     }
   ];
 
@@ -1041,7 +1042,7 @@ function initializeSeedData(): DatabaseSchema {
       century: '15th Century CE (c. 1448 CE)',
       architectural_style: 'Kalinga Fortified Temple Masonry',
       historical_significance: 'Kapilendra Deva constructed this massive, fortified outer stone boundary wall (665 feet by 640 feet, 20 feet high with crenellations) to protect the sanctum of Lord Jagannatha from seaborne and external raids.',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/meghanada_pacheri_puri.jpg',
       sources: ['Madala Panji Records', 'Archaeological Survey of India Puri Conservation Reports']
     },
     {
@@ -1053,7 +1054,7 @@ function initializeSeedData(): DatabaseSchema {
       century: '13th Century CE (c. 1250 CE)',
       architectural_style: 'Classical Kalinga (Rekha & Bhadra Deula)',
       historical_significance: 'Masterpiece of eastern Indian architecture representing the chariot of the Sun God. Re-protected and maintained by later Suryavamshi Gajapathis who traced their solar lineage to the deity.',
-      image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/konark_sun_temple_structure.jpg',
       sources: ['Baya Chakada Palm-leaf Architectural Chronicles', 'UNESCO World Heritage Dossier']
     },
     {
@@ -1065,7 +1066,7 @@ function initializeSeedData(): DatabaseSchema {
       century: '15th Century CE',
       architectural_style: 'Eastern Chalukya-Gajapathi Synthesis',
       historical_significance: 'Prominent Shaivite pilgrim shrine in coastal Andhra where Gajapathi rulers established grand pillared halls and recorded victorious campaigns on stone pillars.',
-      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/draksharama_temple.jpg',
       sources: ['South Indian Inscriptions Vol. IV', 'Andhra Historical Research Society Journal']
     },
     {
@@ -1077,7 +1078,7 @@ function initializeSeedData(): DatabaseSchema {
       century: 'Medieval Era (c. 11th–16th Century CE)',
       architectural_style: 'Island Citadel & Coastal Jala-Durga Temple Architecture',
       historical_significance: 'Historic island fortress sanctuary situated in the middle of Kolleti Sarasu (Kolleru Lake). The temple of Sri Peddintlamma Thalli along with the ancient Gokarneshwara Swamy Shiva shrine formed the sacred and defensive citadel of Gajapathi and Odiyaraju Kshatriya warriors, guarded by natural marshlands and navigated via native boat flotillas.',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/peddintlamma_temple_kolletikota.jpg',
       sources: [
         'Mackenzie Manuscripts (Kaikaluru & Kolletikota Kaifiyats)',
         'Imperial Gazetteer of India, Vol. XV',
@@ -1130,7 +1131,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'ASI Photographic Collection (OD-CTK-14)',
       copyright_license: 'CC BY-SA 4.0 / Open Educational Use',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/barabati_fort_ramparts.jpg',
       alt_text: 'Dressed sandstone masonry walls and deep moat of Barabati Fort in Cuttack',
       description: 'The historic capital of the Suryavamshi Gajapathis showing medieval defensive moat architecture.'
     },
@@ -1144,7 +1145,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'Puri Archival Survey 2024',
       copyright_license: 'Creative Commons Attribution 4.0',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/puri_simhadwara_wall.jpg',
       alt_text: 'Fortified stone boundary wall erected by Kapilendra Deva around Puri Jagannath Temple',
       description: 'The monumental stone wall designed to safeguard the deity during military incursions.'
     },
@@ -1158,7 +1159,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'Konark Archaeological Record',
       copyright_license: 'Public Domain Dedicated',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/konark_chariot_wheel.jpg',
       alt_text: 'Intricate stone carved wheel of the Sun Temple chariot at Konark',
       description: 'Solar dynastic iconography celebrating the divine chariot of Surya in classical Odishan style.'
     },
@@ -1172,7 +1173,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'Andhra Pradesh State Archaeology Archives',
       copyright_license: 'CC BY-SA 4.0',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/kondavidu_fort_engraving.jpg',
       alt_text: 'Rugged granite defensive fortifications of Kondavidu hilltop fortress',
       description: 'Southern military command bastion held by Gajapathi Viceroy Hamvira Deva.'
     },
@@ -1186,7 +1187,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'Odisha State Archives Special Collection',
       copyright_license: 'Educational Fair Use / Archival Record',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/odia_palm_leaf_manuscript.jpg',
       alt_text: 'Palm-leaf manuscript bundle bound with cord and showing incised Odia and Sanskrit lettering',
       description: 'Specimen of indigenous palm-leaf documentation used for royal vamsavalis and court registers.'
     },
@@ -1200,7 +1201,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'Reconstructed based on Epigraphia Indica Volumes XXIV to XXXV',
       copyright_license: 'CC BY-NC 4.0',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/gajapathi_empire_map_1465.jpg',
       alt_text: 'Historical cartographic map showing the extent of Odra Desha from Ganges to Kaveri',
       description: 'Cartographic reconstruction delineating corroborated epigraphic findspots of Kapilendra Deva.'
     },
@@ -1214,7 +1215,7 @@ function initializeSeedData(): DatabaseSchema {
       source: 'Kolleru Archaeological Wetland Survey Archive',
       copyright_license: 'CC BY-SA 4.0',
       verification_status: 'Reviewed',
-      image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
+      image_url: '/assets/archive/kolletikota_island_panorama.jpg',
       alt_text: 'Vast freshwater lake expanses of Kolleti Sarasu surrounding the fortified island sanctuary of Kolletikota',
       description: 'The ancient water citadel (Jala Durga) and sacred abode of Sri Peddintlamma Thalli amidst the serene waters of Kolleru.'
     }
@@ -1286,7 +1287,7 @@ function initializeSeedData(): DatabaseSchema {
       publication_date: '2026-01-18',
       verification_status: 'Published',
       evidence_category: 'verified_archaeological',
-      featured_image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/odra_kalinga_map.jpg',
       tags: ['Odra Desha', 'Historical Geography', 'Utkala', 'Kalinga', 'Epigraphy'],
       sources: [
         {
@@ -1332,7 +1333,7 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
       publication_date: '2026-02-02',
       verification_status: 'Published',
       evidence_category: 'verified_archaeological',
-      featured_image: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/kapilendra_deva_lingaraja.jpg',
       tags: ['Kapilendra Deva', 'Suryavamsha', 'Military History', 'Inscriptions', 'Cuttack'],
       sources: [
         {
@@ -1375,7 +1376,7 @@ Kapilendra did not merely conquer; he instituted administrative stability by rep
       publication_date: '2026-02-14',
       verification_status: 'Published',
       evidence_category: 'scholarly_interpretation',
-      featured_image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/copper_plate_charter.jpg',
       tags: ['Genealogy', 'Methodology', 'Oral Traditions', 'Epigraphy', 'Vamsavali'],
       sources: [
         {
@@ -1414,7 +1415,7 @@ To preserve unwavering historical credibility, our archive visually and textuall
       publication_date: '2026-02-22',
       verification_status: 'Published',
       evidence_category: 'scholarly_interpretation',
-      featured_image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/oad_hydraulic_stepwell.jpg',
       tags: ['Oad-Rajput', 'Od-Kshatriya', 'OddeRajulu', 'VaddeRajulu', 'Waddar', 'Sagara', 'Bhagiratha', 'Kharavela', 'Jasma Devi', 'Siddharameshwara'],
       sources: [
         {
@@ -1494,7 +1495,7 @@ Over two millennia of geographical migration, the ancestral ethnonym Odra (Prakr
       publication_date: '2026-02-23',
       verification_status: 'Published',
       evidence_category: 'traditional_account',
-      featured_image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/surya_konark_sculpture.jpg',
       tags: ['Suryavamsha', 'Samrat Sagara', 'Bhagiratha', 'Sri Rama', 'Kharavela', 'Genealogy'],
       sources: [
         {
@@ -1540,7 +1541,7 @@ This deep heritage explains why Oad-Rajputs, Od-Kshatriyas, and VaddeRajulu main
       publication_date: '2026-02-24',
       verification_status: 'Published',
       evidence_category: 'scholarly_interpretation',
-      featured_image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/kolleru_wetland_sanctuary.jpg',
       tags: ['Kolletikota', 'Peddintlamma Thalli', 'Kolleti Sarasu', 'Kolleru Lake', 'Gajapathi', 'Odiyaraju', 'Jala Durga', 'Eluru', 'Kaikaluru'],
       sources: [
         {
@@ -1608,7 +1609,7 @@ Kolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthes
       publication_date: '2026-02-25',
       verification_status: 'Published',
       evidence_category: 'verified_archaeological',
-      featured_image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80',
+      featured_image: '/assets/archive/hathigumpha_inscription.jpg',
       tags: ['Odra Identity', 'Epigraphy', 'Paleography', 'Hathigumpha', 'Veligalani', 'Lingaraja', 'Copper Plates', 'Gajapathi'],
       sources: [
         {

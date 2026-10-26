@@ -42,6 +42,8 @@ export interface DocumentedFigureData {
   citations: string[];
 }
 
+const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
+
 export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
   // 1. Kapilendra Deva Gajapathi
   {
@@ -179,7 +181,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['কটক (বারাণসী কটক)', 'পুরী জগন্নাথ মন্দির', 'ভুবনেশ্বর', 'কোন্ডাভিডু দুর্গ', 'সিংহাচলম']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('kapilendra_deva_portrait.jpg'),
     inscriptions_ids: ['insc_veligalani_1458', 'insc_lingaraja_1452', 'insc_simhachalam_1459'],
     citations: [
       'Epigraphia Indica, Vol. XXXIII, pp. 275–292 (Veligalani Copper Plates of Kapilendra Deva).',
@@ -311,7 +313,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['পুরী', 'কটক', 'কাঞ্চি', 'কোন্ডাভিডু', 'দ্রাক্ষারাম']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('purushottama_deva_kanchi.jpg'),
     inscriptions_ids: ['insc_potavaram_1489', 'insc_puri_purushottama'],
     citations: [
       'Mukherjee, Prabhat, "The History of the Gajapati Kings of Orissa", Kitab Mahal, 1953.',
@@ -442,7 +444,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['পুরী', 'কটক', 'উদয়গিরি', 'কোন্ডাপল্লী', 'সিংহাচলম']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('prataparudra_deva.jpg'),
     inscriptions_ids: ['insc_simhachalam_prataparudra', 'insc_kondapalli_1519'],
     citations: [
       'Sarasvati Vilasa (Sanskrit Legal Digest), ed. R. Shama Sastri, Mysore, 1927.',
@@ -566,7 +568,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['কোন্ডাভিডু', 'শ্রীশৈলম', 'শ্রীরঙ্গম', 'উদয়গিরি']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('kumara_hamvira_warangal_srirangam.jpg'),
     inscriptions_ids: ['insc_srirangam_1464', 'insc_srisailam_hamvira'],
     citations: [
       'Epigraphia Indica, Vol. XXXIV, pp. 177–188.',
@@ -689,7 +691,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['অযোধ্যা', 'কপিল আশ্রম', 'গঙ্গাসাগর']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('samrat_sagara_surya.jpg'),
     inscriptions_ids: [],
     citations: [
       'Valmiki Ramayana (Balakanda Sarga 38-41).',
@@ -813,7 +815,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['গঙ্গোত্রী', 'হরিদ্বার', 'প্রয়াগরাজ', 'বারাণসী', 'গঙ্গাসাগর']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('maharshi_bhagiratha_penance.jpg'),
     inscriptions_ids: [],
     citations: [
       'Valmiki Ramayana (Balakanda Sarga 42-44).',
@@ -937,7 +939,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['অযোধ্যা', 'চিত্রকূট', 'দণ্ডকারণ্য', 'ভদ্রাচলম', 'রামেশ্বরম']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('sri_rama_sculpture.jpg'),
     inscriptions_ids: [],
     citations: [
       'Valmiki Ramayana.',
@@ -1062,7 +1064,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['উদয়গিরি (হাতিগুম্ফা)', 'খণ্ডগিরি', 'শিশুপালগড়', 'ভুবনেশ্বর']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('emperor_kharavela_udayagiri.jpg'),
     inscriptions_ids: ['insc_hathigumpha_kharavela'],
     citations: [
       'Epigraphia Indica Vol. XX (Hathigumpha Inscription of Kharavela).',
@@ -1186,7 +1188,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['পাটন', 'সহস্রলিঙ্গ জলাশয়', 'সরস্বতী নদীর তীর']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('jasma_devi_sahasralinga.jpg'),
     inscriptions_ids: [],
     citations: [
       'Alexander Kinloch Forbes, "Ras Mala: Hindoo Annals of the Province of Goozerat", 1856.',
@@ -1312,7 +1314,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['সোলাপুর', 'বাসবকল্যাণ', 'শ্রীশৈলম']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('shivayogi_siddharama_solapur.jpg'),
     inscriptions_ids: [],
     citations: [
       'Raghavanka, "Siddharama Charite" (Old Kannada Epic, c. 1200 CE).',
@@ -1436,7 +1438,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['কোল্লেতিকোটা', 'কোল্লেরু হ্রদ', 'গোকর্ণেশ্বর মন্দির']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('peddintlamma_deity_kolletikota.jpg'),
     inscriptions_ids: [],
     citations: [
       'Mackenzie Manuscripts & Local Kaifiyats (Kolletikota & Kaikaluru Kaifiyats).',
@@ -1563,7 +1565,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['বারাবাটি দুর্গ (কটক)', 'ত্রিবেণী ঘাট', 'গোহিরাটিকিরি', 'পুরী']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('mukunda_deva_barabati.jpg'),
     inscriptions_ids: [],
     citations: [
       'Akbarnama of Abul Fazl (Account of Mukunda Deva of Orissa).',
@@ -1687,7 +1689,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['পুরী জগন্নাথ মন্দির', 'মুখলিঙ্গম', 'বারাণসী কটক']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('chodaganga_srikurmam.jpg'),
     inscriptions_ids: ['insc_korni_copper_plates', 'insc_draksharama_chodaganga'],
     citations: [
       'Epigraphia Indica, Vol. XXVIII, Korni Copper Plate Inscriptions of Chodaganga Deva.',
@@ -1811,7 +1813,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['কোণার্ক সূর্য মন্দির', 'পুরী', 'কটক', 'লখনৌতি (বাংলা)']
     },
     evidence_status: 'Documented Primary Evidence',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('narasimha_deva_konark_sculpture.jpg'),
     inscriptions_ids: ['insc_kendupatna_plates', 'insc_kapilas_inscription'],
     citations: [
       'Epigraphia Indica, Vol. XXVIII, Kendupatna Copper Plates of Narasimhadeva I.',

@@ -390,16 +390,36 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
   const modalItem: ContentDetailItem | null = React.useMemo(() => {
     if (!selectedModalRef) return null;
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
     if (selectedModalRef.type === 'synonym') {
       const item = COMMUNITY_SYNONYMS.find(s => s.id === selectedModalRef.id);
       if (!item) return null;
       const epistemicText = item.epistemic_note[language] || item.epistemic_note.en;
+      const synImgMap: Record<string, string> = {
+        syn_suryavamshi: `${base}surya_konark_sculpture.jpg`,
+        syn_sagaravamshi: `${base}samrat_sagara_surya.jpg`,
+        syn_raghuvamshi: `${base}sri_rama_sculpture.jpg`,
+        syn_od_oad_odra: `${base}hathigumpha_inscription.jpg`,
+        syn_odisha_kshatriya: `${base}barabati_fort_gateway.jpg`,
+        syn_odiyaraju_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
+        syn_ottar: `${base}srirangam_temple.jpg`,
+        syn_od_kshatriya: `${base}puri_jagannatha_temple.jpg`,
+        syn_odde_vadde: `${base}kondavidu_fort_hills.jpg`,
+        syn_waddar_vaddar: `${base}shivayogi_siddharama_solapur.jpg`,
+        syn_oddar: `${base}srirangam_temple.jpg`,
+        syn_vadde_gajapathirajulu: `${base}kapilendra_deva_portrait.jpg`,
+        syn_odda_nayakkar_tn: `${base}kumara_hamvira_warangal_srirangam.jpg`,
+        syn_oad_rajputh: `${base}oad_hydraulic_stepwell.jpg`,
+        syn_odderajulu: `${base}kolleru_lake_citadel.jpg`
+      };
       return {
         id: item.id,
         title: item.title,
         subtitle: `${item.designation_group} • ${item.geographical_association}`,
         badge: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification,
         location: item.geographical_association,
+        imageUrl: synImgMap[item.id] || `${base}barabati_fort_gateway.jpg`,
+        imageLayout: 'banner',
         content: `${item.historical_role[language] || item.historical_role.en}\n\n${synonymSectionLabels.epistemicLabel} ${epistemicText}`,
         metadata: [
           { label: synonymSectionLabels.colCategory, value: item.designation_group },
@@ -428,6 +448,15 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       if (!activeReg) return null;
       const regTitle = activeReg.localized_region[language] || activeReg.region_name;
       const regOverview = activeReg.regional_overview[language] || activeReg.regional_overview.en;
+      const regImgMap: Record<string, string> = {
+        geo_rajasthan_sindh_punjab: `${base}oad_hydraulic_stepwell.jpg`,
+        geo_gujarat: `${base}jasma_devi_sahasralinga.jpg`,
+        geo_maharashtra: `${base}shivayogi_siddharama_solapur.jpg`,
+        geo_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
+        geo_andhra_telangana: `${base}kondavidu_fort_hills.jpg`,
+        geo_tamil_nadu: `${base}srirangam_temple.jpg`,
+        geo_odisha: `${base}barabati_fort_gateway.jpg`
+      };
       return {
         id: activeReg.id,
         title: regTitle,
@@ -435,6 +464,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         badge: 'Regional Corridor Spotlight',
         era: activeReg.migration_epoch_and_corridor,
         location: activeReg.prominent_cities_districts.join(', '),
+        imageUrl: regImgMap[activeReg.id] || `${base}odra_kalinga_map.jpg`,
+        imageLayout: 'banner',
         content: regOverview,
         sections: [
           {
@@ -460,12 +491,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       if (!sec) return null;
       const secTitle = sec.section_title[language] || sec.section_title.en;
       const secContent = sec.content[language] || sec.content.en;
+      const monoImgMap: Record<string, string> = {
+        mono_part_1_primordial: `${base}surya_konark_sculpture.jpg`,
+        mono_part_2_kharavela: `${base}emperor_kharavela_udayagiri.jpg`,
+        mono_part_3_synonyms: `${base}copper_plate_charter.jpg`,
+        mono_part_4_jasma_siddharama: `${base}jasma_devi_sahasralinga.jpg`,
+        mono_part_5_gajapathi_diaspora: `${base}kondavidu_fort_hills.jpg`,
+        mono_part_6_geographical_map: `${base}gajapathi_empire_map_1465.jpg`,
+        mono_part_7_kolletikota: `${base}peddintlamma_temple_kolletikota.jpg`,
+        mono_part_8_epigraphic_evolution: `${base}hathigumpha_inscription.jpg`
+      };
       return {
         id: sec.id,
         title: secTitle,
         subtitle: 'The Civilizational Odyssey of Oad-Rajput & Od-Kshatriya Communities',
         badge: 'Peer-Reviewed Archival Monograph',
         author: 'Suryavamsha Archival Research Council',
+        imageUrl: monoImgMap[sec.id] || `${base}barabati_fort_gateway.jpg`,
+        imageLayout: 'banner',
         content: secContent,
         sections:
           sec.key_points && sec.key_points.length > 0

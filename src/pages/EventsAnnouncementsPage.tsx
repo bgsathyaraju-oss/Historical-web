@@ -248,6 +248,12 @@ export const EventsAnnouncementsPage: React.FC<EventsPageProps> = ({ onNavigate 
   });
 
   const selectedEvent = selectedEventId ? localizedEvents.find(e => e.id === selectedEventId) || null : null;
+  const archiveBase = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+  const evImgMap: Record<string, string> = {
+    ev_01: `${archiveBase}barabati_fort_gateway.jpg`,
+    ev_02: `${archiveBase}odia_palm_leaf_manuscript.jpg`,
+    ev_03: `${archiveBase}kondavidu_fort_hills.jpg`
+  };
 
   const modalItem: ContentDetailItem | null = selectedEvent
     ? {
@@ -257,6 +263,8 @@ export const EventsAnnouncementsPage: React.FC<EventsPageProps> = ({ onNavigate 
         badge: selectedEvent.event_type,
         era: selectedEvent.date_text,
         location: selectedEvent.location,
+        imageUrl: evImgMap[selectedEvent.id] || `${archiveBase}barabati_fort_gateway.jpg`,
+        imageLayout: 'banner',
         content: selectedEvent.description,
         metadata: [
           { label: 'Schedule', value: selectedEvent.date_text },

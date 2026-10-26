@@ -307,12 +307,20 @@ export const LiteraturePublicationsPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const selectedPub = selectedId ? loc.items.find(i => i.id === selectedId) || null : null;
+  const archiveBase = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+  const pubImgMap: Record<string, string> = {
+    'lit-sarasvati-vilasa': `${archiveBase}prataparudra_deva.jpg`,
+    'lit-sarala-mahabharata': `${archiveBase}mahakavi_sarala_dasa.jpg`,
+    'lit-abhinava-gitagovinda': `${archiveBase}odia_palm_leaf_manuscript.jpg`
+  };
   const modalItem: ContentDetailItem | null = selectedPub
     ? {
         id: selectedPub.id,
         title: selectedPub.title,
         subtitle: selectedPub.author,
         badge: selectedPub.lang,
+        imageUrl: pubImgMap[selectedPub.id] || `${archiveBase}odia_palm_leaf_manuscript.jpg`,
+        imageLayout: 'banner',
         summary: selectedPub.significance,
         content: selectedPub.desc,
         sources: selectedPub.sources

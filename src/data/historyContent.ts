@@ -79,6 +79,8 @@ export interface HistoricalMonographSection {
 // ---------------------------------------------------------------------------
 // 1. PROGENITORS & HISTORICAL FIGURES REPOSITORY
 // ---------------------------------------------------------------------------
+const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
+
 export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
   {
     id: 'fig_samrat_sagara',
@@ -98,7 +100,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Treta Yuga / Vedic Puranic Antiquity',
     reign_or_dates: 'Primordial Epic Era',
     epigraphic_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('samrat_sagara_surya.jpg'),
     titles: {
       en: 'Chakravartin Emperor of Ayodhya • Primordial Excavator of the Ocean (Sagara) • Suryavamshi Progenitor',
       hi: 'अयोध्या के चक्रवर्ती सम्राट • महासागर के आद्य खनक • सूर्यवंशी क्षत्रिय आदि-पुरुष',
@@ -160,7 +162,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Treta Yuga Antiquity',
     reign_or_dates: 'Puranic Antiquity',
     epigraphic_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('maharshi_bhagiratha_penance.jpg'),
     titles: {
       en: 'Rajarshi of Ayodhya • Bringer of the Sacred Ganga • Patron of Water Engineering & Perseverance',
       hi: 'अयोध्या के राजर्षि • मां गंगा के भू-अवतारी • जल-अभियांत्रिकी एवं अडिग संकल्प के आदि प्रतीक',
@@ -222,7 +224,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Treta Yuga',
     reign_or_dates: 'Epic Antiquity',
     epigraphic_status: 'Traditional Lineage Record',
-    image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('sri_rama_sculpture.jpg'),
     titles: {
       en: 'Maryada Purushottama • Supreme Exemplar of Kshatriya Dharma • Ikshvaku Kula Tilaka',
       hi: 'मर्यादा पुरुषोत्तम • क्षत्रिय धर्म के परम आदर्श • इक्ष्वाकु कुल तिलक • अयोध्याधिपति',
@@ -284,7 +286,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'c. 2nd – 1st Century BCE',
     reign_or_dates: 'c. 193 – 170 BCE (or 1st Century BCE)',
     epigraphic_status: 'Documented Primary Epigraphy',
-    image_url: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('emperor_kharavela_udayagiri.jpg'),
     titles: {
       en: 'Kalingadhipati • Mahameghavahana • Chakravartin • Master of Canal Engineering & Rock Excavation',
       hi: 'कलिंगाधिपति • महामेघवाहन • चक्रवर्ती • नहर-विस्तार एवं शैल-खनन के सम्राट',
@@ -346,7 +348,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: '11th – 12th Century CE',
     reign_or_dates: 'c. 1090 – 1140 CE (Reign of Siddharaja Jaisinh of Gujarat)',
     epigraphic_status: 'Living Sacred Tradition',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('jasma_devi_sahasralinga.jpg'),
     titles: {
       en: 'Kuladevi of Oad / Od-Rajput Community • Emblem of Marital Chastity • Patron Goddess of Dignity & Truth',
       hi: 'ओड / ओड-राजपूत समाज की कुलदेवी • पातिव्रत्य एवं क्षत्रिय स्वाभिमान की अधिष्ठात्री • सती माता',
@@ -408,7 +410,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: '12th Century CE',
     reign_or_dates: 'c. 1125 – 1190 CE',
     epigraphic_status: 'Documented Primary Epigraphy',
-    image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('shivayogi_siddharama_solapur.jpg'),
     titles: {
       en: 'Karmayogi • Master of Civic Water Harvesting • Gramadevata of Solapur • Patron Saint of Waddar / Vaddar Community',
       hi: 'कर्मयोगी • लोक-कल्याणकारी जल-संरक्षण के संत • सोलापुर के ग्रामदैवत • वड्डार / वडार समाज के संरक्षक',
@@ -476,7 +478,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Medieval Era (c. 11th–16th Century CE & Living Sacred Tradition)',
     reign_or_dates: 'Timeless Sacred Living Tradition (Documented Inscriptions & Kaifiyats)',
     epigraphic_status: 'Living Sacred Tradition',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: ARCHIVE_IMG('peddintlamma_deity_kolletikota.jpg'),
     titles: {
       en: 'Presiding Warrior Deity of Kolletikota • Guardian of the Kolleti Sarasu (Kolleru Lake) Aquatic Citadel • Mother of the Royal Elder House',
       hi: 'कोल्लेतिकोटा जलदुर्ग की अधिष्ठात्री कुलदेवी • कोल्लेरु झील की रक्षा-शक्ति • राजवंशीय ज्येष्ठ सदन की माता (पेद्दिंटलम्मा)',

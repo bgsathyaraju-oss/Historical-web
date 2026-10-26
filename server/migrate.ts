@@ -238,7 +238,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
       'Kondapalli & Kondavidu Perimeter'
     ],
     evidence_status: 'Traditional Lineage Record' as const,
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: '/assets/archive/peddintlamma_deity_kolletikota.jpg',
     inscriptions_ids: [],
     citations: [
       'Mackenzie Manuscripts & Local Kaifiyats (Kolletikota & Kaikaluru Kaifiyats).',
@@ -261,7 +261,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
     century: 'Medieval Era (c. 11th–16th Century CE)',
     architectural_style: 'Island Citadel & Coastal Jala-Durga Temple Architecture',
     historical_significance: 'Historic island fortress sanctuary situated in the middle of Kolleti Sarasu (Kolleru Lake). The temple of Sri Peddintlamma Thalli along with the ancient Gokarneshwara Swamy Shiva shrine formed the sacred and defensive citadel of Gajapathi and Odiyaraju Kshatriya warriors, guarded by natural marshlands and navigated via native boat flotillas.',
-    image_url: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80',
+    image_url: '/assets/archive/peddintlamma_temple_kolletikota.jpg',
     sources: [
       'Mackenzie Manuscripts (Kaikaluru & Kolletikota Kaifiyats)',
       'Imperial Gazetteer of India, Vol. XV',
@@ -283,7 +283,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
     summary: 'Colossal natural freshwater lake and island water fortress situated between Krishna and Godavari deltas. Garrisoned by Gajapathi commanders and Odiyaraju warriors, protected by presiding warrior deity Sri Peddintlamma Thalli.',
     archaeological_findings: 'Ancient defensive island ramparts, boat landing jetties, medieval stone temple of Sri Peddintlamma Thalli, and Sri Gokarneshwara Swamy temple precinct.',
     inscriptions_found: ['Chalukya and Gajapathi coastal delta copper-plate records', 'Local Kaifiyat inscriptions'],
-    image_url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80'
+    image_url: '/assets/archive/kolletikota_island_panorama.jpg'
   };
   if (!db.locations.some(l => l.id === kolletikotaLocation.id)) {
     db.locations.push(kolletikotaLocation);
@@ -301,7 +301,7 @@ export function runMigrations(): { success: boolean; changes: string[] } {
     publication_date: '2026-02-24',
     verification_status: 'Published' as const,
     evidence_category: 'scholarly_interpretation' as const,
-    featured_image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80',
+    featured_image: '/assets/archive/peddintlamma_temple_kolletikota.jpg',
     tags: ['Kolletikota', 'Peddintlamma Thalli', 'Kolleti Sarasu', 'Kolleru Lake', 'Gajapathi', 'Odiyaraju', 'Jala Durga', 'Eluru', 'Kaikaluru'],
     sources: [
       {

@@ -87,12 +87,20 @@ export const HistoricalDocumentsPage: React.FC = () => {
 
   const buildDocumentModalItem = (doc: HistoricalDocument | null): ContentDetailItem | null => {
     if (!doc) return null;
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const docImageMap: Record<string, string> = {
+      doc_madala_panji: `${base}odia_palm_leaf_manuscript.jpg`,
+      doc_sarasvati_vilasa: `${base}prataparudra_deva.jpg`,
+      doc_veligalani_charter: `${base}copper_plate_charter.jpg`
+    };
     return {
       id: doc.id,
       title: doc.title,
       subtitle: `${doc.author_authority} • ${doc.approximate_date}`,
       badge: `${doc.original_language} • Archival Manuscript`,
       verificationStatus: doc.verification_status,
+      imageUrl: docImageMap[doc.id] || `${base}odia_palm_leaf_manuscript.jpg`,
+      imageLayout: 'banner',
       metadata: [
         { label: 'Author / Compiling Body', value: doc.author_authority },
         { label: 'Approximate Date', value: doc.approximate_date },

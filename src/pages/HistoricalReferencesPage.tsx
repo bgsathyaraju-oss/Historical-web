@@ -168,6 +168,13 @@ export const HistoricalReferencesPage: React.FC = () => {
   if (selectedRefKey) {
     const [secId, itemIdxStr] = selectedRefKey.split(':');
     const sec = references.find(r => r.id === secId);
+    const archiveBase = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const refImgMap: Record<string, string> = {
+      'ref-epigraphy': `${archiveBase}copper_plate_charter.jpg`,
+      'ref-monographs': `${archiveBase}kapilendra_deva_lingaraja.jpg`,
+      'ref-chronicles': `${archiveBase}odia_palm_leaf_manuscript.jpg`
+    };
+    const sectionImage = refImgMap[secId] || `${archiveBase}copper_plate_charter.jpg`;
     if (sec) {
       if (itemIdxStr !== undefined) {
         const idx = parseInt(itemIdxStr, 10);
@@ -178,6 +185,8 @@ export const HistoricalReferencesPage: React.FC = () => {
             title: item.split(':')[0] || sec.category,
             subtitle: sec.category,
             badge: 'Primary / Secondary Citation',
+            imageUrl: sectionImage,
+            imageLayout: 'banner',
             summary: item,
             content: sec.description,
             sources: [{ title: item }]
@@ -189,6 +198,8 @@ export const HistoricalReferencesPage: React.FC = () => {
           title: sec.category,
           subtitle: hdr.title,
           badge: 'Verified Bibliographic Corpus',
+          imageUrl: sectionImage,
+          imageLayout: 'banner',
           summary: sec.description,
           sections: [
             {

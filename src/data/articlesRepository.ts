@@ -1,6 +1,8 @@
 import { Article, LanguageCode, SourceReference } from '../types';
 import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
 
+const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
+
 export const CANONICAL_ARTICLES: Article[] = [
   {
     id: 'art_odra_desha_history',
@@ -13,7 +15,7 @@ export const CANONICAL_ARTICLES: Article[] = [
     publication_date: '2026-01-18',
     verification_status: 'Published',
     evidence_category: 'verified_archaeological',
-    featured_image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('odra_kalinga_map.jpg'),
     tags: ['Odra Desha', 'Historical Geography', 'Utkala', 'Kalinga', 'Epigraphy'],
     sources: [
       {
@@ -59,7 +61,7 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
     publication_date: '2026-02-02',
     verification_status: 'Published',
     evidence_category: 'verified_archaeological',
-    featured_image: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('kapilendra_deva_lingaraja.jpg'),
     tags: ['Kapilendra Deva', 'Suryavamsha', 'Military History', 'Inscriptions', 'Cuttack'],
     sources: [
       {
@@ -102,7 +104,7 @@ Kapilendra did not merely conquer; he instituted administrative stability by rep
     publication_date: '2026-02-14',
     verification_status: 'Published',
     evidence_category: 'scholarly_interpretation',
-    featured_image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('copper_plate_charter.jpg'),
     tags: ['Genealogy', 'Methodology', 'Oral Traditions', 'Epigraphy', 'Vamsavali'],
     sources: [
       {
@@ -141,7 +143,7 @@ To preserve unwavering historical credibility, our archive visually and textuall
     publication_date: '2026-02-22',
     verification_status: 'Published',
     evidence_category: 'scholarly_interpretation',
-    featured_image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('oad_hydraulic_stepwell.jpg'),
     tags: ['Oad-Rajput', 'Od-Kshatriya', 'OddeRajulu', 'VaddeRajulu', 'Waddar', 'Sagara', 'Bhagiratha', 'Kharavela', 'Jasma Devi', 'Siddharameshwara'],
     sources: [
       {
@@ -221,7 +223,7 @@ Over two millennia of geographical migration, the ancestral ethnonym Odra (Prakr
     publication_date: '2026-02-23',
     verification_status: 'Published',
     evidence_category: 'traditional_account',
-    featured_image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('surya_konark_sculpture.jpg'),
     tags: ['Suryavamsha', 'Samrat Sagara', 'Bhagiratha', 'Sri Rama', 'Kharavela', 'Genealogy'],
     sources: [
       {
@@ -267,7 +269,7 @@ This deep heritage explains why Oad-Rajputs, Od-Kshatriyas, and VaddeRajulu main
     publication_date: '2026-02-24',
     verification_status: 'Published',
     evidence_category: 'scholarly_interpretation',
-    featured_image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('kolleru_wetland_sanctuary.jpg'),
     tags: ['Kolletikota', 'Peddintlamma Thalli', 'Kolleti Sarasu', 'Kolleru Lake', 'Gajapathi', 'Odiyaraju', 'Jala Durga', 'Eluru', 'Kaikaluru'],
     sources: [
       {
@@ -335,7 +337,7 @@ Kolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthes
     publication_date: '2026-02-25',
     verification_status: 'Published',
     evidence_category: 'verified_archaeological',
-    featured_image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&auto=format&fit=crop&q=80',
+    featured_image: ARCHIVE_IMG('hathigumpha_inscription.jpg'),
     tags: ['Odra Identity', 'Epigraphy', 'Paleography', 'Hathigumpha', 'Veligalani', 'Lingaraja', 'Copper Plates', 'Gajapathi'],
     sources: [
       {

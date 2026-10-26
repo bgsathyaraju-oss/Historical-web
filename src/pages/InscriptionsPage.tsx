@@ -73,12 +73,22 @@ export const InscriptionsPage: React.FC<InscriptionsPageProps> = ({ onNavigate, 
 
   const buildInscriptionModalItem = (insc: InscriptionRecord | null): ContentDetailItem | null => {
     if (!insc) return null;
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const inscImageMap: Record<string, string> = {
+      insc_veligalani_1458: `${base}copper_plate_charter.jpg`,
+      insc_lingaraja_1452: `${base}kapilendra_deva_lingaraja.jpg`,
+      insc_simhachalam_prataparudra: `${base}simhachalam_temple.jpg`,
+      insc_hathigumpha: `${base}hathigumpha_inscription.jpg`,
+      insc_srirangam_1464: `${base}srirangam_temple.jpg`
+    };
     return {
       id: insc.id,
       title: insc.name,
       subtitle: `${insc.ruler} • ${insc.location_found}`,
       badge: `${insc.dynasty} • ${insc.era_or_date}`,
       verificationStatus: insc.verification_status,
+      imageUrl: inscImageMap[insc.id] || `${base}copper_plate_charter.jpg`,
+      imageLayout: 'banner',
       metadata: [
         { label: t.inscriptions.rulerLabel || 'Ruler / Authority', value: insc.ruler },
         { label: t.inscriptions.findspotLabel || 'Findspot Location', value: insc.location_found },

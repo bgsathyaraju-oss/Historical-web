@@ -212,12 +212,21 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
   ];
 
   const activeActivity = selectedId ? activities.find(a => a.id === selectedId) : null;
+  const archiveBase = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+  const actImgMap: Record<string, string> = {
+    'act-manuscript-preservation': `${archiveBase}odia_palm_leaf_manuscript.jpg`,
+    'act-research-fellowships': `${archiveBase}copper_plate_charter.jpg`,
+    'act-heritage-tours': `${archiveBase}barabati_fort_gateway.jpg`,
+    'act-fraternal-forums': `${archiveBase}puri_jagannatha_temple.jpg`
+  };
   const modalItem: ContentDetailItem | null = activeActivity
     ? {
         id: activeActivity.id,
         title: activeActivity.title,
         subtitle: hdr.title,
         badge: activeActivity.badge,
+        imageUrl: actImgMap[activeActivity.id] || `${archiveBase}odia_palm_leaf_manuscript.jpg`,
+        imageLayout: 'banner',
         summary: activeActivity.summary,
         content: activeActivity.content
       }

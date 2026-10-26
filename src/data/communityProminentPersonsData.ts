@@ -537,6 +537,8 @@ export const ALL_COMMUNITY_BRANCHES: { key: CommunityBranch; category: 'Royal So
   }
 ];
 
+const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
+
 export const PROMINENT_PERSONS: ProminentPerson[] = [
   // 1. Emperor Kapilendra Deva Routray Gajapathi
   {
@@ -647,7 +649,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Madala Panji (Puri Temple Royal Chronicle)',
       'Prof. R. Subrahmanyam, "The Suryavamsi Gajapatis of Orissa"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('kapilendra_deva_portrait.jpg')
   },
 
   // 2. Kumara Hamvira Deva Gajapathi (Hamvira Rautraya)
@@ -759,7 +761,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Warangal Fort Inscription of Kumara Hamvira Deva (Epigraphia Indica)',
       'Srisailam Temple Inscriptions of the Gajapati Dynasty'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('kumara_hamvira_warangal_srirangam.jpg')
   },
 
   // 3. Baxi Jagabandhu Vidyadhara Mahapatra Bhramarabar Ray
@@ -864,7 +866,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'P.K. Pattanaik, "A Forgotten Chapter of Orissan History (Paik Rebellion 1817)"',
       'Barunei Hill Inscriptions & Commemorative Pillar Records'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('baxi_jagabandhu_statue.jpg')
   },
 
   // 4. Jayee Rajguru (Maharshi Jaya Krushna Rajguru Mohapatra)
@@ -966,7 +968,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Board of Revenue Records, Fort William (Calcutta, 1804–1806)',
       'Dr. H.K. Mahtab, "History of Orissa", Vol. II (Jayee Rajguru Chapter)'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('jayee_rajguru_statue.jpg')
   },
 
   // 5. Anantavarman Chodaganga Deva
@@ -1071,7 +1073,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Draksharama Bhimeswara Temple Epigraphs of Chodaganga Deva (South Indian Inscriptions, Vol. IV)',
       'Epigraphia Indica, Vol. XXVIII (Puri Copper Plates)'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('chodaganga_srikurmam.jpg')
   },
 
   // 6. Purushottama Deva Gajapathi
@@ -1180,7 +1182,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Potavaram Grant of Purushottama Gajapati (Inscriptions of Andhra Pradesh)',
       'K.C. Panigrahi, "History of Orissa (Hindu Period)"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('purushottama_deva_kanchi.jpg')
   },
 
   // 7. Prataparudra Deva Gajapathi
@@ -1287,7 +1289,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Chaitanya Charitamrita of Krishnadasa Kaviraja Goswami',
       'Undavalli & Kondavidu Epigraphs of Prataparudra Deva'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('prataparudra_deva.jpg')
   },
 
   // 8. Maharshi Raja Bhagiratha
@@ -1404,7 +1406,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Vishnu Purana, Book IV, Chapter 4',
       'Imperial Gazetteer of India, Vol. XVIII'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('maharshi_bhagiratha_penance.jpg')
   },
 
   // 9. Samrat Sagara
@@ -1510,7 +1512,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Mahabharata, Vana Parva, Sagara-Charita',
       'Harivamsha Purana, Harivamsha Parva, Chapter 14'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('samrat_sagara_surya.jpg')
   },
 
   // 10. Mata Jasma Devi (Jasma Odan)
@@ -1605,7 +1607,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Alexander Kinloch Forbes, "Ras-Mala"',
       'K.M. Munshi, "Glory that was Gurjaradesa"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('jasma_devi_sahasralinga.jpg')
   },
 
   // 11. Shivayogi Siddharameshwara
@@ -1710,7 +1712,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Vachana Sahitya Sangraha, Government of Karnataka',
       'Gazetteer of Bombay Presidency, Vol. XX'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('shivayogi_siddharama_solapur.jpg')
   },
 
   // 12. Mahameghavahana Kharavela
@@ -1813,7 +1815,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'B.M. Barua, "Old Brahmi Inscriptions in the Udayagiri and Khandagiri Caves"',
       'K.P. Jayaswal and R.D. Banerji, "The Hathigumpha Inscription of Kharavela"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('emperor_kharavela_udayagiri.jpg')
   },
 
   // 13. Sri Kolletikota Peddintlamma Thalli
@@ -1920,7 +1922,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Robert Sewell, "Lists of the Antiquities of the Madras Presidency"',
       'Eluru District Gazetteer on Kolleru Aquatic Bastions'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('peddintlamma_deity_kolletikota.jpg')
   },
 
   // 14. Kolani Rudra Deva Nayaka & Lake Chieftains
@@ -2026,7 +2028,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Chebrolu Epigraph of Kolani Chieftains',
       'N. Venkataramanayya, "The Early Muslim Expansion in South India"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('kolletikota_gajapathi_sculpture.jpg')
   },
 
   // 15. Raja Mukunda Deva Harichandana
@@ -2131,7 +2133,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Akbarnama of Abul Fazl',
       'H.K. Mahtab, "History of Orissa"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('mukunda_deva_barabati.jpg')
   },
 
   // 16. Emperor Langula Narasimha Deva I
@@ -2239,7 +2241,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Tabaqat-i-Nasiri of Minhaj-i-Siraj',
       'K.S. Behera, "Konark: The Heritage of Mankind"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('narasimha_deva_konark_sculpture.jpg')
   },
 
   // 17. Queen Balanagamma
@@ -2358,7 +2360,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Archaeological Survey of India: Panagal (Panugal) Fort & Chhayasomeswara Inscriptions, Nalgonda',
       'Tangirala Venkata Subba Rao, "Telugu Veera Gathalu" (Heroic Ballads of Telugu Land), Andhra University'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('rani_balanagamma_panagal.jpg')
   },
 
   // 18. Emperor Raja Bhoja
@@ -2481,7 +2483,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Betma Copper Plate Inscription of Bhoja (Epigraphia Indica, Vol. XVIII, pp. 320-325)',
       'Archaeological Survey of India: "Bhojpur Lake and Dam Engineering Excavations"'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1599818814510-911130e95ca0?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('raja_bhoja_statue.jpg')
   },
 
   // 19. Prince Balavaddiraju (Bala Vardhiraju)
@@ -2602,7 +2604,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Tangirala Venkata Subba Rao, "Telugu Veera Gathalu" (Heroic Ballads of Andhra), Andhra University Press',
       'Archaeological Survey of Andhra Pradesh: Panagal (Panugal) Fort Historical Archives'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('balavaddiraju_hero_stone.jpg')
   },
 
   // 20. Dr. G. Sathyanarayana Raju
@@ -2813,7 +2815,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Kondavidu Fort Epigraphic Records & Vijayanagara Amar-Nayaka Registers',
       'R. Subrahmanyam, "The Suryavamsi Gajapatis of Orissa" (Andhra University, 1957)'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('virabhadra_deva_archer.jpg')
   },
 
   // 22. Mahakavi Sarala Dasa (Reused from Verified Repository — 15th-Century Scholar & Soldier, Odisha)
@@ -2917,7 +2919,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Dr. Krishna Chandra Panigrahi, "Sarala Dasa" (Sahitya Akademi Monograph, 1975)',
       'K.C. Panigrahi, "History of Orissa (Hindu Period)" (1981)'
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=600&auto=format&fit=crop&q=80'
+    imageUrl: ARCHIVE_IMG('mahakavi_sarala_dasa.jpg')
   }
 ];
 

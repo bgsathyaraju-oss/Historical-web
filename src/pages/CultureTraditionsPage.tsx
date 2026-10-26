@@ -277,12 +277,20 @@ export const CultureTraditionsPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const selectedPillar = selectedId ? loc.pillars.find(p => p.id === selectedId) || null : null;
+  const archiveBase = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+  const pillarImgMap: Record<string, string> = {
+    'culture-solar-veneration': `${archiveBase}surya_konark_sculpture.jpg`,
+    'culture-martial-akhadas': `${archiveBase}virabhadra_deva_archer.jpg`,
+    'culture-jagannatha-servitorship': `${archiveBase}puri_jagannatha_temple.jpg`
+  };
   const modalItem: ContentDetailItem | null = selectedPillar
     ? {
         id: selectedPillar.id,
         title: selectedPillar.title,
         subtitle: loc.title,
         badge: selectedPillar.badge,
+        imageUrl: pillarImgMap[selectedPillar.id] || `${archiveBase}surya_konark_sculpture.jpg`,
+        imageLayout: 'banner',
         summary: selectedPillar.summary,
         content: selectedPillar.content,
         sources: selectedPillar.sources
