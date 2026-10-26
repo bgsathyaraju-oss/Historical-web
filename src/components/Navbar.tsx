@@ -258,24 +258,27 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               onMouseEnter={() => setActiveDropdown('comm')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button
-                className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  ['/culture-traditions', '/community-heritage', '/gallery', '/directory', '/community-activities', '/events', '/submit-research'].includes(currentPath)
-                    ? 'text-[#e8c872] bg-[#221016]'
-                    : 'hover:text-[#e8c872] hover:bg-stone-900/60'
-                }`}
-              >
-                <span>Culture & Heritage</span>
-                <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-              {activeDropdown === 'comm' && (
-                <div className="absolute top-full right-0 w-64 bg-[#121622] border border-[#c99738]/50 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <button onClick={() => navigateTo('/community-heritage')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold border-b border-stone-800/80">
-                    <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityHeritage || 'Community Heritage'}
+                  <button
+                    className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                      ['/culture-traditions', '/community-heritage', '/community-surnames', '/surnames', '/gallery', '/directory', '/community-activities', '/events', '/submit-research'].includes(currentPath)
+                        ? 'text-[#e8c872] bg-[#221016]'
+                        : 'hover:text-[#e8c872] hover:bg-stone-900/60'
+                    }`}
+                  >
+                    <span>Culture & Heritage</span>
+                    <ChevronDown className="w-3.5 h-3.5" />
                   </button>
-                  <button onClick={() => navigateTo('/community-prominent-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
-                    <Users className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityProminentPersons || 'Community Prominent Persons'}
-                  </button>
+                  {activeDropdown === 'comm' && (
+                    <div className="absolute top-full right-0 w-64 bg-[#121622] border border-[#c99738]/50 rounded-xl shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                      <button onClick={() => navigateTo('/community-heritage')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold border-b border-stone-800/80">
+                        <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityHeritage || 'Community Heritage'}
+                      </button>
+                      <button onClick={() => navigateTo('/community-surnames')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
+                        <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnames || 'Community-Surnames'}
+                      </button>
+                      <button onClick={() => navigateTo('/community-prominent-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
+                        <Users className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityProminentPersons || 'Community Prominent Persons'}
+                      </button>
                   <button onClick={() => navigateTo('/culture-traditions')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[#d4af37]" /> {t.nav.culture || 'Culture & Traditions'}
                   </button>
@@ -503,6 +506,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             </span>
             <button onClick={() => navigateTo('/community-heritage')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-[#fae29c] font-semibold flex items-center gap-2">
               <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityHeritage || 'Community Heritage'}
+            </button>
+            <button onClick={() => navigateTo('/community-surnames')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-[#fae29c] font-semibold flex items-center gap-2">
+              <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnames || 'Community-Surnames'}
             </button>
             <button onClick={() => navigateTo('/culture-traditions')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.culture || 'Culture & Traditions'}

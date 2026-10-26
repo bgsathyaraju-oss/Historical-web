@@ -21,6 +21,7 @@ import {
   GALLERY_UI_TRANSLATIONS
 } from '../src/data/galleryArticlesEnrichment.ts';
 import { KALINGA_WAR_CONTENT } from '../src/data/kalingaWarData.ts';
+import { COMMUNITY_SYNONYMS } from '../src/data/historyContent.ts';
 import { performClientSearch } from '../src/utils/searchEngine.ts';
 import fs from 'fs';
 import path from 'path';
@@ -781,6 +782,44 @@ async function runTestSuite() {
     results.push({
       suite: 'Kalinga War Documentary Page',
       test: '8-language translations, Sections A-F, 7 visual scenes, local image files & search indexing',
+      passed: false,
+      error: err.message
+    });
+  }
+
+  // Test 14: Community-Heritage Record "syn_waddar_vaddar" Previous State Verification
+  try {
+    const matches = COMMUNITY_SYNONYMS.filter(s => s.id === 'syn_waddar_vaddar');
+    assert(matches.length === 1, `Expected exactly 1 record with id "syn_waddar_vaddar", got ${matches.length}`);
+
+    const record = matches[0];
+    assert(record.title === 'Waddar / Vaddar', `Expected title "Waddar / Vaddar", got "${record.title}"`);
+    assert(record.category === 'Civic & Water Engineering', `Expected category "Civic & Water Engineering"`);
+    assert(record.designation_group === 'Regional community designations', `Expected group "Regional community designations"`);
+    assert(record.geographical_association === 'Karnataka & Maharashtra', `Expected geography "Karnataka & Maharashtra"`);
+    assert(!('synonyms_and_regional_designations' in record), 'Expected synonyms_and_regional_designations to be removed');
+
+    const supportedLangs = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'] as const;
+    for (const lang of supportedLangs) {
+      assert(
+        !!record.historical_role[lang] && record.historical_role[lang]!.length > 10,
+        `Missing historical_role for syn_waddar_vaddar in ${lang}`
+      );
+      assert(
+        !!record.epistemic_note[lang] && record.epistemic_note[lang]!.length > 10,
+        `Missing epistemic_note for syn_waddar_vaddar in ${lang}`
+      );
+    }
+
+    results.push({
+      suite: 'Community-Heritage Reference',
+      test: 'syn_waddar_vaddar restored to exact previous state across all 8 languages',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Community-Heritage Reference',
+      test: 'syn_waddar_vaddar restored to exact previous state across all 8 languages',
       passed: false,
       error: err.message
     });

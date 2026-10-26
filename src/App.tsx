@@ -43,6 +43,7 @@ import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { UiDesignSystemPage } from './pages/UiDesignSystemPage';
 import { CommunityProminentPersonsPage } from './pages/CommunityProminentPersonsPage';
 import { KalingaWarPage } from './pages/KalingaWarPage';
+import { CommunitySurnamesPage } from './pages/CommunitySurnamesPage';
 
 function getNormalizedAppPath(rawPath: string): string {
   const basePath = import.meta.env.BASE_URL || '/';
@@ -192,6 +193,9 @@ function AppContent() {
         return <HistoricalReferencesPage />;
       case '/community-heritage':
         return <CommunityHeritagePage onNavigate={navigateTo} initialItemId={searchParam} />;
+      case '/community-surnames':
+      case '/surnames':
+        return <CommunitySurnamesPage onNavigate={navigateTo} />;
       case '/community-activities':
         return <CommunityActivitiesPage onNavigate={navigateTo} />;
       case '/events':
