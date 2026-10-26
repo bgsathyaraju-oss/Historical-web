@@ -119,7 +119,9 @@ async function startServer() {
       server: {
         middlewareMode: true,
         host: '0.0.0.0',
-        port: PORT
+        port: PORT,
+        hmr: false,
+        watch: null,
       },
       appType: 'spa'
     });

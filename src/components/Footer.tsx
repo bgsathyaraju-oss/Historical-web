@@ -217,8 +217,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/community-surnames')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
-                  {t.nav.communitySurnames || 'Community-Surnames'}
+                <button onClick={() => onNavigate('/community-surnames')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer text-left">
+                  {t.nav.communitySurnames || 'Community Surnames [South-Indian-Oad-Community]'}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('/community-surnames-north-indian-oad-community')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer text-left">
+                  {t.nav.communitySurnamesNorth || 'Community Surnames [North-Indian-Oad-Community]'}
                 </button>
               </li>
               <li>

@@ -45,7 +45,7 @@ const UI_TEXT: Record<
   }
 > = {
   en: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'Alphabetical archival directory of South-Indian surnames (Intiperlu / Mane Hesarugalu / Kulam Names) of the Suryavamsham VadiyaRaja (Odiyaraju) Kshatriya community. Every surname is preserved in its exact spelling and sequence.',
@@ -65,7 +65,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'Script / Language Transliteration',
   },
   hi: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'सूर्यवंशम वडियाराजा (ओडियाराजु) क्षत्रिय समुदाय के दक्षिण-भारतीय उपनामों (Surnames) की वर्णक्रमानुसार निर्देशिका। प्रत्येक उपनाम की मूल वर्तनी और क्रम सुरक्षित रखा गया है।',
@@ -85,7 +85,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'लिपि / भाषा चयन',
   },
   te: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'సూర్యవంశం వడియరాజ (ఒడియరాజు) క్షత్రియ సమాజం యొక్క దక్షిణ భారత ఇంటిపేర్ల (Surnames) అక్షరక్రమ జాబితా. ప్రతి ఇంటిపేరు దాని అసలు స్పెల్లింగ్ మరియు వరుస క్రమంలో భద్రపరచబడింది.',
@@ -105,7 +105,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'లిపి / భాష ఎంపిక',
   },
   kn: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'ಸೂರ್ಯವಂಶಂ ವಡಿಯರಾಜ (ಒಡಿಯರಾಜು) ಕ್ಷತ್ರಿಯ ಸಮುದಾಯದ ದಕ್ಷಿಣ ಭಾರತೀಯ ಉಪನಾಮಗಳ (ಮನೆ ಹೆಸರುಗಳು / Surnames) ವರ್ಣಮಾಲೆಯ ಪಟ್ಟಿ. ಪ್ರತಿಯೊಂದು ಉಪನಾಮದ ಮೂಲ ಕಾಗುಣಿತ ಮತ್ತು ಕ್ರಮವನ್ನು ಹಾಗೆಯೇ ಉಳಿಸಲಾಗಿದೆ.',
@@ -125,7 +125,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'ಲಿಪಿ / ಭಾಷೆ ಆಯ್ಕೆ',
   },
   ta: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'சூர்யவம்சம் வடியராஜா (ஒடியராஜு) சத்திரிய சமூகத்தின் தென்னிந்திய குடும்பப் பெயர்களின் (Surnames) அகரவரிசைப் பட்டியல். ஒவ்வொரு பெயரின் அசல் எழுத்துக்கூட்டலும் வரிசையும் பாதுகாக்கப்பட்டுள்ளது.',
@@ -145,7 +145,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'எழுத்து / மொழித் தேர்வு',
   },
   mr: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'सूर्यवंशम वडियाराजा (ओडियाराजू) क्षत्रिय समाजातील दक्षिण-भारतीय आडनावांची (Surnames) वर्णानुक्रमे यादी. प्रत्येक आडनावाचे मूळ स्पेलिंग आणि क्रम जतन केला आहे.',
@@ -165,7 +165,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'लिपी / भाषा निवड',
   },
   or: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'ସୂର୍ଯ୍ୟବଂଶମ୍ ବଡ଼ିୟରାଜା (ଓଡ଼ିଆରାଜୁ) କ୍ଷତ୍ରିୟ ସମ୍ପ୍ରଦାୟର ଦକ୍ଷିଣ-ଭାରତୀୟ ସାଙ୍ଗିଆଗୁଡ଼ିକର (Surnames) ବର୍ଣ୍ଣାନୁକ୍ରମିକ ତାଲିକା। ପ୍ରତ୍ୟେକ ସାଙ୍ଗିଆର ମୂଳ ବନାନ ଏବଂ କ୍ରମ ସଂରକ୍ଷିତ ହୋଇଛି।',
@@ -185,7 +185,7 @@ const UI_TEXT: Record<
     languageSwitchLabel: 'ଲିପି / ଭାଷା ଚୟନ',
   },
   bn: {
-    pageBadge: 'Community-Surnames',
+    pageBadge: 'Community Surnames [South-Indian-Oad-Community]',
     categoryLabel: 'Category: South-Indian',
     subtitle:
       'সূর্যবংশম ভাদিয়ারাজা (ওডিয়ারাজু) ক্ষত্রিয় সম্প্রদায়ের দক্ষিণ-ভারতীয় পদবিগুলোর (Surnames) বর্ণানুক্রমিক তালিকা। প্রতিটি পদবির মূল বানান এবং ক্রম অক্ষুণ্ণ রাখা হয়েছে।',

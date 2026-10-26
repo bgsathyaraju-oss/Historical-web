@@ -260,7 +260,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             >
                   <button
                     className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                      ['/culture-traditions', '/community-heritage', '/community-surnames', '/surnames', '/gallery', '/directory', '/community-activities', '/events', '/submit-research'].includes(currentPath)
+                      ['/culture-traditions', '/community-heritage', '/community-surnames', '/community-surnames-north-indian-oad-community', '/surnames', '/gallery', '/directory', '/community-activities', '/events', '/submit-research'].includes(currentPath)
                         ? 'text-[#e8c872] bg-[#221016]'
                         : 'hover:text-[#e8c872] hover:bg-stone-900/60'
                     }`}
@@ -274,7 +274,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                         <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityHeritage || 'Community Heritage'}
                       </button>
                       <button onClick={() => navigateTo('/community-surnames')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
-                        <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnames || 'Community-Surnames'}
+                        <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnames || 'Community Surnames [South-Indian-Oad-Community]'}
+                      </button>
+                      <button onClick={() => navigateTo('/community-surnames-north-indian-oad-community')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
+                        <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnamesNorth || 'Community Surnames [North-Indian-Oad-Community]'}
                       </button>
                       <button onClick={() => navigateTo('/community-prominent-persons')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
                         <Users className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityProminentPersons || 'Community Prominent Persons'}
@@ -508,7 +511,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               <Crown className="w-4 h-4 text-[#d4af37]" /> {t.nav.communityHeritage || 'Community Heritage'}
             </button>
             <button onClick={() => navigateTo('/community-surnames')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-[#fae29c] font-semibold flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnames || 'Community-Surnames'}
+              <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnames || 'Community Surnames [South-Indian-Oad-Community]'}
+            </button>
+            <button onClick={() => navigateTo('/community-surnames-north-indian-oad-community')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-[#fae29c] font-semibold flex items-center gap-2">
+              <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.communitySurnamesNorth || 'Community Surnames [North-Indian-Oad-Community]'}
             </button>
             <button onClick={() => navigateTo('/culture-traditions')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.culture || 'Culture & Traditions'}
