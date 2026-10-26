@@ -42,6 +42,7 @@ import { AccessibilityStatementPage } from './pages/AccessibilityStatementPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { UiDesignSystemPage } from './pages/UiDesignSystemPage';
 import { CommunityProminentPersonsPage } from './pages/CommunityProminentPersonsPage';
+import { KalingaWarPage } from './pages/KalingaWarPage';
 
 function getNormalizedAppPath(rawPath: string): string {
   const basePath = import.meta.env.BASE_URL || '/';
@@ -147,6 +148,9 @@ function AppContent() {
         return <HistoricalDocumentaryPage initialArticleId={searchParam} onNavigate={navigateTo} />;
       case '/odra-desha':
         return <OdraDeshaPage onNavigate={navigateTo} />;
+      case '/kalinga-war':
+      case '/ashoka-kalinga-war':
+        return <KalingaWarPage onNavigate={navigateTo} />;
       case '/gajapathi-kings':
       case '/dynasties':
         return <GajapathiKingdomPage onNavigate={navigateTo} initialItemId={searchParam} />;

@@ -140,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             >
               <button
                 className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                  ['/documentary', '/odra-desha', '/gajapathi-kings', '/dynasties', '/timeline', '/maps', '/genealogy'].includes(currentPath)
+                  ['/documentary', '/odra-desha', '/kalinga-war', '/gajapathi-kings', '/dynasties', '/timeline', '/maps', '/genealogy'].includes(currentPath)
                     ? 'text-[#e8c872] bg-[#221016]'
                     : 'hover:text-[#e8c872] hover:bg-stone-900/60'
                 }`}
@@ -155,6 +155,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
                   </button>
                   <button onClick={() => navigateTo('/odra-desha')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Compass className="w-4 h-4 text-[#d4af37]" /> {t.nav.odraDesha}
+                  </button>
+                  <button onClick={() => navigateTo('/kalinga-war')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2 text-[#fae29c] font-semibold">
+                    <Scroll className="w-4 h-4 text-[#d4af37]" /> {t.nav.kalingaWar || 'The Kalinga War (261 BCE)'}
                   </button>
                   <button onClick={() => navigateTo('/gajapathi-kings')} className="w-full text-left px-4 py-2 text-xs hover:bg-[#201520] hover:text-[#e8c872] flex items-center gap-2">
                     <Shield className="w-4 h-4 text-[#d4af37]" /> {t.nav.gajapathiKings}
@@ -298,6 +301,16 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
               )}
             </div>
 
+            {/* Direct Link: The Kalinga War */}
+            <button
+              onClick={() => navigateTo('/kalinga-war')}
+              className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                currentPath === '/kalinga-war' ? 'text-[#e8c872] bg-[#221016]' : 'hover:text-[#e8c872] hover:bg-stone-900/60'
+              }`}
+            >
+              {t.nav.kalingaWar || 'The Kalinga War'}
+            </button>
+
             {/* Direct Link: Community Heritage */}
             <button
               onClick={() => navigateTo('/community-heritage')}
@@ -418,6 +431,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
             </button>
             <button onClick={() => navigateTo('/odra-desha')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.odraDesha}
+            </button>
+            <button onClick={() => navigateTo('/kalinga-war')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-[#fae29c] font-semibold flex items-center gap-2">
+              <Scroll className="w-4 h-4 text-[#d4af37]" /> {t.nav.kalingaWar || 'The Kalinga War (261 BCE)'}
             </button>
             <button onClick={() => navigateTo('/gajapathi-kings')} className="w-full text-left px-3 py-2 text-xs rounded-lg hover:bg-stone-800 text-stone-200">
               {t.nav.gajapathiKings}

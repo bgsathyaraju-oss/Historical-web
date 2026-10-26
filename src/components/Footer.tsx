@@ -129,6 +129,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </button>
               </li>
               <li>
+                <button onClick={() => onNavigate('/kalinga-war')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                  {t.nav.kalingaWar || 'The Kalinga War (261 BCE)'}
+                </button>
+              </li>
+              <li>
                 <button onClick={() => onNavigate('/gajapathi-kings')} className="hover:text-[#e8c872] transition-colors">
                   {t.nav.gajapathiKings}
                 </button>

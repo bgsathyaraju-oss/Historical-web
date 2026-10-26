@@ -7,6 +7,7 @@ import {
   FIGURE_TRANSLATIONS,
   INSCRIPTION_TRANSLATIONS
 } from '../../server/contentTranslations';
+import { KALINGA_WAR_CONTENT } from '../data/kalingaWarData';
 import type { LanguageCode } from '../types';
 
 export interface SearchResultItem {
@@ -114,6 +115,33 @@ export function performClientSearch(
         });
       }
     });
+
+    // Kalinga War Documentary Page (all 8 languages)
+    const kwCurrent = KALINGA_WAR_CONTENT[currentLang] || KALINGA_WAR_CONTENT.en;
+    const kwAllTexts = Object.values(KALINGA_WAR_CONTENT).flatMap(kw => [
+      kw.pageTitle,
+      kw.subtitle,
+      kw.introParagraph,
+      kw.sections.background.title,
+      kw.sections.background.p1,
+      kw.sections.battle.title,
+      kw.sections.tragedy.title,
+      kw.sections.remorse.title,
+      kw.sections.legacy.title,
+      ...kw.scenes.map(s => `${s.title} ${s.narrative}`)
+    ]);
+    if (matchesAny('kalinga war', 'ashoka', 'dhauli', 'jaugada', '261 bce', 'rock edict xiii', ...kwAllTexts)) {
+      results.push({
+        type: 'Article',
+        id: 'kalinga_war_261_bce',
+        title: kwCurrent.pageTitle,
+        subtitle: kwCurrent.badge,
+        snippet: extractSnippet(kwCurrent.introParagraph, query, kwCurrent.subtitle),
+        verification_status: 'Published',
+        link: '/kalinga-war',
+        category: 'Ancient Kalinga'
+      });
+    }
   }
 
   // 2. Community Prominent Persons (all 20 historical figures across 32 branches and 8 languages)

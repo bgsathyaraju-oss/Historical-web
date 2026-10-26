@@ -45,6 +45,7 @@ export interface BaseTranslationDictionary {
     historicalPersons: string;
     communityProminentPersons: string;
     communityHeritage: string;
+    kalingaWar: string;
     logout: string;
     exportZip: string;
   };
@@ -219,6 +220,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'Historical Persons',
       communityProminentPersons: 'Community Prominent Persons',
       communityHeritage: 'Community Heritage',
+      kalingaWar: 'The Kalinga War (261 BCE)',
       logout: 'Logout',
       exportZip: 'Export Project (ZIP)'
     },
@@ -390,6 +392,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'ऐतिहासिक महापुरुष एवं विभूतियाँ',
       communityProminentPersons: 'समुदाय के प्रमुख व्यक्तित्व',
       communityHeritage: 'सामुदायिक विरासत',
+      kalingaWar: 'कलिंग युद्ध (261 ई.पू.)',
       logout: 'लॉग आउट',
       exportZip: 'प्रोजेक्ट ज़िप डाउनलोड'
     },
@@ -561,6 +564,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'చారిత్రక వ్యక్తులు & వీరులు',
       communityProminentPersons: 'సముదాయ ప్రముఖ వ్యక్తులు',
       communityHeritage: 'సముదాయ వారసత్వం',
+      kalingaWar: 'కళింగ యుద్ధం (క్రీ.పూ. 261)',
       logout: 'లాగౌట్',
       exportZip: 'ప్రాజెక్ట్ జిప్ డౌన్‌లోడ్'
     },
@@ -732,6 +736,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು ಮತ್ತು ನಾಯಕರು',
       communityProminentPersons: 'ಸಮುದಾಯದ ಪ್ರಮುಖ ವ್ಯಕ್ತಿಗಳು',
       communityHeritage: 'ಸಮುದಾಯ ಪರಂಪರೆ',
+      kalingaWar: 'ಕಳಿಂಗ ಯುದ್ಧ (ಕ್ರಿ.ಪೂ. 261)',
       logout: 'ಲಾಗೌಟ್',
       exportZip: 'ಪ್ರಾಜೆಕ್ಟ್ ಜಿಪ್ ಡೌನ್‌ಲೋಡ್'
     },
@@ -903,6 +908,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'வரலாற்று மாந்தர்கள் & நாயகர்கள்',
       communityProminentPersons: 'சமூகத்தின் முக்கிய பிரமுகர்கள்',
       communityHeritage: 'சமூக பாரம்பரியம்',
+      kalingaWar: 'கலிங்கப் போர் (கி.மு. 261)',
       logout: 'வெளியேறு',
       exportZip: 'திட்ட ஜிப் பதிவிறக்கம்'
     },
@@ -1074,6 +1080,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'ऐतिहासिक व्यक्ती आणि विभूती',
       communityProminentPersons: 'समाजातील प्रमुख व्यक्तिमत्त्वे',
       communityHeritage: 'समुदाय वारसा',
+      kalingaWar: 'कलिंग युद्ध (इ.स.पू. २६१)',
       logout: 'लॉगआउट',
       exportZip: 'प्रकल्प झिप डाउनलोड'
     },
@@ -1245,6 +1252,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'ଐତିହାସିକ ବ୍ୟକ୍ତି ଓ ନାୟକ',
       communityProminentPersons: 'ସମୁଦାୟର ପ୍ରମୁଖ ବ୍ୟକ୍ତିବିଶେଷ',
       communityHeritage: 'ସମ୍ପ୍ରଦାୟ ଐତିହ୍ୟ',
+      kalingaWar: 'କଳିଙ୍ଗ ଯୁଦ୍ଧ (ଖ୍ରୀ.ପୂ. ୨୬୧)',
       logout: 'ଲଗ୍ଆଉଟ୍',
       exportZip: 'ପ୍ରକଳ୍ପ ଜିପ୍ ଡାଉନଲୋଡ୍'
     },
@@ -1416,6 +1424,7 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       historicalPersons: 'ঐতিহাসিক ব্যক্তিবর্গ ও নায়ক',
       communityProminentPersons: 'সমাজের বিশিষ্ট ব্যক্তিত্ব',
       communityHeritage: 'সম্প্রদায় ঐতিহ্য',
+      kalingaWar: 'কলিঙ্গ যুদ্ধ (২৬১ খ্রিস্টপূর্বাব্দ)',
       logout: 'লগআউট',
       exportZip: 'প্রকল্প জিপ ডাউনলোড'
     },

@@ -20,6 +20,10 @@ import {
   filterGalleryArticlesByKeyword,
   GALLERY_UI_TRANSLATIONS
 } from '../src/data/galleryArticlesEnrichment.ts';
+import { KALINGA_WAR_CONTENT } from '../src/data/kalingaWarData.ts';
+import { performClientSearch } from '../src/utils/searchEngine.ts';
+import fs from 'fs';
+import path from 'path';
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
@@ -693,6 +697,90 @@ async function runTestSuite() {
     results.push({
       suite: 'Gallery Upgrade & Related Content',
       test: 'Article detail dossiers, 8-language keywords, related articles & empty-state filtering',
+      passed: false,
+      error: err.message
+    });
+  }
+
+  // Test 13: Kalinga War Page — 8-Language Completeness, 7 Visual Scenes, Local Image Assets & Search
+  try {
+    const supportedLangs = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'] as const;
+    const enKalinga = KALINGA_WAR_CONTENT.en;
+    assert(enKalinga.scenes.length === 7, `Expected 7 visual scenes in KALINGA_WAR_CONTENT.en, got ${enKalinga.scenes.length}`);
+
+    for (const lang of supportedLangs) {
+      const content = KALINGA_WAR_CONTENT[lang];
+      assert(!!content, `Missing KALINGA_WAR_CONTENT for ${lang}`);
+      assert(!!content.pageTitle && content.pageTitle.trim().length > 10, `Missing pageTitle for ${lang}`);
+      assert(!!content.subtitle && content.subtitle.trim().length > 10, `Missing subtitle for ${lang}`);
+      assert(!!content.introParagraph && content.introParagraph.trim().length > 30, `Missing introParagraph for ${lang}`);
+      assert(!!content.quickSummary.conflictValue && content.quickSummary.conflictValue.trim().length > 0, `Missing quickSummary.conflictValue for ${lang}`);
+      assert(!!content.quickSummary.dateValue && content.quickSummary.dateValue.trim().length > 0, `Missing quickSummary.dateValue for ${lang}`);
+
+      // Verify all Sections A–E exist and have substantial body paragraphs
+      assert(!!content.sections.background.title && content.sections.background.p1.length > 30, `Missing background section in ${lang}`);
+      assert(!!content.sections.battle.title && content.sections.battle.p1.length > 30, `Missing battle section in ${lang}`);
+      assert(!!content.sections.tragedy.title && content.sections.tragedy.p1.length > 30, `Missing tragedy section in ${lang}`);
+      assert(!!content.sections.remorse.title && content.sections.remorse.p1.length > 30, `Missing remorse section in ${lang}`);
+      assert(!!content.sections.legacy.title && content.sections.legacy.p1.length > 30, `Missing legacy section in ${lang}`);
+
+      assert(!!content.sections.tragedy.statDeathsNumber && !!content.sections.tragedy.statDeportedNumber, `Missing Edict XIII figures for ${lang}`);
+      assert(content.scenes.length === 7, `Expected 7 scenes for ${lang}, got ${content.scenes.length}`);
+
+      // Check every scene's local image existence, alt text, caption, source attribution, and translation
+      for (let i = 0; i < content.scenes.length; i++) {
+        const scene = content.scenes[i];
+        assert(!!scene.sceneNumber && scene.sceneNumber.trim().length > 0, `Missing sceneNumber in ${lang}`);
+        assert(!!scene.title && scene.title.trim().length > 0, `Missing scene ${scene.id} title in ${lang}`);
+        assert(!!scene.narrative && scene.narrative.trim().length > 30, `Missing scene ${scene.id} narrative in ${lang}`);
+        assert(!!scene.caption && scene.caption.trim().length > 20, `Missing scene ${scene.id} caption in ${lang}`);
+        assert(!!scene.imageAlt && scene.imageAlt.trim().length > 10, `Missing scene ${scene.id} imageAlt text in ${lang}`);
+        assert(!!scene.attribution && scene.attribution.trim().length > 10, `Missing scene ${scene.id} attribution in ${lang}`);
+
+        const primaryRel = scene.imageUrl.replace(/^\//, '');
+        const primaryAbs = path.resolve(process.cwd(), 'public', primaryRel);
+        assert(fs.existsSync(primaryAbs), `Missing primary image file on disk: ${primaryAbs} (scene ${scene.id})`);
+
+        if (scene.secondaryImageUrl) {
+          const secRel = scene.secondaryImageUrl.replace(/^\//, '');
+          const secAbs = path.resolve(process.cwd(), 'public', secRel);
+          assert(fs.existsSync(secAbs), `Missing secondary image file on disk: ${secAbs} (scene ${scene.id})`);
+        }
+
+        if (lang !== 'en') {
+          assert(scene.title !== enKalinga.scenes[i].title, `Scene ${scene.id} title not translated in ${lang}`);
+          assert(scene.narrative !== enKalinga.scenes[i].narrative, `Scene ${scene.id} narrative not translated in ${lang}`);
+          assert(scene.caption !== enKalinga.scenes[i].caption, `Scene ${scene.id} caption not translated in ${lang}`);
+        }
+      }
+
+      if (lang !== 'en') {
+        assert(content.pageTitle !== enKalinga.pageTitle, `pageTitle not translated in ${lang}`);
+        assert(content.sections.background.title !== enKalinga.sections.background.title, `Section A title not translated in ${lang}`);
+        assert(content.sections.tragedy.title !== enKalinga.sections.tragedy.title, `Section C title not translated in ${lang}`);
+      }
+
+      // Check navigation translation for kalingaWar
+      const navKalinga = translations[lang].nav.kalingaWar;
+      assert(typeof navKalinga === 'string' && navKalinga.trim().length > 0, `Missing nav.kalingaWar for ${lang}`);
+      if (lang !== 'en') {
+        assert(navKalinga !== translations.en.nav.kalingaWar, `nav.kalingaWar not translated for ${lang}`);
+      }
+    }
+
+    // Check Global Search finds Kalinga War page
+    const searchHits = performClientSearch('Dhauli', 'all', 'en');
+    assert(searchHits.some(h => h.link === '/kalinga-war'), 'Expected Global Search for "Dhauli" to return /kalinga-war');
+
+    results.push({
+      suite: 'Kalinga War Documentary Page',
+      test: '8-language translations, Sections A-F, 7 visual scenes, local image files & search indexing',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Kalinga War Documentary Page',
+      test: '8-language translations, Sections A-F, 7 visual scenes, local image files & search indexing',
       passed: false,
       error: err.message
     });
