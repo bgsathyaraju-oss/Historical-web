@@ -14,6 +14,12 @@ import { getAllArticles } from '../src/data/articlesRepository.ts';
 import { getAllDocumentedFigures } from '../src/data/documentedFiguresRepository.ts';
 import { GENEALOGY_UI_TRANSLATIONS } from '../src/data/multilingualSeedTranslations.ts';
 import { translations } from '../src/i18n/translations.ts';
+import {
+  getEnrichedGalleryArticles,
+  getRelatedGalleryArticles,
+  filterGalleryArticlesByKeyword,
+  GALLERY_UI_TRANSLATIONS
+} from '../src/data/galleryArticlesEnrichment.ts';
 
 const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
@@ -604,6 +610,89 @@ async function runTestSuite() {
     results.push({
       suite: 'Multilingual 8-Language System',
       test: 'Backend API ?lang= localization for genealogy, claims, timeline, maps, inscriptions, monuments, docs & gallery',
+      passed: false,
+      error: err.message
+    });
+  }
+
+  // Test 12: Gallery Article Detail Dossiers, Clickable Keywords, Related Articles & 8-Language Support
+  try {
+    const supportedLangs = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'] as const;
+    const enEnriched = getEnrichedGalleryArticles('en');
+    assert(enEnriched.length >= 7, `Expected >= 7 enriched gallery articles, got ${enEnriched.length}`);
+
+    for (const lang of supportedLangs) {
+      const ui = GALLERY_UI_TRANSLATIONS[lang];
+      assert(
+        !!ui &&
+          !!ui.viewDetails &&
+          !!ui.backButton &&
+          !!ui.closeButton &&
+          !!ui.keywordsHeading &&
+          !!ui.relatedArticlesHeading &&
+          !!ui.noRelatedArticlesFound,
+        `Missing GALLERY_UI_TRANSLATIONS fields for ${lang}`
+      );
+
+      const enrichedList = getEnrichedGalleryArticles(lang);
+      assert(enrichedList.length === enEnriched.length, `Length mismatch in ${lang}`);
+
+      for (let i = 0; i < enrichedList.length; i++) {
+        const art = enrichedList[i];
+        assert(!!art.fullDescription && art.fullDescription.length > 30, `Missing fullDescription for ${art.item.id} in ${lang}`);
+        assert(art.historicalBackground.length > 0, `Missing historicalBackground for ${art.item.id} in ${lang}`);
+        assert(art.importantDates.length > 0, `Missing importantDates for ${art.item.id} in ${lang}`);
+        assert(art.historicalPeople.length > 0, `Missing historicalPeople for ${art.item.id} in ${lang}`);
+        assert(art.historicalPlaces.length > 0, `Missing historicalPlaces for ${art.item.id} in ${lang}`);
+        assert(art.references.length > 0, `Missing references for ${art.item.id} in ${lang}`);
+        assert(art.keywords.length > 0, `Missing keywords for ${art.item.id} in ${lang}`);
+
+        if (lang !== 'en') {
+          assert(
+            art.fullDescription !== enEnriched[i].fullDescription,
+            `Gallery fullDescription not translated for ${art.item.id} in ${lang}`
+          );
+          assert(
+            art.keywords[0].label !== enEnriched[i].keywords[0].label,
+            `Gallery keyword label not translated for ${art.item.id} in ${lang}`
+          );
+        }
+
+        // Verify Related Articles never include the current article itself
+        const related = getRelatedGalleryArticles(art.item.id, lang, enrichedList);
+        assert(related.length > 0, `Expected related articles for ${art.item.id} in ${lang}`);
+        assert(
+          related.every(r => r.article.item.id !== art.item.id),
+          `Related articles must not include the currently open article ${art.item.id}`
+        );
+
+        // Verify Keyword filtering works for localized keyword label and canonical ID
+        const kwMatchById = filterGalleryArticlesByKeyword(art.keywords[0].id, lang, enrichedList);
+        assert(
+          kwMatchById.some(m => m.item.id === art.item.id),
+          `Keyword filter by ID ${art.keywords[0].id} failed for ${art.item.id} in ${lang}`
+        );
+        const kwMatchByLabel = filterGalleryArticlesByKeyword(art.keywords[0].label, lang, enrichedList);
+        assert(
+          kwMatchByLabel.some(m => m.item.id === art.item.id),
+          `Keyword filter by localized label ${art.keywords[0].label} failed for ${art.item.id} in ${lang}`
+        );
+      }
+
+      // Verify empty state when no articles match a keyword
+      const emptyMatches = filterGalleryArticlesByKeyword('__nonexistent_keyword_xyz_999__', lang, enrichedList);
+      assert(emptyMatches.length === 0, `Expected 0 matches for nonexistent keyword in ${lang}`);
+    }
+
+    results.push({
+      suite: 'Gallery Upgrade & Related Content',
+      test: 'Article detail dossiers, 8-language keywords, related articles & empty-state filtering',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Gallery Upgrade & Related Content',
+      test: 'Article detail dossiers, 8-language keywords, related articles & empty-state filtering',
       passed: false,
       error: err.message
     });

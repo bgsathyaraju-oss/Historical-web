@@ -178,7 +178,7 @@ function AppContent() {
         return <ResearchArticlesPage onNavigate={navigateTo} initialArticleId={searchParam} />;
       case '/gallery':
       case '/media':
-        return <HistoricalGalleryPage />;
+        return <HistoricalGalleryPage initialItemId={searchParam || undefined} />;
       case '/culture-traditions':
         return <CultureTraditionsPage />;
       case '/literature':
