@@ -28,11 +28,14 @@ function determinePort(): number {
     const p = parseInt(process.argv[portIndex + 1], 10);
     if (!isNaN(p)) return p;
   }
-  // In development, the dev server must always bind to port 3000
-  if (process.env.npm_lifecycle_event === 'dev' || process.env.NODE_ENV === 'development') {
+  // When running behind the AI Studio nginx + control-plane proxy, nginx owns 8080 and proxies to 3000
+  if (
+    process.env.npm_lifecycle_event === 'dev' ||
+    process.env.NODE_ENV === 'development' ||
+    fs.existsSync('/app/control-plane-api/control-plane-api')
+  ) {
     return 3000;
   }
-  // In production outside of dev supervisor, use process.env.PORT
   if (process.env.PORT) {
     const p = parseInt(process.env.PORT, 10);
     if (!isNaN(p)) return p;
@@ -109,9 +112,9 @@ async function startServer() {
   // Production mode detection (never production if running dev script)
   const isProduction =
     process.env.npm_lifecycle_event !== 'dev' &&
+    hasDist &&
     (process.env.NODE_ENV === 'production' ||
-     process.env.npm_lifecycle_event === 'start' ||
-     Boolean(process.env.K_SERVICE));
+     process.env.npm_lifecycle_event === 'start');
 
   if (!isProduction) {
     const { createServer: createViteServer } = await import('vite');
@@ -152,8 +155,19 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const srv = app.listen(PORT, '0.0.0.0', () => {
     console.log(`[SURYAVAMSHA PORTAL] Server running in ${isProduction ? 'production' : 'development'} mode on port ${PORT}`);
+  });
+
+  srv.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE' && PORT !== 3000) {
+      console.warn(`[SURYAVAMSHA PORTAL] Port ${PORT} in use, falling back to port 3000...`);
+      app.listen(3000, '0.0.0.0', () => {
+        console.log(`[SURYAVAMSHA PORTAL] Server running on fallback port 3000`);
+      });
+    } else {
+      console.error('Server listen error:', err);
+    }
   });
 }
 

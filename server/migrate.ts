@@ -366,8 +366,10 @@ Kolletikota Peddintlamma Thalli and Kolleti Sarasu embody the harmonious synthes
   // Sort events chronologically
   db.events_timeline.sort((a, b) => a.sort_year - b.sort_year);
 
-  // Save changes
-  saveDb(db);
+  // Save changes only when migrations modified the database
+  if (changes.length > 0) {
+    saveDb(db);
+  }
   return { success: true, changes };
 }
 

@@ -193,6 +193,7 @@ function AppContent() {
       case '/references':
         return <HistoricalReferencesPage />;
       case '/community-heritage':
+      case '/heritage':
         return <CommunityHeritagePage onNavigate={navigateTo} initialItemId={searchParam} />;
       case '/community-surnames':
       case '/surnames':

@@ -232,13 +232,15 @@ interface ContentDetailModalProps {
   onClose: () => void;
   onHome?: () => void;
   closeLabel?: string;
+  onTagClick?: (tagItem: string, sectionHeading?: string) => void;
 }
 
 export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
   item,
   isOpen = true,
   onClose,
-  closeLabel
+  closeLabel,
+  onTagClick
 }) => {
   const { language } = useLanguage();
   const ui = MODAL_UI_LABELS[language] || MODAL_UI_LABELS.en;
@@ -509,14 +511,25 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
                   {sec.type === 'tags' && sec.items && (
                     <div className="flex flex-wrap gap-2">
-                      {sec.items.map((tagItem, tIdx) => (
-                        <span
-                          key={tIdx}
-                          className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-[#fae29c] font-medium"
-                        >
-                          {tagItem}
-                        </span>
-                      ))}
+                      {sec.items.map((tagItem, tIdx) =>
+                        onTagClick && !tagItem.startsWith('#') ? (
+                          <button
+                            key={tIdx}
+                            type="button"
+                            onClick={() => onTagClick(tagItem, secHeading)}
+                            className="px-3 py-1 rounded-lg bg-[#182030] hover:bg-[#580014] border border-stone-700 hover:border-[#d4af37] text-xs text-[#fae29c] hover:text-white font-medium transition-colors cursor-pointer"
+                          >
+                            {tagItem}
+                          </button>
+                        ) : (
+                          <span
+                            key={tIdx}
+                            className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-[#fae29c] font-medium"
+                          >
+                            {tagItem}
+                          </span>
+                        )
+                      )}
                     </div>
                   )}
 

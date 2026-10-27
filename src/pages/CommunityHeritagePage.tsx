@@ -33,10 +33,28 @@ import {
 } from '../data/historyContent';
 import { LanguageCode } from '../types';
 import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
+import {
+  COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES,
+  COMMUNITY_DIRECTORY_ITEMS,
+  ARTICLE_SECTION_HEADINGS,
+  STEP2_DIRECTORY_UI_LABELS,
+  KEYWORD_TRANSLATIONS,
+  CommunityDirectoryEntry,
+  ProfessionalHeritageCategoryArticle
+} from '../data/communityHeritageDirectoryData';
+import {
+  COMMUNITY_HERITAGE_DETAILED_ARTICLES,
+  STEP3_ARTICLE_UI_LABELS,
+  STEP4_VISUAL_ASSET_REGISTRY,
+  STEP4_VISUAL_UI_LABELS,
+  STEP5_PAGE_UI_TRANSLATIONS,
+  SYNONYM_COMPREHENSIVE_MONOGRAPHS,
+  SYNONYM_MONOGRAPH_SECTION_HEADINGS
+} from '../data/communityHeritageArticlesData';
 
 interface CommunityHeritagePageProps {
   onNavigate: (path: string) => void;
-  initialTab?: 'synonyms' | 'figures' | 'geography' | 'history';
+  initialTab?: 'synonyms' | 'professions' | 'figures' | 'geography' | 'history';
   initialItemId?: string | null;
 }
 
@@ -46,11 +64,17 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   initialItemId
 }) => {
   const { t, language, setLanguage, translateText, getMetadataLabel } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'synonyms' | 'figures' | 'geography' | 'history'>(() => {
+  const [activeTab, setActiveTab] = useState<'synonyms' | 'professions' | 'figures' | 'geography' | 'history'>(() => {
     if (initialTab) return initialTab;
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    if (tabParam === 'figures' || tabParam === 'synonyms' || tabParam === 'geography' || tabParam === 'history') {
+    if (
+      tabParam === 'figures' ||
+      tabParam === 'synonyms' ||
+      tabParam === 'professions' ||
+      tabParam === 'geography' ||
+      tabParam === 'history'
+    ) {
       return tabParam;
     }
     return 'synonyms';
@@ -58,11 +82,366 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [selectedFigure, setSelectedFigure] = useState<HistoricalFigureSummary | null>(null);
-  const [selectedModalRef, setSelectedModalRef] = useState<{ type: 'synonym' | 'region' | 'monograph'; id: string } | null>(null);
+  const [selectedModalRef, setSelectedModalRef] = useState<{
+    type: 'synonym' | 'region' | 'monograph' | 'community_dir' | 'profession_cat';
+    id: string;
+  } | null>(null);
   const [synonymCategoryFilter, setSynonymCategoryFilter] = useState<string>('all');
+  const [directoryGroupFilter, setDirectoryGroupFilter] = useState<string>('all');
+  const [selectedProfessionCatNumber, setSelectedProfessionCatNumber] = useState<number | 'all'>('all');
+
+  const referenceMenuRef = React.useRef<HTMLDivElement | null>(null);
+  const targetContentRef = React.useRef<HTMLDivElement | null>(null);
+
+  const syncUrlParams = React.useCallback(
+    (
+      nextTab: 'synonyms' | 'professions' | 'figures' | 'geography' | 'history',
+      nextItemId?: string | null,
+      nextRegionId?: string | null
+    ) => {
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
+      params.set('tab', nextTab);
+      if (nextItemId) {
+        params.set('id', nextItemId);
+      } else {
+        params.delete('id');
+        params.delete('figure');
+        params.delete('article');
+      }
+      if (nextRegionId !== undefined) {
+        if (nextRegionId) {
+          params.set('region', nextRegionId);
+        } else {
+          params.delete('region');
+        }
+      }
+      const queryStr = params.toString();
+      const newUrl = `${window.location.pathname}${queryStr ? `?${queryStr}` : ''}`;
+      const currentUrl = `${window.location.pathname}${window.location.search}`;
+      if (newUrl !== currentUrl) {
+        window.history.pushState(
+          { path: newUrl, tab: nextTab, id: nextItemId || null, region: nextRegionId || null },
+          '',
+          newUrl
+        );
+      }
+    },
+    []
+  );
+
+  const scrollToTargetSection = React.useCallback(() => {
+    setTimeout(() => {
+      if (targetContentRef.current) {
+        targetContentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  }, []);
+
+  const handleSelectReferenceOption = React.useCallback(
+    (nextTab: 'synonyms' | 'professions' | 'figures' | 'geography' | 'history') => {
+      setSearchTerm('');
+      setSelectedRegionId(null);
+      setSynonymCategoryFilter('all');
+      setDirectoryGroupFilter('all');
+      setSelectedProfessionCatNumber('all');
+      setSelectedModalRef(null);
+      setSelectedFigure(null);
+      setActiveTab(nextTab);
+      syncUrlParams(nextTab, null, null);
+      scrollToTargetSection();
+    },
+    [syncUrlParams, scrollToTargetSection]
+  );
+
+  const step2Labels = STEP2_DIRECTORY_UI_LABELS[language] || STEP2_DIRECTORY_UI_LABELS.en;
+  const step3Labels = STEP3_ARTICLE_UI_LABELS[language] || STEP3_ARTICLE_UI_LABELS.en;
+  const step4VisualLabels = STEP4_VISUAL_UI_LABELS[language] || STEP4_VISUAL_UI_LABELS.en;
+  const step5Ui = STEP5_PAGE_UI_TRANSLATIONS[language] || STEP5_PAGE_UI_TRANSLATIONS.en;
+  const fallbackArchiveImg = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
+  const getHeading = (key: string) =>
+    ARTICLE_SECTION_HEADINGS[key]?.[language] || ARTICLE_SECTION_HEADINGS[key]?.en || key;
+  const translateKeyword = (kw: string) =>
+    KEYWORD_TRANSLATIONS[kw]?.[language] || KEYWORD_TRANSLATIONS[kw]?.en || kw;
+
+  const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.currentTarget;
+    if (target.src !== fallbackArchiveImg) {
+      target.src = fallbackArchiveImg;
+    }
+  };
+
+  const buildVisualDocSection = (articleId: string) => {
+    const vis = STEP4_VISUAL_ASSET_REGISTRY[articleId];
+    if (!vis) return [];
+    const vTitle = vis.title[language] || vis.title.en;
+    const vCap = vis.caption[language] || vis.caption.en;
+    const vClass = step4VisualLabels.visualClasses[vis.visualClass];
+    const items: string[] = [
+      `${step4VisualLabels.imageTitleLabel}: ${vTitle}`,
+      `${step4VisualLabels.visualTypeLabel}: ${vClass}`,
+      `${step4VisualLabels.imageCaptionLabel}: ${vCap}`,
+      `${step4VisualLabels.sourceAttributionLabel}: ${vis.sourceAttribution}`
+    ];
+    if (vis.visualClass === 'reconstructed_map') {
+      items.push(step4VisualLabels.mapDisclaimerText);
+    }
+    if (vis.visualClass === 'artistic_illustration') {
+      items.push(step4VisualLabels.illustrationDisclaimerText);
+    }
+    if (vis.companionMapUrl && vis.companionMapTitle && vis.companionMapCaption) {
+      items.push(
+        `${step4VisualLabels.companionMapHeading}: ${
+          vis.companionMapTitle[language] || vis.companionMapTitle.en
+        } — ${vis.companionMapCaption[language] || vis.companionMapCaption.en}`
+      );
+      items.push(step4VisualLabels.mapDisclaimerText);
+    }
+    return [
+      {
+        heading: step4VisualLabels.visualDocumentationHeading,
+        type: 'list' as const,
+        items: Array.from(new Set(items))
+      }
+    ];
+  };
+
+  const DESIGNATION_TO_ARTICLE_ID: Record<string, string> = {
+    'Oad-Rajputh': 'syn_oad_rajputh',
+    'Oad': 'syn_od_oad_odra',
+    'Od-Rajput': 'comm_dir_02_od_rajputh',
+    'Od': 'comm_dir_01_od',
+    'Oad Patel (Artisan Title)': 'syn_oad_rajputh',
+    'Waddar': 'syn_waddar_vaddar',
+    'Vaddar': 'comm_dir_15_voddar',
+    'Vadar': 'syn_waddar_vaddar',
+    'Od-Kshatriya': 'syn_od_kshatriya',
+    'Odde': 'syn_odde_vadde',
+    'Vadde': 'syn_odde_vadde',
+    'OddeRajulu': 'syn_odderajulu',
+    'VaddeRajulu': 'comm_dir_13_vadderarajulu',
+    'Vadiyarajulu': 'comm_dir_12_vaddirajulu',
+    'Oddar': 'syn_oddar',
+    'Odra': 'comm_dir_03_odra_kshatriya',
+    'Suryavamshi Odiyaraju': 'syn_suryavamshi'
+  };
+
+  const REGION_RELATED_ARTICLE_IDS: Record<string, string[]> = {
+    geo_rajasthan_sindh_punjab: [
+      'comm_dir_02_od_rajputh',
+      'comm_dir_01_od',
+      'syn_oad_rajputh',
+      'syn_od_oad_odra',
+      'syn_sagaravamshi',
+      'fig_maharshi_bhagiratha',
+      'mono_part_6_geographical_map'
+    ],
+    geo_gujarat: [
+      'comm_dir_02_od_rajputh',
+      'comm_dir_01_od',
+      'syn_oad_rajputh',
+      'fig_mata_jasma_devi',
+      'mono_part_4_jasma_siddharama',
+      'mono_part_6_geographical_map'
+    ],
+    geo_maharashtra: [
+      'comm_dir_15_voddar',
+      'syn_waddar_vaddar',
+      'syn_od_kshatriya',
+      'fig_siddharameshwara',
+      'mono_part_4_jasma_siddharama',
+      'mono_part_6_geographical_map'
+    ],
+    geo_karnataka: [
+      'comm_dir_15_voddar',
+      'syn_waddar_vaddar',
+      'syn_odiyaraju_karnataka',
+      'syn_odde_vadde',
+      'fig_siddharameshwara',
+      'fig_prince_balavaddiraju',
+      'mono_part_6_geographical_map'
+    ],
+    geo_andhra_telangana: [
+      'syn_odde_vadde',
+      'syn_odderajulu',
+      'comm_dir_09_vaddi',
+      'comm_dir_10_vaddera',
+      'comm_dir_11_vaddeelu',
+      'comm_dir_12_vaddirajulu',
+      'comm_dir_13_vadderarajulu',
+      'syn_vadde_gajapathirajulu',
+      'fig_kapilendra_deva',
+      'mono_part_5_gajapathi_diaspora'
+    ],
+    geo_tamil_nadu: [
+      'comm_dir_08_odan',
+      'comm_dir_16_oddaru',
+      'syn_oddar',
+      'syn_ottar',
+      'syn_odda_nayakkar_tn',
+      'syn_odde_vadde',
+      'mono_part_5_gajapathi_diaspora'
+    ],
+    geo_odisha: [
+      'comm_dir_01_od',
+      'comm_dir_03_odra_kshatriya',
+      'comm_dir_04_kalingarajulu',
+      'comm_dir_05_od_khandayath',
+      'comm_dir_06_oda_chassa',
+      'comm_dir_07_od_paika',
+      'comm_dir_14_gajapathulu',
+      'syn_od_kshatriya',
+      'syn_odisha_kshatriya',
+      'syn_suryavamshi',
+      'fig_king_kharavela',
+      'fig_kapilendra_deva',
+      'mono_part_2_kharavela'
+    ]
+  };
+
+  const resolveDesignationTargetId = (designation: string): string => {
+    if (DESIGNATION_TO_ARTICLE_ID[designation]) {
+      return DESIGNATION_TO_ARTICLE_ID[designation];
+    }
+    const trimmed = designation.trim();
+    if (DESIGNATION_TO_ARTICLE_ID[trimmed]) {
+      return DESIGNATION_TO_ARTICLE_ID[trimmed];
+    }
+    const commMatch = COMMUNITY_DIRECTORY_ITEMS.find(
+      c =>
+        c.canonicalName.toLowerCase() === trimmed.toLowerCase() ||
+        Object.values(c.localizedName).some(v => v?.toLowerCase() === trimmed.toLowerCase())
+    );
+    if (commMatch) return commMatch.id;
+    const synMatch = COMMUNITY_SYNONYMS.find(
+      s =>
+        s.title.toLowerCase().includes(trimmed.toLowerCase()) ||
+        trimmed.toLowerCase().includes(s.title.toLowerCase())
+    );
+    if (synMatch) return synMatch.id;
+    return 'syn_od_oad_odra';
+  };
 
   const openSynonymModal = (item: CommunitySynonym) => {
+    setSelectedFigure(null);
     setSelectedModalRef({ type: 'synonym', id: item.id });
+    syncUrlParams('synonyms', item.id);
+  };
+
+  const openCommunityDirModal = (item: CommunityDirectoryEntry) => {
+    setSelectedFigure(null);
+    setSelectedModalRef({ type: 'community_dir', id: item.id });
+    syncUrlParams('synonyms', item.id);
+  };
+
+  const openProfessionModal = (cat: ProfessionalHeritageCategoryArticle) => {
+    setSelectedFigure(null);
+    setSelectedModalRef({ type: 'profession_cat', id: cat.id });
+    syncUrlParams('professions', cat.id);
+  };
+
+  const handleNavigateRelatedId = (targetId: string) => {
+    const commItem = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === targetId);
+    if (commItem) {
+      setSelectedFigure(null);
+      setActiveTab('synonyms');
+      setSelectedModalRef({ type: 'community_dir', id: commItem.id });
+      syncUrlParams('synonyms', commItem.id);
+      return;
+    }
+    const profItem = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.id === targetId);
+    if (profItem) {
+      setSelectedFigure(null);
+      setActiveTab('professions');
+      setSelectedModalRef({ type: 'profession_cat', id: profItem.id });
+      syncUrlParams('professions', profItem.id);
+      return;
+    }
+    const synItem = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
+    if (synItem) {
+      setSelectedFigure(null);
+      setActiveTab('synonyms');
+      setSelectedModalRef({ type: 'synonym', id: synItem.id });
+      syncUrlParams('synonyms', synItem.id);
+      return;
+    }
+    const regItem = GEOGRAPHICAL_SPREAD.find(r => r.id === targetId);
+    if (regItem) {
+      setSelectedFigure(null);
+      setActiveTab('geography');
+      setSelectedRegionId(regItem.id);
+      setSelectedModalRef({ type: 'region', id: regItem.id });
+      syncUrlParams('geography', regItem.id, regItem.id);
+      return;
+    }
+    const monoItem = HISTORICAL_MONOGRAPH_SECTIONS.find(m => m.id === targetId);
+    if (monoItem) {
+      setSelectedFigure(null);
+      setActiveTab('history');
+      setSelectedModalRef({ type: 'monograph', id: monoItem.id });
+      syncUrlParams('history', monoItem.id);
+      return;
+    }
+    const figItem = HISTORICAL_FIGURES.find(f => f.id === targetId);
+    if (figItem) {
+      setSelectedModalRef(null);
+      setActiveTab('figures');
+      setSelectedFigure(figItem);
+      syncUrlParams('figures', figItem.id);
+    }
+  };
+
+  const resolveRelatedLabel = (targetId: string): string => {
+    const commItem = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === targetId);
+    if (commItem) {
+      return `#${commItem.orderNumber} ${commItem.localizedName[language] || commItem.canonicalName}`;
+    }
+    const profItem = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.id === targetId);
+    if (profItem) {
+      return `${step5Ui.catPrefix}${profItem.categoryNumber}: ${profItem.title[language] || profItem.title.en}`;
+    }
+    const synItem = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
+    if (synItem) {
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[synItem.id];
+      return mono ? mono.localizedTitle[language] || mono.localizedTitle.en : synItem.title;
+    }
+    const regItem = GEOGRAPHICAL_SPREAD.find(r => r.id === targetId);
+    if (regItem) {
+      return regItem.localized_region[language] || regItem.region_name;
+    }
+    const monoItem = HISTORICAL_MONOGRAPH_SECTIONS.find(m => m.id === targetId);
+    if (monoItem) {
+      return monoItem.section_title[language] || monoItem.section_title.en;
+    }
+    const figItem = HISTORICAL_FIGURES.find(f => f.id === targetId);
+    if (figItem) {
+      return figItem.localized_name[language] || figItem.canonical_name;
+    }
+    return targetId;
+  };
+
+  const handleModalTagClick = (tagItem: string) => {
+    if (DESIGNATION_TO_ARTICLE_ID[tagItem]) {
+      handleNavigateRelatedId(DESIGNATION_TO_ARTICLE_ID[tagItem]);
+      return;
+    }
+    const allIds = [
+      ...COMMUNITY_DIRECTORY_ITEMS.map(c => c.id),
+      ...COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.map(p => p.id),
+      ...COMMUNITY_SYNONYMS.map(s => s.id),
+      ...GEOGRAPHICAL_SPREAD.map(r => r.id),
+      ...HISTORICAL_MONOGRAPH_SECTIONS.map(m => m.id),
+      ...HISTORICAL_FIGURES.map(f => f.id)
+    ];
+    const matchedId = allIds.find(id => resolveRelatedLabel(id) === tagItem || id === tagItem);
+    if (matchedId) {
+      handleNavigateRelatedId(matchedId);
+      return;
+    }
+    const fallbackId = resolveDesignationTargetId(tagItem);
+    if (fallbackId) {
+      handleNavigateRelatedId(fallbackId);
+    }
   };
 
   const synonymSectionLabels = React.useMemo(() => {
@@ -388,12 +767,28 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     return dict[language] || dict.en;
   }, [language]);
 
+  const localizeSynonymGroup = (grp: string): string => {
+    if (grp === 'Dynastic and lineage designations') {
+      return synonymSectionLabels.groupDynastic.split(' (')[0];
+    }
+    if (grp === 'Regional community designations') {
+      return synonymSectionLabels.groupRegional.split(' (')[0];
+    }
+    if (grp === 'Historical, martial, and traditional titles') {
+      return synonymSectionLabels.groupTitles.split(' (')[0];
+    }
+    return grp;
+  };
+
   const modalItem: ContentDetailItem | null = React.useMemo(() => {
     if (!selectedModalRef) return null;
     const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
     if (selectedModalRef.type === 'synonym') {
       const item = COMMUNITY_SYNONYMS.find(s => s.id === selectedModalRef.id);
       if (!item) return null;
+      const vis = STEP4_VISUAL_ASSET_REGISTRY[item.id];
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[item.id];
+      const monoHeadings = SYNONYM_MONOGRAPH_SECTION_HEADINGS[language] || SYNONYM_MONOGRAPH_SECTION_HEADINGS.en;
       const epistemicText = item.epistemic_note[language] || item.epistemic_note.en;
       const synImgMap: Record<string, string> = {
         syn_suryavamshi: `${base}surya_konark_sculpture.jpg`,
@@ -412,40 +807,120 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         syn_oad_rajputh: `${base}oad_hydraulic_stepwell.jpg`,
         syn_odderajulu: `${base}kolleru_lake_citadel.jpg`
       };
+      const monographSections = mono
+        ? [
+            {
+              heading: monoHeadings.sec2_linguistics,
+              type: 'text' as const,
+              content: mono.terminologyAndLinguisticAnalysis[language] || mono.terminologyAndLinguisticAnalysis.en
+            },
+            {
+              heading: monoHeadings.sec3_chronology,
+              type: 'text' as const,
+              content: mono.chronologicalHistory[language] || mono.chronologicalHistory.en
+            },
+            {
+              heading: monoHeadings.sec4_geography,
+              type: 'text' as const,
+              content: mono.geographicalAndSettlementAnalysis[language] || mono.geographicalAndSettlementAnalysis.en
+            },
+            {
+              heading: monoHeadings.sec5_culture,
+              type: 'text' as const,
+              content: mono.culturalAndSocialTraditions[language] || mono.culturalAndSocialTraditions.en
+            },
+            {
+              heading: monoHeadings.sec6_professions,
+              type: 'text' as const,
+              content: mono.occupationalAndProfessionalHeritage[language] || mono.occupationalAndProfessionalHeritage.en
+            },
+            {
+              heading: monoHeadings.sec7_evidence,
+              type: 'text' as const,
+              content: mono.epigraphicAndDocumentaryEvidence[language] || mono.epigraphicAndDocumentaryEvidence.en
+            },
+            {
+              heading: monoHeadings.sec8_epistemic,
+              type: 'text' as const,
+              content: mono.epistemicEvaluationAndResearchGaps[language] || mono.epistemicEvaluationAndResearchGaps.en
+            },
+            {
+              heading: monoHeadings.sec9_conclusion,
+              type: 'text' as const,
+              content: mono.conclusionAndSynthesis[language] || mono.conclusionAndSynthesis.en
+            }
+          ]
+        : [];
       return {
         id: item.id,
-        title: item.title,
-        subtitle: `${item.designation_group} • ${item.geographical_association}`,
+        title: mono ? mono.localizedTitle[language] || mono.localizedTitle.en : item.title,
+        subtitle: `${localizeSynonymGroup(item.designation_group)} • ${item.geographical_association}`,
         badge: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification,
         location: item.geographical_association,
-        imageUrl: synImgMap[item.id] || `${base}barabati_fort_gateway.jpg`,
+        imageUrl: vis?.imageUrl || synImgMap[item.id] || `${base}barabati_fort_gateway.jpg`,
+        imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
         imageLayout: 'banner',
+        summaryLabel: mono ? monoHeadings.summaryLabel : undefined,
+        summary: mono ? mono.executiveSummaryAndScope[language] || mono.executiveSummaryAndScope.en : undefined,
         content: `${item.historical_role[language] || item.historical_role.en}\n\n${synonymSectionLabels.epistemicLabel} ${epistemicText}`,
         metadata: [
-          { label: synonymSectionLabels.colCategory, value: item.designation_group },
+          { label: synonymSectionLabels.colCategory, value: localizeSynonymGroup(item.designation_group) },
           { label: synonymSectionLabels.colGeography, value: item.geographical_association },
           { label: synonymSectionLabels.colEpistemic, value: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification },
-          { label: 'Linguistic Origin', value: item.linguistic_origin },
-          { label: 'Primary Regions', value: item.primary_regions.join(', ') },
-          { label: 'Prominent States', value: item.prominent_states.join(', ') }
+          { label: step5Ui.synonymModal.linguisticOrigin, value: item.linguistic_origin },
+          { label: step5Ui.synonymModal.primaryRegions, value: item.primary_regions.join(', ') },
+          { label: step5Ui.synonymModal.prominentStates, value: item.prominent_states.join(', ') }
         ],
         sections: [
+          ...monographSections,
+          ...buildVisualDocSection(item.id),
           {
-            heading: 'Native Script Attestations',
+            heading: step5Ui.nativeScriptAttestations,
             type: 'tags',
             items: Object.entries(item.native_scripts).map(([k, v]) => `${k}: ${v}`)
           },
           {
-            heading: 'Sacred Associations & Patron Deities',
+            heading: step5Ui.synonymModal.sacredAssociations,
             type: 'list',
-            items: item.sacred_associations
-          }
+            items: Array.from(new Set(item.sacred_associations))
+          },
+          ...(mono && mono.references.length > 0
+            ? [
+                {
+                  heading: step3Labels.referencesHeading,
+                  type: 'list' as const,
+                  items: mono.references.map(r => `${r.citation} [${r.type}]`)
+                }
+              ]
+            : []),
+          ...(mono && mono.relatedArticleIds.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedArticlesHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(mono.relatedArticleIds)).map((id: string) => resolveRelatedLabel(id))
+                }
+              ]
+            : []),
+          ...(mono && mono.relatedKeywords.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedKeywordsHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(mono.relatedKeywords)).map((kw: string) => {
+                    const tr = translateKeyword(kw);
+                    return tr !== kw ? `#${tr} (${kw})` : `#${kw}`;
+                  })
+                }
+              ]
+            : [])
         ]
       };
     }
     if (selectedModalRef.type === 'region') {
       const activeReg = GEOGRAPHICAL_SPREAD.find(r => r.id === selectedModalRef.id);
       if (!activeReg) return null;
+      const vis = STEP4_VISUAL_ASSET_REGISTRY[activeReg.id];
       const regTitle = activeReg.localized_region[language] || activeReg.region_name;
       const regOverview = activeReg.regional_overview[language] || activeReg.regional_overview.en;
       const regImgMap: Record<string, string> = {
@@ -457,40 +932,66 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         geo_tamil_nadu: `${base}srirangam_temple.jpg`,
         geo_odisha: `${base}barabati_fort_gateway.jpg`
       };
+      const relatedIds = REGION_RELATED_ARTICLE_IDS[activeReg.id] || [];
       return {
         id: activeReg.id,
         title: regTitle,
         subtitle: activeReg.states_and_territories.join(' • '),
-        badge: 'Regional Corridor Spotlight',
-        era: activeReg.migration_epoch_and_corridor,
+        badge: step5Ui.geographyTab.spotlightPanelBadge,
+        era: step5Ui.geographyTab.migrationEpochs[activeReg.id] || activeReg.migration_epoch_and_corridor,
         location: activeReg.prominent_cities_districts.join(', '),
-        imageUrl: regImgMap[activeReg.id] || `${base}odra_kalinga_map.jpg`,
+        imageUrl: vis?.imageUrl || regImgMap[activeReg.id] || `${base}odra_kalinga_map.jpg`,
+        imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
         imageLayout: 'banner',
         content: regOverview,
         sections: [
+          ...buildVisualDocSection(activeReg.id),
           {
-            heading: 'Predominant Community Designations',
+            heading: step5Ui.geographyTab.predominantDesignationsLabel,
             type: 'tags',
-            items: activeReg.predominant_community_synonyms
+            items: Array.from(new Set(activeReg.predominant_community_synonyms))
           },
           {
-            heading: 'Landmark Forts & Reservoirs',
+            heading: step5Ui.geographyTab.landmarkFortsLabel,
             type: 'list',
-            items: activeReg.historical_forts_and_landmarks
+            items: Array.from(new Set(activeReg.historical_forts_and_landmarks))
           },
           {
-            heading: 'Sacred Centers & Shrines',
+            heading: step5Ui.geographyTab.sacredCentersLabel,
             type: 'list',
-            items: activeReg.sacred_centers
+            items: Array.from(new Set(activeReg.sacred_centers))
+          },
+          ...(relatedIds.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedArticlesHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(relatedIds)).map(id => resolveRelatedLabel(id))
+                }
+              ]
+            : [])
+        ],
+        actionButton: {
+          label: step5Ui.geographyTab.filterSynonymsBtn,
+          onClick: () => {
+            setSelectedRegionId(activeReg.id);
+            setSearchTerm('');
+            setDirectoryGroupFilter('all');
+            setSynonymCategoryFilter('all');
+            setActiveTab('synonyms');
+            syncUrlParams('synonyms', null, activeReg.id);
+            scrollToTargetSection();
           }
-        ]
+        }
       };
     }
     if (selectedModalRef.type === 'monograph') {
       const sec = HISTORICAL_MONOGRAPH_SECTIONS.find(s => s.id === selectedModalRef.id);
       if (!sec) return null;
+      const vis = STEP4_VISUAL_ASSET_REGISTRY[sec.id];
       const secTitle = sec.section_title[language] || sec.section_title.en;
       const secContent = sec.content[language] || sec.content.en;
+      const localizedKeyPoints = step5Ui.monographTab.chapterKeyPoints[sec.id] || sec.key_points;
       const monoImgMap: Record<string, string> = {
         mono_part_1_primordial: `${base}surya_konark_sculpture.jpg`,
         mono_part_2_kharavela: `${base}emperor_kharavela_udayagiri.jpg`,
@@ -504,64 +1005,414 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       return {
         id: sec.id,
         title: secTitle,
-        subtitle: 'The Civilizational Odyssey of Oad-Rajput & Od-Kshatriya Communities',
-        badge: 'Peer-Reviewed Archival Monograph',
+        subtitle: step5Ui.monographTab.heading,
+        badge: step5Ui.monographTab.badge,
         author: 'Suryavamsha Archival Research Council',
-        imageUrl: monoImgMap[sec.id] || `${base}barabati_fort_gateway.jpg`,
+        imageUrl: vis?.imageUrl || monoImgMap[sec.id] || `${base}barabati_fort_gateway.jpg`,
+        imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
         imageLayout: 'banner',
         content: secContent,
-        sections:
-          sec.key_points && sec.key_points.length > 0
-            ? [{ heading: 'Key Historical Takeaways', type: 'list', items: sec.key_points }]
-            : []
+        sections: [
+          ...buildVisualDocSection(sec.id),
+          ...(localizedKeyPoints && localizedKeyPoints.length > 0
+            ? [{ heading: step5Ui.monographTab.keyTakeawaysHeading, type: 'list' as const, items: localizedKeyPoints }]
+            : [])
+        ]
+      };
+    }
+    if (selectedModalRef.type === 'community_dir') {
+      const entry = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === selectedModalRef.id);
+      if (!entry) return null;
+      const detailed = COMMUNITY_HERITAGE_DETAILED_ARTICLES.find(a => a.id === entry.id);
+      const vis = STEP4_VISUAL_ASSET_REGISTRY[entry.id];
+      const linkedSyn = entry.linkedSynonymId
+        ? COMMUNITY_SYNONYMS.find(s => s.id === entry.linkedSynonymId)
+        : undefined;
+      const locName = entry.localizedName[language] || entry.localizedName.en;
+      const locGroup = entry.localizedCategoryGroup[language] || entry.localizedCategoryGroup.en;
+      const locGeo = entry.geographicalSpread[language] || entry.geographicalSpread.en;
+      const locEpistemic = entry.epistemicClassification[language] || entry.epistemicClassification.en;
+      const locOverview = entry.overview[language] || entry.overview.en;
+      const assocProfNames = entry.professionalCategoryNumbers
+        .map(num => {
+          const cat = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.categoryNumber === num);
+          return cat ? `${cat.categoryNumber}. ${cat.title[language] || cat.title.en}` : '';
+        })
+        .filter(Boolean);
+
+      const articleBlocks: string[] = [locOverview];
+      if (detailed) {
+        articleBlocks.push(
+          `■ ${step3Labels.historicalAnalysisHeading}:\n${
+            detailed.historicalAnalysis[language] || detailed.historicalAnalysis.en
+          }`,
+          `■ ${step3Labels.culturalBackgroundHeading}:\n${
+            detailed.culturalBackground[language] || detailed.culturalBackground.en
+          }`,
+          `■ ${step3Labels.professionalHeritageHeading}:\n${
+            detailed.professionalHeritageSummary[language] || detailed.professionalHeritageSummary.en
+          }`,
+          `■ ${step3Labels.documentedExamplesHeading}:\n${
+            detailed.documentedExamples[language] || detailed.documentedExamples.en
+          }`,
+          `■ ${step3Labels.epistemicDistinctionHeading}:\n${
+            detailed.epistemicDistinctionNote[language] || detailed.epistemicDistinctionNote.en
+          }`
+        );
+      }
+      if (linkedSyn) {
+        articleBlocks.push(
+          `■ ${step3Labels.preservedSynonymHeading} (${linkedSyn.title}):\n${
+            linkedSyn.historical_role[language] || linkedSyn.historical_role.en
+          }\n${synonymSectionLabels.epistemicLabel} ${
+            linkedSyn.epistemic_note[language] || linkedSyn.epistemic_note.en
+          }`
+        );
+      }
+
+      const nonRedundantRelatedIds = detailed
+        ? Array.from(new Set(detailed.relatedArticleIds.filter((id: string) => !id.startsWith('prof_cat_'))))
+        : [];
+      const uniqueKeywords = detailed ? Array.from(new Set(detailed.relatedKeywords)) : [];
+
+      return {
+        id: entry.id,
+        title: `${entry.orderNumber}. ${locName}${locName !== entry.canonicalName ? ` (${entry.canonicalName})` : ''}`,
+        subtitle: `${locGroup} • ${locGeo}`,
+        badge: locEpistemic,
+        location: locGeo,
+        imageUrl: vis?.imageUrl || detailed?.imageUrl || `${base}barabati_fort_gateway.jpg`,
+        imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
+        imageLayout: 'banner',
+        content: articleBlocks.join('\n\n'),
+        metadata: [
+          {
+            label: synonymSectionLabels.colDesignation,
+            value: locName !== entry.canonicalName ? `${entry.canonicalName} (${locName})` : entry.canonicalName
+          },
+          { label: synonymSectionLabels.colCategory, value: locGroup },
+          { label: synonymSectionLabels.colGeography, value: locGeo },
+          { label: synonymSectionLabels.colEpistemic, value: locEpistemic },
+          { label: synonymSectionLabels.statesLabel, value: entry.prominentStates.join(', ') }
+        ],
+        sections: [
+          ...buildVisualDocSection(entry.id),
+          {
+            heading: step5Ui.nativeScriptAttestations,
+            type: 'tags',
+            items: Object.entries(entry.nativeScripts).map(([k, v]) => `${k}: ${v}`)
+          },
+          {
+            heading: step2Labels.associatedProfessionsLabel,
+            type: 'list',
+            items: assocProfNames
+          },
+          ...(detailed && detailed.references.length > 0
+            ? [
+                {
+                  heading: step3Labels.referencesHeading,
+                  type: 'list' as const,
+                  items: detailed.references.map(r => `${r.citation} [${r.type}]`)
+                }
+              ]
+            : []),
+          ...(nonRedundantRelatedIds.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedArticlesHeading,
+                  type: 'tags' as const,
+                  items: nonRedundantRelatedIds.map((id: string) => resolveRelatedLabel(id))
+                }
+              ]
+            : []),
+          ...(uniqueKeywords.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedKeywordsHeading,
+                  type: 'tags' as const,
+                  items: uniqueKeywords.map((kw: string) => {
+                    const tr = translateKeyword(kw);
+                    return tr !== kw ? `#${tr} (${kw})` : `#${kw}`;
+                  })
+                }
+              ]
+            : [])
+        ]
+      };
+    }
+    if (selectedModalRef.type === 'profession_cat') {
+      const cat = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.id === selectedModalRef.id);
+      if (!cat) return null;
+      const primaryVis = cat.visualAssets && cat.visualAssets.length > 0 ? cat.visualAssets[0] : undefined;
+      const titleText = cat.title[language] || cat.title.en;
+      const subText = cat.shortSummary[language] || cat.shortSummary.en;
+      const defText = cat.definitionAndExplanation[language] || cat.definitionAndExplanation.en;
+      const histText = cat.historicalBackground[language] || cat.historicalBackground.en;
+      const toolsText = cat.toolsMaterialsAndTechniques[language] || cat.toolsMaterialsAndTechniques.en;
+      const cultText = cat.culturalAndRegionalSignificance[language] || cat.culturalAndRegionalSignificance.en;
+      const exText = cat.documentedHistoricalExamples[language] || cat.documentedHistoricalExamples.en;
+      const contribText = cat.contributionsToSociety[language] || cat.contributionsToSociety.en;
+      const distText =
+        cat.communitySpecificConnectionsAndDistinctions[language] ||
+        cat.communitySpecificConnectionsAndDistinctions.en;
+      const methText = cat.epistemicAndMethodologicalNote[language] || cat.epistemicAndMethodologicalNote.en;
+      const combinedMonograph = [
+        `■ ${getHeading('secB')}:\n${defText}`,
+        `■ ${getHeading('secC')}:\n${histText}`,
+        `■ ${getHeading('secJ')}:\n${toolsText}`,
+        `■ ${getHeading('secF')}:\n${cultText}`,
+        `■ ${getHeading('secO')}:\n${exText}`,
+        `■ ${getHeading('secP')}:\n${contribText}`,
+        `■ ${getHeading('secQ')}:\n${distText}`,
+        `■ ${getHeading('secR')}:\n${methText}`
+      ].join('\n\n');
+      return {
+        id: cat.id,
+        title: titleText,
+        subtitle: subText,
+        badge: step2Labels.profCategoriesBadge,
+        imageUrl: primaryVis ? primaryVis.imageUrl : `${base}kondavidu_fort_hills.jpg`,
+        imageCaption: primaryVis ? (primaryVis.caption[language] || primaryVis.caption.en) : undefined,
+        imageLayout: 'banner',
+        content: combinedMonograph,
+        sections: [
+          ...(primaryVis
+            ? [
+                {
+                  heading: step4VisualLabels.visualDocumentationHeading,
+                  type: 'list' as const,
+                  items: Array.from(
+                    new Set([
+                      `${step4VisualLabels.imageTitleLabel}: ${primaryVis.title[language] || primaryVis.title.en}`,
+                      `${step4VisualLabels.visualTypeLabel}: ${
+                        step5Ui.visualTypeLabels[primaryVis.visualType] || primaryVis.visualType
+                      }`,
+                      `${step4VisualLabels.imageCaptionLabel}: ${primaryVis.caption[language] || primaryVis.caption.en}`,
+                      `${step4VisualLabels.sourceAttributionLabel}: ${primaryVis.sourceAttribution}`,
+                      ...(primaryVis.mapDisclaimer
+                        ? [primaryVis.mapDisclaimer[language] || primaryVis.mapDisclaimer.en]
+                        : [])
+                    ])
+                  )
+                }
+              ]
+            : []),
+          {
+            heading: step2Labels.subcategoriesLabel,
+            type: 'list',
+            items: cat.includedSubClassifications.map(
+              sub => `${sub.name[language] || sub.name.en} — ${sub.description[language] || sub.description.en}`
+            )
+          },
+          ...(cat.references && cat.references.length > 0
+            ? [
+                {
+                  heading: getHeading('secS'),
+                  type: 'list' as const,
+                  items: cat.references.map(r => `${r.citation} [${r.type}]`)
+                }
+              ]
+            : []),
+          ...(cat.relatedArticles && cat.relatedArticles.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedArticlesHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(cat.relatedArticles.map(rel => rel.label[language] || rel.label.en)))
+                }
+              ]
+            : []),
+          ...(cat.relatedKeywords && cat.relatedKeywords.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedKeywordsHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(cat.relatedKeywords)).map((kw: string) => {
+                    const tr = translateKeyword(kw);
+                    return tr !== kw ? `#${tr} (${kw})` : `#${kw}`;
+                  })
+                }
+              ]
+            : [])
+        ]
       };
     }
     return null;
-  }, [selectedModalRef, language, synonymSectionLabels]);
+  }, [selectedModalRef, language, synonymSectionLabels, step2Labels, step3Labels, step4VisualLabels, step5Ui]);
 
-  useEffect(() => {
-    const targetId =
-      initialItemId ||
-      new URLSearchParams(window.location.search).get('id') ||
-      new URLSearchParams(window.location.search).get('figure');
-    if (!targetId) return;
-
-    const foundFig = HISTORICAL_FIGURES.find(f => f.id === targetId);
-    if (foundFig) {
-      setActiveTab('figures');
-      setSelectedFigure(foundFig);
-      return;
-    }
-
-    const foundSyn = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
-    if (foundSyn) {
-      setActiveTab('synonyms');
-      openSynonymModal(foundSyn);
-    }
-  }, [initialItemId, language]);
-
-  useEffect(() => {
-    if (initialTab) {
-      setActiveTab(initialTab);
-    } else {
+  const applyUrlTargetState = React.useCallback(
+    (explicitItemId?: string | null) => {
+      if (typeof window === 'undefined') return;
       const urlParams = new URLSearchParams(window.location.search);
       const tabParam = urlParams.get('tab');
-      if (tabParam === 'figures' || tabParam === 'synonyms' || tabParam === 'geography' || tabParam === 'history') {
-        setActiveTab(tabParam);
+      const regionParam = urlParams.get('region');
+      const urlItemId = urlParams.get('id') || urlParams.get('figure') || urlParams.get('article');
+      const targetId = urlItemId || (!tabParam ? explicitItemId : null);
+
+      if (regionParam && GEOGRAPHICAL_SPREAD.some(r => r.id === regionParam)) {
+        setSelectedRegionId(regionParam);
       }
-    }
-  }, [initialTab]);
+
+      if (
+        tabParam === 'figures' ||
+        tabParam === 'synonyms' ||
+        tabParam === 'professions' ||
+        tabParam === 'geography' ||
+        tabParam === 'history'
+      ) {
+        setActiveTab(tabParam);
+      } else if (initialTab) {
+        setActiveTab(initialTab);
+      }
+
+      if (!targetId) {
+        setSelectedFigure(null);
+        setSelectedModalRef(null);
+        return;
+      }
+
+      const foundFig = HISTORICAL_FIGURES.find(f => f.id === targetId);
+      if (foundFig) {
+        setActiveTab('figures');
+        setSelectedModalRef(null);
+        setSelectedFigure(foundFig);
+        return;
+      }
+
+      const foundSyn = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
+      if (foundSyn) {
+        setActiveTab('synonyms');
+        setSelectedFigure(null);
+        setSelectedModalRef({ type: 'synonym', id: foundSyn.id });
+        return;
+      }
+
+      const foundComm = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === targetId);
+      if (foundComm) {
+        setActiveTab('synonyms');
+        setSelectedFigure(null);
+        setSelectedModalRef({ type: 'community_dir', id: foundComm.id });
+        return;
+      }
+
+      const foundProf = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.id === targetId);
+      if (foundProf) {
+        setActiveTab('professions');
+        setSelectedFigure(null);
+        setSelectedModalRef({ type: 'profession_cat', id: foundProf.id });
+        return;
+      }
+
+      const foundReg = GEOGRAPHICAL_SPREAD.find(r => r.id === targetId);
+      if (foundReg) {
+        setActiveTab('geography');
+        setSelectedRegionId(foundReg.id);
+        setSelectedFigure(null);
+        setSelectedModalRef({ type: 'region', id: foundReg.id });
+        return;
+      }
+
+      const foundMono = HISTORICAL_MONOGRAPH_SECTIONS.find(m => m.id === targetId);
+      if (foundMono) {
+        setActiveTab('history');
+        setSelectedFigure(null);
+        setSelectedModalRef({ type: 'monograph', id: foundMono.id });
+      }
+    },
+    [initialTab]
+  );
+
+  useEffect(() => {
+    applyUrlTargetState(initialItemId);
+  }, [initialItemId, initialTab, applyUrlTargetState]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      applyUrlTargetState(undefined);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [applyUrlTargetState]);
 
   // Close modal on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setSelectedFigure(null);
+        setSelectedModalRef(null);
+        syncUrlParams(activeTab, null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [activeTab, syncUrlParams]);
+
+  // Helper to check if a state list or article ID belongs to a selected region
+  const doesItemMatchRegion = (itemId: string, itemStates: string[], regionId: string | null): boolean => {
+    if (!regionId) return true;
+    const reg = GEOGRAPHICAL_SPREAD.find(g => g.id === regionId);
+    if (!reg) return true;
+    if ((REGION_RELATED_ARTICLE_IDS[regionId] || []).includes(itemId)) {
+      return true;
+    }
+    const mappedSynonymIds = reg.predominant_community_synonyms.map(syn => resolveDesignationTargetId(syn));
+    if (mappedSynonymIds.includes(itemId)) {
+      return true;
+    }
+    return itemStates.some(st => {
+      const stLower = st.toLowerCase();
+      if (stLower.includes('all indian states') || stLower.includes('pan-indian')) return true;
+      return reg.states_and_territories.some(regSt => {
+        const regStLower = regSt.toLowerCase();
+        return regStLower.includes(stLower) || stLower.includes(regStLower);
+      });
+    });
+  };
+
+  // Filtered 16-Community Directory Items
+  const filteredCommunityDirectory = COMMUNITY_DIRECTORY_ITEMS.filter(item => {
+    const term = searchTerm.toLowerCase();
+    const locName = (item.localizedName[language] || item.localizedName.en).toLowerCase();
+    const locOverview = (item.overview[language] || item.overview.en).toLowerCase();
+    const locGeo = (item.geographicalSpread[language] || item.geographicalSpread.en).toLowerCase();
+
+    const matchesSearch =
+      !term ||
+      item.canonicalName.toLowerCase().includes(term) ||
+      locName.includes(term) ||
+      locOverview.includes(term) ||
+      locGeo.includes(term) ||
+      item.prominentStates.some(st => st.toLowerCase().includes(term));
+
+    const matchesGroup = directoryGroupFilter === 'all' || item.categoryGroup === directoryGroupFilter;
+
+    const matchesRegion = doesItemMatchRegion(item.id, item.prominentStates, selectedRegionId);
+
+    return matchesSearch && matchesGroup && matchesRegion;
+  });
+
+  // Filtered 9 Professional Heritage Categories
+  const filteredProfessions = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.filter(cat => {
+    const term = searchTerm.toLowerCase();
+    const title = (cat.title[language] || cat.title.en).toLowerCase();
+    const sub = (cat.shortSummary[language] || cat.shortSummary.en).toLowerCase();
+    const def = (cat.definitionAndExplanation[language] || cat.definitionAndExplanation.en).toLowerCase();
+    const matchesSearch =
+      !term ||
+      title.includes(term) ||
+      sub.includes(term) ||
+      def.includes(term) ||
+      cat.includedSubClassifications.some(
+        sc =>
+          (sc.name[language] || sc.name.en).toLowerCase().includes(term) ||
+          (sc.description[language] || sc.description.en).toLowerCase().includes(term)
+      );
+
+    const matchesNumber =
+      selectedProfessionCatNumber === 'all' || cat.categoryNumber === selectedProfessionCatNumber;
+
+    return matchesSearch && matchesNumber;
+  });
 
   // Filtered Synonyms
   const filteredSynonyms = COMMUNITY_SYNONYMS.filter(s => {
@@ -580,12 +1431,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       s.designation_group === synonymCategoryFilter ||
       s.category.toLowerCase().includes(synonymCategoryFilter.toLowerCase());
 
-    const matchesRegion =
-      !selectedRegionId ||
-      s.prominent_states.some(st => {
-        const reg = GEOGRAPHICAL_SPREAD.find(g => g.id === selectedRegionId);
-        return reg?.states_and_territories.includes(st);
-      });
+    const matchesRegion = doesItemMatchRegion(s.id, s.prominent_states, selectedRegionId);
 
     return matchesSearch && matchesCategory && matchesRegion;
   });
@@ -606,6 +1452,127 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     );
   });
 
+  const refOptionsDict: Record<
+    LanguageCode,
+    {
+      heading: string;
+      seeAction: string;
+      activeSectionBadge: string;
+      backToOptionsBtn: string;
+      synonyms: string;
+      professions: string;
+      figures: string;
+      geography: string;
+      history: string;
+    }
+  > = {
+    en: {
+      heading: '👇Select a Topic and See👇',
+      seeAction: '👈 See',
+      activeSectionBadge: 'Currently Viewing Reference Section',
+      backToOptionsBtn: '↑ Reference Options',
+      synonyms: '1. 16-Community Directory & Synonyms',
+      professions: '2. 9 Professional Heritage Categories',
+      figures: '3. Foundational Sovereign & Sacred Figures',
+      geography: '4. Pan-Indian Geographical Spreading',
+      history: '5. Documentary History & Monograph Chapters'
+    },
+    hi: {
+      heading: '👇एक विषय चुनें और देखें👇',
+      seeAction: '👈 देखें',
+      activeSectionBadge: 'वर्तमान में चयनित संदर्भ अनुभाग',
+      backToOptionsBtn: '↑ संदर्भ विकल्प',
+      synonyms: '1. 16-समुदाय निर्देशिका और पर्यायवाची नाम',
+      professions: '2. 9 व्यावसायिक विरासत श्रेणियाँ',
+      figures: '3. संस्थापक संप्रभु और पवित्र विभूतियाँ',
+      geography: '4. अखिल भारतीय भौगोलिक विस्तार',
+      history: '5. दस्तावेजी इतिहास और मोनोग्राफ अध्याय'
+    },
+    te: {
+      heading: '👇ఒక అంశాన్ని ఎంచుకుని చూడండి👇',
+      seeAction: '👈 చూడండి',
+      activeSectionBadge: 'ప్రస్తుతం చూస్తున్న రిఫరెన్స్ విభాగం',
+      backToOptionsBtn: '↑ రిఫరెన్స్ ఎంపికలు',
+      synonyms: '1. 16-సమాజ డైరెక్టరీ & పర్యాయపదాలు',
+      professions: '2. 9 వృత్తిపరమైన వారసత్వ విభాగాలు',
+      figures: '3. మూల సార్వభౌమ & పవిత్ర మూర్తులు',
+      geography: '4. పాన్-ఇండియన్ భౌగోళిక విస్తరణ',
+      history: '5. డాక్యుమెంటరీ చరిత్ర & మోనోగ్రాఫ్ అధ్యాయాలు'
+    },
+    kn: {
+      heading: '👇ಒಂದು ವಿಷಯವನ್ನು ಆಯ್ಕೆಮಾಡಿ ಮತ್ತು ನೋಡಿ👇',
+      seeAction: '👈 ನೋಡಿ',
+      activeSectionBadge: 'ಪ್ರಸ್ತುತ ವೀಕ್ಷಿಸುತ್ತಿರುವ ಉಲ್ಲೇಖ ವಿಭಾಗ',
+      backToOptionsBtn: '↑ ಉಲ್ಲೇಖ ಆಯ್ಕೆಗಳು',
+      synonyms: '1. 16-ಸಮುದಾಯ ನಿರ್ದೇಶಿಕೆ ಮತ್ತು ಸಮಾನಾರ್ಥಕ ನಾಮಗಳು',
+      professions: '2. 9 ವೃತ್ತಿಪರ ಪರಂಪರೆಯ ವಿಭಾಗಗಳು',
+      figures: '3. ಮೂಲ ಸಾರ್ವಭೌಮ ಮತ್ತು ಪವಿತ್ರ ವ್ಯಕ್ತಿಗಳು',
+      geography: '4. ಅಖಿಲ ಭಾರತ ಭೌಗೋಳಿಕ ವಿಸ್ತರಣೆ',
+      history: '5. ಸಾಕ್ಷ್ಯಾಧಾರಿತ ಇತಿಹಾಸ ಮತ್ತು ಮೊನೊಗ್ರಾಫ್ ಅಧ್ಯಾಯಗಳು'
+    },
+    ta: {
+      heading: '👇ஒரு தலைப்பைத் தேர்ந்தெடுத்துப் பார்க்கவும்👇',
+      seeAction: '👈 பார்க்க',
+      activeSectionBadge: 'தற்போது பார்க்கும் குறிப்புப் பிரிவு',
+      backToOptionsBtn: '↑ குறிப்பு விருப்பங்கள்',
+      synonyms: '1. 16-சமூக அடைவு மற்றும் மாற்றுப் பெயர்கள்',
+      professions: '2. 9 தொழில்முறை பாரம்பரியப் பிரிவுகள்',
+      figures: '3. அடிப்படை இறையான்மை மற்றும் புனித ஆளுமைகள்',
+      geography: '4. அகில இந்திய புவியியல் பரவல்',
+      history: '5. ஆவண வரலாறு மற்றும் தனிக்கட்டுரை அத்தியாயங்கள்'
+    },
+    mr: {
+      heading: '👇एक विषय निवडा आणि पहा👇',
+      seeAction: '👈 पहा',
+      activeSectionBadge: 'सध्या पाहत असलेला संदर्भ विभाग',
+      backToOptionsBtn: '↑ संदर्भ पर्याय',
+      synonyms: '1. 16-समुदाय निर्देशिका आणि समानार्थी नावे',
+      professions: '2. 9 व्यावसायिक वारसा श्रेणी',
+      figures: '3. मूळ सार्वभौम आणि पवित्र विभूती',
+      geography: '4. अखिल भारतीय भौगोलिक विस्तार',
+      history: '5. दस्तऐवजी इतिहास आणि मोनोग्राफ प्रकरणे'
+    },
+    or: {
+      heading: '👇ଏକ ବିଷୟ ବାଛନ୍ତୁ ଏବଂ ଦେଖନ୍ତୁ👇',
+      seeAction: '👈 ଦେଖନ୍ତୁ',
+      activeSectionBadge: 'ବର୍ତ୍ତମାନ ଦେଖୁଥିବା ସନ୍ଦର୍ଭ ବିଭାଗ',
+      backToOptionsBtn: '↑ ସନ୍ଦର୍ଭ ବିକଳ୍ପ',
+      synonyms: '1. 16-ସମ୍ପ୍ରଦାୟ ନିର୍ଦ୍ଦେଶିକା ଓ ପର୍ଯ୍ୟାୟବାଚୀ ନାମ',
+      professions: '2. 9 ବୃତ୍ତିଗତ ଐତିହ୍ୟ ବର୍ଗ',
+      figures: '3. ମୂଳ ସାର୍ବଭୌମ ଓ ପବିତ୍ର ବ୍ୟକ୍ତିତ୍ୱ',
+      geography: '4. ସର୍ବଭାରତୀୟ ଭୌଗୋଳିକ ବିସ୍ତାର',
+      history: '5. ପ୍ରାମାଣିକ ଇତିହାସ ଓ ମନୋଗ୍ରାଫ୍ ଅଧ୍ୟାୟ'
+    },
+    bn: {
+      heading: '👇একটি বিষয় নির্বাচন করুন এবং দেখুন👇',
+      seeAction: '👈 দেখুন',
+      activeSectionBadge: 'বর্তমানে প্রদর্শিত রেফারেন্স বিভাগ',
+      backToOptionsBtn: '↑ রেফারেন্স বিকল্প',
+      synonyms: '1. 16-সম্প্রদায় ডিরেক্টরি ও সমার্থক নাম',
+      professions: '2. 9 পেশাগত ঐতিহ্য বিভাগ',
+      figures: '3. আদি সার্বভৌম ও পবিত্র ব্যক্তিত্ব',
+      geography: '4. সর্বভারতীয় ভৌগোলিক বিস্তার',
+      history: '5. প্রামাণ্য ইতিহাস ও মনোগ্রাফ অধ্যায়'
+    }
+  };
+
+  const refText = refOptionsDict[language] || refOptionsDict.en;
+
+  const referenceTabs: Array<{
+    id: 'synonyms' | 'professions' | 'figures' | 'geography' | 'history';
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }> = [
+    { id: 'synonyms', label: refText.synonyms, icon: Users },
+    { id: 'professions', label: refText.professions, icon: Shield },
+    { id: 'figures', label: refText.figures, icon: Crown },
+    { id: 'geography', label: refText.geography, icon: MapPin },
+    { id: 'history', label: refText.history, icon: BookOpen }
+  ];
+
+  const activeReferenceOption =
+    referenceTabs.find(tab => tab.id === activeTab) || referenceTabs[0];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Hero Header */}
@@ -613,7 +1580,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         <div className="max-w-4xl space-y-4 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/40 shadow-sm">
             <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
-            <span>Suryavamsha Odiyaraju Kshatriya & Oad-Rajput Heritage Archive</span>
+            <span>{step5Ui.heroBadge}</span>
           </div>
 
           <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#fcedc7] leading-tight">
@@ -654,114 +1621,377 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
           <div className="pt-2 flex flex-wrap gap-2 text-xs">
             <span className="px-3 py-1 rounded-full bg-[#580014]/60 border border-[#d4af37]/30 text-[#fcedc7] flex items-center gap-1.5">
-              <Crown className="w-3 h-3 text-[#d4af37]" /> Suryavamsha Solar Race
+              <Crown className="w-3 h-3 text-[#d4af37]" /> {step5Ui.heroChips[0]}
             </span>
             <span className="px-3 py-1 rounded-full bg-stone-900/80 border border-stone-700 text-stone-300 flex items-center gap-1.5">
-              <Droplets className="w-3 h-3 text-cyan-400" /> Master Hydraulic & Canal Engineers
+              <Droplets className="w-3 h-3 text-cyan-400" /> {step5Ui.heroChips[1]}
             </span>
             <span className="px-3 py-1 rounded-full bg-stone-900/80 border border-stone-700 text-stone-300 flex items-center gap-1.5">
-              <Shield className="w-3 h-3 text-amber-400" /> Gajapathi Military Garrisons
+              <Shield className="w-3 h-3 text-amber-400" /> {step5Ui.heroChips[2]}
             </span>
             <span className="px-3 py-1 rounded-full bg-stone-900/80 border border-stone-700 text-stone-300 flex items-center gap-1.5">
-              <Compass className="w-3 h-3 text-emerald-400" /> 7 Pan-Indian Corridors
+              <Compass className="w-3 h-3 text-emerald-400" /> {step5Ui.heroChips[3]}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Main Tab Navigation */}
-      <div className="flex items-center gap-2 border-b border-stone-800 pb-2 overflow-x-auto scrollbar-none">
-        {[
-          { id: 'synonyms', label: translateText('synonyms_and_variants', '1. Community Synonyms & Titles'), icon: Users },
-          { id: 'figures', label: translateText('key_historical_figures', '2. Sacred Progenitors & Figures'), icon: Crown },
-          { id: 'geography', label: translateText('pan_india_spread', '3. Pan-Indian Geographical Spreading'), icon: MapPin },
-          { id: 'history', label: translateText('historical_monographs', '4. Complete Historical Monograph'), icon: BookOpen }
-        ].map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => {
-                setActiveTab(tab.id as any);
-                window.scrollTo({ top: 380, behavior: 'smooth' });
-              }}
-              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-                isActive
-                  ? 'bg-gradient-to-r from-[#580014] to-[#78001c] text-[#fae29c] border border-[#d4af37] shadow-lg shadow-[#580014]/40'
-                  : 'bg-stone-900/60 text-stone-400 hover:text-stone-200 hover:bg-stone-800 border border-transparent'
-              }`}
-            >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-[#d4af37]' : 'text-stone-400'}`} />
-              <span>{tab.label}</span>
-            </button>
-          );
-        })}
+      {/* Main Tab Navigation — Vertical Reference Options */}
+      <div
+        id="reference-options-menu"
+        ref={referenceMenuRef}
+        className="scroll-mt-24 bg-[#121624] border border-[#c99738]/40 rounded-2xl p-4 sm:p-6 space-y-4 shadow-xl"
+      >
+        <h2 className="font-royal-heading font-bold text-sm sm:text-base md:text-lg text-[#fae29c] text-center tracking-wide pb-2 border-b border-stone-800">
+          {refText.heading}
+        </h2>
+        <div className="flex flex-col gap-3">
+          {referenceTabs.map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                aria-expanded={isActive}
+                aria-controls={`section-${tab.id}`}
+                onClick={() => handleSelectReferenceOption(tab.id)}
+                className={`w-full px-4 py-3.5 rounded-xl text-xs sm:text-sm md:text-base font-semibold flex items-center justify-between gap-3 text-left transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#580014] to-[#78001c] text-[#fae29c] border border-[#d4af37] shadow-lg shadow-[#580014]/40'
+                    : 'bg-stone-900/80 text-stone-200 hover:text-[#fae29c] hover:bg-stone-800/90 border border-stone-800 hover:border-[#c99738]/50'
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ${isActive ? 'text-[#d4af37]' : 'text-[#c99738]'}`} />
+                  <span className="leading-snug break-words">{tab.label}</span>
+                </div>
+                <span
+                  className={`shrink-0 px-3 py-1 rounded-lg text-xs sm:text-sm font-bold whitespace-nowrap transition-colors ${
+                    isActive
+                      ? 'bg-[#d4af37]/20 text-[#fae29c] border border-[#d4af37]/50'
+                      : 'bg-[#1a2130] text-[#dfab43] border border-[#c99738]/30'
+                  }`}
+                >
+                  {refText.seeAction}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Universal Search & Quick Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#121624] p-4 rounded-2xl border border-stone-800">
-        <div className="relative w-full sm:w-96">
-          <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            placeholder={translateText('search_placeholder', 'Search synonyms, figures, regions, states...')}
-            className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-stone-900/90 border border-stone-700/80 rounded-xl text-stone-200 placeholder-stone-500 focus:outline-none focus:border-[#d4af37]"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-200 text-xs"
-            >
-              Clear
-            </button>
-          )}
+      {/* Target Content Scroll Anchor & Active Reference Banner */}
+      <div
+        id="heritage-target-content"
+        ref={targetContentRef}
+        className="scroll-mt-24 space-y-6"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-[#260713] via-[#151a2b] to-[#121624] px-4 py-3.5 rounded-2xl border border-[#d4af37]/50 shadow-lg">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-2 rounded-xl bg-[#580014] border border-[#d4af37]/40 shrink-0">
+              {(() => {
+                const ActiveIcon = activeReferenceOption.icon;
+                return <ActiveIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#d4af37]" />;
+              })()}
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] uppercase tracking-wider font-bold text-[#d4af37]">
+                {refText.activeSectionBadge}
+              </div>
+              <div className="font-royal-heading font-bold text-sm sm:text-base text-[#fae29c] break-words">
+                {activeReferenceOption.label}
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              referenceMenuRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            className="self-start sm:self-auto shrink-0 px-3 py-1.5 rounded-xl bg-stone-900/90 hover:bg-[#580014] text-xs font-semibold text-[#fae29c] border border-[#d4af37]/40 transition-colors cursor-pointer"
+          >
+            {refText.backToOptionsBtn}
+          </button>
         </div>
 
-        {/* Region filter badges */}
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none text-xs">
-          <span className="text-stone-400 text-[11px] whitespace-nowrap flex items-center gap-1">
-            <Compass className="w-3 h-3 text-[#d4af37]" /> Region:
-          </span>
-          <button
-            onClick={() => setSelectedRegionId(null)}
-            className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-              selectedRegionId === null
-                ? 'bg-[#c99738] text-[#300207] font-bold'
-                : 'bg-stone-900 text-stone-300 hover:bg-stone-800'
-            }`}
-          >
-            All Regions
-          </button>
-          {GEOGRAPHICAL_SPREAD.map(reg => (
+        {/* Universal Search & Quick Filter Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#121624] p-4 rounded-2xl border border-stone-800">
+          <div className="relative w-full sm:w-96">
+            <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              placeholder={translateText('search_placeholder', 'Search communities, professions, figures, regions...')}
+              className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-stone-900/90 border border-stone-700/80 rounded-xl text-stone-200 placeholder-stone-500 focus:outline-none focus:border-[#d4af37]"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-200 text-xs"
+              >
+                {step5Ui.clearBtn}
+              </button>
+            )}
+          </div>
+
+          {/* Region filter badges */}
+          <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none text-xs">
+            <span className="text-stone-400 text-[11px] whitespace-nowrap flex items-center gap-1">
+              <Compass className="w-3 h-3 text-[#d4af37]" /> {step5Ui.regionLabel}
+            </span>
             <button
-              key={reg.id}
-              onClick={() => setSelectedRegionId(selectedRegionId === reg.id ? null : reg.id)}
+              onClick={() => setSelectedRegionId(null)}
               className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
-                selectedRegionId === reg.id
-                  ? 'bg-[#c99738] text-[#300207] font-bold shadow'
+                selectedRegionId === null
+                  ? 'bg-[#c99738] text-[#300207] font-bold'
                   : 'bg-stone-900 text-stone-300 hover:bg-stone-800'
               }`}
             >
-              {reg.region_name.split(' ')[0]}
+              {step5Ui.allRegionsBtn}
             </button>
-          ))}
+            {GEOGRAPHICAL_SPREAD.map(reg => (
+              <button
+                key={reg.id}
+                onClick={() => setSelectedRegionId(selectedRegionId === reg.id ? null : reg.id)}
+                className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
+                  selectedRegionId === reg.id
+                    ? 'bg-[#c99738] text-[#300207] font-bold shadow'
+                    : 'bg-stone-900 text-stone-300 hover:bg-stone-800'
+                }`}
+              >
+                {(reg.localized_region[language] || reg.region_name).split(' (')[0].split(',')[0]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* ---------------------------------------------------------------------- */}
-      {/* TAB 1: COMMUNITY SYNONYMS & TITLES */}
+      {/* TAB 1: 16-COMMUNITY DIRECTORY & EXISTING COMMUNITY SYNONYMS */}
       {/* ---------------------------------------------------------------------- */}
       {activeTab === 'synonyms' && (
-        <div className="space-y-8">
+        <div id="section-synonyms" className="space-y-10 scroll-mt-24">
+          {/* STEP 2A: ORGANIZED 16-COMMUNITY DIRECTORY */}
+          <div className="bg-[#111522] border border-[#c99738]/40 rounded-3xl p-5 sm:p-8 space-y-6 shadow-2xl">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-stone-800 pb-5">
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>{step2Labels.directorySectionBadge}</span>
+                </div>
+                <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
+                  {step2Labels.directoryHeading}
+                </h2>
+                <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+                  {step2Labels.directorySubheading}
+                </p>
+              </div>
+
+              {/* Group Filter Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                {[
+                  { key: 'all', label: step2Labels.filterAllGroups },
+                  { key: 'Odra-Kalinga Core', label: step5Ui.directoryGroups['Odra-Kalinga Core'] },
+                  { key: 'Rajput & Martial Lineages', label: step5Ui.directoryGroups['Rajput & Martial'] },
+                  { key: 'Deccan & Southern Designations', label: step5Ui.directoryGroups['Deccan & South'] },
+                  { key: 'Dynastic & Royal Lineages', label: step5Ui.directoryGroups['Dynastic & Royal'] }
+                ].map(grp => (
+                  <button
+                    key={grp.key}
+                    onClick={() => setDirectoryGroupFilter(grp.key)}
+                    className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
+                      directoryGroupFilter === grp.key
+                        ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
+                        : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                    }`}
+                  >
+                    {grp.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Methodological Note */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-[#220711] to-[#141a29] border border-[#d4af37]/30 text-xs text-stone-300 leading-relaxed">
+              {step2Labels.directoryMethodologicalNote}
+            </div>
+
+            {/* 16 Community Directory Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {filteredCommunityDirectory.map(entry => {
+                const detailed = COMMUNITY_HERITAGE_DETAILED_ARTICLES.find(a => a.id === entry.id);
+                const vis = STEP4_VISUAL_ASSET_REGISTRY[entry.id];
+                const locName = entry.localizedName[language] || entry.localizedName.en;
+                const locGroup = entry.localizedCategoryGroup[language] || entry.localizedCategoryGroup.en;
+                const locGeo = entry.geographicalSpread[language] || entry.geographicalSpread.en;
+                const locOverview = entry.overview[language] || entry.overview.en;
+                const locEpistemic = entry.epistemicClassification[language] || entry.epistemicClassification.en;
+                const visTitle = vis ? vis.title[language] || vis.title.en : locName;
+                const visAlt = vis ? vis.altText[language] || vis.altText.en : `${locName} (${entry.canonicalName})`;
+                const visClassLabel = vis ? step4VisualLabels.visualClasses[vis.visualClass] : '';
+
+                return (
+                  <div
+                    key={entry.id}
+                    onClick={() => openCommunityDirModal(entry)}
+                    className="bg-[#151a2a] border border-[#c99738]/30 hover:border-[#d4af37] rounded-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    <div>
+                      {/* Step 4 Visual Banner with 8-Language Alt & Classification Badge */}
+                      <figure className="relative h-36 sm:h-40 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                        <img
+                          src={vis?.imageUrl || detailed?.imageUrl || fallbackArchiveImg}
+                          alt={visAlt}
+                          loading="lazy"
+                          onError={handleImgError}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#151a2a] via-transparent to-black/30" />
+                        {visClassLabel && (
+                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold backdrop-blur-sm max-w-[90%] truncate">
+                            {visClassLabel}
+                          </span>
+                        )}
+                        <figcaption className="absolute bottom-1.5 left-2.5 right-2.5 text-[10px] text-stone-200 font-medium line-clamp-1 drop-shadow">
+                          {visTitle}
+                        </figcaption>
+                      </figure>
+
+                      <div className="p-4 space-y-2.5">
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="px-2 py-0.5 rounded-md bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 text-[10px] font-bold">
+                            #{entry.orderNumber} • {entry.canonicalName}
+                          </span>
+                          <span className="text-[10px] text-stone-400 font-medium text-right line-clamp-1">
+                            {locGroup}
+                          </span>
+                        </div>
+
+                        <div>
+                          <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#fcedc7] group-hover:text-white transition-colors">
+                            {locName}
+                          </h3>
+                          {locName !== entry.canonicalName && (
+                            <p className="text-[11px] text-[#d4af37] font-semibold">
+                              {entry.canonicalName}
+                            </p>
+                          )}
+                        </div>
+
+                      {/* Native Script Badges */}
+                      <div className="flex flex-wrap gap-1">
+                        {Object.entries(entry.nativeScripts)
+                          .slice(0, 3)
+                          .map(([script, val]) => (
+                            <span
+                              key={script}
+                              className="px-1.5 py-0.5 rounded bg-stone-900/90 border border-stone-800 text-[10px] text-stone-300"
+                            >
+                              {val}
+                            </span>
+                          ))}
+                      </div>
+
+                      <p className="text-xs text-stone-300 leading-relaxed line-clamp-3">
+                        {locOverview}
+                      </p>
+                      </div>
+                    </div>
+
+                    <div className="px-4 pb-4 space-y-2 pt-2 border-t border-stone-800/80">
+                      <div className="text-[10px] text-stone-400 line-clamp-1">
+                        📍 {locGeo}
+                      </div>
+                      <div className="text-[10px] text-[#d4af37]/90 line-clamp-1 font-medium">
+                        ✓ {locEpistemic}
+                      </div>
+
+                      {/* Quick links to associated Professional Heritage Categories & Related Community Articles */}
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {entry.professionalCategoryNumbers.slice(0, 3).map(catNum => {
+                          const profCat = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(
+                            p => p.categoryNumber === catNum
+                          );
+                          if (!profCat) return null;
+                          return (
+                            <button
+                              key={catNum}
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                openProfessionModal(profCat);
+                              }}
+                              className="px-1.5 py-0.5 rounded bg-[#1e2538] hover:bg-[#580014] text-[10px] text-amber-200 border border-amber-500/20 transition-colors cursor-pointer"
+                              title={profCat.title[language] || profCat.title.en}
+                            >
+                              {step5Ui.catPrefix}{catNum}
+                            </button>
+                          );
+                        })}
+                        {detailed?.relatedArticleIds
+                          .filter((relId: string) => !relId.startsWith('prof_cat_'))
+                          .slice(0, 2)
+                          .map((relId: string) => (
+                            <button
+                              key={relId}
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                handleNavigateRelatedId(relId);
+                              }}
+                              className="px-1.5 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-amber-200 border border-stone-700/70 transition-colors cursor-pointer truncate max-w-[110px]"
+                              title={resolveRelatedLabel(relId)}
+                            >
+                              ⇄ {resolveRelatedLabel(relId)}
+                            </button>
+                          ))}
+                      </div>
+
+                      {/* Multilingual Keyword Tags */}
+                      {detailed && detailed.relatedKeywords.length > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-0.5">
+                          {Array.from(new Set(detailed.relatedKeywords))
+                            .slice(0, 3)
+                            .map(kw => (
+                              <button
+                                key={kw}
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setSearchTerm(kw);
+                                }}
+                                className="px-1.5 py-0.5 rounded bg-[#111522] hover:bg-stone-800 text-[9px] text-amber-200/80 border border-stone-800 cursor-pointer"
+                              >
+                                #{translateKeyword(kw)}
+                              </button>
+                            ))}
+                        </div>
+                      )}
+
+                      <div className="pt-1 flex items-center justify-end text-[11px] font-semibold text-[#d4af37] group-hover:translate-x-0.5 transition-transform">
+                        {step2Labels.exploreCommunityBtn} <ChevronRight className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {filteredCommunityDirectory.length === 0 && (
+              <div className="p-8 text-center rounded-2xl bg-stone-900/50 border border-stone-800 space-y-1">
+                <div className="text-sm font-bold text-[#fae29c]">{step5Ui.emptyStateTitle}</div>
+                <div className="text-xs text-stone-400">{step5Ui.emptyStateDesc}</div>
+              </div>
+            )}
+          </div>
+
           {/* Section Title & Category Filter Pills */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
                 <Layers className="w-3.5 h-3.5" />
-                <span>Synonyms, Regional Designations & Martial Titles</span>
+                <span>{synonymSectionLabels.sectionTitle}</span>
               </div>
               <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
                 {synonymSectionLabels.sectionTitle}
@@ -853,6 +2083,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {groupItems.map(item => {
+                    const vis = STEP4_VISUAL_ASSET_REGISTRY[item.id];
+                    const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[item.id];
                     const epistemicLabel =
                       synonymSectionLabels.epistemicClasses[item.epistemic_classification] ||
                       item.epistemic_classification;
@@ -865,13 +2097,32 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       <div
                         key={item.id}
                         onClick={() => openSynonymModal(item)}
-                        className="bg-[#121624] border border-[#c99738]/35 rounded-2xl p-5 sm:p-6 space-y-4 hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.18)] cursor-pointer"
+                        className="bg-[#121624] border border-[#c99738]/35 rounded-2xl overflow-hidden hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.18)] cursor-pointer"
                       >
-                        <div className="space-y-3">
+                        <div>
+                          {vis && (
+                            <figure className="relative h-40 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                              <img
+                                src={vis.imageUrl}
+                                alt={vis.altText[language] || vis.altText.en}
+                                loading="lazy"
+                                onError={handleImgError}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
+                              <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold backdrop-blur-sm">
+                                {step4VisualLabels.visualClasses[vis.visualClass]}
+                              </span>
+                              <figcaption className="absolute bottom-1.5 left-3 right-3 text-[10px] text-stone-200 font-medium line-clamp-1">
+                                {vis.title[language] || vis.title.en}
+                              </figcaption>
+                            </figure>
+                          )}
+                          <div className="p-5 sm:p-6 space-y-3">
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <h4 className="font-royal-heading font-bold text-lg text-[#fae29c] group-hover:text-white transition-colors">
-                                {item.title}
+                                {mono ? mono.localizedTitle[language] || mono.localizedTitle.en : item.title}
                               </h4>
                               <div className="flex flex-wrap gap-1.5 mt-1.5">
                                 {Object.entries(item.native_scripts).map(([scriptName, scriptVal]) => (
@@ -886,7 +2137,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                               </div>
                             </div>
                             <span className="text-[10px] px-2 py-1 rounded bg-[#580014] text-[#fcedc7] font-semibold border border-[#d4af37]/30 whitespace-nowrap shrink-0">
-                              {item.category}
+                              {step5Ui.synonymCategories[item.category] || item.category}
                             </span>
                           </div>
 
@@ -929,9 +2180,43 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                             <strong className="text-[#d4af37]">{synonymSectionLabels.epistemicLabel}</strong>{' '}
                             {item.epistemic_note[language] || item.epistemic_note.en}
                           </div>
+
+                          {mono && (
+                            <div className="pt-1.5 space-y-2 border-t border-stone-800/60">
+                              <div className="flex flex-wrap items-center gap-1">
+                                <span className="text-[10px] font-bold text-[#d4af37] mr-1">
+                                  {step3Labels.relatedArticlesHeading}:
+                                </span>
+                                {mono.relatedArticleIds.slice(0, 5).map(relId => (
+                                  <button
+                                    key={relId}
+                                    type="button"
+                                    onClick={e => {
+                                      e.stopPropagation();
+                                      handleNavigateRelatedId(relId);
+                                    }}
+                                    className="px-2 py-0.5 rounded bg-stone-900 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-amber-200 border border-stone-700/70 transition-colors cursor-pointer"
+                                  >
+                                    ⇄ {resolveRelatedLabel(relId)}
+                                  </button>
+                                ))}
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {mono.relatedKeywords.slice(0, 5).map(kw => (
+                                  <span
+                                    key={kw}
+                                    className="text-[9px] px-1.5 py-0.5 rounded bg-stone-950/90 text-stone-400 border border-stone-800/80"
+                                  >
+                                    #{translateKeyword(kw)}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          </div>
                         </div>
 
-                        <div className="pt-3 border-t border-stone-800/60 flex items-center justify-between text-[11px]">
+                        <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-stone-800/60 flex items-center justify-between text-[11px]">
                           <span className="text-stone-400 truncate max-w-[180px]">
                             🙏 {item.sacred_associations.slice(0, 2).join(' • ')}
                           </span>
@@ -939,8 +2224,15 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                             <button
                               onClick={e => {
                                 e.stopPropagation();
+                                const matchedRegion =
+                                  GEOGRAPHICAL_SPREAD.find(reg =>
+                                    doesItemMatchRegion(item.id, item.prominent_states, reg.id)
+                                  ) || GEOGRAPHICAL_SPREAD[0];
+                                setSelectedRegionId(matchedRegion.id);
+                                setSearchTerm('');
                                 setActiveTab('geography');
-                                setSearchTerm(item.prominent_states[0] || '');
+                                syncUrlParams('geography', null, matchedRegion.id);
+                                scrollToTargetSection();
                               }}
                               className="text-stone-400 hover:text-[#d4af37] hover:underline font-medium cursor-pointer"
                             >
@@ -969,7 +2261,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 <p className="text-xs text-stone-400 mt-0.5">{synonymSectionLabels.tableSubheading}</p>
               </div>
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 self-start sm:self-auto">
-                {filteredSynonyms.length} Designations
+                {filteredSynonyms.length} {step5Ui.designationsCountLabel}
               </span>
             </div>
 
@@ -999,7 +2291,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       </td>
                       <td className="py-3.5 px-4 align-top text-stone-300">
                         <span className="inline-block px-2 py-0.5 rounded bg-stone-900 border border-stone-700 text-[11px] text-stone-200">
-                          {item.designation_group}
+                          {localizeSynonymGroup(item.designation_group)}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 align-top font-semibold text-stone-200">
@@ -1024,17 +2316,211 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       )}
 
       {/* ---------------------------------------------------------------------- */}
+      {/* STEP 2B: 9 PROFESSIONAL HERITAGE CATEGORIES */}
+      {/* ---------------------------------------------------------------------- */}
+      {activeTab === 'professions' && (
+        <div id="section-professions" className="space-y-8 scroll-mt-24">
+          {/* Header & Filter Pills */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
+                <Shield className="w-3.5 h-3.5" />
+                <span>{step2Labels.profCategoriesBadge}</span>
+              </div>
+              <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
+                {step2Labels.profCategoriesHeading}
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+                {step2Labels.profCategoriesSubheading}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+              <button
+                onClick={() => setSelectedProfessionCatNumber('all')}
+                className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
+                  selectedProfessionCatNumber === 'all'
+                    ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
+                    : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                }`}
+              >
+                {step2Labels.allNineCategoriesLabel}
+              </button>
+              {COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedProfessionCatNumber(cat.categoryNumber)}
+                  className={`px-2.5 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
+                    selectedProfessionCatNumber === cat.categoryNumber
+                      ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
+                      : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                  }`}
+                >
+                  #{cat.categoryNumber}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Methodological Banner */}
+          <div className="bg-gradient-to-r from-[#240610] via-[#141929] to-[#1a0912] border border-[#d4af37]/40 rounded-2xl p-4 sm:p-5 shadow-lg">
+            <div className="flex items-start gap-3">
+              <Shield className="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                {step2Labels.profMethodologicalNote}
+              </p>
+            </div>
+          </div>
+
+          {/* 9 Professional Heritage Category Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {filteredProfessions.map(cat => {
+              const primaryVis = cat.visualAssets && cat.visualAssets.length > 0 ? cat.visualAssets[0] : undefined;
+              const titleText = cat.title[language] || cat.title.en;
+              const subText = cat.shortSummary[language] || cat.shortSummary.en;
+              const defText = cat.definitionAndExplanation[language] || cat.definitionAndExplanation.en;
+              const distText =
+                cat.communitySpecificConnectionsAndDistinctions[language] ||
+                cat.communitySpecificConnectionsAndDistinctions.en;
+
+              return (
+                <div
+                  key={cat.id}
+                  onClick={() => openProfessionModal(cat)}
+                  className="bg-[#121624] border border-[#c99738]/40 hover:border-[#d4af37] rounded-3xl overflow-hidden flex flex-col justify-between shadow-xl transition-all cursor-pointer group hover:-translate-y-0.5"
+                >
+                  <div>
+                    {primaryVis && (
+                      <figure className="relative h-48 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                        <img
+                          src={primaryVis.imageUrl}
+                          alt={primaryVis.altText[language] || primaryVis.altText.en}
+                          loading="lazy"
+                          onError={handleImgError}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
+                        <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[10px] font-semibold backdrop-blur-sm">
+                          {step5Ui.visualTypeLabels[primaryVis.visualType] || primaryVis.visualType}
+                        </span>
+                        <figcaption className="absolute bottom-2 left-4 right-4 text-[11px] text-stone-200 font-medium line-clamp-1">
+                          {primaryVis.title[language] || primaryVis.title.en} •{' '}
+                          <span className="text-stone-400">{primaryVis.sourceAttribution}</span>
+                        </figcaption>
+                      </figure>
+                    )}
+
+                    <div className="p-6 space-y-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 text-xs font-bold">
+                          {(cat.title[language] || cat.title.en).split(':')[0] || cat.codeLabel}
+                        </span>
+                        <span className="text-[11px] text-stone-400 font-medium">
+                          {cat.includedSubClassifications.length} {step2Labels.subcategoriesLabel}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h3 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] group-hover:text-white transition-colors">
+                          {titleText}
+                        </h3>
+                        <p className="text-xs text-[#d4af37] font-semibold mt-1">
+                          {subText}
+                        </p>
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-stone-300 leading-relaxed line-clamp-4">
+                        {defText}
+                      </p>
+
+                      {/* Subcategories Pills */}
+                      <div className="space-y-1.5">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                          {step2Labels.subcategoriesLabel}:
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {cat.includedSubClassifications.map(sub => (
+                            <span
+                              key={sub.id}
+                              className="px-2.5 py-1 rounded-lg bg-stone-900/90 border border-stone-800 text-[11px] text-stone-200"
+                            >
+                              • {sub.name[language] || sub.name.en}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="px-6 pb-6 pt-4 border-t border-stone-800/80 space-y-3">
+                    <p className="text-[11px] text-stone-400 line-clamp-2">
+                      {distText}
+                    </p>
+                    {cat.relatedArticles && cat.relatedArticles.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-1">
+                        {cat.relatedArticles.slice(0, 4).map(rel => (
+                          <button
+                            key={rel.id}
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleNavigateRelatedId(rel.targetIdOrPath);
+                            }}
+                            className="px-2 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-amber-200 border border-stone-700/70 transition-colors cursor-pointer"
+                          >
+                            ⇄ {rel.label[language] || rel.label.en}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {Array.from(new Set(cat.relatedKeywords))
+                          .slice(0, 4)
+                          .map(kw => (
+                            <button
+                              key={kw}
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setSearchTerm(kw);
+                              }}
+                              className="px-2 py-0.5 rounded bg-[#1b2234] hover:bg-stone-800 text-amber-200/90 text-[10px] cursor-pointer"
+                            >
+                              #{translateKeyword(kw)}
+                            </button>
+                          ))}
+                      </div>
+                      <span className="text-[#d4af37] font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform shrink-0">
+                        {step2Labels.exploreCategoryBtn} <ChevronRight className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {filteredProfessions.length === 0 && (
+            <div className="p-8 text-center rounded-2xl bg-stone-900/50 border border-stone-800 space-y-1">
+              <div className="text-sm font-bold text-[#fae29c]">{step5Ui.emptyStateTitle}</div>
+              <div className="text-xs text-stone-400">{step5Ui.emptyStateDesc}</div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ---------------------------------------------------------------------- */}
       {/* TAB 2: SACRED PROGENITORS & HISTORICAL FIGURES */}
       {/* ---------------------------------------------------------------------- */}
       {activeTab === 'figures' && (
-        <div className="space-y-6">
+        <div id="section-figures" className="space-y-6 scroll-mt-24">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="font-royal-heading font-bold text-2xl text-[#fcedc7]">
-                Sacred Progenitors, Emperors & Divine Guardians
+                {step5Ui.figuresTab.heading}
               </h2>
               <p className="text-xs sm:text-sm text-stone-400">
-                Click on any figure to view the complete detailed historical narrative, civil engineering legacy, and canonical sources.
+                {step5Ui.figuresTab.subtitle}
               </p>
             </div>
           </div>
@@ -1048,19 +2534,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               return (
                 <div
                   key={fig.id}
-                  onClick={() => setSelectedFigure(fig)}
+                  onClick={() => {
+                    setSelectedFigure(fig);
+                    syncUrlParams('figures', fig.id);
+                  }}
                   className="bg-[#121624] border border-[#c99738]/30 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-lg transition-all flex flex-col justify-between group cursor-pointer hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(201,151,56,0.2)]"
                 >
                   <div className="relative h-48 w-full overflow-hidden bg-stone-950">
                     <img
                       src={fig.image_url}
-                      alt={fig.canonical_name}
+                      alt={`${displayName} — ${displayTitle}`}
+                      loading="lazy"
+                      onError={handleImgError}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-transparent" />
                     <div className="absolute top-3 left-3">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#580014]/90 text-[#fcedc7] border border-[#d4af37]/40 backdrop-blur-sm">
-                        {fig.epigraphic_status}
+                        {step5Ui.figuresTab.epigraphicStatus[fig.epigraphic_status] || fig.epigraphic_status}
                       </span>
                     </div>
                   </div>
@@ -1090,7 +2581,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         📍 {fig.associated_places[0]}
                       </span>
                       <span className="text-[#d4af37] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                        Explore Profile <ChevronRight className="w-3.5 h-3.5" />
+                        {step5Ui.figuresTab.exploreProfile} <ChevronRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
                   </div>
@@ -1098,6 +2589,12 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               );
             })}
           </div>
+          {filteredFigures.length === 0 && (
+            <div className="p-8 text-center rounded-2xl bg-stone-900/50 border border-stone-800 space-y-1">
+              <div className="text-sm font-bold text-[#fae29c]">{step5Ui.emptyStateTitle}</div>
+              <div className="text-xs text-stone-400">{step5Ui.emptyStateDesc}</div>
+            </div>
+          )}
         </div>
       )}
 
@@ -1105,13 +2602,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       {/* TAB 3: PAN-INDIAN GEOGRAPHICAL SPREADING */}
       {/* ---------------------------------------------------------------------- */}
       {activeTab === 'geography' && (
-        <div className="space-y-6">
+        <div id="section-geography" className="space-y-6 scroll-mt-24">
           <div>
             <h2 className="font-royal-heading font-bold text-2xl text-[#fcedc7]">
-              Pan-Indian Geographical Spreading & Historical Corridors
+              {step5Ui.geographyTab.heading}
             </h2>
             <p className="text-xs sm:text-sm text-stone-400">
-              Examining the 7 major regional corridors where the community established fort defenses, irrigation networks, and sacred shrines.
+              {step5Ui.geographyTab.subtitle}
             </p>
           </div>
 
@@ -1125,22 +2622,44 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 return (
                   <div
                     key={reg.id}
-                    onClick={() => setSelectedRegionId(reg.id)}
+                    onClick={() => {
+                      setSelectedRegionId(reg.id);
+                      setSelectedFigure(null);
+                      setSelectedModalRef({ type: 'region', id: reg.id });
+                      syncUrlParams('geography', reg.id, reg.id);
+                    }}
                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                       isSelected
                         ? 'bg-[#201520] border-[#d4af37] shadow-lg shadow-[#580014]/20'
                         : 'bg-[#121624] border-stone-800 hover:border-stone-700 hover:bg-[#161b2e]'
                     }`}
                   >
-                    <div className="space-y-1">
+                    <div className="space-y-1.5 min-w-0 pr-2">
                       <h4 className={`text-sm font-bold ${isSelected ? 'text-[#fae29c]' : 'text-stone-200'}`}>
                         {regTitle}
                       </h4>
-                      <p className="text-[11px] text-stone-400 truncate max-w-[220px]">
-                        {reg.predominant_community_synonyms.join(' • ')}
-                      </p>
+                      <div className="flex flex-wrap gap-1">
+                        {reg.predominant_community_synonyms.map(syn => {
+                          const targetId = resolveDesignationTargetId(syn);
+                          return (
+                            <button
+                              key={syn}
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setSelectedRegionId(reg.id);
+                                handleNavigateRelatedId(targetId);
+                              }}
+                              className="px-1.5 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-[#fcedc7] border border-stone-800 hover:border-[#d4af37]/50 transition-colors cursor-pointer"
+                              title={resolveRelatedLabel(targetId)}
+                            >
+                              {syn}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <ChevronRight className={`w-4 h-4 ${isSelected ? 'text-[#d4af37]' : 'text-stone-600'}`} />
+                    <ChevronRight className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#d4af37]' : 'text-stone-600'}`} />
                   </div>
                 );
               })}
@@ -1151,34 +2670,102 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               const activeReg =
                 GEOGRAPHICAL_SPREAD.find(r => r.id === (selectedRegionId || GEOGRAPHICAL_SPREAD[0].id)) ||
                 GEOGRAPHICAL_SPREAD[0];
+              const vis = STEP4_VISUAL_ASSET_REGISTRY[activeReg.id];
               const regTitle = activeReg.localized_region[language] || activeReg.region_name;
               const regOverview = activeReg.regional_overview[language] || activeReg.regional_overview.en;
+              const relatedIds = REGION_RELATED_ARTICLE_IDS[activeReg.id] || [];
 
               return (
                 <div
-                  onClick={() => setSelectedModalRef({ type: 'region', id: activeReg.id })}
+                  onClick={() => {
+                    setSelectedFigure(null);
+                    setSelectedModalRef({ type: 'region', id: activeReg.id });
+                    syncUrlParams('geography', activeReg.id, activeReg.id);
+                  }}
                   className="lg:col-span-2 bg-[#121624] border border-[#c99738]/40 hover:border-[#c99738] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl cursor-pointer transition-all"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-4">
                     <div>
                       <span className="text-[11px] font-bold text-[#d4af37] uppercase tracking-wider">
-                        Regional Corridor Spotlight (Click to Open Full Modal)
+                        {step5Ui.geographyTab.spotlightModalBadge}
                       </span>
                       <h3 className="font-royal-heading font-extrabold text-2xl text-[#fcedc7]">
                         {regTitle}
                       </h3>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
-                      {activeReg.predominant_community_synonyms.map(syn => (
-                        <span
-                          key={syn}
-                          className="px-2.5 py-1 rounded bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/30"
-                        >
-                          {syn}
-                        </span>
-                      ))}
+                      {activeReg.predominant_community_synonyms.map(syn => {
+                        const targetId = resolveDesignationTargetId(syn);
+                        return (
+                          <button
+                            key={syn}
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleNavigateRelatedId(targetId);
+                            }}
+                            className="px-2.5 py-1 rounded bg-[#580014] hover:bg-[#73001b] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/30 hover:border-[#d4af37] transition-colors cursor-pointer"
+                            title={resolveRelatedLabel(targetId)}
+                          >
+                            {syn}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
+
+                  {/* Step 4 Regional Monument Visual & Reconstructed Historical Reference Map */}
+                  {vis && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <figure className="rounded-xl overflow-hidden border border-[#c99738]/30 bg-stone-950 flex flex-col justify-between">
+                        <div className="relative h-44 w-full overflow-hidden">
+                          <img
+                            src={vis.imageUrl}
+                            alt={vis.altText[language] || vis.altText.en}
+                            loading="lazy"
+                            onError={handleImgError}
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/80 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold">
+                            {step4VisualLabels.visualClasses[vis.visualClass]}
+                          </span>
+                        </div>
+                        <figcaption className="p-3 space-y-1 text-[11px] bg-stone-950/90 border-t border-stone-800">
+                          <div className="font-bold text-[#fcedc7]">{vis.title[language] || vis.title.en}</div>
+                          <p className="text-stone-300 leading-snug">{vis.caption[language] || vis.caption.en}</p>
+                          <div className="text-[10px] text-[#d4af37]">{vis.sourceAttribution}</div>
+                        </figcaption>
+                      </figure>
+
+                      {vis.companionMapUrl && vis.companionMapTitle && vis.companionMapCaption && (
+                        <figure className="rounded-xl overflow-hidden border border-[#c99738]/30 bg-stone-950 flex flex-col justify-between">
+                          <div className="relative h-44 w-full overflow-hidden">
+                            <img
+                              src={vis.companionMapUrl}
+                              alt={vis.companionMapTitle[language] || vis.companionMapTitle.en}
+                              loading="lazy"
+                              onError={handleImgError}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-[#580014]/90 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold">
+                              {step4VisualLabels.visualClasses.reconstructed_map}
+                            </span>
+                          </div>
+                          <figcaption className="p-3 space-y-1 text-[11px] bg-stone-950/90 border-t border-stone-800">
+                            <div className="font-bold text-[#fcedc7]">
+                              {vis.companionMapTitle[language] || vis.companionMapTitle.en}
+                            </div>
+                            <p className="text-stone-300 leading-snug">
+                              {vis.companionMapCaption[language] || vis.companionMapCaption.en}
+                            </p>
+                            <div className="text-[10px] text-amber-300/90">
+                              {step4VisualLabels.mapDisclaimerText}
+                            </div>
+                          </figcaption>
+                        </figure>
+                      )}
+                    </div>
+                  )}
 
                   <p className="text-sm text-stone-200 font-royal-serif leading-relaxed">
                     {regOverview}
@@ -1188,7 +2775,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800 space-y-2">
                       <div className="flex items-center gap-2 text-[#d4af37] font-semibold">
                         <MapPin className="w-4 h-4" />
-                        <span>Key Cities & Districts</span>
+                        <span>{step5Ui.geographyTab.keyCitiesLabel}</span>
                       </div>
                       <p className="text-stone-300 leading-relaxed">
                         {activeReg.prominent_cities_districts.join(', ')}
@@ -1198,7 +2785,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800 space-y-2">
                       <div className="flex items-center gap-2 text-[#d4af37] font-semibold">
                         <Building className="w-4 h-4" />
-                        <span>Landmark Forts & Reservoirs</span>
+                        <span>{step5Ui.geographyTab.landmarkFortsLabel}</span>
                       </div>
                       <p className="text-stone-300 leading-relaxed">
                         {activeReg.historical_forts_and_landmarks.join(' • ')}
@@ -1208,7 +2795,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800 space-y-2">
                       <div className="flex items-center gap-2 text-[#d4af37] font-semibold">
                         <Sparkles className="w-4 h-4" />
-                        <span>Sacred Centers & Shrines</span>
+                        <span>{step5Ui.geographyTab.sacredCentersLabel}</span>
                       </div>
                       <p className="text-stone-300 leading-relaxed">
                         {activeReg.sacred_centers.join(' • ')}
@@ -1218,27 +2805,58 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     <div className="p-4 rounded-xl bg-stone-900/80 border border-stone-800 space-y-2">
                       <div className="flex items-center gap-2 text-[#d4af37] font-semibold">
                         <Calendar className="w-4 h-4" />
-                        <span>Migration Context</span>
+                        <span>{step5Ui.geographyTab.migrationContextLabel}</span>
                       </div>
                       <p className="text-stone-300 leading-relaxed">
-                        {activeReg.migration_epoch_and_corridor}
+                        {step5Ui.geographyTab.migrationEpochs[activeReg.id] || activeReg.migration_epoch_and_corridor}
                       </p>
                     </div>
                   </div>
 
-                  <div className="pt-2 flex items-center justify-between border-t border-stone-800 text-xs">
+                  {/* Related Articles for this Regional Corridor */}
+                  {relatedIds.length > 0 && (
+                    <div className="p-4 rounded-xl bg-stone-900/70 border border-stone-800 space-y-2.5">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
+                        <BookOpen className="w-3.5 h-3.5 text-[#d4af37]" />
+                        <span>{step3Labels.relatedArticlesHeading}:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {relatedIds.map(relId => (
+                          <button
+                            key={relId}
+                            type="button"
+                            onClick={e => {
+                              e.stopPropagation();
+                              handleNavigateRelatedId(relId);
+                            }}
+                            className="px-2.5 py-1 rounded-lg bg-[#161c2d] hover:bg-[#580014] text-xs text-[#fae29c] hover:text-white border border-stone-700 hover:border-[#d4af37] transition-colors cursor-pointer"
+                          >
+                            ⇄ {resolveRelatedLabel(relId)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-stone-800 text-xs">
                     <span className="text-stone-400">
-                      States: {activeReg.states_and_territories.join(', ')}
+                      {step5Ui.geographyTab.statesLabel} {activeReg.states_and_territories.join(', ')}
                     </span>
                     <button
+                      type="button"
                       onClick={e => {
                         e.stopPropagation();
+                        setSelectedRegionId(activeReg.id);
+                        setSearchTerm('');
+                        setDirectoryGroupFilter('all');
+                        setSynonymCategoryFilter('all');
                         setActiveTab('synonyms');
-                        setSearchTerm(activeReg.predominant_community_synonyms[0] || '');
+                        syncUrlParams('synonyms', null, activeReg.id);
+                        scrollToTargetSection();
                       }}
                       className="text-[#d4af37] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                     >
-                      Filter Synonyms for this Region <ChevronRight className="w-3.5 h-3.5" />
+                      {step5Ui.geographyTab.filterSynonymsBtn} <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -1252,43 +2870,83 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       {/* TAB 4: COMPLETE HISTORICAL MONOGRAPH */}
       {/* ---------------------------------------------------------------------- */}
       {activeTab === 'history' && (
-        <article className="bg-[#121624] border border-[#c99738]/40 rounded-3xl p-6 sm:p-12 space-y-10 shadow-2xl">
+        <article id="section-history" className="bg-[#121624] border border-[#c99738]/40 rounded-3xl p-6 sm:p-12 space-y-10 shadow-2xl scroll-mt-24">
           <div className="border-b border-stone-800 pb-6 space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] text-xs font-semibold">
               <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
-              <span>Peer-Reviewed Archival Monograph</span>
+              <span>{step5Ui.monographTab.badge}</span>
             </div>
             <h2 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
-              The Civilizational Odyssey of Oad-Rajput & Od-Kshatriya Communities
+              {step5Ui.monographTab.heading}
             </h2>
             <p className="text-xs sm:text-sm text-stone-400">
-              Authored by the Suryavamsha Archival Research Council • Click any chapter below to open in focused reader modal
+              {step5Ui.monographTab.subtitle}
             </p>
           </div>
 
           <div className="space-y-8 font-royal-serif text-stone-200 text-sm sm:text-base leading-relaxed">
             {HISTORICAL_MONOGRAPH_SECTIONS.map(sec => {
+              const vis = STEP4_VISUAL_ASSET_REGISTRY[sec.id];
               const secTitle = sec.section_title[language] || sec.section_title.en;
               const secContent = sec.content[language] || sec.content.en;
+              const localizedKeyPoints = step5Ui.monographTab.chapterKeyPoints[sec.id] || sec.key_points;
 
               return (
                 <section
                   key={sec.id}
-                  onClick={() => setSelectedModalRef({ type: 'monograph', id: sec.id })}
-                  className="space-y-3 pb-6 border-b border-stone-800/60 last:border-0 cursor-pointer p-4 -mx-4 rounded-2xl hover:bg-stone-900/40 transition-colors group"
+                  onClick={() => {
+                    setSelectedModalRef({ type: 'monograph', id: sec.id });
+                    syncUrlParams('history', sec.id);
+                  }}
+                  className="space-y-4 pb-6 border-b border-stone-800/60 last:border-0 cursor-pointer p-4 -mx-4 rounded-2xl hover:bg-stone-900/40 transition-colors group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] group-hover:text-white transition-colors">
                       {secTitle}
                     </h3>
-                    <span className="text-xs font-sans font-semibold text-[#d4af37] shrink-0">Open Chapter →</span>
+                    <span className="text-xs font-sans font-semibold text-[#d4af37] shrink-0">
+                      {step5Ui.monographTab.openChapterBtn}
+                    </span>
                   </div>
+
+                  {vis && (
+                    <figure className="rounded-2xl overflow-hidden border border-[#c99738]/35 bg-stone-950 font-sans">
+                      <div className="relative h-52 sm:h-64 w-full overflow-hidden">
+                        <img
+                          src={vis.imageUrl}
+                          alt={vis.altText[language] || vis.altText.en}
+                          loading="lazy"
+                          onError={handleImgError}
+                          className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                        />
+                        <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/80 text-[#fae29c] border border-[#d4af37]/40 text-[10px] font-semibold">
+                          {step4VisualLabels.visualClasses[vis.visualClass]}
+                        </span>
+                      </div>
+                      <figcaption className="p-3.5 bg-stone-950/95 border-t border-stone-800 space-y-1 text-xs">
+                        <div className="font-bold text-[#fcedc7]">{vis.title[language] || vis.title.en}</div>
+                        <p className="text-stone-300">{vis.caption[language] || vis.caption.en}</p>
+                        <div className="text-[11px] text-[#d4af37]">{vis.sourceAttribution}</div>
+                        {vis.visualClass === 'reconstructed_map' && (
+                          <div className="text-[11px] text-amber-300/90 pt-0.5">
+                            {step4VisualLabels.mapDisclaimerText}
+                          </div>
+                        )}
+                        {vis.visualClass === 'artistic_illustration' && (
+                          <div className="text-[11px] text-amber-300/90 pt-0.5">
+                            {step4VisualLabels.illustrationDisclaimerText}
+                          </div>
+                        )}
+                      </figcaption>
+                    </figure>
+                  )}
+
                   <div className="whitespace-pre-line text-stone-300">
                     {secContent}
                   </div>
-                  {sec.key_points && sec.key_points.length > 0 && (
+                  {localizedKeyPoints && localizedKeyPoints.length > 0 && (
                     <div className="pt-2 flex flex-wrap gap-2 text-xs font-sans">
-                      {sec.key_points.map((kp, idx) => (
+                      {localizedKeyPoints.map((kp, idx) => (
                         <span
                           key={idx}
                           className="px-2.5 py-1 rounded bg-stone-900 text-stone-400 border border-stone-800"
@@ -1305,7 +2963,14 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         </article>
       )}
 
-      <ContentDetailModal item={modalItem} onClose={() => setSelectedModalRef(null)} />
+      <ContentDetailModal
+        item={modalItem}
+        onTagClick={handleModalTagClick}
+        onClose={() => {
+          setSelectedModalRef(null);
+          syncUrlParams(activeTab, null);
+        }}
+      />
 
       {/* ---------------------------------------------------------------------- */}
       {/* DETAILED HISTORICAL FIGURE MODAL DIALOG */}
@@ -1318,7 +2983,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
-                    {selectedFigure.epigraphic_status}
+                    {step5Ui.figuresTab.epigraphicStatus[selectedFigure.epigraphic_status] ||
+                      selectedFigure.epigraphic_status}
                   </span>
                   <span className="text-xs text-stone-400">⏳ {selectedFigure.reign_or_dates}</span>
                 </div>
@@ -1330,9 +2996,12 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 </p>
               </div>
               <button
-                onClick={() => setSelectedFigure(null)}
+                onClick={() => {
+                  setSelectedFigure(null);
+                  syncUrlParams(activeTab, null);
+                }}
                 className="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-white border border-stone-700 transition-colors cursor-pointer"
-                title="Close Profile (Esc)"
+                title={translateText('close_modal', 'Close Profile')}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1340,16 +3009,28 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
             {/* Figure Image & Alternate Names */}
             <div className="flex flex-col sm:flex-row gap-6 items-center">
-              <div className="w-full sm:w-48 h-48 rounded-2xl overflow-hidden border border-[#d4af37]/50 shrink-0 shadow-lg bg-stone-950">
+              <figure className="w-full sm:w-52 rounded-2xl overflow-hidden border border-[#d4af37]/50 shrink-0 shadow-lg bg-stone-950">
                 <img
                   src={selectedFigure.image_url}
-                  alt={selectedFigure.canonical_name}
-                  className="w-full h-full object-cover"
+                  alt={`${selectedFigure.localized_name[language] || selectedFigure.canonical_name} — ${
+                    selectedFigure.titles[language] || selectedFigure.titles.en
+                  }`}
+                  onError={handleImgError}
+                  className="w-full h-48 object-cover"
                 />
-              </div>
+                <figcaption className="p-2 bg-stone-950 border-t border-stone-800 text-[10px] text-stone-300 leading-snug">
+                  <div className="font-semibold text-[#fae29c]">
+                    {selectedFigure.localized_name[language] || selectedFigure.canonical_name}
+                  </div>
+                  <div className="text-stone-400">
+                    {step5Ui.figuresTab.epigraphicStatus[selectedFigure.epigraphic_status] ||
+                      selectedFigure.epigraphic_status}
+                  </div>
+                </figcaption>
+              </figure>
               <div className="space-y-3 text-xs w-full">
                 <div className="space-y-1">
-                  <span className="text-stone-400 text-[11px] font-semibold">Alternate Historical Names:</span>
+                  <span className="text-stone-400 text-[11px] font-semibold">{step5Ui.figuresTab.modalAltNames}</span>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedFigure.alternate_names.map(alt => (
                       <span key={alt} className="px-2 py-0.5 rounded bg-stone-900 text-stone-300 border border-stone-800">
@@ -1360,12 +3041,12 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-stone-400 text-[11px] font-semibold">Dynasty & Lineage:</span>
+                  <span className="text-stone-400 text-[11px] font-semibold">{step5Ui.figuresTab.modalDynasty}</span>
                   <p className="text-stone-200 font-semibold">{selectedFigure.dynasty_lineage}</p>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-stone-400 text-[11px] font-semibold">Associated Sacred Geography:</span>
+                  <span className="text-stone-400 text-[11px] font-semibold">{step5Ui.figuresTab.modalSacredGeo}</span>
                   <p className="text-stone-300">📍 {selectedFigure.associated_places.join(', ')}</p>
                 </div>
               </div>
@@ -1407,7 +3088,10 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             {/* Footer Close Button */}
             <div className="pt-4 border-t border-stone-800 flex justify-end">
               <button
-                onClick={() => setSelectedFigure(null)}
+                onClick={() => {
+                  setSelectedFigure(null);
+                  syncUrlParams(activeTab, null);
+                }}
                 className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer shadow-md"
               >
                 {translateText('close_modal', 'Close Profile')}
@@ -1421,10 +3105,10 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       <div className="p-8 rounded-3xl bg-[#141824] border border-[#c99738]/40 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-1 text-center sm:text-left">
           <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
-            Connect with Fellow Members Across the Nation
+            {step5Ui.bottomCta.heading}
           </h3>
           <p className="text-xs text-stone-400">
-            Join the verified public member directory and preserve your family vamsavali with strict privacy safeguards.
+            {step5Ui.bottomCta.subtitle}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -1432,13 +3116,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             onClick={() => onNavigate('/directory')}
             className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer shadow-md"
           >
-            Explore Directory
+            {step5Ui.bottomCta.exploreDirectoryBtn}
           </button>
           <button
             onClick={() => onNavigate('/register')}
             className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#1a2130] text-stone-200 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
           >
-            Register as Member
+            {step5Ui.bottomCta.registerMemberBtn}
           </button>
         </div>
       </div>

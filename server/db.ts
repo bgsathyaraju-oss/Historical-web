@@ -91,8 +91,8 @@ export function getDb(): DatabaseSchema {
         if (!memoryDb.email_verifications) {
           memoryDb.email_verifications = [];
         }
-        // Auto-merge any newly added canonical seed items and update categorizations
-        const seed = initializeSeedData();
+        // Auto-merge any newly added canonical seed items and update categorizations without re-hashing passwords
+        const seed = initializeSeedData(false);
         let changed = false;
         for (const art of seed.articles) {
           const existing = memoryDb.articles.find(a => a.id === art.id);
@@ -140,7 +140,7 @@ export function getDb(): DatabaseSchema {
     }
   }
 
-  memoryDb = initializeSeedData();
+  memoryDb = initializeSeedData(true);
   saveDb(memoryDb);
   return memoryDb;
 }
@@ -174,12 +174,12 @@ export function addAuditLog(user_id: string, user_email: string, action: string,
   saveDb(db);
 }
 
-function initializeSeedData(): DatabaseSchema {
+function initializeSeedData(includePasswordHashes = true): DatabaseSchema {
   const adminId = 'usr_admin_001';
   const editorId = 'usr_editor_001';
   const memberId = 'usr_member_001';
 
-  const defaultPasswordHash = bcrypt.hashSync('Heritage@2026', 10);
+  const defaultPasswordHash = includePasswordHashes ? bcrypt.hashSync('Heritage@2026', 10) : '';
 
   const users: User[] = [
     {
