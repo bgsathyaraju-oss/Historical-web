@@ -1,0 +1,60 @@
+name: Deploy React Website to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+concurrency:
+  group: firebase-hosting
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build website for Firebase Hosting (root base path)
+        env:
+          VITE_BASE_PATH: /
+        run: bun run build
+
+      - name: Verify Firebase Service Account Secret
+        id: check_secret
+        env:
+          HAS_SECRET: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HISTORICAL_WEB != '' }}
+        run: |
+          if [ "$HAS_SECRET" = "true" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::FIREBASE_SERVICE_ACCOUNT_HISTORICAL_WEB secret is not set yet. Build succeeded; skipping Firebase Hosting deploy step until the secret is added in GitHub Repository Settings."
+          fi
+
+      - name: Deploy to Firebase Hosting
+        if: steps.check_secret.outputs.configured == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HISTORICAL_WEB }}
+          channelId: live
+          projectId: historical-web

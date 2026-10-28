@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: process.env.GITHUB_ACTIONS === 'true' ? '/Historical-web/' : '/',
+    base: process.env.VITE_BASE_PATH || (process.env.GITHUB_ACTIONS === 'true' ? '/Historical-web/' : '/'),
     // Tailwind v4 plugin MUST precede @vitejs/plugin-react
     plugins: [tailwindcss(), react()],
     resolve: {
