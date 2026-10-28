@@ -421,9 +421,18 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const handleModalTagClick = (tagItem: string) => {
-    if (DESIGNATION_TO_ARTICLE_ID[tagItem]) {
-      handleNavigateRelatedId(DESIGNATION_TO_ARTICLE_ID[tagItem]);
-      return;
+    const rawTrimmed = tagItem.startsWith('#') ? tagItem.slice(1).trim() : tagItem.trim();
+    const parenMatch = rawTrimmed.match(/\(([^)]+)\)$/);
+    const candidateKeys = [
+      tagItem,
+      rawTrimmed,
+      ...(parenMatch ? [parenMatch[1].trim()] : [])
+    ];
+    for (const key of candidateKeys) {
+      if (DESIGNATION_TO_ARTICLE_ID[key]) {
+        handleNavigateRelatedId(DESIGNATION_TO_ARTICLE_ID[key]);
+        return;
+      }
     }
     const allIds = [
       ...COMMUNITY_DIRECTORY_ITEMS.map(c => c.id),
@@ -433,14 +442,19 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       ...HISTORICAL_MONOGRAPH_SECTIONS.map(m => m.id),
       ...HISTORICAL_FIGURES.map(f => f.id)
     ];
-    const matchedId = allIds.find(id => resolveRelatedLabel(id) === tagItem || id === tagItem);
+    const matchedId = allIds.find(id =>
+      candidateKeys.some(k => resolveRelatedLabel(id) === k || id === k)
+    );
     if (matchedId) {
       handleNavigateRelatedId(matchedId);
       return;
     }
-    const fallbackId = resolveDesignationTargetId(tagItem);
-    if (fallbackId) {
-      handleNavigateRelatedId(fallbackId);
+    for (const key of candidateKeys) {
+      const fallbackId = resolveDesignationTargetId(key);
+      if (fallbackId) {
+        handleNavigateRelatedId(fallbackId);
+        return;
+      }
     }
   };
 
@@ -989,7 +1003,11 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       const sec = HISTORICAL_MONOGRAPH_SECTIONS.find(s => s.id === selectedModalRef.id);
       if (!sec) return null;
       const vis = STEP4_VISUAL_ASSET_REGISTRY[sec.id];
-      const secTitle = sec.section_title[language] || sec.section_title.en;
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[sec.id];
+      const monoHeadings = SYNONYM_MONOGRAPH_SECTION_HEADINGS[language] || SYNONYM_MONOGRAPH_SECTION_HEADINGS.en;
+      const secTitle = mono
+        ? mono.localizedTitle[language] || mono.localizedTitle.en
+        : sec.section_title[language] || sec.section_title.en;
       const secContent = sec.content[language] || sec.content.en;
       const localizedKeyPoints = step5Ui.monographTab.chapterKeyPoints[sec.id] || sec.key_points;
       const monoImgMap: Record<string, string> = {
@@ -1002,6 +1020,50 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         mono_part_7_kolletikota: `${base}peddintlamma_temple_kolletikota.jpg`,
         mono_part_8_epigraphic_evolution: `${base}hathigumpha_inscription.jpg`
       };
+      const monographSections = mono
+        ? [
+            {
+              heading: monoHeadings.sec2_linguistics,
+              type: 'text' as const,
+              content: mono.terminologyAndLinguisticAnalysis[language] || mono.terminologyAndLinguisticAnalysis.en
+            },
+            {
+              heading: monoHeadings.sec3_chronology,
+              type: 'text' as const,
+              content: mono.chronologicalHistory[language] || mono.chronologicalHistory.en
+            },
+            {
+              heading: monoHeadings.sec4_geography,
+              type: 'text' as const,
+              content: mono.geographicalAndSettlementAnalysis[language] || mono.geographicalAndSettlementAnalysis.en
+            },
+            {
+              heading: monoHeadings.sec5_culture,
+              type: 'text' as const,
+              content: mono.culturalAndSocialTraditions[language] || mono.culturalAndSocialTraditions.en
+            },
+            {
+              heading: monoHeadings.sec6_professions,
+              type: 'text' as const,
+              content: mono.occupationalAndProfessionalHeritage[language] || mono.occupationalAndProfessionalHeritage.en
+            },
+            {
+              heading: monoHeadings.sec7_evidence,
+              type: 'text' as const,
+              content: mono.epigraphicAndDocumentaryEvidence[language] || mono.epigraphicAndDocumentaryEvidence.en
+            },
+            {
+              heading: monoHeadings.sec8_epistemic,
+              type: 'text' as const,
+              content: mono.epistemicEvaluationAndResearchGaps[language] || mono.epistemicEvaluationAndResearchGaps.en
+            },
+            {
+              heading: monoHeadings.sec9_conclusion,
+              type: 'text' as const,
+              content: mono.conclusionAndSynthesis[language] || mono.conclusionAndSynthesis.en
+            }
+          ]
+        : [];
       return {
         id: sec.id,
         title: secTitle,
@@ -1011,11 +1073,44 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         imageUrl: vis?.imageUrl || monoImgMap[sec.id] || `${base}barabati_fort_gateway.jpg`,
         imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
         imageLayout: 'banner',
+        summaryLabel: mono ? monoHeadings.summaryLabel : undefined,
+        summary: mono ? (mono.executiveSummaryAndScope[language] || mono.executiveSummaryAndScope.en) : undefined,
         content: secContent,
         sections: [
+          ...monographSections,
           ...buildVisualDocSection(sec.id),
           ...(localizedKeyPoints && localizedKeyPoints.length > 0
             ? [{ heading: step5Ui.monographTab.keyTakeawaysHeading, type: 'list' as const, items: localizedKeyPoints }]
+            : []),
+          ...(mono && mono.references.length > 0
+            ? [
+                {
+                  heading: step3Labels.referencesHeading,
+                  type: 'list' as const,
+                  items: mono.references.map(r => `${r.citation} [${r.type}]`)
+                }
+              ]
+            : []),
+          ...(mono && mono.relatedArticleIds.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedArticlesHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(mono.relatedArticleIds)).map((id: string) => resolveRelatedLabel(id))
+                }
+              ]
+            : []),
+          ...(mono && mono.relatedKeywords.length > 0
+            ? [
+                {
+                  heading: step3Labels.relatedKeywordsHeading,
+                  type: 'tags' as const,
+                  items: Array.from(new Set(mono.relatedKeywords)).map((kw: string) => {
+                    const tr = translateKeyword(kw);
+                    return tr !== kw ? `#${tr} (${kw})` : `#${kw}`;
+                  })
+                }
+              ]
             : [])
         ]
       };
