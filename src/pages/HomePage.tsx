@@ -94,7 +94,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       }
     };
 
-    fetchHomeData();
+    fetchHomeData().catch(() => {});
   }, [language]);
 
   return (

@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    fetchCurrentUser();
+    fetchCurrentUser().catch(() => {});
   }, []);
 
   const login = async (email: string, pass: string) => {

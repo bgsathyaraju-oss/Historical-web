@@ -116,6 +116,10 @@ function AppContent() {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).__PORTAL_MOUNTED__ = true;
+    }
+
     const handlePopState = () => {
       try {
         const appPath = getNormalizedAppPath(window.location.pathname);

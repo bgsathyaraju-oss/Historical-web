@@ -15,7 +15,6 @@ function mountApplication() {
         <App />
       </ErrorBoundary>
     );
-    (window as any).__PORTAL_MOUNTED__ = true;
   } catch (err) {
     logSafePortalError('RootMountError', err);
     const msg = err instanceof Error ? err.message : String(err);

@@ -1,13 +1,30 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import {defineConfig, Plugin} from 'vite';
+
+function androidWebViewCssCompatPlugin(): Plugin {
+  return {
+    name: 'android-webview-css-compat',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      for (const fileName of Object.keys(bundle)) {
+        const asset = bundle[fileName];
+        if (asset.type === 'asset' && fileName.endsWith('.css') && typeof asset.source === 'string') {
+          // Remove 'in oklab' from Tailwind v4 gradient positions so Android WebViews < Chrome 111
+          // do not drop linear-gradient() and make bg-clip-text headings invisible.
+          asset.source = asset.source.replace(/\s+in\s+oklab\b/g, '');
+        }
+      }
+    },
+  };
+}
 
 export default defineConfig(() => {
   return {
     base: process.env.VITE_BASE_PATH || (process.env.GITHUB_ACTIONS === 'true' ? '/Historical-web/' : '/'),
     // Tailwind v4 plugin MUST precede @vitejs/plugin-react
-    plugins: [tailwindcss(), react()],
+    plugins: [tailwindcss(), react(), androidWebViewCssCompatPlugin()],
     resolve: {
       alias: [
         {

@@ -80,3 +80,12 @@
   background-size: 40px 40px;
   background-position: 0 0, 20px 20px;
 }
+
+/* Android WebView safety fallback for gradient text */
+@supports not (color: oklab(0% 0 0)) {
+  .bg-clip-text.text-transparent {
+    color: #fae29c !important;
+    -webkit-text-fill-color: #fae29c !important;
+  }
+}
+

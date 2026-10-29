@@ -453,7 +453,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setContentTranslations(event.data);
         }
       } else if (event.type === 'cache-cleared') {
-        loadTranslations(language, true);
+        loadTranslations(language, true).catch(() => {});
       }
     });
 
@@ -465,7 +465,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Initial load and language switch trigger
   useEffect(() => {
     syncDocumentMetadata(language);
-    loadTranslations(language);
+    loadTranslations(language).catch(() => {});
   }, [language, loadTranslations, syncDocumentMetadata]);
 
   // Manual refresh helper

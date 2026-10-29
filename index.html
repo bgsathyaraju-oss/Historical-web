@@ -7,6 +7,106 @@
     <meta name="description" content="Historical documentary, royal heritage archive, and global community portal dedicated to Suryavamsha Odiyaraju Kshatriya, Odra Desha, and Gajapathi heritage." />
     <meta name="keywords" content="Suryavamsha Odiyaraju Kshatriya, Suryavamshi Odiya Rajput Kshatriya, Odiya Gajapathi Rajulu, Odra Desha, Kalinga, Utkala, Trikalinga, Gajapathi dynasty, Kapilendra Deva, Purushottama Deva, Prataparudra Deva, historical inscriptions, royal genealogy" />
     <meta name="author" content="Suryavamsha Odiyaraju Kshatriya Historical Documentation Project" />
+
+    <!-- Early WebView Error Capture & Startup Watchdog (must run before module scripts) -->
+    <script>
+      (function () {
+        window.__PORTAL_ERROR_LOG__ = window.__PORTAL_ERROR_LOG__ || [];
+
+        function isBenignDiagnostic(detailStr) {
+          var s = String(detailStr || '').toLowerCase();
+          return (
+            s.indexOf('websocket') !== -1 ||
+            s.indexOf('vite') !== -1 ||
+            s.indexOf('hmr') !== -1 ||
+            s.indexOf('failed to fetch') !== -1 ||
+            s.indexOf('networkerror') !== -1 ||
+            s.indexOf('load failed') !== -1
+          );
+        }
+
+        function recordError(source, detail) {
+          try {
+            var detailStr = String(detail || 'Unknown error');
+            if (isBenignDiagnostic(detailStr)) return;
+            window.__PORTAL_ERROR_LOG__.push({
+              time: new Date().toISOString(),
+              source: source,
+              detail: detailStr
+            });
+            if (window.console && window.console.warn) {
+              window.console.warn('[Portal Boot Diagnostic - ' + source + ']', detailStr);
+            }
+          } catch (e) {}
+        }
+
+        window.__SHOW_PORTAL_FALLBACK__ = function (reason) {
+          try {
+            var root = document.getElementById('root');
+            if (!root) return;
+            var loader = document.getElementById('portal-boot-loader');
+            if (window.__PORTAL_MOUNTED__ && !loader && root.children.length > 0) return;
+
+            var safeReason = String(reason || 'The application script could not finish initializing in this WebView.').replace(/[<>]/g, '');
+            root.innerHTML =
+              '<div style="padding:16px;background:#120910;color:#f7f5f0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;">' +
+                '<div style="max-width:520px;margin:16px auto;background:#181c2a;border:2px solid #d4af37;border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,0.6);">' +
+                  '<div style="color:#d4af37;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Suryavamsha Odiyaraju Kshatriya Portal • WebView Diagnostic</div>' +
+                  '<h1 style="color:#fcedc7;font-size:18px;margin:10px 0;">Unable to Complete Page Load</h1>' +
+                  '<p style="color:#e7e5e4;font-size:13px;line-height:1.5;margin:0 0 12px;">A script, network cache, or WebView restriction prevented the portal from finishing initialization.</p>' +
+                  '<div style="background:#090b12;border:1px solid #c99738;color:#fde68a;padding:12px;border-radius:10px;font-size:12px;font-family:monospace;word-break:break-word;margin-bottom:16px;">Diagnostic: ' + safeReason + '</div>' +
+                  '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
+                    '<button onclick="window.location.href=\'/?v=\'+Date.now()" style="background:#d4af37;color:#290106;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">Reload Fresh Copy</button>' +
+                    '<a href="/?v=fresh" style="background:#261019;color:#fcedc7;border:1px solid #d4af37;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;">Open Home Page</a>' +
+                  '</div>' +
+                '</div>' +
+              '</div>';
+          } catch (e) {}
+        };
+
+        window.addEventListener('error', function (event) {
+          var target = event && event.target;
+          if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
+            var url = target.src || target.href || 'asset';
+            recordError('AssetLoadError', 'Failed to load ' + target.tagName + ': ' + url);
+            if (target.tagName === 'SCRIPT') {
+              setTimeout(function () {
+                window.__SHOW_PORTAL_FALLBACK__('Failed to load JavaScript bundle (' + url + '). Please tap Reload Fresh Copy.');
+              }, 400);
+            }
+            return;
+          }
+          var msg = (event && event.message) ? event.message : 'Runtime script error';
+          recordError('WindowError', msg);
+          setTimeout(function () {
+            window.__SHOW_PORTAL_FALLBACK__(msg);
+          }, 400);
+        }, true);
+
+        window.addEventListener('unhandledrejection', function (event) {
+          var reason = event && event.reason;
+          var msg = reason && reason.message ? reason.message : String(reason || 'Unhandled promise rejection');
+          if (isBenignDiagnostic(msg)) {
+            if (event && typeof event.preventDefault === 'function') {
+              event.preventDefault();
+            }
+            return;
+          }
+          recordError('UnhandledRejection', msg);
+        });
+
+        setTimeout(function () {
+          var root = document.getElementById('root');
+          var loader = document.getElementById('portal-boot-loader');
+          if (!window.__PORTAL_MOUNTED__ || loader || (root && root.children.length === 0)) {
+            var lastErr = window.__PORTAL_ERROR_LOG__.length > 0
+              ? window.__PORTAL_ERROR_LOG__[window.__PORTAL_ERROR_LOG__.length - 1].detail
+              : 'Application script timed out or was blocked by WebView cache/settings.';
+            window.__SHOW_PORTAL_FALLBACK__(lastErr);
+          }
+        }, 8000);
+      })();
+    </script>
     
     <!-- OpenGraph Metadata -->
     <meta property="og:type" content="website" />
@@ -19,10 +119,10 @@
     <meta name="twitter:title" content="Suryavamsha Odiyaraju Kshatriya Heritage Portal" />
     <meta name="twitter:description" content="Preserving the royal heritage, historical documentary, inscriptions, and global community heritage of Odra Desha & Gajapathi Kings." />
 
-    <!-- Google Fonts for Classical Royal Typography & Indic Scripts -->
+    <!-- Non-blocking Google Fonts for Classical Royal Typography & Indic Scripts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans+Kannada:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Oriya:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans+Kannada:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Oriya:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     
     <!-- SVG Favicon with Royal Sun Emblem -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23780016' stroke='%23d4af37' stroke-width='4'/><circle cx='50' cy='50' r='24' fill='%23d4af37'/><path d='M50 8 L54 30 L50 25 L46 30 Z M50 92 L54 70 L50 75 L46 70 Z M8 50 L30 54 L25 50 L30 46 Z M92 50 L70 54 L75 50 L70 46 Z M20 20 L38 34 L33 32 L34 38 Z M80 80 L62 66 L67 68 L66 62 Z M80 20 L66 38 L68 33 L62 34 Z M20 80 L34 62 L32 67 L38 66 Z' fill='%23d4af37'/><circle cx='50' cy='50' r='10' fill='%2350000e'/></svg>" />
@@ -40,108 +140,40 @@
     }
     </script>
   </head>
-  <body class="bg-[#0c0d12] text-[#f7f5f0] selection:bg-[#c99738] selection:text-[#380208] antialiased" style="background-color:#0c0d12;color:#f7f5f0;margin:0;font-family:system-ui,-apple-system,sans-serif;">
+  <body class="bg-[#0c0d12] text-[#f7f5f0] selection:bg-[#c99738] selection:text-[#380208] antialiased" style="background-color:#120910;color:#f7f5f0;margin:0;font-family:system-ui,-apple-system,sans-serif;">
     <noscript>
-      <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#0c0d12;color:#f7f5f0;text-align:center;">
-        <div style="max-width:480px;background:#141824;border:1px solid #c99738;border-radius:16px;padding:24px;">
+      <div style="padding:20px;background:#120910;color:#f7f5f0;text-align:center;">
+        <div style="max-width:480px;margin:20px auto;background:#181c2a;border:2px solid #d4af37;border-radius:16px;padding:24px;">
           <h1 style="color:#fcedc7;font-size:20px;margin:0 0 12px;">JavaScript Required</h1>
-          <p style="color:#d6d3d1;font-size:14px;line-height:1.5;margin:0;">Please enable JavaScript in your browser or WebViewer settings to view the Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal.</p>
+          <p style="color:#e7e5e4;font-size:14px;line-height:1.5;margin:0;">Please enable JavaScript in your browser or WebViewer settings to view the Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal.</p>
         </div>
       </div>
     </noscript>
 
     <div id="root">
-      <!-- Visible initial loading screen replaced automatically when React mounts -->
-      <div id="portal-boot-loader" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:#0c0d12;color:#f7f5f0;text-align:center;">
-        <div style="width:52px;height:52px;border-radius:50%;background:#580014;border:2px solid #d4af37;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 0 20px rgba(212,175,55,0.25);">
-          <span style="color:#d4af37;font-size:22px;font-weight:700;">☀</span>
+      <!-- Top-anchored visible royal loading banner & card (replaced automatically when React mounts) -->
+      <div id="portal-boot-loader" style="background:#120910;color:#f7f5f0;padding:0;margin:0;font-family:system-ui,-apple-system,sans-serif;">
+        <div style="background:#4a0010;border-bottom:2px solid #d4af37;padding:14px 16px;text-align:center;">
+          <div style="color:#fae29c;font-size:14px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">
+            ☀ Suryavamsha Odiyaraju Kshatriya Portal
+          </div>
+          <div style="color:#f5ecd5;font-size:11px;margin-top:4px;">
+            Historical Documentary &amp; Royal Heritage Archive
+          </div>
         </div>
-        <div style="color:#fae29c;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;">
-          Suryavamsha Odiyaraju Kshatriya
-        </div>
-        <div style="color:#c99738;font-size:12px;margin-top:6px;">
-          Loading Historical Documentary &amp; Royal Heritage Portal…
+        <div style="padding:20px 16px;">
+          <div style="max-width:480px;margin:0 auto;background:#181c2a;border:2px solid #d4af37;border-radius:16px;padding:20px;text-align:center;">
+            <div style="color:#fae29c;font-size:15px;font-weight:700;margin-bottom:8px;">
+              Loading Royal Heritage Archive…
+            </div>
+            <div style="color:#d6d3d1;font-size:13px;line-height:1.5;">
+              Preparing multilingual historical records, dynasties, and community directory…
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <script>
-      (function () {
-        window.__PORTAL_ERROR_LOG__ = window.__PORTAL_ERROR_LOG__ || [];
-
-        function recordError(source, detail) {
-          try {
-            window.__PORTAL_ERROR_LOG__.push({
-              time: new Date().toISOString(),
-              source: source,
-              detail: String(detail || 'Unknown error')
-            });
-            if (window.console && window.console.error) {
-              window.console.error('[Portal Boot Diagnostic - ' + source + ']', detail);
-            }
-          } catch (e) {}
-        }
-
-        function showFallbackIfUnmounted(reason) {
-          try {
-            if (window.__PORTAL_MOUNTED__) return;
-            var root = document.getElementById('root');
-            if (!root) return;
-            var loader = document.getElementById('portal-boot-loader');
-            if (!loader && root.children.length > 0) return;
-
-            var safeReason = String(reason || 'The application script could not finish initializing in this WebView.').replace(/[<>]/g, '');
-            root.innerHTML =
-              '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:#0c0d12;color:#f7f5f0;font-family:system-ui,-apple-system,sans-serif;">' +
-                '<div style="max-width:520px;width:100%;background:#141824;border:1px solid #c99738;border-radius:16px;padding:24px;box-shadow:0 10px_30px rgba(0,0,0,0.6);">' +
-                  '<div style="color:#d4af37;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Suryavamsha Odiyaraju Kshatriya Portal • WebView Diagnostic</div>' +
-                  '<h1 style="color:#fcedc7;font-size:19px;margin:10px 0;">Unable to Complete Page Load</h1>' +
-                  '<p style="color:#d6d3d1;font-size:13px;line-height:1.5;margin:0 0 12px;">A script or browser storage restriction prevented the page from finishing initialization inside this WebViewer.</p>' +
-                  '<div style="background:#080a10;border:1px solid #292524;color:#fde68a;padding:12px;border-radius:10px;font-size:12px;font-family:monospace;word-break:break-word;margin-bottom:16px;">Diagnostic: ' + safeReason + '</div>' +
-                  '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
-                    '<button onclick="window.location.reload()" style="background:#c99738;color:#290106;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">Reload Website</button>' +
-                    '<a href="/" style="background:#1c2333;color:#fcedc7;border:1px solid rgba(201,151,56,0.5);padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;">Open Home Page</a>' +
-                  '</div>' +
-                '</div>' +
-              '</div>';
-          } catch (e) {}
-        }
-
-        window.addEventListener('error', function (event) {
-          var target = event && event.target;
-          if (target && (target.tagName === 'SCRIPT' || target.tagName === 'LINK')) {
-            var url = target.src || target.href || 'asset';
-            recordError('AssetLoadError', 'Failed to load ' + target.tagName + ': ' + url);
-            if (target.tagName === 'SCRIPT') {
-              setTimeout(function () {
-                showFallbackIfUnmounted('Failed to load script asset: ' + url);
-              }, 800);
-            }
-            return;
-          }
-          var msg = (event && event.message) ? event.message : 'Runtime script error';
-          recordError('WindowError', msg);
-          setTimeout(function () {
-            showFallbackIfUnmounted(msg);
-          }, 500);
-        }, true);
-
-        window.addEventListener('unhandledrejection', function (event) {
-          var reason = event && event.reason;
-          var msg = reason && reason.message ? reason.message : String(reason || 'Unhandled promise rejection');
-          recordError('UnhandledRejection', msg);
-        });
-
-        setTimeout(function () {
-          if (!window.__PORTAL_MOUNTED__) {
-            var lastErr = window.__PORTAL_ERROR_LOG__.length > 0
-              ? window.__PORTAL_ERROR_LOG__[window.__PORTAL_ERROR_LOG__.length - 1].detail
-              : 'Startup timed out or main module script was blocked by WebView settings.';
-            showFallbackIfUnmounted(lastErr);
-          }
-        }, 12000);
-      })();
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
