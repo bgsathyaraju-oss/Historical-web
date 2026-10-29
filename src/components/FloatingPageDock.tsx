@@ -29,7 +29,15 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
     if (currentPath !== '/') {
       onNavigate('/');
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      try {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        try {
+          window.scrollTo(0, 0);
+        } catch {
+          // Ignore in restricted WebViews
+        }
+      }
     }
   };
 

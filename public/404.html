@@ -9,14 +9,20 @@
     const basePath = '/' + locationParts.slice(1, segmentCount + 1).join('/');
     const routePath = locationParts.slice(segmentCount + 1).join('/');
     const query = window.location.search;
-    const hash = window.location.hash;sessionStorage.setItem('spa-redirect', JSON.stringify({
-  path: '/' + routePath,
-  query: query,
-  hash: hash
-}));
+    const hash = window.location.hash;
+    try {
+      if (typeof window !== 'undefined' && window.sessionStorage) {
+        window.sessionStorage.setItem('spa-redirect', JSON.stringify({
+          path: '/' + routePath,
+          query: query,
+          hash: hash
+        }));
+      }
+    } catch (_err) {
+      // Ignore storage errors in restricted WebViews
+    }
 
-window.location.replace(basePath + '/');
-
+    window.location.replace(basePath + '/');
   </script>
 </head>
 <body>

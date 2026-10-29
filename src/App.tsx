@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { FloatingPageDock } from './components/FloatingPageDock';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -46,6 +47,19 @@ import { KalingaWarPage } from './pages/KalingaWarPage';
 import { CommunitySurnamesPage } from './pages/CommunitySurnamesPage';
 import { NorthIndianCommunitySurnamesPage } from './pages/NorthIndianCommunitySurnamesPage';
 
+function safeScrollToTop(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch {
+    try {
+      window.scrollTo(0, 0);
+    } catch {
+      // Ignore in restricted WebViews
+    }
+  }
+}
+
 function getNormalizedAppPath(rawPath: string): string {
   const basePath = import.meta.env.BASE_URL || '/';
   let path = rawPath || '/';
@@ -66,9 +80,11 @@ function getNormalizedAppPath(rawPath: string): string {
 function consumeSpaRedirect(): void {
   if (typeof window === 'undefined') return;
   try {
-    const raw = sessionStorage.getItem('spa-redirect');
+    const storage = window.sessionStorage;
+    if (!storage) return;
+    const raw = storage.getItem('spa-redirect');
     if (!raw) return;
-    sessionStorage.removeItem('spa-redirect');
+    storage.removeItem('spa-redirect');
     const parsed = JSON.parse(raw) as { path?: string; query?: string; hash?: string };
     const normalizedPath = getNormalizedAppPath(parsed.path || '/');
     const query = parsed.query || '';
@@ -78,7 +94,7 @@ function consumeSpaRedirect(): void {
     const fullUrl = `${basePath}${cleanPath}${query}${hash}`;
     window.history.replaceState({ path: fullUrl }, '', fullUrl);
   } catch {
-    // Ignore malformed sessionStorage payload
+    // Ignore malformed sessionStorage payload or disabled storage in Android WebView
   }
 }
 
@@ -101,10 +117,15 @@ function AppContent() {
 
   useEffect(() => {
     const handlePopState = () => {
-      const appPath = getNormalizedAppPath(window.location.pathname);
-      setCurrentPath(appPath);
-      const params = new URLSearchParams(window.location.search);
-      setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
+      try {
+        const appPath = getNormalizedAppPath(window.location.pathname);
+        setCurrentPath(appPath);
+        const params = new URLSearchParams(window.location.search);
+        setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
+      } catch {
+        setCurrentPath('/');
+        setSearchParam(null);
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -129,15 +150,23 @@ function AppContent() {
     const basePath = import.meta.env.BASE_URL || '/';
     setCurrentPath(path);
     if (query) {
-      const params = new URLSearchParams(query);
-      setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
+      try {
+        const params = new URLSearchParams(query);
+        setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
+      } catch {
+        setSearchParam(null);
+      }
     } else {
       setSearchParam(null);
     }
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
     const fullPath = `${basePath.replace(/\/$/, '')}${cleanPath}${query ? `?${query}` : ''}`;
-    window.history.pushState({ path: fullPath }, '', fullPath);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try {
+      window.history.pushState({ path: fullPath }, '', fullPath);
+    } catch {
+      // Ignore history API restrictions in embedded WebViews
+    }
+    safeScrollToTop();
   };
 
   const renderCurrentPage = () => {
@@ -250,7 +279,9 @@ function AppContent() {
 
       {/* Main Page Content */}
       <main className="flex-1">
-        {renderCurrentPage()}
+        <ErrorBoundary key={currentPath} onReset={() => navigateTo('/')}>
+          {renderCurrentPage()}
+        </ErrorBoundary>
       </main>
 
       {/* Royal Footer */}

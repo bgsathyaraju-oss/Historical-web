@@ -1,18 +1,38 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
+import { getAuth, initializeAuth, inMemoryPersistence, Auth } from 'firebase/auth';
+import { getFirestore, doc, getDocFromServer, Firestore } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
-// Initialize Firebase App
-export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Safely initialize Firebase App
+export const app: FirebaseApp = (() => {
+  try {
+    return !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  } catch (err) {
+    console.warn('[FIREBASE] App initialization warning:', err);
+    return getApp();
+  }
+})();
 
-// Initialize Firebase Auth
-export const auth = getAuth(app);
+// Safely initialize Firebase Auth (with fallback to inMemoryPersistence for restricted Android WebViews)
+export const auth: Auth = (() => {
+  try {
+    return getAuth(app);
+  } catch {
+    return initializeAuth(app, { persistence: inMemoryPersistence });
+  }
+})();
 
-// Initialize Firestore with specific database ID if configured
-export const db = firebaseConfig.firestoreDatabaseId
-  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
-  : getFirestore(app);
+// Safely initialize Firestore with specific database ID if configured
+export const db: Firestore = (() => {
+  try {
+    return firebaseConfig.firestoreDatabaseId
+      ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
+      : getFirestore(app);
+  } catch (err) {
+    console.warn('[FIREBASE] Firestore initialization warning:', err);
+    return getFirestore(app);
+  }
+})();
 
 // Connection validation test
 export async function validateFirebaseConnection(): Promise<boolean> {

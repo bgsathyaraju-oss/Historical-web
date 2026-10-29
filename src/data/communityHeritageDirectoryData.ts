@@ -31,7 +31,7 @@ export interface KeywordTagItem {
 
 export interface SourceReferenceItem {
   citation: string;
-  type: 'Epigraphic Record' | 'Colonial Gazetteer / Census' | 'Academic Monograph' | 'Traditional Chronicle / Vamsavali';
+  type: 'Epigraphic Record' | 'Colonial Gazetteer / Census' | 'Academic Monograph' | 'Traditional Chronicle / Vamsavali' | 'Archaeological Survey';
   url?: string;
   verificationNote?: string;
 }

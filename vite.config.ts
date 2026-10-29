@@ -30,6 +30,8 @@ export default defineConfig(() => {
     },
     build: {
       outDir: 'dist',
+      target: ['es2020', 'chrome80', 'safari14'],
+      cssTarget: ['chrome80', 'safari14'],
       chunkSizeWarningLimit: 2500,
       rollupOptions: {
         output: {

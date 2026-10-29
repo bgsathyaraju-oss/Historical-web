@@ -36,6 +36,57 @@ interface CacheEntry<T> {
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL for stale-while-revalidate
 const STORAGE_PREFIX = 'suryavamsha_tr_';
 
+function safeStorageGet(key: string): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const storage = window.localStorage;
+    if (!storage) return null;
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeStorageSet(key: string, value: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const storage = window.localStorage;
+    if (!storage) return;
+    storage.setItem(key, value);
+  } catch {
+    // Ignore SecurityError / QuotaExceededError in restricted Android WebViews
+  }
+}
+
+function safeStorageRemove(key: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const storage = window.localStorage;
+    if (!storage) return;
+    storage.removeItem(key);
+  } catch {
+    // Ignore storage errors in restricted Android WebViews
+  }
+}
+
+function safeStorageClearPrefix(prefix: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const storage = window.localStorage;
+    if (!storage) return;
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < storage.length; i++) {
+      const key = storage.key(i);
+      if (key && key.startsWith(prefix)) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach(k => storage.removeItem(k));
+  } catch {
+    // Ignore storage errors in restricted Android WebViews
+  }
+}
+
 export class TranslationManager {
   private currentLanguage: LanguageCode = 'en';
   private inMemoryArticles = new Map<string, CacheEntry<Article[]>>();
@@ -48,7 +99,7 @@ export class TranslationManager {
     if (initialLang) {
       this.currentLanguage = initialLang;
     } else if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('suryavamsha_lang') as LanguageCode;
+      const saved = safeStorageGet('suryavamsha_lang') as LanguageCode | null;
       if (saved && SUPPORTED_LANGUAGES.some(l => l.code === saved)) {
         this.currentLanguage = saved;
       }
@@ -89,8 +140,14 @@ export class TranslationManager {
     if (this.currentLanguage === lang) return;
     this.currentLanguage = lang;
     if (typeof window !== 'undefined') {
-      localStorage.setItem('suryavamsha_lang', lang);
-      document.documentElement.lang = lang;
+      safeStorageSet('suryavamsha_lang', lang);
+      try {
+        if (document?.documentElement) {
+          document.documentElement.lang = lang;
+        }
+      } catch {
+        // Ignore DOM write errors
+      }
     }
     this.emit({ type: 'language-changed', language: lang });
     // Proactively fetch content translations for the new language
@@ -113,16 +170,7 @@ export class TranslationManager {
     this.inMemorySingleArticle.clear();
     this.inMemoryTranslations.clear();
 
-    if (typeof window !== 'undefined') {
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith(STORAGE_PREFIX)) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach(k => localStorage.removeItem(k));
-    }
+    safeStorageClearPrefix(STORAGE_PREFIX);
 
     this.emit({ type: 'cache-cleared' });
   }
@@ -143,24 +191,17 @@ export class TranslationManager {
       }
     }
 
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.removeItem(`${STORAGE_PREFIX}translations_${lang}`);
-        localStorage.removeItem(`${STORAGE_PREFIX}articles_${lang}`);
-      } catch (e) {
-        // Ignore storage errors
-      }
-    }
+    safeStorageRemove(`${STORAGE_PREFIX}translations_${lang}`);
+    safeStorageRemove(`${STORAGE_PREFIX}articles_${lang}`);
   }
 
   /**
    * Read from persistent localStorage with expiration check
    */
   private getFromLocalStorage<T>(key: string): T | null {
-    if (typeof window === 'undefined') return null;
+    const raw = safeStorageGet(`${STORAGE_PREFIX}${key}`);
+    if (!raw) return null;
     try {
-      const raw = localStorage.getItem(`${STORAGE_PREFIX}${key}`);
-      if (!raw) return null;
       const parsed = JSON.parse(raw) as CacheEntry<T>;
       return parsed.data;
     } catch {
@@ -172,13 +213,12 @@ export class TranslationManager {
    * Write to persistent localStorage
    */
   private writeToLocalStorage<T>(key: string, data: T): void {
-    if (typeof window === 'undefined') return;
     try {
       const entry: CacheEntry<T> = {
         data,
         timestamp: Date.now()
       };
-      localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(entry));
+      safeStorageSet(`${STORAGE_PREFIX}${key}`, JSON.stringify(entry));
     } catch {
       // Storage full or unavailable - safe to ignore
     }
