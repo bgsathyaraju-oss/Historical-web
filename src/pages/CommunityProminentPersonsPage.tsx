@@ -1059,15 +1059,20 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const savedListingScrollYRef = useRef<number>(0);
   const shouldRestoreScrollRef = useRef<boolean>(false);
 
-  const isAndroidWebViewEnvironment = (): boolean => {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+  const hasAppInventorBridge = (): boolean => {
+    if (typeof window === 'undefined') return false;
     const win = window as unknown as {
       AppInventor?: {
         getWebViewString?: () => string;
         setWebViewString?: (val: string) => void;
       };
     };
-    if (win.AppInventor) return true;
+    return Boolean(win.AppInventor && typeof win.AppInventor.setWebViewString === 'function');
+  };
+
+  const isAndroidWebViewEnvironment = (): boolean => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+    if (hasAppInventorBridge()) return true;
     const ua = navigator.userAgent || '';
     const isAndroid = /Android/i.test(ua);
     const isWebView = /\bwv\b/i.test(ua) || /Version\/\d+\.\d+/i.test(ua);
@@ -1125,28 +1130,29 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
       const autoPrint = params.get('autoprint');
       const targetId = params.get('id') || activePersonId;
-      if (
-        autoPrint === '1' &&
-        targetId &&
-        !isAndroidWebViewEnvironment() &&
-        autoPrintTriggeredRef.current !== `${targetId}-${langParam || language}`
-      ) {
-        autoPrintTriggeredRef.current = `${targetId}-${langParam || language}`;
-        const timer = window.setTimeout(() => {
-          try {
-            const cleanParams = new URLSearchParams(window.location.search);
-            cleanParams.delete('autoprint');
-            const newQuery = cleanParams.toString();
-            const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
-            window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-          } catch {
-            // Ignore history replaceState errors
-          }
-          if (typeof window.print === 'function') {
-            window.print();
-          }
-        }, 550);
-        return () => window.clearTimeout(timer);
+      if (autoPrint === '1' && targetId) {
+        if (isAndroidWebViewEnvironment()) {
+          // If WebViewer had UseExternalBrowser=false and loaded the &autoprint=1 URL inside itself,
+          // keep the Print fallback panel open so the user sees the URL and Copy Link option.
+          setIsPrintFallbackOpen(true);
+        } else if (autoPrintTriggeredRef.current !== `${targetId}-${langParam || language}`) {
+          autoPrintTriggeredRef.current = `${targetId}-${langParam || language}`;
+          const timer = window.setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autoprint');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore history replaceState errors
+            }
+            if (typeof window.print === 'function') {
+              window.print();
+            }
+          }, 550);
+          return () => window.clearTimeout(timer);
+        }
       }
     } catch {
       // Ignore malformed query string
@@ -1232,22 +1238,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     }
   };
 
-  const passExternalUrlToAppInventor = (externalUrl: string) => {
-    if (typeof window === 'undefined') return;
-    // Pass the HTTPS article print URL to MIT App Inventor via WebViewString bridge.
-    // Reset to empty string first so WebViewStringChange fires reliably on repeated taps.
+  const sendArticleUrlToAppInventor = (articleUrl: string): boolean => {
+    if (typeof window === 'undefined') return false;
+    const trimmedUrl = (articleUrl || '').trim();
+    // Do not send empty values or unrelated URLs
+    if (!trimmedUrl || !/^https?:\/\/.+\/community-prominent-persons\?id=/i.test(trimmedUrl)) {
+      return false;
+    }
+    if (!hasAppInventorBridge()) {
+      return false;
+    }
     try {
       const win = window as unknown as {
-        AppInventor?: {
-          setWebViewString?: (val: string) => void;
+        AppInventor: {
+          setWebViewString: (val: string) => void;
         };
       };
-      if (win.AppInventor && typeof win.AppInventor.setWebViewString === 'function') {
-        win.AppInventor.setWebViewString('');
-        win.AppInventor.setWebViewString(externalUrl);
-      }
+      win.AppInventor.setWebViewString(trimmedUrl);
+      return true;
     } catch {
-      // Ignore bridge errors
+      return false;
     }
   };
 
@@ -1265,19 +1275,30 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     }
   };
 
+  const handleExternalBrowserLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    articleUrl: string
+  ) => {
+    // Detect MIT App Inventor WebViewer bridge and send the exact article URL only on button click
+    const sentViaBridge = sendArticleUrlToAppInventor(articleUrl);
+    if (sentViaBridge) {
+      // Prevent in-WebView navigation so ActivityStarter1 can launch the URL via ACTION_VIEW cleanly
+      e.preventDefault();
+    }
+    // If the bridge is unavailable, default <a target="_blank"> external-browser navigation proceeds
+  };
+
   const handlePrintArticle = () => {
     setIsShareMenuOpen(false);
     if (!activePerson) return;
 
-    const externalPrintUrl = getExternalPrintArticleUrl(activePerson.id, currentLang);
     const inAndroidWebView = isAndroidWebViewEnvironment();
     const canCallWindowPrint = typeof window !== 'undefined' && typeof window.print === 'function';
 
     // If inside MIT App Inventor WebViewer / Android WebView or if window.print is unavailable,
-    // immediately show the multilingual external browser print fallback and notify the AppInventor bridge
+    // display the multilingual external browser print fallback (URL is sent only when user clicks the button)
     if (inAndroidWebView || !canCallWindowPrint) {
       setIsPrintFallbackOpen(true);
-      passExternalUrlToAppInventor(externalPrintUrl);
       return;
     }
 
@@ -1295,7 +1316,6 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       window.print();
     } catch {
       setIsPrintFallbackOpen(true);
-      passExternalUrlToAppInventor(externalPrintUrl);
     }
 
     if (typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent || '')) {
@@ -1304,7 +1324,6 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         window.removeEventListener('blur', onBeforePrintOrBlur);
         if (!printDialogStarted) {
           setIsPrintFallbackOpen(true);
-          passExternalUrlToAppInventor(externalPrintUrl);
         }
       }, 500);
     } else {
@@ -3819,7 +3838,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     href={externalPrintArticleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => passExternalUrlToAppInventor(externalPrintArticleUrl)}
+                    onClick={e => handleExternalBrowserLinkClick(e, externalPrintArticleUrl)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
@@ -5304,7 +5323,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     href={externalPrintArticleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => passExternalUrlToAppInventor(externalPrintArticleUrl)}
+                    onClick={e => handleExternalBrowserLinkClick(e, externalPrintArticleUrl)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
