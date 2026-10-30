@@ -89,3 +89,140 @@
   }
 }
 
+.print-only {
+  display: none;
+}
+
+/* Professional Print Layout for Community Prominent Persons Full Articles */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm 14mm 16mm 14mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+    line-height: 1.55 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide global navigation, footer, floating dock, and article action controls */
+  header:not(.print-article-header),
+  nav,
+  footer,
+  aside[aria-label*="Floating Navigation"],
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-only-inline {
+    display: inline !important;
+  }
+
+  .print-article-wrapper {
+    background: #ffffff !important;
+    color: #111827 !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-article-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Reset dark backgrounds and light text inside the printed article for crisp readability */
+  .print-article-container header,
+  .print-article-container section,
+  .print-article-container div,
+  .print-article-container dl,
+  .print-article-container ul {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+  }
+
+  .print-article-container header,
+  .print-article-container section {
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    padding: 14px 16px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .print-article-container h1,
+  .print-article-container h2,
+  .print-article-container h3,
+  .print-article-container h4,
+  .print-article-container dt,
+  .print-article-container dd,
+  .print-article-container p,
+  .print-article-container li,
+  .print-article-container span,
+  .print-article-container strong,
+  .print-article-container a {
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+  }
+
+  .print-article-container h1 {
+    font-size: 20pt !important;
+    line-height: 1.25 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .print-article-container h2 {
+    font-size: 13pt !important;
+    line-height: 1.35 !important;
+    border-bottom: 1px solid #9ca3af !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 8px !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .print-article-container h3,
+  .print-article-container h4 {
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Prevent awkward page breaks across images, cards, chronology rows, and bibliographic entries */
+  .print-article-header,
+  .print-avoid-break,
+  .print-article-container img,
+  .print-article-container dl > div,
+  .print-article-container li {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-article-container p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Constrain portrait image cleanly for print */
+  .print-portrait-box {
+    width: 165px !important;
+    max-width: 165px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

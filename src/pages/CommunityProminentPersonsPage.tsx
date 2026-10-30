@@ -24,7 +24,10 @@ import {
   AlertCircle,
   Compass,
   Home,
-  ExternalLink
+  ExternalLink,
+  Printer,
+  Copy,
+  Link2
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageCode } from '../types';
@@ -944,7 +947,7 @@ const PersonPortraitThumbnail: React.FC<{
   altText: string;
   badgeText: string;
   eraText: string;
-  variant?: 'card' | 'detail';
+  variant?: 'card' | 'detail' | 'related';
 }> = ({ imageUrl, altText, badgeText, eraText, variant = 'card' }) => {
   const [imgFailed, setImgFailed] = useState(false);
 
@@ -953,6 +956,28 @@ const PersonPortraitThumbnail: React.FC<{
   }, [imageUrl]);
 
   const hasValidImg = Boolean(imageUrl && !imgFailed);
+
+  if (variant === 'related') {
+    return (
+      <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg overflow-hidden border border-[#c99738]/50 bg-gradient-to-b from-[#21020b] via-[#141928] to-[#0a0d14] shrink-0 relative flex items-center justify-center group-hover:border-[#d4af37] transition-all">
+        {hasValidImg ? (
+          <img
+            src={imageUrl}
+            alt={altText}
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div className="p-1.5 text-center flex flex-col items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-[#580014]/80 border border-[#d4af37]/50 flex items-center justify-center">
+              <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   if (variant === 'detail') {
     return (
@@ -1023,6 +1048,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const [showAll32Branches, setShowAll32Branches] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [hasInternalArticleHistory, setHasInternalArticleHistory] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState<'none' | 'link' | 'title_link'>('none');
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const shareFeedbackTimerRef = useRef<number | null>(null);
   const savedListingScrollYRef = useRef<number>(0);
   const shouldRestoreScrollRef = useRef<boolean>(false);
 
@@ -1054,6 +1082,103 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       setActivePersonId(readPersonIdFromLocation());
     }
   }, [initialPersonId]);
+
+  // Reset share menu and feedback state when switching or closing articles
+  useEffect(() => {
+    setShareFeedback('none');
+    setIsShareMenuOpen(false);
+    return () => {
+      if (shareFeedbackTimerRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(shareFeedbackTimerRef.current);
+      }
+    };
+  }, [activePersonId]);
+
+  const getCanonicalArticleUrl = (personId: string): string => {
+    if (typeof window === 'undefined') {
+      return `/community-prominent-persons?id=${encodeURIComponent(personId)}`;
+    }
+    const origin = window.location.origin || '';
+    const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+    return `${origin}${basePath}/community-prominent-persons?id=${encodeURIComponent(personId)}`;
+  };
+
+  const copyTextToClipboard = async (textToCopy: string): Promise<boolean> => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        return true;
+      } catch {
+        // Fall through to textarea copy fallback
+      }
+    }
+    if (typeof document !== 'undefined') {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.top = '-9999px';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return copied;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  const showTemporaryShareFeedback = (type: 'link' | 'title_link') => {
+    setShareFeedback(type);
+    if (shareFeedbackTimerRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(shareFeedbackTimerRef.current);
+    }
+    if (typeof window !== 'undefined') {
+      shareFeedbackTimerRef.current = window.setTimeout(() => {
+        setShareFeedback('none');
+      }, 3500);
+    }
+  };
+
+  const handlePrintArticle = () => {
+    setIsShareMenuOpen(false);
+    if (typeof window !== 'undefined' && typeof window.print === 'function') {
+      window.print();
+    }
+  };
+
+  const handleCopyArticleLink = async (personId: string) => {
+    const canonicalUrl = getCanonicalArticleUrl(personId);
+    await copyTextToClipboard(canonicalUrl);
+    showTemporaryShareFeedback('link');
+  };
+
+  const handleCopyTitleAndUrl = async (personId: string, articleTitle: string) => {
+    const canonicalUrl = getCanonicalArticleUrl(personId);
+    const combined = `${articleTitle} — ${canonicalUrl}`;
+    await copyTextToClipboard(combined);
+    showTemporaryShareFeedback('title_link');
+  };
+
+  const handleShareArticle = async (personId: string, articleTitle: string, articleSummary: string) => {
+    const canonicalUrl = getCanonicalArticleUrl(personId);
+    setIsShareMenuOpen(prev => !prev);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: articleTitle,
+          text: `${articleTitle} — ${articleSummary}`,
+          url: canonicalUrl
+        });
+      } catch {
+        // User cancelled native share sheet or browser restricted share in iframe; fallback menu remains open
+      }
+    }
+  };
 
   // Also listen for popstate so browser Back/Forward always updates activePersonId immediately
   useEffect(() => {
@@ -1098,6 +1223,12 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const openPersonArticle = (person: ProminentPerson) => {
     if (!activePersonId && typeof window !== 'undefined') {
       savedListingScrollYRef.current = window.scrollY || document.documentElement.scrollTop || 0;
+    } else if (typeof window !== 'undefined') {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      } catch {
+        window.scrollTo(0, 0);
+      }
     }
     setHasInternalArticleHistory(true);
     setActivePersonId(person.id);
@@ -1672,6 +1803,21 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     setSearchQuery('');
   };
 
+  const navigateFromArticleToDirectoryFilter = (applyFilter: () => void) => {
+    resetAllDirectoryFilters();
+    applyFilter();
+    shouldRestoreScrollRef.current = false;
+    setActivePersonId(null);
+    onNavigate('/community-prominent-persons');
+    if (typeof window !== 'undefined') {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      } catch {
+        window.scrollTo(0, 0);
+      }
+    }
+  };
+
   const hasActiveFilters =
     selectedBranch !== 'all' ||
     selectedCategory !== 'all' ||
@@ -1893,6 +2039,25 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         evidenceTypeLabels: Record<HistoricalEvidenceType, string>;
         sourceStatusBadges: Record<SourceVerificationStatus, string>;
         section12Conclusion: string;
+        relatedArticlesHeading: string;
+        relatedArticlesSubtitle: string;
+        readMoreLabel: string;
+        relatedCommunitiesHeading: string;
+        relatedCommunitiesSubtitle: string;
+        keywordsHeading: string;
+        keywordsSubtitle: string;
+        hashtagsHeading: string;
+        hashtagsSubtitle: string;
+        printButton: string;
+        printButtonAria: string;
+        shareButton: string;
+        shareButtonAria: string;
+        copyLinkButton: string;
+        copyTitleAndLinkButton: string;
+        linkCopiedMessage: string;
+        titleAndLinkCopiedMessage: string;
+        printWebsiteHeader: string;
+        printCanonicalUrlLabel: string;
       }
     > = {
       en: {
@@ -1968,7 +2133,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'Classical / Traditional Textual Source',
           verification_required: 'Verification Required / Source Not Yet Verified'
         },
-        section12Conclusion: 'Concluding Historical Summary'
+        section12Conclusion: 'Concluding Historical Summary',
+        relatedArticlesHeading: 'Related Articles',
+        relatedArticlesSubtitle: 'Connected historical personalities sharing documented dynasties, periods, regions, or community traditions',
+        readMoreLabel: 'Read More',
+        relatedCommunitiesHeading: 'Related Communities',
+        relatedCommunitiesSubtitle: 'Documented associations from the 45 audited communities and lineage traditions in the repository',
+        keywordsHeading: 'Keywords',
+        keywordsSubtitle: 'Select any keyword to filter the directory by dynasty, period, region, profession, community, or archival search term',
+        hashtagsHeading: 'Hashtags',
+        hashtagsSubtitle: 'Verified historical topic tags linked to directory categories and search filters',
+        printButton: 'Print',
+        printButtonAria: 'Print full historical article in the selected language',
+        shareButton: 'Share',
+        shareButtonAria: 'Share article or copy canonical article link',
+        copyLinkButton: 'Copy Article Link',
+        copyTitleAndLinkButton: 'Copy Title & URL',
+        linkCopiedMessage: 'Article link copied to clipboard!',
+        titleAndLinkCopiedMessage: 'Article title & URL copied!',
+        printWebsiteHeader: 'Suryavamsha Odiyaraju Kshatriya Historical Website — Prominent Persons Archive',
+        printCanonicalUrlLabel: 'Canonical Article URL'
       },
       hi: {
         backButton: 'वापस (Back)',
@@ -2043,7 +2227,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'शास्त्रीय / पारंपरिक साहित्यिक स्रोत',
           verification_required: 'सत्यापन आवश्यक / स्रोत अभी सत्यापित नहीं'
         },
-        section12Conclusion: 'निष्कर्ष एवं सारांश'
+        section12Conclusion: 'निष्कर्ष एवं सारांश',
+        relatedArticlesHeading: 'संबंधित लेख (Related Articles)',
+        relatedArticlesSubtitle: 'साझा राजवंश, कालखंड, क्षेत्र या वंश परंपराओं से जुड़े संबंधित ऐतिहासिक व्यक्तित्व',
+        readMoreLabel: 'अधिक पढ़ें (Read More)',
+        relatedCommunitiesHeading: 'संबंधित समुदाय (Related Communities)',
+        relatedCommunitiesSubtitle: 'निर्देशिका के 45 परीक्षित समुदायों और वंश शाखाओं में से प्रमाणित संबद्धताएं',
+        keywordsHeading: 'मुख्य शब्द (Keywords)',
+        keywordsSubtitle: 'राजवंश, कालखंड, क्षेत्र, कार्यक्षेत्र या समुदाय के अनुसार खोजने के लिए किसी भी शब्द पर क्लिक करें',
+        hashtagsHeading: 'हैशटैग (Hashtags)',
+        hashtagsSubtitle: 'निर्देशिका श्रेणियों और खोज फ़िल्टर से जुड़े प्रमाणित ऐतिहासिक विषय टैग',
+        printButton: 'प्रिंट करें (Print)',
+        printButtonAria: 'चयनित भाषा में संपूर्ण ऐतिहासिक लेख प्रिंट करें',
+        shareButton: 'साझा करें (Share)',
+        shareButtonAria: 'लेख साझा करें या लिंक कॉपी करें',
+        copyLinkButton: 'लेख का लिंक कॉपी करें',
+        copyTitleAndLinkButton: 'शीर्षक और लिंक कॉपी करें',
+        linkCopiedMessage: 'लेख का लिंक सफलतापूर्वक कॉपी हो गया!',
+        titleAndLinkCopiedMessage: 'शीर्षक और लिंक सफलतापूर्वक कॉपी हो गए!',
+        printWebsiteHeader: 'सूर्यवंश ओडियाराजु क्षत्रिय ऐतिहासिक वेबसाइट — प्रमुख व्यक्तित्व अभिलेखागार',
+        printCanonicalUrlLabel: 'मूल लेख लिंक (Canonical URL)'
       },
       te: {
         backButton: 'వెనుకకు (Back)',
@@ -2118,7 +2321,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'సాంప్రదాయ / సాహిత్య ఆధారం',
           verification_required: 'ధృవీకరణ అవసరం / ఆధారం ఇంకా ధృవీకరించబడలేదు'
         },
-        section12Conclusion: 'ముగింపు సారాంశం'
+        section12Conclusion: 'ముగింపు సారాంశం',
+        relatedArticlesHeading: 'సంబంధిత వ్యాసాలు (Related Articles)',
+        relatedArticlesSubtitle: 'ఉమ్మడి రాజవంశాలు, చారిత్రక కాలాలు, ప్రాంతాలు లేదా వంశ సంప్రదాయాలతో ముడిపడిన ప్రముఖుల వ్యాసాలు',
+        readMoreLabel: 'మరింత చదవండి (Read More)',
+        relatedCommunitiesHeading: 'సంబంధిత సమాజాలు (Related Communities)',
+        relatedCommunitiesSubtitle: 'డైరెక్టరీలోని 45 సమాజ నామాలు మరియు వంశ శాఖల నుండి ధృవీకరించబడిన అనుబంధాలు',
+        keywordsHeading: 'కీలక పదాలు (Keywords)',
+        keywordsSubtitle: 'రాజవంశం, కాలం, ప్రాంతం, వృత్తి లేదా సమాజం ఆధారంగా డైరెక్టరీని ఫిల్టర్ చేయడానికి ఏదైనా పదాన్ని ఎంచుకోండి',
+        hashtagsHeading: 'హ్యాష్‌ట్యాగ్‌లు (Hashtags)',
+        hashtagsSubtitle: 'డైరెక్టరీ విభాగాలు మరియు శోధన ఫిల్టర్‌లకు అనుసంధానించబడిన చారిత్రక హ్యాష్‌ట్యాగ్‌లు',
+        printButton: 'ముద్రించు (Print)',
+        printButtonAria: 'ఎంచుకున్న భాషలో పూర్తి చారిత్రక వ్యాసాన్ని ముద్రించండి',
+        shareButton: 'షేర్ చేయండి (Share)',
+        shareButtonAria: 'వ్యాసాన్ని షేర్ చేయండి లేదా లింక్ కాపీ చేయండి',
+        copyLinkButton: 'వ్యాస లింక్ కాపీ చేయండి',
+        copyTitleAndLinkButton: 'శీర్షిక & లింక్ కాపీ చేయండి',
+        linkCopiedMessage: 'వ్యాస లింక్ కాపీ చేయబడింది!',
+        titleAndLinkCopiedMessage: 'వ్యాస శీర్షిక మరియు లింక్ కాపీ చేయబడ్డాయి!',
+        printWebsiteHeader: 'సూర్యవంశ ఒడియరాజు క్షత్రియ చారిత్రక వెబ్‌సైట్ — ప్రముఖ వ్యక్తుల పురావస్తు భాండాగారం',
+        printCanonicalUrlLabel: 'వ్యాస ప్రామాణిక లింక్ (Canonical URL)'
       },
       kn: {
         backButton: 'ಹಿಂದಕ್ಕೆ (Back)',
@@ -2193,7 +2415,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'ಶಾಸ್ತ್ರೀಯ / ಸಾಂಪ್ರದಾಯಿಕ ಸಾಹಿತ್ಯ ಆಧಾರ',
           verification_required: 'ಪರಿಶೀಲನೆ ಅಗತ್ಯವಿದೆ / ಆಧಾರ ಇನ್ನೂ ದೃಢೀಕರಿಸಲಾಗಿಲ್ಲ'
         },
-        section12Conclusion: 'ಸಮಗ್ರ ಉಪಸಂಹಾರ'
+        section12Conclusion: 'ಸಮಗ್ರ ಉಪಸಂಹಾರ',
+        relatedArticlesHeading: 'ಸಂಬಂಧಿತ ಲೇಖನಗಳು (Related Articles)',
+        relatedArticlesSubtitle: 'ಸಮಾನ ರಾಜವಂಶ, ಕಾಲಘಟ್ಟ, ಪ್ರದೇಶ ಅಥವಾ ವಂಶ ಪರಂಪರೆಗಳೊಂದಿಗೆ ಗುರುತಿಸಿಕೊಂಡಿರುವ ಚಾರಿತ್ರಿಕ ಗಣ್ಯರು',
+        readMoreLabel: 'ಮತ್ತಷ್ಟು ಓದಿ (Read More)',
+        relatedCommunitiesHeading: 'ಸಂಬಂಧಿತ ಸಮುದಾಯಗಳು (Related Communities)',
+        relatedCommunitiesSubtitle: 'ಕೈಪಿಡಿಯಲ್ಲಿರುವ 45 ಸಮುದಾಯಗಳು ಮತ್ತು ವಂಶ ಶಾಖೆಗಳಿಂದ ದೃಢೀಕೃತ ಸಂಬಂಧಗಳು',
+        keywordsHeading: 'ಮುಖ್ಯ ಪದಗಳು (Keywords)',
+        keywordsSubtitle: 'ರಾಜವಂಶ, ಕಾಲಘಟ್ಟ, ಪ್ರದೇಶ, ವೃತ್ತಿ ಅಥವಾ ಸಮುದಾಯದ ಆಧಾರದ ಮೇಲೆ ಹುಡುಕಲು ಯಾವುದೇ ಪದವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+        hashtagsHeading: 'ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು (Hashtags)',
+        hashtagsSubtitle: 'ಕೈಪಿಡಿಯ ವಿಭಾಗಗಳು ಮತ್ತು ಹುಡುಕಾಟ ಫಿಲ್ಟರ್‌ಗಳಿಗೆ ಜೋಡಿಸಲಾದ ಚಾರಿತ್ರಿಕ ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು',
+        printButton: 'ಮುದ್ರಿಸಿ (Print)',
+        printButtonAria: 'ಆಯ್ದ ಭಾಷೆಯಲ್ಲಿ ಸಂಪೂರ್ಣ ಚಾರಿತ್ರಿಕ ಲೇಖನವನ್ನು ಮುದ್ರಿಸಿ',
+        shareButton: 'ಹಂಚಿಕೊಳ್ಳಿ (Share)',
+        shareButtonAria: 'ಲೇಖನವನ್ನು ಹಂಚಿಕೊಳ್ಳಿ ಅಥವಾ ಕೊಂಡಿಯನ್ನು ನಕಲಿಸಿ',
+        copyLinkButton: 'ಲೇಖನದ ಲಿಂಕ್ ನಕಲಿಸಿ',
+        copyTitleAndLinkButton: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಿ',
+        linkCopiedMessage: 'ಲೇಖನದ ಲಿಂಕ್ ಯಶಸ್ವಿಯಾಗಿ ನಕಲಿಸಲಾಗಿದೆ!',
+        titleAndLinkCopiedMessage: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
+        printWebsiteHeader: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಚಾರಿತ್ರಿಕ ಜಾಲತಾಣ — ಪ್ರಮುಖ ಗಣ್ಯರ ದಾಖಲಾತಿ',
+        printCanonicalUrlLabel: 'ಲೇಖನದ ಮೂಲ ಕೊಂಡಿ (Canonical URL)'
       },
       ta: {
         backButton: 'பின்செல் (Back)',
@@ -2268,7 +2509,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'பாரம்பரிய / இலக்கிய ஆதாரம்',
           verification_required: 'சரிபார்ப்பு தேவை / சான்று இன்னும் சரிபார்க்கப்படவில்லை'
         },
-        section12Conclusion: 'முடிவுரைச் சுருக்கம்'
+        section12Conclusion: 'முடிவுரைச் சுருக்கம்',
+        relatedArticlesHeading: 'தொடர்புடைய கட்டுரைகள் (Related Articles)',
+        relatedArticlesSubtitle: 'அரச வம்சம், வரலாற்றுக் காலம், பிரதேசம் அல்லது சமூக மரபுகளால் தொடர்புடைய வரலாற்று ஆளுமைகள்',
+        readMoreLabel: 'மேலும் படிக்க (Read More)',
+        relatedCommunitiesHeading: 'தொடர்புடைய சமூகங்கள் (Related Communities)',
+        relatedCommunitiesSubtitle: 'பட்டியலிலுள்ள 45 சமூகப் பெயர்கள் மற்றும் வம்சப் பிரிவுகளிலிருந்து உறுதிப்படுத்தப்பட்ட தொடர்புகள்',
+        keywordsHeading: 'முக்கியச் சொற்கள் (Keywords)',
+        keywordsSubtitle: 'வம்சம், காலம், பிரதேசம், துறை அல்லது சமூகத்தின் அடிப்படையில் தேட எந்தச் சொல்லையும் சொடுக்கவும்',
+        hashtagsHeading: 'ஹேஷ்டேக்குகள் (Hashtags)',
+        hashtagsSubtitle: 'பட்டியல் பிரிவுகள் மற்றும் தேடல் வடிகட்டிகளுடன் இணைக்கப்பட்ட வரலாற்றுக் குறிச்சொற்கள்',
+        printButton: 'அச்சிடு (Print)',
+        printButtonAria: 'தேர்ந்தெடுக்கப்பட்ட மொழியில் முழு வரலாற்றுக் கட்டுரையையும் அச்சிடுக',
+        shareButton: 'பகிர் (Share)',
+        shareButtonAria: 'கட்டுரையைப் பகிரவும் அல்லது இணைப்பை நகலெடுக்கவும்',
+        copyLinkButton: 'கட்டுரை இணைப்பை நகலெடு',
+        copyTitleAndLinkButton: 'தலைப்பு & இணைப்பை நகலெடு',
+        linkCopiedMessage: 'கட்டுரை இணைப்பு நகலெடுக்கப்பட்டது!',
+        titleAndLinkCopiedMessage: 'தலைப்பு மற்றும் இணைப்பு நகலெடுக்கப்பட்டது!',
+        printWebsiteHeader: 'சூர்யவம்ச ஒடியராஜு க்ஷத்ரிய வரலாற்று இணையதளம் — முக்கிய ஆளுமைகள் ஆவணக் காப்பகம்',
+        printCanonicalUrlLabel: 'கட்டுரை இணைய முகவரி (Canonical URL)'
       },
       mr: {
         backButton: 'मागे (Back)',
@@ -2343,7 +2603,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'अभिजात / पारंपरिक साहित्यिक स्रोत',
           verification_required: 'पडताळणी आवश्यक / स्रोत अद्याप सत्यापित नाही'
         },
-        section12Conclusion: 'समारोप व सारांश'
+        section12Conclusion: 'समारोप व सारांश',
+        relatedArticlesHeading: 'संबंधित लेख (Related Articles)',
+        relatedArticlesSubtitle: 'समान राजवंश, ऐतिहासिक कालखंड, प्रदेश किंवा वंश परंपरेशी संबंधित ऐतिहासिक व्यक्तिमत्त्वे',
+        readMoreLabel: 'अधिक वाचा (Read More)',
+        relatedCommunitiesHeading: 'संबंधित समाज (Related Communities)',
+        relatedCommunitiesSubtitle: 'निर्देशिकेतील ४५ परीक्षित समाज व वंश शाखांमधील प्रमाणित संबंध',
+        keywordsHeading: 'महत्त्वाचे शब्द (Keywords)',
+        keywordsSubtitle: 'राजवंश, कालखंड, प्रदेश, कार्यक्षेत्र किंवा समाजानुसार शोधण्यासाठी कोणत्याही शब्दावर क्लिक करा',
+        hashtagsHeading: 'हॅशटॅग (Hashtags)',
+        hashtagsSubtitle: 'निर्देशिका श्रेणी आणि शोध फिल्टरशी जोडलेले ऐतिहासिक हॅशटॅग',
+        printButton: 'प्रिंट करा (Print)',
+        printButtonAria: 'निवडलेल्या भाषेत संपूर्ण ऐतिहासिक लेख प्रिंट करा',
+        shareButton: 'शेअर करा (Share)',
+        shareButtonAria: 'लेख शेअर करा किंवा दुवा कॉपी करा',
+        copyLinkButton: 'लेखाची लिंक कॉपी करा',
+        copyTitleAndLinkButton: 'शीर्षक आणि लिंक कॉपी करा',
+        linkCopiedMessage: 'लेखाची लिंक यशस्वीरित्या कॉपी झाली!',
+        titleAndLinkCopiedMessage: 'लेखाचे शीर्षक आणि लिंक कॉपी झाली!',
+        printWebsiteHeader: 'सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक संकेतस्थळ — प्रमुख व्यक्तिमत्त्वे अभिलेखागार',
+        printCanonicalUrlLabel: 'मूळ लेख दुवा (Canonical URL)'
       },
       or: {
         backButton: 'ପଛକୁ (Back)',
@@ -2418,7 +2697,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'ଶାସ୍ତ୍ରୀୟ / ପାରମ୍ପରିକ ସାହିତ୍ୟ ଉତ୍ସ',
           verification_required: 'ଯାଞ୍ଚ ଆବଶ୍ୟକ / ଉତ୍ସ ଏପର୍ଯ୍ୟନ୍ତ ଯାଞ୍ଚ ହୋଇନାହିଁ'
         },
-        section12Conclusion: 'ଉପସଂହାର ଓ ସାରାଂଶ'
+        section12Conclusion: 'ଉପସଂହାର ଓ ସାରାଂଶ',
+        relatedArticlesHeading: 'ସମ୍ପୃକ୍ତ ପ୍ରବନ୍ଧ (Related Articles)',
+        relatedArticlesSubtitle: 'ସମାନ ରାଜବଂଶ, ଐତିହାସିକ କାଳ, ଅଞ୍ଚଳ ବା ବଂଶ ପରମ୍ପରା ସହିତ ଜଡ଼ିତ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
+        readMoreLabel: 'ଅଧିକ ପଢ଼ନ୍ତୁ (Read More)',
+        relatedCommunitiesHeading: 'ସମ୍ପୃକ୍ତ ସମାଜ (Related Communities)',
+        relatedCommunitiesSubtitle: 'ତାଲିକାରେ ଥିବା ୪୫ଟି ସମାଜ ନାମ ଓ ବଂଶ ଶାଖା ମଧ୍ୟରୁ ପ୍ରମାଣିତ ସମ୍ପର୍କ',
+        keywordsHeading: 'ମୁଖ୍ୟ ଶବ୍ଦ (Keywords)',
+        keywordsSubtitle: 'ରାଜବଂଶ, କାଳ, ଅଞ୍ଚଳ, ବୃତ୍ତି ବା ସମାଜ ଅନୁସାରେ ଖୋଜିବା ପାଇଁ ଯେକୌଣସି ଶବ୍ଦ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ',
+        hashtagsHeading: 'ହ୍ୟାଶଟ୍ୟାଗ୍ (Hashtags)',
+        hashtagsSubtitle: 'ତାଲিকা ବିଭାଗ ଓ ସର୍ଚ୍ଚ ଫିଲ୍ଟର୍ ସହିତ ସଂଯୁକ୍ତ ଐତିହାସିକ ହ୍ୟାଶଟ୍ୟାଗ୍',
+        printButton: 'ପ୍ରିଣ୍ଟ୍ କରନ୍ତୁ (Print)',
+        printButtonAria: 'ମନୋନୀତ ଭାଷାରେ ସମ୍ପୂର୍ଣ୍ଣ ଐତିହାସିକ ପ୍ରବନ୍ଧ ପ୍ରିଣ୍ଟ୍ କରନ୍ତୁ',
+        shareButton: 'ସେୟାର୍ କରନ୍ତୁ (Share)',
+        shareButtonAria: 'ପ୍ରବନ୍ଧ ସେୟାର୍ କରନ୍ତୁ କିମ୍ବା ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+        copyLinkButton: 'ପ୍ରବନ୍ଧ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+        copyTitleAndLinkButton: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+        linkCopiedMessage: 'ପ୍ରବନ୍ଧ ଲିଙ୍କ୍ କପି ହୋଇগଲା!',
+        titleAndLinkCopiedMessage: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି ହୋଇଗଲା!',
+        printWebsiteHeader: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହାସିକ ୱେବସାଇଟ୍ — ପ୍ରମୁଖ ବ୍ୟକ୍ତିତ୍ୱ ଅଭିଲେଖାଗାର',
+        printCanonicalUrlLabel: 'ମୂଳ ପ୍ରବନ୍ଧ ଲିଙ୍କ୍ (Canonical URL)'
       },
       bn: {
         backButton: 'পিছনে (Back)',
@@ -2493,7 +2791,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           traditional_textual_record: 'ধ্রুপদী / ঐতিহ্যবাহী সাহিত্যিক উৎস',
           verification_required: 'যাচাইকরণ আবশ্যক / উৎস এখনও যাচাইকৃত নয়'
         },
-        section12Conclusion: 'উপসংহার ও সারাংশ'
+        section12Conclusion: 'উপসংহার ও সারাংশ',
+        relatedArticlesHeading: 'সংশ্লিষ্ট নিবন্ধসমূহ (Related Articles)',
+        relatedArticlesSubtitle: 'অভিন্ন রাজবংশ, ঐতিহাসিক কাল, অঞ্চল বা বংশ ঐতিহ্যের সাথে যুক্ত ঐতিহাসিক ব্যক্তিত্বগণ',
+        readMoreLabel: 'আরও পড়ুন (Read More)',
+        relatedCommunitiesHeading: 'সংশ্লিষ্ট সম্প্রদায়সমূহ (Related Communities)',
+        relatedCommunitiesSubtitle: 'নির্দেশিকার ৪৫টি নিরীক্ষিত সম্প্রদায় ও বংশ শাখা থেকে প্রমাণিত সংযোগ',
+        keywordsHeading: 'মূল শব্দসমূহ (Keywords)',
+        keywordsSubtitle: 'রাজবংশ, সময়কাল, অঞ্চল, পেশা বা সম্প্রদায় অনুসারে খুঁজতে যেকোনো শব্দে ক্লিক করুন',
+        hashtagsHeading: 'হ্যাশট্যাগসমূহ (Hashtags)',
+        hashtagsSubtitle: 'নির্দেশিকা বিভাগ এবং অনুসন্ধান ফিল্টারের সাথে যুক্ত ঐতিহাসিক হ্যাশট্যাগ',
+        printButton: 'প্রিন্ট করুন (Print)',
+        printButtonAria: 'নির্বাচিত ভাষায় সম্পূর্ণ ঐতিহাসিক নিবন্ধ প্রিন্ট করুন',
+        shareButton: 'শেয়ার করুন (Share)',
+        shareButtonAria: 'নিবন্ধটি শেয়ার করুন অথবা লিঙ্ক কপি করুন',
+        copyLinkButton: 'নিবন্ধের লিঙ্ক কপি করুন',
+        copyTitleAndLinkButton: 'শিরোনাম ও লিঙ্ক কপি করুন',
+        linkCopiedMessage: 'নিবন্ধের লিঙ্ক কপি করা হয়েছে!',
+        titleAndLinkCopiedMessage: 'শিরোনাম ও লিঙ্ক কপি করা হয়েছে!',
+        printWebsiteHeader: 'সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয় ঐতিহাসিক ওয়েবসাইট — বিশিষ্ট ব্যক্তিত্ব আর্কাইভ',
+        printCanonicalUrlLabel: 'মূল নিবন্ধ লিঙ্ক (Canonical URL)'
       }
     };
     return labels[currentLang] || labels.en;
@@ -2968,79 +3285,386 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       .map(st => pageLabels.stateRegions[st] || st)
       .filter(Boolean);
 
+    // ------------------------------------------------------------------------
+    // ADDITIVE METADATA COMPUTATION: RELATED ARTICLES, COMMUNITIES, KEYWORDS & HASHTAGS
+    // ------------------------------------------------------------------------
+    const relatedArticles = chronologicallyOrderedPersons
+      .filter(candidate => candidate.id !== activePerson.id)
+      .map(candidate => {
+        const candExt = resolveExtendedDirectoryMeta(candidate.id);
+        const candMeta = resolvePersonClassification(candidate.id);
+        const candChrono = CHRONOLOGICAL_REGISTRY[candidate.id];
+
+        const sharedDynasties = candExt.rulerDynastyCategories.filter(cat =>
+          extMeta.rulerDynastyCategories.includes(cat)
+        );
+        const sharedPeriod = candExt.historicalPeriodBucket === extMeta.historicalPeriodBucket;
+        const sharedProfessions = candExt.professionCategories.filter(prof =>
+          extMeta.professionCategories.includes(prof)
+        );
+        const sharedRegions = candMeta.regionalStates.filter(st => meta.regionalStates.includes(st));
+        const sharedBranches = candidate.branches.filter(b => activePerson.branches.includes(b));
+        const sharedCommunities = candExt.communityLabels.filter(c => extMeta.communityLabels.includes(c));
+
+        const score =
+          sharedDynasties.length * 5 +
+          (sharedPeriod ? 3 : 0) +
+          sharedProfessions.length * 2 +
+          sharedRegions.length * 2 +
+          sharedBranches.length * 2 +
+          sharedCommunities.length;
+
+        const orderDiff = Math.abs((candChrono?.order ?? 99) - (chrono?.order ?? 99));
+        return {
+          person: candidate,
+          candExt,
+          candChrono,
+          score,
+          orderDiff
+        };
+      })
+      .filter(item => item.score > 0)
+      .sort((a, b) => (b.score !== a.score ? b.score - a.score : a.orderDiff - b.orderDiff))
+      .slice(0, 6);
+
+    const relatedCommunities = SEARCHABLE_COMMUNITY_LABELS.filter(lbl =>
+      extMeta.communityLabels.includes(lbl.id)
+    );
+
+    const periodBucketObj = HISTORICAL_PERIOD_BUCKETS.find(
+      b => b.id === extMeta.historicalPeriodBucket
+    );
+
+    const rawKeywords: Array<{
+      id: string;
+      label: string;
+      onClick: () => void;
+    }> = [];
+
+    const addKeyword = (id: string, label: string | undefined, onClick: () => void) => {
+      if (!label) return;
+      const clean = label.trim();
+      if (!clean) return;
+      if (rawKeywords.some(k => k.label.toLowerCase() === clean.toLowerCase())) return;
+      rawKeywords.push({ id, label: clean, onClick });
+    };
+
+    // 1. Personality Name & Alternative Names
+    addKeyword(`name-${activePerson.id}`, localizedName, () =>
+      navigateFromArticleToDirectoryFilter(() => setSearchQuery(activePerson.name.en))
+    );
+    extMeta.alternativeNames.slice(0, 3).forEach((alt, idx) => {
+      addKeyword(`alt-${idx}`, alt, () =>
+        navigateFromArticleToDirectoryFilter(() => setSearchQuery(alt))
+      );
+    });
+
+    // 2. Dynasty / Ruler Categories
+    extMeta.rulerDynastyCategories.forEach(catId => {
+      const catObj = HISTORICAL_RULER_DYNASTY_CATEGORIES.find(c => c.id === catId);
+      if (catObj) {
+        addKeyword(`dyn-${catId}`, catObj.title[currentLang] || catObj.title.en, () =>
+          navigateFromArticleToDirectoryFilter(() => setSelectedRulerDynasty(catId))
+        );
+      }
+    });
+
+    // 3. Historical Period
+    if (periodBucketObj) {
+      addKeyword(
+        `period-${periodBucketObj.id}`,
+        periodBucketObj.label[currentLang] || periodBucketObj.label.en,
+        () =>
+          navigateFromArticleToDirectoryFilter(() =>
+            setSelectedPeriodBucket(extMeta.historicalPeriodBucket)
+          )
+      );
+    }
+
+    // 4. Regions & States
+    meta.regionalStates.forEach(st => {
+      addKeyword(`state-${st}`, pageLabels.stateRegions[st] || st, () =>
+        navigateFromArticleToDirectoryFilter(() => setSelectedStateRegion(st))
+      );
+    });
+
+    // 5. Professions & Historical Roles
+    extMeta.professionCategories.forEach(profId => {
+      const profObj = PROFESSION_ACHIEVEMENT_CATEGORIES.find(p => p.id === profId);
+      if (profObj) {
+        addKeyword(`prof-${profId}`, profObj.label[currentLang] || profObj.label.en, () =>
+          navigateFromArticleToDirectoryFilter(() => setSelectedProfession(profId))
+        );
+      }
+    });
+
+    // 6. Related Community Names (top 5 distinct community labels)
+    relatedCommunities.slice(0, 5).forEach(lbl => {
+      addKeyword(`comm-${lbl.id}`, lbl.label[currentLang] || lbl.label.en, () =>
+        navigateFromArticleToDirectoryFilter(() => setSelectedCommunityLabel(lbl.id))
+      );
+    });
+
+    // 7. Evidence / Inscription Types & Epistemic Verification Tier
+    addKeyword(`tier-${extMeta.epistemicTier}`, verificationLabel, () =>
+      navigateFromArticleToDirectoryFilter(() => setSelectedEpistemicTier(extMeta.epistemicTier))
+    );
+    (evidenceDossier?.structuredSources || []).forEach((src, idx) => {
+      const evLabel = detailSectionHeadings.evidenceTypeLabels[src.evidenceType];
+      if (evLabel) {
+        addKeyword(`ev-${src.evidenceType}-${idx}`, evLabel, () =>
+          navigateFromArticleToDirectoryFilter(() => setSelectedEpistemicTier(extMeta.epistemicTier))
+        );
+      }
+    });
+
+    // Generate clean, verified Hashtags linked to directory filters/search
+    const toHashtagToken = (text: string): string => {
+      const withoutParens = text.replace(/\([^)]*\)/g, ' ').trim();
+      const cleaned = withoutParens
+        .split(/[\s,./·—–-]+/)
+        .map(part => part.replace(/[^\p{L}\p{N}\p{M}]/gu, ''))
+        .filter(Boolean)
+        .slice(0, 4)
+        .join('');
+      return cleaned ? `#${cleaned}` : '';
+    };
+
+    const articleHashtags: Array<{
+      id: string;
+      tag: string;
+      title: string;
+      onClick: () => void;
+    }> = [];
+
+    const addHashtag = (id: string, rawText: string | undefined, onClick: () => void) => {
+      if (!rawText) return;
+      const tag = toHashtagToken(rawText);
+      if (!tag || tag.length < 3) return;
+      if (articleHashtags.some(h => h.tag.toLowerCase() === tag.toLowerCase())) return;
+      articleHashtags.push({ id, tag, title: rawText, onClick });
+    };
+
+    addHashtag(`ht-name-${activePerson.id}`, localizedName, () =>
+      navigateFromArticleToDirectoryFilter(() => setSearchQuery(activePerson.name.en))
+    );
+    if (extMeta.alternativeNames[0]) {
+      addHashtag(`ht-alt-0`, extMeta.alternativeNames[0], () =>
+        navigateFromArticleToDirectoryFilter(() => setSearchQuery(extMeta.alternativeNames[0]))
+      );
+    }
+    extMeta.rulerDynastyCategories.forEach(catId => {
+      const catObj = HISTORICAL_RULER_DYNASTY_CATEGORIES.find(c => c.id === catId);
+      if (catObj) {
+        addHashtag(`ht-dyn-${catId}`, catObj.title[currentLang] || catObj.title.en, () =>
+          navigateFromArticleToDirectoryFilter(() => setSelectedRulerDynasty(catId))
+        );
+      }
+    });
+    meta.regionalStates.forEach(st => {
+      addHashtag(`ht-state-${st}`, pageLabels.stateRegions[st] || st, () =>
+        navigateFromArticleToDirectoryFilter(() => setSelectedStateRegion(st))
+      );
+    });
+    extMeta.professionCategories.slice(0, 3).forEach(profId => {
+      const profObj = PROFESSION_ACHIEVEMENT_CATEGORIES.find(p => p.id === profId);
+      if (profObj) {
+        addHashtag(`ht-prof-${profId}`, profObj.label[currentLang] || profObj.label.en, () =>
+          navigateFromArticleToDirectoryFilter(() => setSelectedProfession(profId))
+        );
+      }
+    });
+    if (periodBucketObj) {
+      addHashtag(
+        `ht-period-${periodBucketObj.id}`,
+        periodBucketObj.label[currentLang] || periodBucketObj.label.en,
+        () =>
+          navigateFromArticleToDirectoryFilter(() =>
+            setSelectedPeriodBucket(extMeta.historicalPeriodBucket)
+          )
+      );
+    }
+    relatedCommunities.slice(0, 4).forEach(lbl => {
+      addHashtag(`ht-comm-${lbl.id}`, lbl.canonicalName, () =>
+        navigateFromArticleToDirectoryFilter(() => setSelectedCommunityLabel(lbl.id))
+      );
+    });
+
+    const canonicalArticleUrl = getCanonicalArticleUrl(activePerson.id);
+
     return (
-      <div className="min-h-screen bg-[#07090e] text-stone-200">
-        {/* Top Article Navigation Bar (Back Button, Home Button, and ✕ Close Button) */}
-        <div className="border-b border-[#c99738]/30 bg-gradient-to-b from-[#21020b] via-[#101420] to-[#07090e] py-4 px-4 sm:px-6 lg:px-8 sticky top-0 z-30 backdrop-blur-md shadow-xl">
-          <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
-            {/* Breadcrumb Trail */}
-            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => onNavigate('/')}
-                className="text-stone-300 hover:text-[#d4af37] transition-colors cursor-pointer inline-flex items-center gap-1"
-              >
-                <Home className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span>{t.nav?.home || detailSectionHeadings.homeButton}</span>
-              </button>
-              <span className="text-stone-600">/</span>
-              <button
-                type="button"
-                onClick={closePersonArticle}
-                className="text-stone-300 hover:text-[#d4af37] transition-colors cursor-pointer font-medium"
-              >
-                {t.nav?.communityProminentPersons || pageLabels.pageTitle}
-              </button>
-              <span className="text-stone-600">/</span>
-              <span className="text-[#d4af37] font-semibold truncate max-w-[180px] sm:max-w-xs">
-                {localizedName}
-              </span>
-            </nav>
+      <div className="min-h-screen bg-[#07090e] text-stone-200 print-article-wrapper">
+        {/* Top Article Navigation Bar (Back, Home, Print, Share, and ✕ Close Buttons) */}
+        <div className="no-print border-b border-[#c99738]/30 bg-gradient-to-b from-[#21020b] via-[#101420] to-[#07090e] py-4 px-4 sm:px-6 lg:px-8 sticky top-0 z-30 backdrop-blur-md shadow-xl">
+          <div className="max-w-5xl mx-auto space-y-2.5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              {/* Breadcrumb Trail */}
+              <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/')}
+                  className="text-stone-300 hover:text-[#d4af37] transition-colors cursor-pointer inline-flex items-center gap-1"
+                >
+                  <Home className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{t.nav?.home || detailSectionHeadings.homeButton}</span>
+                </button>
+                <span className="text-stone-600">/</span>
+                <button
+                  type="button"
+                  onClick={closePersonArticle}
+                  className="text-stone-300 hover:text-[#d4af37] transition-colors cursor-pointer font-medium"
+                >
+                  {t.nav?.communityProminentPersons || pageLabels.pageTitle}
+                </button>
+                <span className="text-stone-600">/</span>
+                <span className="text-[#d4af37] font-semibold truncate max-w-[180px] sm:max-w-xs">
+                  {localizedName}
+                </span>
+              </nav>
 
-            {/* Primary Navigation Controls: Back, Home, and ✕ Close (Visually Distinct & Mobile-Friendly) */}
-            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
-              <button
-                type="button"
-                onClick={handleBackNavigation}
-                title={detailSectionHeadings.backButton}
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#141a29] hover:bg-[#1e273d] text-stone-100 border border-stone-700 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span>{detailSectionHeadings.backButton}</span>
-              </button>
+              {/* Primary Navigation & Utility Controls: Back, Home, Print, Share, and ✕ Close */}
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+                <button
+                  type="button"
+                  onClick={handleBackNavigation}
+                  title={detailSectionHeadings.backButton}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#141a29] hover:bg-[#1e273d] text-stone-100 border border-stone-700 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.backButton}</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => onNavigate('/')}
-                title={detailSectionHeadings.homeButton}
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#182135] hover:bg-[#23304d] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <Home className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span>{t.nav?.home || detailSectionHeadings.homeButton}</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/')}
+                  title={detailSectionHeadings.homeButton}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#182135] hover:bg-[#23304d] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <Home className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{t.nav?.home || detailSectionHeadings.homeButton}</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={closePersonArticle}
-                aria-label={detailSectionHeadings.closeButtonAria}
-                title={detailSectionHeadings.closeButtonAria}
-                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border-2 border-[#d4af37] text-xs sm:text-sm font-extrabold tracking-wide transition-all shadow-lg cursor-pointer"
-              >
-                <span>{detailSectionHeadings.closeButton}</span>
-              </button>
+                {/* TASK 1 — PRINT BUTTON */}
+                <button
+                  type="button"
+                  onClick={handlePrintArticle}
+                  aria-label={detailSectionHeadings.printButtonAria}
+                  title={detailSectionHeadings.printButtonAria}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.printButton}</span>
+                </button>
+
+                {/* TASK 2 — SHARE BUTTON */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleShareArticle(
+                      activePerson.id,
+                      `${localizedName} — ${localizedTitles}`,
+                      localizedSummary
+                    )
+                  }
+                  aria-label={detailSectionHeadings.shareButtonAria}
+                  aria-expanded={isShareMenuOpen}
+                  title={detailSectionHeadings.shareButtonAria}
+                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer border ${
+                    isShareMenuOpen || shareFeedback !== 'none'
+                      ? 'bg-[#580014] text-[#fae29c] border-[#d4af37]'
+                      : 'bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border-[#c99738]/50'
+                  }`}
+                >
+                  {shareFeedback !== 'none' ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Share2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                  )}
+                  <span>{detailSectionHeadings.shareButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={closePersonArticle}
+                  aria-label={detailSectionHeadings.closeButtonAria}
+                  title={detailSectionHeadings.closeButtonAria}
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border-2 border-[#d4af37] text-xs sm:text-sm font-extrabold tracking-wide transition-all shadow-lg cursor-pointer"
+                >
+                  <span>{detailSectionHeadings.closeButton}</span>
+                </button>
+              </div>
             </div>
+
+            {/* Share Fallback Options & Copy Confirmation Bar */}
+            {(isShareMenuOpen || shareFeedback !== 'none') && (
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#c99738]/25 animate-in fade-in duration-150">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCopyArticleLink(activePerson.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Link2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{detailSectionHeadings.copyLinkButton}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleCopyTitleAndUrl(
+                        activePerson.id,
+                        `${localizedName} (${localizedTitles})`
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-stone-200 hover:text-[#fae29c] border border-stone-700 hover:border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{detailSectionHeadings.copyTitleAndLinkButton}</span>
+                  </button>
+
+                  {shareFeedback !== 'none' && (
+                    <span
+                      role="status"
+                      aria-live="polite"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 text-xs font-bold"
+                    >
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>
+                        {shareFeedback === 'link'
+                          ? detailSectionHeadings.linkCopiedMessage
+                          : detailSectionHeadings.titleAndLinkCopiedMessage}
+                      </span>
+                    </span>
+                  )}
+                </div>
+
+                <span className="text-[11px] text-stone-400 truncate max-w-full sm:max-w-md font-mono">
+                  {canonicalArticleUrl}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Full Structured Article Container */}
-        <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+        <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 print-article-container">
+          {/* Print-Only Website Identification Masthead */}
+          <div className="print-only border-b-2 border-stone-800 pb-3 mb-4">
+            <p className="text-xs font-bold uppercase tracking-wider">
+              {detailSectionHeadings.printWebsiteHeader}
+            </p>
+            <p className="text-[10px]">
+              {detailSectionHeadings.printCanonicalUrlLabel}: {canonicalArticleUrl}
+            </p>
+          </div>
+
           {/* ====================================================================
               SECTIONS 1 & 2 — ARTICLE TITLE, ALTERNATIVE NAMES & LEAD PORTRAIT
               ==================================================================== */}
-          <header className="bg-[#0e131f] border border-[#c99738]/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+          <header className="print-article-header bg-[#0e131f] border border-[#c99738]/40 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
             <div className="flex flex-col md:flex-row items-start gap-6 sm:gap-8">
               {/* SECTION 2: Main Portrait or Historical Illustration */}
-              <div className="w-full sm:w-60 md:w-64 shrink-0 space-y-2.5">
+              <div className="w-full sm:w-60 md:w-64 shrink-0 space-y-2.5 print-portrait-box">
                 <PersonPortraitThumbnail
                   imageUrl={activePerson.imageUrl}
                   altText={`${localizedName} — ${localizedTitles}`}
@@ -3995,6 +4619,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                               <span>{detailSectionHeadings.sourceExternalLinkLabel}</span>
+                              <span className="print-only print-only-inline font-normal text-[10px]">
+                                {' '}({src.sourceUrl})
+                              </span>
                             </a>
                           </div>
                         )}
@@ -4047,10 +4674,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     <button
                       key={branchKey}
                       type="button"
-                      onClick={() => {
-                        setSelectedBranch(branchKey);
-                        closePersonArticle();
-                      }}
+                      onClick={() =>
+                        navigateFromArticleToDirectoryFilter(() => setSelectedBranch(branchKey))
+                      }
                       className="px-3 py-1 rounded-lg text-xs font-semibold bg-[#182030] hover:bg-[#222c42] text-[#fae29c] border border-[#c99738]/40 transition-colors cursor-pointer"
                     >
                       {bObj?.label[currentLang] || branchKey}
@@ -4061,8 +4687,204 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             </div>
           </section>
 
-          {/* Bottom Article Navigation Controls (Previous/Next + Back, Home & Listing Navigation) */}
-          <div className="space-y-4 pt-2">
+          {/* ====================================================================
+              TASK 1 — RELATED ARTICLES SECTION (Compact Responsive Cards)
+              ==================================================================== */}
+          {relatedArticles.length > 0 && (
+            <section className="bg-[#0e131f] border border-[#c99738]/35 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+              <div className="border-b border-stone-800 pb-3 space-y-1">
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.relatedArticlesHeading}</span>
+                </h2>
+                <p className="text-xs text-stone-400">
+                  {detailSectionHeadings.relatedArticlesSubtitle}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {relatedArticles.map(({ person: relPerson, candExt, candChrono }) => {
+                  const relName = relPerson.name[currentLang] || relPerson.name.en;
+                  const relSummary = relPerson.summary[currentLang] || relPerson.summary.en;
+                  const relBadge =
+                    PERSON_BADGE_TRANSLATIONS[relPerson.id]?.[currentLang] || relPerson.badge;
+                  const relPeriod = candChrono
+                    ? candChrono.centuryOrPeriod[currentLang] || candChrono.centuryOrPeriod.en
+                    : relPerson.era[currentLang] || relPerson.era.en;
+                  const relPrimaryProfObj = PROFESSION_ACHIEVEMENT_CATEGORIES.find(
+                    p => p.id === candExt.professionCategories[0]
+                  );
+                  const relPrimaryProf = relPrimaryProfObj
+                    ? relPrimaryProfObj.label[currentLang] || relPrimaryProfObj.label.en
+                    : '';
+
+                  return (
+                    <div
+                      key={relPerson.id}
+                      onClick={() => openPersonArticle(relPerson)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          openPersonArticle(relPerson);
+                        }
+                      }}
+                      className="group bg-[#121826] hover:bg-[#172033] border border-stone-800 hover:border-[#c99738]/60 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5 transition-all cursor-pointer shadow-md"
+                    >
+                      <PersonPortraitThumbnail
+                        imageUrl={relPerson.imageUrl}
+                        altText={relName}
+                        badgeText={relBadge}
+                        eraText={relPeriod}
+                        variant="related"
+                      />
+
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#1a2234] text-[#d4af37] border border-[#c99738]/30 truncate max-w-full">
+                            {relPeriod}
+                          </span>
+                          {relPrimaryProf && (
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#21020b]/80 text-[#fae29c] border border-[#c99738]/25 truncate max-w-full">
+                              {relPrimaryProf}
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] group-hover:text-[#ffd966] transition-colors line-clamp-1 font-royal-heading">
+                          {relName}
+                        </h3>
+
+                        <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
+                          {relSummary}
+                        </p>
+
+                        <div className="pt-1 flex items-center justify-end">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#d4af37] group-hover:text-[#fae29c] transition-colors">
+                            <span>{detailSectionHeadings.readMoreLabel}</span>
+                            <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* ====================================================================
+              TASK 2 — RELATED COMMUNITIES SECTION (From 45 Audited Communities)
+              ==================================================================== */}
+          {relatedCommunities.length > 0 && (
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-3">
+                <div className="space-y-1">
+                  <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                    <Users className="w-4 h-4 text-[#d4af37]" />
+                    <span>{detailSectionHeadings.relatedCommunitiesHeading}</span>
+                  </h2>
+                  <p className="text-xs text-stone-400">
+                    {detailSectionHeadings.relatedCommunitiesSubtitle}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => navigateFromArticleToDirectoryFilter(() => {})}
+                  className="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-[#141b2d] hover:bg-[#1e2942] text-[#d4af37] border border-[#c99738]/40 transition-colors cursor-pointer"
+                >
+                  {directoryLabels.all13CommunityLabels} ({SEARCHABLE_COMMUNITY_LABELS.length})
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {relatedCommunities.map(lbl => {
+                  const needsOngoingResearch = lbl.auditStatus === 'verified_plus_ongoing_research';
+                  return (
+                    <button
+                      key={lbl.id}
+                      type="button"
+                      onClick={() =>
+                        navigateFromArticleToDirectoryFilter(() => setSelectedCommunityLabel(lbl.id))
+                      }
+                      title={lbl.historicalNote[currentLang] || lbl.historicalNote.en}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#131926] hover:bg-[#1d263b] text-[#fae29c] border border-[#c99738]/40 hover:border-[#d4af37] transition-all cursor-pointer"
+                    >
+                      <span>{lbl.label[currentLang] || lbl.label.en}</span>
+                      {needsOngoingResearch && (
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-700/50">
+                          {directoryLabels.ongoingEpigraphicResearch}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* ====================================================================
+              TASKS 3 & 4 — COMPACT KEYWORDS & HASHTAGS SECTIONS
+              ==================================================================== */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* TASK 3 — KEYWORDS */}
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
+              <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <Search className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.keywordsHeading}</span>
+                </h2>
+                <p className="text-[11px] text-stone-400">
+                  {detailSectionHeadings.keywordsSubtitle}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5">
+                {rawKeywords.map(kw => (
+                  <button
+                    key={kw.id}
+                    type="button"
+                    onClick={kw.onClick}
+                    className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#141a29] hover:bg-[#1f2940] text-stone-200 hover:text-[#fae29c] border border-stone-700/80 hover:border-[#c99738]/60 transition-colors cursor-pointer text-left"
+                  >
+                    {kw.label}
+                  </button>
+                ))}
+              </div>
+            </section>
+
+            {/* TASK 4 — HASHTAGS */}
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
+              <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <Layers className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.hashtagsHeading}</span>
+                </h2>
+                <p className="text-[11px] text-stone-400">
+                  {detailSectionHeadings.hashtagsSubtitle}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5">
+                {articleHashtags.map(ht => (
+                  <button
+                    key={ht.id}
+                    type="button"
+                    onClick={ht.onClick}
+                    title={ht.title}
+                    className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#21020b]/60 hover:bg-[#580014] text-[#d4af37] hover:text-[#fae29c] border border-[#c99738]/35 hover:border-[#d4af37] transition-colors cursor-pointer"
+                  >
+                    {ht.tag}
+                  </button>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {/* Bottom Article Navigation Controls (Previous/Next + Back, Home, Print, Share & Close Navigation) */}
+          <div className="no-print space-y-4 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {prevPerson ? (
                 <button
@@ -4127,6 +4949,57 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                 <button
                   type="button"
+                  onClick={handlePrintArticle}
+                  aria-label={detailSectionHeadings.printButtonAria}
+                  title={detailSectionHeadings.printButtonAria}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  <Printer className="w-4 h-4 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.printButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleShareArticle(
+                      activePerson.id,
+                      `${localizedName} — ${localizedTitles}`,
+                      localizedSummary
+                    )
+                  }
+                  aria-label={detailSectionHeadings.shareButtonAria}
+                  title={detailSectionHeadings.shareButtonAria}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  <Share2 className="w-4 h-4 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.shareButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopyArticleLink(activePerson.id)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-all cursor-pointer"
+                >
+                  <Link2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.copyLinkButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCopyTitleAndUrl(
+                      activePerson.id,
+                      `${localizedName} (${localizedTitles})`
+                    )
+                  }
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#141c2e] hover:bg-[#1f2b46] text-stone-200 hover:text-[#fae29c] border border-stone-700 hover:border-[#c99738]/40 text-xs font-semibold transition-all cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{detailSectionHeadings.copyTitleAndLinkButton}</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={closePersonArticle}
                   aria-label={detailSectionHeadings.closeButtonAria}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border-2 border-[#d4af37] text-xs sm:text-sm font-extrabold transition-all shadow-md cursor-pointer"
@@ -4147,6 +5020,21 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 <span>{pageLabels.consultPublisher}</span>
               </a>
             </div>
+
+            {shareFeedback !== 'none' && (
+              <div
+                role="status"
+                aria-live="polite"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 text-xs font-bold"
+              >
+                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>
+                  {shareFeedback === 'link'
+                    ? detailSectionHeadings.linkCopiedMessage
+                    : detailSectionHeadings.titleAndLinkCopiedMessage}
+                </span>
+              </div>
+            )}
           </div>
         </article>
       </div>
