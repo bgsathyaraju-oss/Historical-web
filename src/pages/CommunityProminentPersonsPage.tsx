@@ -1055,6 +1055,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const shareFeedbackTimerRef = useRef<number | null>(null);
   const printFallbackTimerRef = useRef<number | null>(null);
   const autoPrintTriggeredRef = useRef<string | null>(null);
+  const appliedUrlLangRef = useRef<string | null>(null);
   const savedListingScrollYRef = useRef<number>(0);
   const shouldRestoreScrollRef = useRef<boolean>(false);
 
@@ -1107,11 +1108,19 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
-      const params = new URLSearchParams(window.location.search);
+      const searchStr = window.location.search;
+      const params = new URLSearchParams(searchStr);
       const langParam = params.get('lang') as LanguageCode | null;
       const validLanguages: LanguageCode[] = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'];
-      if (langParam && validLanguages.includes(langParam) && langParam !== language) {
-        setLanguage(langParam);
+      if (
+        langParam &&
+        validLanguages.includes(langParam) &&
+        appliedUrlLangRef.current !== searchStr
+      ) {
+        appliedUrlLangRef.current = searchStr;
+        if (langParam !== language) {
+          setLanguage(langParam);
+        }
       }
 
       const autoPrint = params.get('autoprint');
@@ -1161,12 +1170,20 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   }, [activePersonId]);
 
   const getCanonicalArticleUrl = (personId: string): string => {
+    const fallbackHttpsOrigin = 'https://historical-web.web.app';
     if (typeof window === 'undefined') {
-      return `/community-prominent-persons?id=${encodeURIComponent(personId)}`;
+      return `${fallbackHttpsOrigin}/community-prominent-persons?id=${encodeURIComponent(personId)}`;
     }
-    const origin = window.location.origin || '';
+    const rawOrigin = window.location.origin || '';
+    const isLocalDev = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(rawOrigin);
+    let safeOrigin = fallbackHttpsOrigin;
+    if (rawOrigin.startsWith('https://') || isLocalDev) {
+      safeOrigin = rawOrigin;
+    } else if (rawOrigin.startsWith('http://')) {
+      safeOrigin = rawOrigin.replace(/^http:\/\//i, 'https://');
+    }
     const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
-    return `${origin}${basePath}/community-prominent-persons?id=${encodeURIComponent(personId)}`;
+    return `${safeOrigin}${basePath}/community-prominent-persons?id=${encodeURIComponent(personId)}`;
   };
 
   const getExternalPrintArticleUrl = (personId: string, langCode: LanguageCode = currentLang): string => {
@@ -1215,9 +1232,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     }
   };
 
-  const triggerExternalBrowserForPrint = (externalUrl: string) => {
+  const passExternalUrlToAppInventor = (externalUrl: string) => {
     if (typeof window === 'undefined') return;
-    // 1. If running inside MIT App Inventor WebViewer, pass the print URL via WebViewString bridge
+    // Pass the HTTPS article print URL to MIT App Inventor via WebViewString bridge.
+    // Reset to empty string first so WebViewStringChange fires reliably on repeated taps.
     try {
       const win = window as unknown as {
         AppInventor?: {
@@ -1225,26 +1243,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         };
       };
       if (win.AppInventor && typeof win.AppInventor.setWebViewString === 'function') {
+        win.AppInventor.setWebViewString('');
         win.AppInventor.setWebViewString(externalUrl);
       }
     } catch {
       // Ignore bridge errors
-    }
-
-    // 2. Attempt to open the exact article URL in the external browser via a target="_blank" anchor
-    if (typeof document !== 'undefined') {
-      try {
-        const link = document.createElement('a');
-        link.href = externalUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch {
-        // Fallback banner remains visible with direct link and copy button
-      }
     }
   };
 
@@ -1271,10 +1274,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     const canCallWindowPrint = typeof window !== 'undefined' && typeof window.print === 'function';
 
     // If inside MIT App Inventor WebViewer / Android WebView or if window.print is unavailable,
-    // immediately show the multilingual external browser print fallback and trigger external browser open
+    // immediately show the multilingual external browser print fallback and notify the AppInventor bridge
     if (inAndroidWebView || !canCallWindowPrint) {
       setIsPrintFallbackOpen(true);
-      triggerExternalBrowserForPrint(externalPrintUrl);
+      passExternalUrlToAppInventor(externalPrintUrl);
       return;
     }
 
@@ -1292,7 +1295,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       window.print();
     } catch {
       setIsPrintFallbackOpen(true);
-      triggerExternalBrowserForPrint(externalPrintUrl);
+      passExternalUrlToAppInventor(externalPrintUrl);
     }
 
     if (typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent || '')) {
@@ -1301,7 +1304,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         window.removeEventListener('blur', onBeforePrintOrBlur);
         if (!printDialogStarted) {
           setIsPrintFallbackOpen(true);
-          triggerExternalBrowserForPrint(externalPrintUrl);
+          passExternalUrlToAppInventor(externalPrintUrl);
         }
       }, 500);
     } else {
@@ -3816,7 +3819,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     href={externalPrintArticleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => triggerExternalBrowserForPrint(externalPrintArticleUrl)}
+                    onClick={() => passExternalUrlToAppInventor(externalPrintArticleUrl)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
@@ -3839,6 +3842,13 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         : detailSectionHeadings.copyPrintUrlButton}
                     </span>
                   </button>
+                </div>
+
+                {/* Visible Exact HTTPS Article URL with Language & Print Parameters */}
+                <div className="p-2 rounded-lg bg-[#0d121f] border border-stone-700/80 flex items-center justify-between gap-2">
+                  <code className="text-[11px] text-[#fae29c] font-mono break-all select-all">
+                    {externalPrintArticleUrl}
+                  </code>
                 </div>
               </div>
             )}
@@ -5294,7 +5304,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     href={externalPrintArticleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={() => triggerExternalBrowserForPrint(externalPrintArticleUrl)}
+                    onClick={() => passExternalUrlToAppInventor(externalPrintArticleUrl)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
@@ -5317,6 +5327,13 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         : detailSectionHeadings.copyPrintUrlButton}
                     </span>
                   </button>
+                </div>
+
+                {/* Visible Exact HTTPS Article URL with Language & Print Parameters */}
+                <div className="p-2 rounded-lg bg-[#0d121f] border border-stone-700/80 flex items-center justify-between gap-2">
+                  <code className="text-[11px] text-[#fae29c] font-mono break-all select-all">
+                    {externalPrintArticleUrl}
+                  </code>
                 </div>
               </div>
             )}
