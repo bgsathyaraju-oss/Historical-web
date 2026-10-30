@@ -1033,7 +1033,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   initialBranch = 'all',
   initialPersonId
 }) => {
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const currentLang = (language as LanguageCode) || 'en';
 
   const [selectedBranch, setSelectedBranch] = useState<CommunityBranch | 'all'>(initialBranch);
@@ -1050,9 +1050,28 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const [hasInternalArticleHistory, setHasInternalArticleHistory] = useState(false);
   const [shareFeedback, setShareFeedback] = useState<'none' | 'link' | 'title_link'>('none');
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const [isPrintFallbackOpen, setIsPrintFallbackOpen] = useState(false);
+  const [printUrlCopied, setPrintUrlCopied] = useState(false);
   const shareFeedbackTimerRef = useRef<number | null>(null);
+  const printFallbackTimerRef = useRef<number | null>(null);
+  const autoPrintTriggeredRef = useRef<string | null>(null);
   const savedListingScrollYRef = useRef<number>(0);
   const shouldRestoreScrollRef = useRef<boolean>(false);
+
+  const isAndroidWebViewEnvironment = (): boolean => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+    const win = window as unknown as {
+      AppInventor?: {
+        getWebViewString?: () => string;
+        setWebViewString?: (val: string) => void;
+      };
+    };
+    if (win.AppInventor) return true;
+    const ua = navigator.userAgent || '';
+    const isAndroid = /Android/i.test(ua);
+    const isWebView = /\bwv\b/i.test(ua) || /Version\/\d+\.\d+/i.test(ua);
+    return isAndroid && isWebView;
+  };
 
   const readPersonIdFromLocation = (): string | null => {
     if (typeof window === 'undefined') return null;
@@ -1083,13 +1102,60 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     }
   }, [initialPersonId]);
 
-  // Reset share menu and feedback state when switching or closing articles
+  // Preserve selected article language when opened in external browser via ?lang= query parameter,
+  // and automatically invoke browser print if opened with &autoprint=1 in a full browser
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang') as LanguageCode | null;
+      const validLanguages: LanguageCode[] = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'];
+      if (langParam && validLanguages.includes(langParam) && langParam !== language) {
+        setLanguage(langParam);
+      }
+
+      const autoPrint = params.get('autoprint');
+      const targetId = params.get('id') || activePersonId;
+      if (
+        autoPrint === '1' &&
+        targetId &&
+        !isAndroidWebViewEnvironment() &&
+        autoPrintTriggeredRef.current !== `${targetId}-${langParam || language}`
+      ) {
+        autoPrintTriggeredRef.current = `${targetId}-${langParam || language}`;
+        const timer = window.setTimeout(() => {
+          try {
+            const cleanParams = new URLSearchParams(window.location.search);
+            cleanParams.delete('autoprint');
+            const newQuery = cleanParams.toString();
+            const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+            window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+          } catch {
+            // Ignore history replaceState errors
+          }
+          if (typeof window.print === 'function') {
+            window.print();
+          }
+        }, 550);
+        return () => window.clearTimeout(timer);
+      }
+    } catch {
+      // Ignore malformed query string
+    }
+  }, [activePersonId, language, setLanguage]);
+
+  // Reset share menu, print fallback, and feedback state when switching or closing articles
   useEffect(() => {
     setShareFeedback('none');
     setIsShareMenuOpen(false);
+    setIsPrintFallbackOpen(false);
+    setPrintUrlCopied(false);
     return () => {
       if (shareFeedbackTimerRef.current !== null && typeof window !== 'undefined') {
         window.clearTimeout(shareFeedbackTimerRef.current);
+      }
+      if (printFallbackTimerRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(printFallbackTimerRef.current);
       }
     };
   }, [activePersonId]);
@@ -1101,6 +1167,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     const origin = window.location.origin || '';
     const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
     return `${origin}${basePath}/community-prominent-persons?id=${encodeURIComponent(personId)}`;
+  };
+
+  const getExternalPrintArticleUrl = (personId: string, langCode: LanguageCode = currentLang): string => {
+    const baseCanonical = getCanonicalArticleUrl(personId);
+    return `${baseCanonical}&lang=${encodeURIComponent(langCode)}&autoprint=1`;
   };
 
   const copyTextToClipboard = async (textToCopy: string): Promise<boolean> => {
@@ -1144,10 +1215,98 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     }
   };
 
+  const triggerExternalBrowserForPrint = (externalUrl: string) => {
+    if (typeof window === 'undefined') return;
+    // 1. If running inside MIT App Inventor WebViewer, pass the print URL via WebViewString bridge
+    try {
+      const win = window as unknown as {
+        AppInventor?: {
+          setWebViewString?: (val: string) => void;
+        };
+      };
+      if (win.AppInventor && typeof win.AppInventor.setWebViewString === 'function') {
+        win.AppInventor.setWebViewString(externalUrl);
+      }
+    } catch {
+      // Ignore bridge errors
+    }
+
+    // 2. Attempt to open the exact article URL in the external browser via a target="_blank" anchor
+    if (typeof document !== 'undefined') {
+      try {
+        const link = document.createElement('a');
+        link.href = externalUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch {
+        // Fallback banner remains visible with direct link and copy button
+      }
+    }
+  };
+
+  const handleCopyPrintArticleUrl = async (personId: string) => {
+    const externalUrl = getExternalPrintArticleUrl(personId, currentLang);
+    await copyTextToClipboard(externalUrl);
+    setPrintUrlCopied(true);
+    if (printFallbackTimerRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(printFallbackTimerRef.current);
+    }
+    if (typeof window !== 'undefined') {
+      printFallbackTimerRef.current = window.setTimeout(() => {
+        setPrintUrlCopied(false);
+      }, 3500);
+    }
+  };
+
   const handlePrintArticle = () => {
     setIsShareMenuOpen(false);
-    if (typeof window !== 'undefined' && typeof window.print === 'function') {
+    if (!activePerson) return;
+
+    const externalPrintUrl = getExternalPrintArticleUrl(activePerson.id, currentLang);
+    const inAndroidWebView = isAndroidWebViewEnvironment();
+    const canCallWindowPrint = typeof window !== 'undefined' && typeof window.print === 'function';
+
+    // If inside MIT App Inventor WebViewer / Android WebView or if window.print is unavailable,
+    // immediately show the multilingual external browser print fallback and trigger external browser open
+    if (inAndroidWebView || !canCallWindowPrint) {
+      setIsPrintFallbackOpen(true);
+      triggerExternalBrowserForPrint(externalPrintUrl);
+      return;
+    }
+
+    // In standard mobile/desktop browsers, track whether the print dialog actually opens;
+    // if on Android and window.print() is silently ignored by a custom WebView wrapper, reveal the fallback
+    let printDialogStarted = false;
+    const onBeforePrintOrBlur = () => {
+      printDialogStarted = true;
+    };
+
+    window.addEventListener('beforeprint', onBeforePrintOrBlur, { once: true });
+    window.addEventListener('blur', onBeforePrintOrBlur, { once: true });
+
+    try {
       window.print();
+    } catch {
+      setIsPrintFallbackOpen(true);
+      triggerExternalBrowserForPrint(externalPrintUrl);
+    }
+
+    if (typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent || '')) {
+      window.setTimeout(() => {
+        window.removeEventListener('beforeprint', onBeforePrintOrBlur);
+        window.removeEventListener('blur', onBeforePrintOrBlur);
+        if (!printDialogStarted) {
+          setIsPrintFallbackOpen(true);
+          triggerExternalBrowserForPrint(externalPrintUrl);
+        }
+      }, 500);
+    } else {
+      window.removeEventListener('beforeprint', onBeforePrintOrBlur);
+      window.removeEventListener('blur', onBeforePrintOrBlur);
     }
   };
 
@@ -2058,6 +2217,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         titleAndLinkCopiedMessage: string;
         printWebsiteHeader: string;
         printCanonicalUrlLabel: string;
+        webViewPrintFallbackNotice: string;
+        openInExternalBrowserButton: string;
+        copyPrintUrlButton: string;
       }
     > = {
       en: {
@@ -2152,7 +2314,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'Article link copied to clipboard!',
         titleAndLinkCopiedMessage: 'Article title & URL copied!',
         printWebsiteHeader: 'Suryavamsha Odiyaraju Kshatriya Historical Website — Prominent Persons Archive',
-        printCanonicalUrlLabel: 'Canonical Article URL'
+        printCanonicalUrlLabel: 'Canonical Article URL',
+        webViewPrintFallbackNotice:
+          'Direct printing is not supported inside the Android app WebViewer. You can print or save this article as a PDF in your selected language by opening it in your external Android browser.',
+        openInExternalBrowserButton: 'Open in External Browser to Print',
+        copyPrintUrlButton: 'Copy Print Link'
       },
       hi: {
         backButton: 'वापस (Back)',
@@ -2246,7 +2412,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'लेख का लिंक सफलतापूर्वक कॉपी हो गया!',
         titleAndLinkCopiedMessage: 'शीर्षक और लिंक सफलतापूर्वक कॉपी हो गए!',
         printWebsiteHeader: 'सूर्यवंश ओडियाराजु क्षत्रिय ऐतिहासिक वेबसाइट — प्रमुख व्यक्तित्व अभिलेखागार',
-        printCanonicalUrlLabel: 'मूल लेख लिंक (Canonical URL)'
+        printCanonicalUrlLabel: 'मूल लेख लिंक (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'एंड्रॉइड ऐप वेबव्यू (WebViewer) के भीतर सीधा प्रिंट समर्थित नहीं है। आप इस लेख को अपनी चयनित भाषा में प्रिंट करने या PDF के रूप में सहेजने के लिए बाहरी ब्राउज़र (Chrome) में खोल सकते हैं।',
+        openInExternalBrowserButton: 'प्रिंट करने के लिए बाहरी ब्राउज़र में खोलें',
+        copyPrintUrlButton: 'प्रिंट लिंक कॉपी करें'
       },
       te: {
         backButton: 'వెనుకకు (Back)',
@@ -2340,7 +2510,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'వ్యాస లింక్ కాపీ చేయబడింది!',
         titleAndLinkCopiedMessage: 'వ్యాస శీర్షిక మరియు లింక్ కాపీ చేయబడ్డాయి!',
         printWebsiteHeader: 'సూర్యవంశ ఒడియరాజు క్షత్రియ చారిత్రక వెబ్‌సైట్ — ప్రముఖ వ్యక్తుల పురావస్తు భాండాగారం',
-        printCanonicalUrlLabel: 'వ్యాస ప్రామాణిక లింక్ (Canonical URL)'
+        printCanonicalUrlLabel: 'వ్యాస ప్రామాణిక లింక్ (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'ఆండ్రాయిడ్ యాప్ వెబ్‌వ్యూయర్ (WebViewer) లో నేరుగా ప్రింట్ చేయడం అందుబాటులో లేదు. మీరు ఎంచుకున్న భాషలోనే ఈ వ్యాసాన్ని ప్రింట్ చేయడానికి లేదా PDF గా సేవ్ చేయడానికి బాహ్య బ్రౌజర్ (Chrome) లో తెరవండి.',
+        openInExternalBrowserButton: 'ప్రింట్ కోసం బాహ్య బ్రౌజర్‌లో తెరవండి',
+        copyPrintUrlButton: 'ప్రింట్ లింక్ కాపీ చేయండి'
       },
       kn: {
         backButton: 'ಹಿಂದಕ್ಕೆ (Back)',
@@ -2434,7 +2608,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'ಲೇಖನದ ಲಿಂಕ್ ಯಶಸ್ವಿಯಾಗಿ ನಕಲಿಸಲಾಗಿದೆ!',
         titleAndLinkCopiedMessage: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
         printWebsiteHeader: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಚಾರಿತ್ರಿಕ ಜಾಲತಾಣ — ಪ್ರಮುಖ ಗಣ್ಯರ ದಾಖಲಾತಿ',
-        printCanonicalUrlLabel: 'ಲೇಖನದ ಮೂಲ ಕೊಂಡಿ (Canonical URL)'
+        printCanonicalUrlLabel: 'ಲೇಖನದ ಮೂಲ ಕೊಂಡಿ (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'ಆಂಡ್ರಾಯ್ಡ್ ಆಪ್ ವೆಬ್‌ವೀವರ್ (WebViewer) ಒಳಗೆ ನೇರ ಮುದ್ರಣ ಲಭ್ಯವಿಲ್ಲ. ಆಯ್ದ ಭಾಷೆಯಲ್ಲಿಯೇ ಈ ಲೇಖನವನ್ನು ಮುದ್ರಿಸಲು ಅಥವಾ PDF ಆಗಿ ಉಳಿಸಲು ಬಾಹ್ಯ ಬ್ರೌಸರ್‌ನಲ್ಲಿ (Chrome) ತೆರೆಯಿರಿ.',
+        openInExternalBrowserButton: 'ಮುದ್ರಿಸಲು ಬಾಹ್ಯ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ',
+        copyPrintUrlButton: 'ಮುದ್ರಣ ಲಿಂಕ್ ನಕಲಿಸಿ'
       },
       ta: {
         backButton: 'பின்செல் (Back)',
@@ -2528,7 +2706,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'கட்டுரை இணைப்பு நகலெடுக்கப்பட்டது!',
         titleAndLinkCopiedMessage: 'தலைப்பு மற்றும் இணைப்பு நகலெடுக்கப்பட்டது!',
         printWebsiteHeader: 'சூர்யவம்ச ஒடியராஜு க்ஷத்ரிய வரலாற்று இணையதளம் — முக்கிய ஆளுமைகள் ஆவணக் காப்பகம்',
-        printCanonicalUrlLabel: 'கட்டுரை இணைய முகவரி (Canonical URL)'
+        printCanonicalUrlLabel: 'கட்டுரை இணைய முகவரி (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'ஆண்ட்ராய்டு செயலியின் WebViewer-க்குள் நேரடி அச்சிடல் ஆதரிக்கப்படவில்லை. தேர்ந்தெடுக்கப்பட்ட மொழியில் இக்கட்டுரையை அச்சிட அல்லது PDF ஆகச் சேமிக்க வெளிப்புற உலாவியில் (Chrome) திறக்கவும்.',
+        openInExternalBrowserButton: 'அச்சிட வெளிப்புற உலாவியில் திறக்கவும்',
+        copyPrintUrlButton: 'அச்சு இணைப்பை நகலெடு'
       },
       mr: {
         backButton: 'मागे (Back)',
@@ -2622,7 +2804,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'लेखाची लिंक यशस्वीरित्या कॉपी झाली!',
         titleAndLinkCopiedMessage: 'लेखाचे शीर्षक आणि लिंक कॉपी झाली!',
         printWebsiteHeader: 'सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक संकेतस्थळ — प्रमुख व्यक्तिमत्त्वे अभिलेखागार',
-        printCanonicalUrlLabel: 'मूळ लेख दुवा (Canonical URL)'
+        printCanonicalUrlLabel: 'मूळ लेख दुवा (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'अँड्रॉइड अ‍ॅपच्या WebViewer मध्ये थेट प्रिंट सुविधा उपलब्ध नाही. आपण निवडलेल्या भाषेत हा लेख प्रिंट करण्यासाठी किंवा PDF म्हणून जतन करण्यासाठी बाह्य ब्राउझरमध्ये (Chrome) उघडू शकता.',
+        openInExternalBrowserButton: 'प्रिंटसाठी बाह्य ब्राउझरमध्ये उघडा',
+        copyPrintUrlButton: 'प्रिंट लिंक कॉपी करा'
       },
       or: {
         backButton: 'ପଛକୁ (Back)',
@@ -2716,7 +2902,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'ପ୍ରବନ୍ଧ ଲିଙ୍କ୍ କପି ହୋଇগଲା!',
         titleAndLinkCopiedMessage: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି ହୋଇଗଲା!',
         printWebsiteHeader: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହାସିକ ୱେବସାଇଟ୍ — ପ୍ରମୁଖ ବ୍ୟକ୍ତିତ୍ୱ ଅଭିଲେଖାଗାର',
-        printCanonicalUrlLabel: 'ମୂଳ ପ୍ରବନ୍ଧ ଲିଙ୍କ୍ (Canonical URL)'
+        printCanonicalUrlLabel: 'ମୂଳ ପ୍ରବନ୍ଧ ଲିଙ୍କ୍ (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'ଆଣ୍ଡ୍ରଏଡ୍ ଆପ୍ WebViewer ଭିତରେ ସିଧାସଳଖ ପ୍ରିଣ୍ଟ୍ ସୁବିଧା ଉପଲବ୍ଧ ନାହିଁ। ମନୋନୀତ ଭାଷାରେ ଏହି ପ୍ରବନ୍ଧକୁ ପ୍ରିଣ୍ଟ୍ କରିବା ବା PDF ଭାବେ ସେଭ୍ କରିବା ପାଇଁ ବାହ୍ୟ ବ୍ରାଉଜରରେ (Chrome) ଖୋଲନ୍ତୁ।',
+        openInExternalBrowserButton: 'ପ୍ରିଣ୍ଟ୍ ପାଇଁ ବାହ୍ୟ ବ୍ରାଉଜରରେ ଖୋଲନ୍ତୁ',
+        copyPrintUrlButton: 'ପ୍ରିଣ୍ଟ୍ ଲିଙ୍କ୍ କପି କରନ୍ତୁ'
       },
       bn: {
         backButton: 'পিছনে (Back)',
@@ -2810,7 +3000,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         linkCopiedMessage: 'নিবন্ধের লিঙ্ক কপি করা হয়েছে!',
         titleAndLinkCopiedMessage: 'শিরোনাম ও লিঙ্ক কপি করা হয়েছে!',
         printWebsiteHeader: 'সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয় ঐতিহাসিক ওয়েবসাইট — বিশিষ্ট ব্যক্তিত্ব আর্কাইভ',
-        printCanonicalUrlLabel: 'মূল নিবন্ধ লিঙ্ক (Canonical URL)'
+        printCanonicalUrlLabel: 'মূল নিবন্ধ লিঙ্ক (Canonical URL)',
+        webViewPrintFallbackNotice:
+          'অ্যান্ড্রয়েড অ্যাপের WebViewer-এর ভেতরে সরাসরি প্রিন্ট সমর্থিত নয়। নির্বাচিত ভাষায় এই নিবন্ধটি প্রিন্ট করতে বা PDF হিসেবে সংরক্ষণ করতে বাহ্যিক ব্রাউজারে (Chrome) খুলুন।',
+        openInExternalBrowserButton: 'প্রিন্ট করতে বাহ্যিক ব্রাউজারে খুলুন',
+        copyPrintUrlButton: 'প্রিন্ট লিঙ্ক কপি করুন'
       }
     };
     return labels[currentLang] || labels.en;
@@ -3491,6 +3685,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     });
 
     const canonicalArticleUrl = getCanonicalArticleUrl(activePerson.id);
+    const externalPrintArticleUrl = getExternalPrintArticleUrl(activePerson.id, currentLang);
 
     return (
       <div className="min-h-screen bg-[#07090e] text-stone-200 print-article-wrapper">
@@ -3594,6 +3789,59 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 </button>
               </div>
             </div>
+
+            {/* Android WebViewer Print Fallback Banner (Multilingual) */}
+            {isPrintFallbackOpen && (
+              <div
+                role="status"
+                aria-live="polite"
+                className="p-3 sm:p-3.5 rounded-xl bg-[#161f33] border border-[#d4af37]/60 space-y-2.5 animate-in fade-in duration-150"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs text-[#fcedc7] leading-relaxed">
+                    {detailSectionHeadings.webViewPrintFallbackNotice}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsPrintFallbackOpen(false)}
+                    aria-label="Close print notice"
+                    className="p-1 rounded-md text-stone-400 hover:text-white hover:bg-stone-800 shrink-0 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={externalPrintArticleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => triggerExternalBrowserForPrint(externalPrintArticleUrl)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{detailSectionHeadings.openInExternalBrowserButton}</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCopyPrintArticleUrl(activePerson.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    {printUrlCopied ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                    )}
+                    <span>
+                      {printUrlCopied
+                        ? detailSectionHeadings.linkCopiedMessage
+                        : detailSectionHeadings.copyPrintUrlButton}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Share Fallback Options & Copy Confirmation Bar */}
             {(isShareMenuOpen || shareFeedback !== 'none') && (
@@ -5020,6 +5268,58 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 <span>{pageLabels.consultPublisher}</span>
               </a>
             </div>
+
+            {isPrintFallbackOpen && (
+              <div
+                role="status"
+                aria-live="polite"
+                className="p-3.5 sm:p-4 rounded-xl bg-[#161f33] border border-[#d4af37]/60 space-y-2.5 animate-in fade-in duration-150"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-xs text-[#fcedc7] leading-relaxed">
+                    {detailSectionHeadings.webViewPrintFallbackNotice}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsPrintFallbackOpen(false)}
+                    aria-label="Close print notice"
+                    className="p-1 rounded-md text-stone-400 hover:text-white hover:bg-stone-800 shrink-0 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={externalPrintArticleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => triggerExternalBrowserForPrint(externalPrintArticleUrl)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{detailSectionHeadings.openInExternalBrowserButton}</span>
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCopyPrintArticleUrl(activePerson.id)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    {printUrlCopied ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                    )}
+                    <span>
+                      {printUrlCopied
+                        ? detailSectionHeadings.linkCopiedMessage
+                        : detailSectionHeadings.copyPrintUrlButton}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
 
             {shareFeedback !== 'none' && (
               <div
