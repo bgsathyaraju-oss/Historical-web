@@ -9,12 +9,12 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const { t } = useLanguage();
-  const whatsappGreeting = t.publisher?.whatsappGreeting || 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal';
+  const whatsappGreeting = t.publisher?.whatsappGreeting || 'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   return (
     <footer className="w-full bg-[#080a10] border-t border-[#c99738]/30 text-stone-300">
-      {/* WebSite Design and Published by Dr G.Sathyanarayana Raju */}
+      {/* Research, Documentation & Compilation by Dr.G Sathyanarayana Raju */}
       <div className="bg-gradient-to-r from-[#21020b] via-[#101420] to-[#21020b] border-b border-[#c99738]/40 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-5">
@@ -22,7 +22,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#e8c872] shadow-xl ring-2 ring-[#580014]">
                 <img
                   src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
-                  alt={t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
+                  alt={t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
                   className="w-full h-full object-cover object-top"
                 />
               </div>
@@ -33,13 +33,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
             <div className="space-y-1">
               <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37]">
-                {t.publisher?.designedAndPublishedBy || 'WebSite Design and Published by'}
+                {t.publisher?.designedAndPublishedBy || 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
               </div>
               <h3 className="font-royal-heading font-black text-xl text-[#fcedc7]">
-                {t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
+                {t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
               </h3>
               <p className="text-xs sm:text-sm font-semibold text-stone-300">
-                {t.publisher?.leaderTitle || 'Leader of Suryavamsha Odiyaraju Kshatriya Community'}
+                {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}
+              </p>
+              <p className="text-xs text-[#d4af37]/90">
+                {t.publisher?.organization || 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'}
               </p>
             </div>
           </div>

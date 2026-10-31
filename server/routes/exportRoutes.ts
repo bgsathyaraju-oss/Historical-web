@@ -198,3 +198,104 @@ exportRouter.get('/instructions', (_req: Request, res: Response) => {
     setup_guide: SETUP_INSTRUCTIONS
   });
 });
+
+interface CachedPdfEntry {
+  buffer: Buffer;
+  filename: string;
+  createdAt: number;
+}
+
+const pdfDownloadCache = new Map<string, CachedPdfEntry>();
+const PDF_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+function cleanupPdfCache() {
+  const now = Date.now();
+  for (const [key, entry] of pdfDownloadCache.entries()) {
+    if (now - entry.createdAt > PDF_CACHE_TTL_MS) {
+      pdfDownloadCache.delete(key);
+    }
+  }
+  // Cap maximum entries to 25
+  if (pdfDownloadCache.size > 25) {
+    const oldestKey = pdfDownloadCache.keys().next().value;
+    if (oldestKey) pdfDownloadCache.delete(oldestKey);
+  }
+}
+
+function buildContentDispositionHeader(filename: string): string {
+  const cleanName = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+  // ASCII-safe fallback for legacy user-agents
+  const asciiFallback = cleanName
+    .replace(/[^\x20-\x7E]/g, '_')
+    .replace(/["\\]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
+  const safeAscii =
+    asciiFallback && asciiFallback !== '.pdf' && asciiFallback !== '_.pdf'
+      ? asciiFallback
+      : 'Historical_Article.pdf';
+  const encodedUtf8 = encodeURIComponent(cleanName)
+    .replace(/['()]/g, escape)
+    .replace(/\*/g, '%2A');
+  return `attachment; filename="${safeAscii}"; filename*=UTF-8''${encodedUtf8}`;
+}
+
+// POST /api/export/prepare-pdf - Stores generated PDF binary for native browser / Android Download Manager saving
+exportRouter.post('/prepare-pdf', (req: Request, res: Response) => {
+  try {
+    cleanupPdfCache();
+    const { pdfBase64, filename } = req.body || {};
+    if (!pdfBase64 || typeof pdfBase64 !== 'string') {
+      res.status(400).json({ error: 'Missing pdfBase64 payload.' });
+      return;
+    }
+
+    const rawBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');
+    const buffer = Buffer.from(rawBase64, 'base64');
+    if (buffer.length === 0) {
+      res.status(400).json({ error: 'Empty PDF payload.' });
+      return;
+    }
+
+    const safeFilename =
+      typeof filename === 'string' && filename.trim()
+        ? filename.trim().endsWith('.pdf')
+          ? filename.trim()
+          : `${filename.trim()}.pdf`
+        : 'Historical_Article.pdf';
+
+    const token = `pdf_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    pdfDownloadCache.set(token, {
+      buffer,
+      filename: safeFilename,
+      createdAt: Date.now()
+    });
+
+    res.status(200).json({
+      token,
+      filename: safeFilename,
+      downloadUrl: `/api/export/download-pdf/${encodeURIComponent(token)}/${encodeURIComponent(safeFilename)}`
+    });
+  } catch (err) {
+    console.error('[PDF EXPORT] Failed to prepare PDF download:', err);
+    res.status(500).json({ error: 'Failed to prepare PDF download.' });
+  }
+});
+
+// GET /api/export/download-pdf/:token/:filename - Streams the PDF binary as a file attachment
+exportRouter.get('/download-pdf/:token/:filename?', (req: Request, res: Response) => {
+  cleanupPdfCache();
+  const { token } = req.params;
+  const entry = pdfDownloadCache.get(token);
+  if (!entry) {
+    res.status(404).send('PDF download link has expired. Please click Download PDF again.');
+    return;
+  }
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Length', String(entry.buffer.length));
+  res.setHeader('Content-Disposition', buildContentDispositionHeader(entry.filename));
+  res.setHeader('Cache-Control', 'private, max-age=300');
+  res.status(200).send(entry.buffer);
+});
+

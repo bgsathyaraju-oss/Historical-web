@@ -1,210 +1,284 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  BookOpen,
+  Search,
+  User,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+  Clock,
+  FileText,
+  CheckCircle2,
+  ShieldCheck,
+  X
+} from 'lucide-react';
 import { Article, LanguageCode } from '../types';
+import { EvidenceBadge } from '../components/EvidenceBadge';
+import { ArticleBriefModal } from '../components/ArticleBriefModal';
+import {
+  ArticleDetailView,
+  getMonographPeriod,
+  getMonographCategories
+} from '../components/ArticleDetailView';
+import { useLanguage } from '../context/LanguageContext';
+import { getAllArticles } from '../data/articlesRepository';
 
-const RESEARCH_PAGE_UI: Record<LanguageCode, {
-  clickHint: string;
-  noArticlesTitle: string;
-  noArticlesDesc: string;
-  clearFilters: string;
-  viewBrief: string;
-  fullArticle: string;
-  prevPage: string;
-  nextPage: string;
-  execSummary: string;
-  completeArticle: string;
-  authorLabel: string;
-  pubDateLabel: string;
-  categoryLabel: string;
-}> = {
+const RESEARCH_PAGE_UI: Record<
+  LanguageCode,
+  {
+    clickHint: string;
+    noArticlesTitle: string;
+    noArticlesDesc: string;
+    clearFilters: string;
+    viewBrief: string;
+    fullArticle: string;
+    prevPage: string;
+    nextPage: string;
+    returnHome: string;
+    sourcesCount: (count: number) => string;
+  }
+> = {
   en: {
-    clickHint: 'Click any article to open Complete Research Article',
-    noArticlesTitle: 'No Articles Found',
-    noArticlesDesc: 'No research papers match your current search query',
+    clickHint: 'Click any monograph card to open the Complete Monograph & Chapters',
+    noArticlesTitle: 'No Monographs Found',
+    noArticlesDesc: 'No historical monographs match your current search query',
     clearFilters: 'Clear Filters',
-    viewBrief: 'View Brief Summary',
-    fullArticle: 'Full Article',
+    viewBrief: 'Quick Abstract',
+    fullArticle: 'Read More — Complete Monograph',
     prevPage: 'Previous',
     nextPage: 'Next',
-    execSummary: 'Executive Summary',
-    completeArticle: 'Complete Documented Research Article',
-    authorLabel: 'Author / Research Council',
-    pubDateLabel: 'Publication Date',
-    categoryLabel: 'Archival Category'
+    returnHome: 'Return to Home',
+    sourcesCount: count => `${count} Citations`
   },
   hi: {
-    clickHint: 'पूर्ण शोध लेख खोलने के लिए किसी भी लेख पर क्लिक करें',
-    noArticlesTitle: 'कोई लेख नहीं मिला',
-    noArticlesDesc: 'आपकी वर्तमान खोज से कोई शोध पत्र मेल नहीं खाता',
+    clickHint: 'संपूर्ण मोनोग्राफ एवं अध्याय खोलने के लिए किसी भी कार्ड पर क्लिक करें',
+    noArticlesTitle: 'कोई मोनोग्राफ नहीं मिला',
+    noArticlesDesc: 'आपकी वर्तमान खोज से कोई ऐतिहासिक मोनोग्राफ मेल नहीं खाता',
     clearFilters: 'फ़िल्टर साफ़ करें',
-    viewBrief: 'संक्षिप्त सारांश देखें',
-    fullArticle: 'पूर्ण लेख',
+    viewBrief: 'संक्षिप्त सारांश',
+    fullArticle: 'अधिक पढ़ें — संपूर्ण मोनोग्राफ',
     prevPage: 'पिछला',
     nextPage: 'अगला',
-    execSummary: 'कार्यकारी सारांश',
-    completeArticle: 'संपूर्ण प्रमाणित शोध लेख',
-    authorLabel: 'लेखक / अनुसंधान परिषद',
-    pubDateLabel: 'प्रकाशन तिथि',
-    categoryLabel: 'अभिलेखीय श्रेणी'
+    returnHome: 'मुख्य पृष्ठ पर लौटें',
+    sourcesCount: count => `${count} संदर्भ`
   },
   te: {
-    clickHint: 'పూర్తి పరిశోధనా వ్యాసాన్ని తెరవడానికి ఏదైనా వ్యాసంపై క్లిక్ చేయండి',
-    noArticlesTitle: 'వ్యాసాలు కనుగొనబడలేదు',
-    noArticlesDesc: 'మీ ప్రస్తుత శోధనకు సరిపోయే పరిశోధనా పత్రాలు లేవు',
+    clickHint: 'పూర్తి మోనోగ్రాఫ్ & అధ్యాయాలను తెరవడానికి ఏదైనా కార్డుపై క్లిక్ చేయండి',
+    noArticlesTitle: 'మోనోగ్రాఫ్‌లు కనుగొనబడలేదు',
+    noArticlesDesc: 'మీ ప్రస్తుత శోధనకు సరిపోయే చారిత్రక మోనోగ్రాఫ్‌లు లేవు',
     clearFilters: 'ఫిల్టర్లు తొలగించండి',
-    viewBrief: 'సంక్షిప్త సారాంశం చూడండి',
-    fullArticle: 'పూర్తి వ్యాసం',
+    viewBrief: 'సంక్షిప్త సారాంశం',
+    fullArticle: 'మరింత చదవండి — పూర్తి మోనోగ్రాఫ్',
     prevPage: 'మునుపటి',
     nextPage: 'తదుపరి',
-    execSummary: 'కార్యనిర్వాహక సారాంశం',
-    completeArticle: 'పూర్తి ప్రామాణిక పరిశోధనా వ్యాసం',
-    authorLabel: 'రచయిత / పరిశోధనా మండలి',
-    pubDateLabel: 'ప్రచురణ తేదీ',
-    categoryLabel: 'పురావస్తు విభాగం'
+    returnHome: 'హోమ్ పేజీకి తిరిగి వెళ్ళండి',
+    sourcesCount: count => `${count} ఆధారాలు`
   },
   kn: {
-    clickHint: 'ಸಂಪೂರ್ಣ ಸಂಶೋಧನಾ ಲೇಖನವನ್ನು ತೆರೆಯಲು ಯಾವುದೇ ಲೇಖನದ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ',
-    noArticlesTitle: 'ಯಾವುದೇ ಲೇಖನಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
-    noArticlesDesc: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ಸಂಶೋಧನಾ ಪತ್ರಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ',
+    clickHint: 'ಸಂಪೂರ್ಣ ಮೊನೊಗ್ರಾಫ್ ಮತ್ತು ಅಧ್ಯಾಯಗಳನ್ನು ತೆರೆಯಲು ಯಾವುದೇ ಕಾರ್ಡ್ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ',
+    noArticlesTitle: 'ಯಾವುದೇ ಮೊನೊಗ್ರಾಫ್ ಕಂಡುಬಂದಿಲ್ಲ',
+    noArticlesDesc: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ಸಂಶೋಧನಾ ಮೊನೊಗ್ರಾಫ್ ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ',
     clearFilters: 'ಫಿಲ್ಟರ್‌ಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ',
-    viewBrief: 'ಸಂಕ್ಷಿಪ್ತ ಸಾರಾಂಶ ನೋಡಿ',
-    fullArticle: 'ಪೂರ್ಣ ಲೇಖನ',
+    viewBrief: 'ಸಂಕ್ಷಿಪ್ತ ಸಾರಾಂಶ',
+    fullArticle: 'ಮುಂದೆ ಓದಿ — ಪೂರ್ಣ ಮೊನೊಗ್ರಾಫ್',
     prevPage: 'ಹಿಂದಿನದು',
     nextPage: 'ಮುಂದಿನದು',
-    execSummary: 'ಕಾರ್ಯಕಾರಿ ಸಾರಾಂಶ',
-    completeArticle: 'ಸಂಪೂರ್ಣ ದಾಖಲಿತ ಸಂಶೋಧನಾ ಲೇಖನ',
-    authorLabel: 'ಲೇಖಕರು / ಸಂಶೋಧನಾ ಮಂಡಳಿ',
-    pubDateLabel: 'ಪ್ರಕಟಣೆ ದಿನಾಂಕ',
-    categoryLabel: 'ಪತ್ರಾಗಾರ ವರ್ಗ'
+    returnHome: 'ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ',
+    sourcesCount: count => `${count} ಉಲ್ಲೇಖಗಳು`
   },
   ta: {
-    clickHint: 'முழு ஆய்வுக் கட்டுரையைத் திறக்க எந்தக் கட்டுரையையும் சொடுக்கவும்',
-    noArticlesTitle: 'கட்டுரைகள் எதுவும் கிடைக்கவில்லை',
+    clickHint: 'முழு ஆய்வுக் கட்டுரை மற்றும் அத்தியாயங்களைத் திறக்க எந்த அட்டையையும் சொடுக்கவும்',
+    noArticlesTitle: 'ஆய்வுக் கட்டுரைகள் எதுவும் கிடைக்கவில்லை',
     noArticlesDesc: 'உங்கள் தற்போதைய தேடலுக்குப் பொருந்தும் ஆய்வுக் கட்டுரைகள் இல்லை',
     clearFilters: 'வடிகட்டிகளை அழி',
     viewBrief: 'சுருக்கத்தைக் காண்க',
-    fullArticle: 'முழு கட்டுரை',
+    fullArticle: 'மேலும் படிக்க — முழு கட்டுரை',
     prevPage: 'முந்தைய',
     nextPage: 'அடுத்தது',
-    execSummary: 'நிறைவேற்றுச் சுருக்கம்',
-    completeArticle: 'முழுமையான ஆவணப்படுத்தப்பட்ட ஆய்வுக் கட்டுரை',
-    authorLabel: 'ஆசிரியர் / ஆராய்ச்சி குழு',
-    pubDateLabel: 'வெளியீட்டு தேதி',
-    categoryLabel: 'ஆவணப் பிரிவு'
+    returnHome: 'முகப்புப் பக்கத்திற்குத் திரும்பு',
+    sourcesCount: count => `${count} ஆதாரங்கள்`
   },
   mr: {
-    clickHint: 'संपूर्ण संशोधन लेख उघडण्यासाठी कोणत्याही लेखावर क्लिक करा',
-    noArticlesTitle: 'कोणतेही लेख सापडले नाहीत',
-    noArticlesDesc: 'तुमच्या सध्याच्या शोधाशी कोणताही संशोधन प्रबंध जुळत नाही',
+    clickHint: 'संपूर्ण मोनोग्राफ आणि प्रकरणे उघडण्यासाठी कोणत्याही कार्डवर क्लिक करा',
+    noArticlesTitle: 'कोणतेही मोनोग्राफ सापडले नाहीत',
+    noArticlesDesc: 'तुमच्या सध्याच्या शोधाशी कोणताही ऐतिहासिक मोनोग्राफ जुळत नाही',
     clearFilters: 'फिल्टर साफ करा',
-    viewBrief: 'संक्षिप्त सारांश पहा',
-    fullArticle: 'पूर्ण लेख',
+    viewBrief: 'संक्षिप्त सारांश',
+    fullArticle: 'अधिक वाचा — संपूर्ण मोनोग्राफ',
     prevPage: 'मागील',
     nextPage: 'पुढील',
-    execSummary: 'कार्यकारी सारांश',
-    completeArticle: 'संपूर्ण प्रमाणित संशोधन लेख',
-    authorLabel: 'लेखक / संशोधन परिषद',
-    pubDateLabel: 'प्रकाशन तारीख',
-    categoryLabel: 'अभिलेखीय श्रेणी'
+    returnHome: 'मुख्य पृष्ठावर परत जा',
+    sourcesCount: count => `${count} संदर्भ`
   },
   or: {
-    clickHint: 'ସମ୍ପୂର୍ଣ୍ଣ ଗବେଷଣା ପ୍ରବନ୍ଧ ଖୋଲିବାକୁ ଯେକୌଣସି ପ୍ରବନ୍ଧ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ',
-    noArticlesTitle: 'କୌଣସି ପ୍ରବନ୍ଧ ମିଳିଲା ନାହିଁ',
-    noArticlesDesc: 'ଆପଣଙ୍କ ବର୍ତ୍ତମାନର ସନ୍ଧାନ ସହିତ କୌଣସି ଗବେଷଣା ପତ୍ର ମେଳ ଖାଉନାହିଁ',
+    clickHint: 'ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍ ଓ ଅଧ୍ୟାୟ ଖୋଲିବାକୁ ଯେକୌଣସି କାର୍ଡ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ',
+    noArticlesTitle: 'କୌଣସି ମୋନୋଗ୍ରାଫ୍ ମିଳିଲା ନାହିଁ',
+    noArticlesDesc: 'ଆପଣଙ୍କ ବର୍ତ୍ତମାନର ସନ୍ଧାନ ସହିତ କୌଣସି ଗବେଷଣା ମୋନୋଗ୍ରାଫ୍ ମେଳ ଖାଉନାହିଁ',
     clearFilters: 'ଫିଲ୍ଟର୍ ସଫା କରନ୍ତୁ',
-    viewBrief: 'ସଂକ୍ଷିପ୍ତ ସାରାଂଶ ଦେଖନ୍ତୁ',
-    fullArticle: 'ସମ୍ପୂର୍ଣ୍ଣ ପ୍ରବନ୍ଧ',
-    prevPage: 'ପୂର୍ବবর্তী',
+    viewBrief: 'ସଂକ୍ଷିପ୍ତ ସାରାଂଶ',
+    fullArticle: 'ଅଧିକ ପଢ଼ନ୍ତୁ — ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍',
+    prevPage: 'ପୂର୍ବବର୍ତ୍ତୀ',
     nextPage: 'ପରବର୍ତ୍ତୀ',
-    execSummary: 'କାର୍ଯ୍ୟନିର୍ବାହୀ ସାରାଂଶ',
-    completeArticle: 'ସମ୍ପୂର୍ଣ୍ଣ ପ୍ରାମାଣିକ ଗବେଷଣା ପ୍ରବନ୍ଧ',
-    authorLabel: 'ଲେଖକ / ଗବେଷଣା ପରିଷଦ',
-    pubDateLabel: 'ପ୍ରକାଶନ ତାରିଖ',
-    categoryLabel: 'ଅଭିଲେଖାଗାର ବିଭାଗ'
+    returnHome: 'ମୁଖ୍ୟ ପୃଷ୍ଠାକୁ ଫେରନ୍ତୁ',
+    sourcesCount: count => `${count} ପ୍ରମାଣ`
   },
   bn: {
-    clickHint: 'সম্পূর্ণ গবেষণা নিবন্ধ খুলতে যেকোনো নিবন্ধে ক্লিক করুন',
-    noArticlesTitle: 'কোনো নিবন্ধ পাওয়া যায়নি',
-    noArticlesDesc: 'আপনার বর্তমান অনুসন্ধানের সাথে কোনো গবেষণা পত্র মেলেনি',
+    clickHint: 'সম্পূর্ণ মনোগ্রাফ ও অধ্যায় খুলতে যেকোনো কার্ডে ক্লিক করুন',
+    noArticlesTitle: 'কোনো মনোগ্রাফ পাওয়া যায়নি',
+    noArticlesDesc: 'আপনার বর্তমান অনুসন্ধানের সাথে কোনো ঐতিহাসিক মনোগ্রাফ মেলেনি',
     clearFilters: 'ফিল্টার মুছুন',
-    viewBrief: 'সংক্ষিপ্ত সারাংশ দেখুন',
-    fullArticle: 'সম্পূর্ণ নিবন্ধ',
+    viewBrief: 'সংক্ষিপ্ত সারাংশ',
+    fullArticle: 'আরও পড়ুন — সম্পূর্ণ মনোগ্রাফ',
     prevPage: 'পূর্ববর্তী',
     nextPage: 'পরবর্তী',
-    execSummary: 'কার্যনির্বাহী সারাংশ',
-    completeArticle: 'সম্পূর্ণ প্রামাণ্য গবেষণা নিবন্ধ',
-    authorLabel: 'লেখক / গবেষণা পরিষদ',
-    pubDateLabel: 'প্রকাশের তারিখ',
-    categoryLabel: 'আর্কাইভাল বিভাগ'
+    returnHome: 'হোম পেজে ফিরে যান',
+    sourcesCount: count => `${count}টি সূত্র`
   }
 };
-import { BookOpen, Search, Filter, ShieldCheck, Calendar, User, ArrowRight, Sparkles } from 'lucide-react';
-import { EvidenceBadge } from '../components/EvidenceBadge';
-import { ArticleBriefModal } from '../components/ArticleBriefModal';
-import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
-import { useLanguage } from '../context/LanguageContext';
-
-import { getAllArticles } from '../data/articlesRepository';
 
 interface ResearchArticlesPageProps {
   onNavigate: (path: string) => void;
   initialArticleId?: string | null;
 }
 
-export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNavigate, initialArticleId }) => {
-  const { language, t, translationManager, getArticleContent, getMetadataLabel, translateText } = useLanguage();
+export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
+  onNavigate,
+  initialArticleId
+}) => {
+  const { language, t, translationManager, getArticleContent, getMetadataLabel, translateText } =
+    useLanguage();
   const ui = RESEARCH_PAGE_UI[language] || RESEARCH_PAGE_UI.en;
   const initialArticles = getAllArticles(language);
   const [articles, setArticles] = useState<Article[]>(initialArticles);
-  const [selectedFullArticle, setSelectedFullArticle] = useState<Article | null>(null);
+  const [activeArticleId, setActiveArticleId] = useState<string | null>(() => {
+    if (initialArticleId) {
+      const match = initialArticles.find(a => a.id === initialArticleId || a.slug === initialArticleId);
+      if (match) return match.id;
+    }
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const artParam = params.get('article') || params.get('id');
+      if (artParam) {
+        const match = initialArticles.find(a => a.id === artParam || a.slug === artParam);
+        if (match) return match.id;
+      }
+    } catch {
+      // Ignore
+    }
+    return null;
+  });
+
   const [selectedBriefArticle, setSelectedBriefArticle] = useState<Article | null>(null);
   const [isBriefModalOpen, setIsBriefModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const savedScrollY = useRef<number>(0);
 
   useEffect(() => {
     const updated = getAllArticles(language);
     setArticles(updated);
-    setSelectedFullArticle(prev => (prev ? updated.find(a => a.id === prev.id) || prev : null));
     setSelectedBriefArticle(prev => (prev ? updated.find(a => a.id === prev.id) || prev : null));
     if (initialArticleId) {
       const found = updated.find(a => a.id === initialArticleId || a.slug === initialArticleId);
-      if (found) setSelectedFullArticle(found);
+      if (found) setActiveArticleId(found.id);
     }
-    translationManager.fetchArticles(language)
+    translationManager
+      .fetchArticles(language)
       .then(data => {
         if (data && data.length > 0) setArticles(data);
       })
       .catch(() => {});
   }, [language, translationManager, initialArticleId]);
 
+  const openMonographDetail = (art: Article) => {
+    savedScrollY.current = window.scrollY;
+    setActiveArticleId(art.id);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('article', art.id);
+      window.history.replaceState({}, '', url.toString());
+    } catch {
+      // Ignore
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const closeMonographDetail = () => {
+    setActiveArticleId(null);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('article');
+      url.searchParams.delete('id');
+      window.history.replaceState({}, '', url.toString());
+    } catch {
+      // Ignore
+    }
+    setTimeout(() => {
+      window.scrollTo({ top: savedScrollY.current, behavior: 'smooth' });
+    }, 60);
+  };
+
+  const activeArticle = activeArticleId
+    ? articles.find(a => a.id === activeArticleId || a.slug === activeArticleId) || null
+    : null;
+
   const categories = [
-    { id: 'all', label: translateText('all', 'All Categories') },
-    { id: 'odra_desha_geography', label: getMetadataLabel('category', 'odra_desha_geography') || 'Odra Desha & Geography' },
-    { id: 'suryavamsha_gajapathi_kings', label: getMetadataLabel('category', 'suryavamsha_gajapathi_kings') || 'Gajapathi Kings' },
-    { id: 'genealogy_methodology', label: getMetadataLabel('category', 'genealogy_methodology') || 'Genealogy & Methodology' },
-    { id: 'oad_rajput_heritage', label: getMetadataLabel('category', 'oad_rajput_heritage') || 'Oad-Rajput Heritage' },
-    { id: 'suryavamsha_lineage_antiquity', label: getMetadataLabel('category', 'suryavamsha_lineage_antiquity') || 'Suryavamsha Lineage' },
-    { id: 'sacred_citadels_maritime', label: getMetadataLabel('category', 'sacred_citadels_maritime') || 'Sacred Citadels (Kolletikota)' },
-    { id: 'inscriptions_epigraphy', label: getMetadataLabel('category', 'inscriptions_epigraphy') || 'Inscriptions & Epigraphy' }
+    { id: 'all', label: `${translateText('all', 'All Categories')} (${articles.length})` },
+    {
+      id: 'odra_desha_geography',
+      label: getMetadataLabel('category', 'odra_desha_geography') || 'Odra Desha & Geography'
+    },
+    {
+      id: 'suryavamsha_gajapathi_kings',
+      label: getMetadataLabel('category', 'suryavamsha_gajapathi_kings') || 'Gajapathi Kings'
+    },
+    {
+      id: 'genealogy_methodology',
+      label: getMetadataLabel('category', 'genealogy_methodology') || 'Genealogy & Methodology'
+    },
+    {
+      id: 'oad_rajput_heritage',
+      label: getMetadataLabel('category', 'oad_rajput_heritage') || 'Oad-Rajput Heritage'
+    },
+    {
+      id: 'suryavamsha_lineage_antiquity',
+      label: getMetadataLabel('category', 'suryavamsha_lineage_antiquity') || 'Suryavamsha Lineage'
+    },
+    {
+      id: 'sacred_citadels_maritime',
+      label: getMetadataLabel('category', 'sacred_citadels_maritime') || 'Sacred Citadels (Kolletikota)'
+    },
+    {
+      id: 'inscriptions_epigraphy',
+      label: getMetadataLabel('category', 'inscriptions_epigraphy') || 'Inscriptions & Epigraphy'
+    }
   ];
 
-  // Cross-browser safe Unicode search
   const normalizedSearch = (search || '').normalize('NFC').toLowerCase().trim();
 
   const filtered = articles.filter(a => {
-    // Category filter
     if (activeCategory !== 'all') {
       const catKey = a.category.toLowerCase();
       const match =
         (activeCategory === 'odra_desha_geography' && (catKey.includes('odra') || catKey.includes('geography'))) ||
-        (activeCategory === 'suryavamsha_gajapathi_kings' && (catKey.includes('gajapathi') || catKey.includes('kapilendra'))) ||
-        (activeCategory === 'genealogy_methodology' && (catKey.includes('genealogy') || catKey.includes('methodology'))) ||
-        (activeCategory === 'oad_rajput_heritage' && (catKey.includes('oad') || catKey.includes('rajput') || catKey.includes('synonym'))) ||
-        (activeCategory === 'suryavamsha_lineage_antiquity' && (catKey.includes('antiquity') || catKey.includes('sagara'))) ||
-        (activeCategory === 'sacred_citadels_maritime' && (catKey.includes('maritime') || catKey.includes('citadel') || catKey.includes('kolletikota') || catKey.includes('sarasu'))) ||
-        (activeCategory === 'inscriptions_epigraphy' && (catKey.includes('inscription') || catKey.includes('epigraph')));
+        (activeCategory === 'suryavamsha_gajapathi_kings' &&
+          (catKey.includes('gajapathi') || catKey.includes('kapilendra'))) ||
+        (activeCategory === 'genealogy_methodology' &&
+          (catKey.includes('genealogy') || catKey.includes('methodology'))) ||
+        (activeCategory === 'oad_rajput_heritage' &&
+          (catKey.includes('oad') || catKey.includes('rajput') || catKey.includes('synonym'))) ||
+        (activeCategory === 'suryavamsha_lineage_antiquity' &&
+          (catKey.includes('antiquity') || catKey.includes('sagara') || catKey.includes('kings'))) ||
+        (activeCategory === 'sacred_citadels_maritime' &&
+          (catKey.includes('maritime') ||
+            catKey.includes('citadel') ||
+            catKey.includes('kolletikota') ||
+            catKey.includes('sarasu') ||
+            catKey.includes('culture'))) ||
+        (activeCategory === 'inscriptions_epigraphy' &&
+          (catKey.includes('inscription') || catKey.includes('epigraph')));
 
       if (!match) return false;
     }
@@ -226,7 +300,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
       normOrigSummary.includes(normalizedSearch) ||
       normAuthor.includes(normalizedSearch) ||
       normCat.includes(normalizedSearch) ||
-      a.tags.some(t => (t || '').normalize('NFC').toLowerCase().includes(normalizedSearch))
+      a.tags.some(tag => (tag || '').normalize('NFC').toLowerCase().includes(normalizedSearch))
     );
   });
 
@@ -243,74 +317,119 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
     setCurrentPage(1);
   };
 
-  const handleCardClick = (art: Article) => {
-    setSelectedFullArticle(art);
-  };
+  // ============================================================================
+  // COMPLETE MONOGRAPH DETAIL VIEW
+  // ============================================================================
+  if (activeArticle) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <ArticleDetailView
+          article={activeArticle}
+          onBack={closeMonographDetail}
+          onNavigate={onNavigate}
+          onSelectArticle={art => openMonographDetail(art)}
+          onTagClick={tag => {
+            handleSearchChange(tag);
+            closeMonographDetail();
+          }}
+          allArticles={articles}
+          showLanguageSwitcher={true}
+          basePath="/research"
+        />
+      </div>
+    );
+  }
 
-  const buildArticleModalItem = (art: Article | null): ContentDetailItem | null => {
-    if (!art) return null;
-    const { title, summary, content } = getArticleContent(art);
-    return {
-      id: art.id,
-      title,
-      subtitle: `${art.author_name} • ${art.publication_date}`,
-      badge: getMetadataLabel('category', art.category) || art.category,
-      evidenceCategory: art.evidence_category,
-      verificationStatus: art.verification_status,
-      imageUrl: art.featured_image,
-      imageLayout: 'banner',
-      summary,
-      summaryLabel: ui.execSummary,
-      fullText: content,
-      fullTextLabel: ui.completeArticle,
-      metadata: [
-        { label: ui.authorLabel, value: art.author_name },
-        { label: ui.pubDateLabel, value: art.publication_date },
-        { label: ui.categoryLabel, value: getMetadataLabel('category', art.category) || art.category }
-      ],
-      sources: (art.sources || []).map(s => ({
-        title: s.title,
-        author: s.author_or_authority,
-        year: s.year_or_era,
-        type: s.source_type,
-        details: `${s.publication_or_location ? s.publication_or_location + ' — ' : ''}${s.citation_details || ''}`
-      })),
-      tags: art.tags,
-      shareUrl: `${window.location.origin}/research?article=${encodeURIComponent(art.id)}`
-    };
-  };
+  // ============================================================================
+  // MONOGRAPH ARTICLE CARDS LIST INTERFACE
+  // ============================================================================
+  const fallbackThumb = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-          <BookOpen className="w-4 h-4" />
-          <span>{t.home?.researchBadge || 'Peer-Reviewed Academic Historiography'}</span>
-        </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
-          {t.home?.researchTitle || 'Research Articles & Historiographical Studies'}
-        </h1>
-        <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
-          {t.home?.researchSubtitle || 'Critical monographs examining the Suryavamsha Gajapathi era, epigraphic paleography, territorial borders of Odra Desha, and traditional genealogy methods.'}
-        </p>
-      </div>
+      <div className="border-b border-stone-800 pb-6 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigate('/')}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-200 text-xs font-semibold transition-all cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37]" />
+            <span>{ui.returnHome}</span>
+          </button>
 
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading bg-[#1a1308] px-3.5 py-1.5 rounded-full border border-[#c99738]/40">
+            <BookOpen className="w-4 h-4" />
+            <span>{t.home?.researchBadge || 'Peer-Reviewed Academic Historiography'}</span>
+          </div>
+        </div>
+
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+          {t.home?.researchTitle || 'Research Articles & Historical Monographs'}
+        </h1>
+        <p className="text-xs sm:text-sm text-stone-300 max-w-4xl leading-relaxed">
+          {t.home?.researchSubtitle ||
+            'Critical monographs examining the Suryavamsha Gajapathi era, epigraphic paleography, territorial borders of Odra Desha, and traditional genealogy methods.'}
+        </p>
+
+        {/* 3-Pillar Epistemic Distinction Banner */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <div className="p-3.5 rounded-2xl bg-[#121622] border border-emerald-800/50 flex items-start gap-3">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="text-xs font-bold text-emerald-300">Verified Epigraphic Evidence</div>
+              <p className="text-[11px] text-stone-400 mt-0.5">
+                Primary copper plates, temple lithic edicts, and ASI archaeological surveys.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-[#121622] border border-amber-800/50 flex items-start gap-3">
+            <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="text-xs font-bold text-amber-300">Traditional Accounts & Vamsavalis</div>
+              <p className="text-[11px] text-stone-400 mt-0.5">
+                Puranic genealogies, Madala Panji temple annals, and community chronicles.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-[#121622] border border-indigo-800/50 flex items-start gap-3">
+            <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="text-xs font-bold text-indigo-300">Scholarly Interpretations</div>
+              <p className="text-[11px] text-stone-400 mt-0.5">
+                Peer-reviewed historiography distinguishing epigraphy from devotional allegory.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Search and Category Filter Bar */}
       <div className="space-y-4 p-4 sm:p-5 rounded-3xl bg-[#121622] border border-stone-800">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="w-full sm:w-96 relative">
-            <Search className="w-4 h-4 text-[#d4af37] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder={t.common?.searchPlaceholder || 'Search articles in any language or script...'}
-              className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+              onChange={e => handleSearchChange(e.target.value)}
+              placeholder={t.common?.searchPlaceholder || 'Search monographs in any language or script...'}
+              className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => handleSearchChange('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
-          <div className="text-xs text-stone-400 flex items-center gap-2">
+          <div className="text-xs text-stone-300 flex items-center gap-2">
             <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
             <span>{ui.clickHint}</span>
           </div>
@@ -318,11 +437,12 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
 
         {/* Category Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1 pt-1">
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <button
               key={cat.id}
+              type="button"
               onClick={() => handleCategoryChange(cat.id)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 activeCategory === cat.id
                   ? 'bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] shadow-md font-bold'
                   : 'bg-stone-900/90 text-stone-400 hover:text-stone-200 hover:bg-stone-800 border border-stone-800'
@@ -334,7 +454,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
         </div>
       </div>
 
-      {/* Articles Grid & Empty State */}
+      {/* Monograph Cards Grid & Empty State */}
       {filtered.length === 0 ? (
         <div className="p-12 text-center rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
           <BookOpen className="w-10 h-10 text-stone-600 mx-auto" />
@@ -343,6 +463,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
             {ui.noArticlesDesc} "{search}".
           </p>
           <button
+            type="button"
             onClick={() => {
               handleSearchChange('');
               setActiveCategory('all');
@@ -353,69 +474,110 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
           {paginated.map(art => {
             const { title: cardTitle, summary: cardSummary } = getArticleContent(art);
+            const localizedCat = getMetadataLabel('category', art.category) || art.category;
+            const periodText = getMonographPeriod(art, language);
+            const subjectCats = getMonographCategories(art, localizedCat);
+
             return (
-            <div
-              key={art.id}
-              onClick={() => handleCardClick(art)}
-              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] p-6 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
-              title="Click to read Complete Research Article"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#d4af37]">
-                    {getMetadataLabel('category', art.category) || art.category}
-                  </span>
-                  <EvidenceBadge category={art.evidence_category} size="sm" />
+              <article
+                key={art.id}
+                onClick={() => openMonographDetail(art)}
+                className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+                title="Click to read Complete Monograph"
+              >
+                <div>
+                  {/* Thumbnail + Historical Period Badge */}
+                  <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                    <img
+                      src={art.featured_image || fallbackThumb}
+                      alt={cardTitle}
+                      loading="lazy"
+                      onError={e => {
+                        const target = e.currentTarget;
+                        if (!target.dataset.fallback) {
+                          target.dataset.fallback = '1';
+                          target.src = fallbackThumb;
+                        }
+                      }}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-black/25 to-transparent" />
+
+                    <div className="absolute top-3.5 left-3.5 right-3.5 flex flex-wrap items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-xs border border-[#d4af37]/50 text-[#fae29c] text-[11px] font-bold">
+                        <Clock className="w-3 h-3 text-[#d4af37] shrink-0" />
+                        <span className="truncate max-w-[260px]">{periodText}</span>
+                      </span>
+                      <EvidenceBadge category={art.evidence_category} size="sm" />
+                    </div>
+                  </div>
+
+                  {/* Card Body: Subject Categories, Complete Title, Short Introduction */}
+                  <div className="p-6 pb-4 space-y-3">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {subjectCats.map((sc, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37] bg-[#1a1308] px-2.5 py-0.5 rounded-md border border-[#c99738]/30"
+                        >
+                          {sc}
+                        </span>
+                      ))}
+                    </div>
+
+                    <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug">
+                      {cardTitle}
+                    </h2>
+
+                    <p className="text-xs sm:text-sm text-stone-300 line-clamp-3 leading-relaxed">
+                      {cardSummary}
+                    </p>
+                  </div>
                 </div>
 
-                <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug">
-                  {cardTitle}
-                </h3>
+                {/* Card Footer */}
+                <div className="px-6 pb-6 pt-4 border-t border-stone-800/80 space-y-3 bg-[#0f131d]">
+                  <div className="flex items-center justify-between text-[11px] text-stone-400">
+                    <span className="flex items-center gap-1.5 text-stone-300 font-medium">
+                      <User className="w-3.5 h-3.5 text-[#d4af37]" />
+                      {art.author_name}
+                    </span>
+                    <span className="flex items-center gap-1 font-semibold text-amber-200/90">
+                      <FileText className="w-3.5 h-3.5 text-[#d4af37]" />
+                      {ui.sourcesCount((art.sources || []).length)}
+                    </span>
+                  </div>
 
-                <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
-                  {cardSummary}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-stone-800/80 space-y-3">
-                <div className="flex items-center justify-between text-[11px] text-stone-500">
-                  <span className="flex items-center gap-1 text-stone-400">
-                    <User className="w-3.5 h-3.5 text-[#d4af37]" />
-                    {art.author_name}
-                  </span>
-                  <span>{art.publication_date}</span>
+                  <div className="flex items-center justify-between pt-2 border-t border-stone-800/60">
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation();
+                        setSelectedBriefArticle(art);
+                        setIsBriefModalOpen(true);
+                      }}
+                      className="text-[11px] text-[#fae29c] hover:underline font-medium flex items-center gap-1 cursor-pointer"
+                    >
+                      <Sparkles className="w-3 h-3 text-[#d4af37]" />
+                      <span>{ui.viewBrief}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.stopPropagation();
+                        openMonographDetail(art);
+                      }}
+                      className="text-xs font-bold text-[#e8c872] hover:underline flex items-center gap-1.5 group-hover:translate-x-1 transition-transform cursor-pointer"
+                    >
+                      <span>{ui.fullArticle}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
-
-                <div className="flex items-center justify-between pt-1">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedBriefArticle(art);
-                      setIsBriefModalOpen(true);
-                    }}
-                    className="text-[11px] text-[#fae29c] hover:underline font-medium flex items-center gap-1 cursor-pointer"
-                  >
-                    <Sparkles className="w-3 h-3 text-[#d4af37]" />
-                    <span>{ui.viewBrief}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedFullArticle(art);
-                    }}
-                    className="text-xs font-semibold text-[#e8c872] hover:underline flex items-center gap-1 group-hover:translate-x-1 transition-transform cursor-pointer"
-                  >
-                    <span>{ui.fullArticle}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
+              </article>
             );
           })}
         </div>
@@ -426,26 +588,22 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
         article={selectedBriefArticle}
         isOpen={isBriefModalOpen}
         onClose={() => setIsBriefModalOpen(false)}
-        onReadFull={(art) => {
+        onReadFull={art => {
           setIsBriefModalOpen(false);
-          setSelectedFullArticle(art);
+          openMonographDetail(art);
         }}
-      />
-
-      {/* Full Research Article Modal */}
-      <ContentDetailModal
-        item={buildArticleModalItem(selectedFullArticle)}
-        onClose={() => setSelectedFullArticle(null)}
       />
 
       {/* Pagination Bar */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between p-4 rounded-2xl bg-[#121622] border border-stone-800 text-xs">
           <span className="text-stone-400">
-            Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} articles
+            Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+            {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} monographs
           </span>
           <div className="flex items-center gap-1.5">
             <button
+              type="button"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className="px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 disabled:opacity-40 hover:bg-stone-800"
@@ -455,6 +613,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
               <button
                 key={p}
+                type="button"
                 onClick={() => setCurrentPage(p)}
                 className={`w-7 h-7 rounded-lg font-semibold flex items-center justify-center ${
                   currentPage === p
@@ -466,6 +625,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({ onNa
               </button>
             ))}
             <button
+              type="button"
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className="px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 disabled:opacity-40 hover:bg-stone-800"

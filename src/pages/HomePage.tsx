@@ -99,7 +99,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
   return (
     <div className="w-full space-y-12 pb-20">
-      {/* TOP POSITION: WebSite Design and Published by Dr G.Sathyanarayana Raju */}
+      {/* TOP POSITION: Research, Documentation & Compilation by Dr.G Sathyanarayana Raju */}
       <section className="pt-6 sm:pt-8 -mb-4">
         <PublisherCreditCard variant="hero-top" />
       </section>
@@ -308,31 +308,51 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {featuredArticles.map((art) => {
             const { title: artTitle, summary: artSummary } = getArticleContent(art);
+            const fallbackThumb = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
             return (
               <div
                 key={art.id}
                 onClick={() => setSelectedFullArticle(art)}
-                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] p-5 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
                 title="Click to read Complete Research Article"
               >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[11px] font-semibold text-[#d4af37] uppercase tracking-wider">
-                      {getMetadataLabel('category', art.category) || art.category}
-                    </span>
-                    <EvidenceBadge category={art.evidence_category} size="sm" />
+                <div>
+                  <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                    <img
+                      src={art.featured_image || fallbackThumb}
+                      alt={artTitle}
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.dataset.fallback) {
+                          target.dataset.fallback = '1';
+                          target.src = fallbackThumb;
+                        }
+                      }}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
                   </div>
 
-                  <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug">
-                    {artTitle}
-                  </h3>
+                  <div className="p-5 pb-3 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[11px] font-semibold text-[#d4af37] uppercase tracking-wider">
+                        {getMetadataLabel('category', art.category) || art.category}
+                      </span>
+                      <EvidenceBadge category={art.evidence_category} size="sm" />
+                    </div>
 
-                  <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
-                    {artSummary}
-                  </p>
+                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug">
+                      {artTitle}
+                    </h3>
+
+                    <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
+                      {artSummary}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="pt-3 border-t border-stone-800/80 space-y-2.5">
+                <div className="px-5 pb-5 pt-3 border-t border-stone-800/80 space-y-2.5">
                   <div className="flex items-center justify-between text-[11px] text-stone-500">
                     <span>By {art.author_name}</span>
                     <span>{art.publication_date}</span>

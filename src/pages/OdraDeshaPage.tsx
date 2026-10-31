@@ -250,24 +250,50 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {regionalItems.map(reg => {
             const Icon = reg.icon;
+            const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+            const regionImgMap: Record<string, string> = {
+              'region-odra': `${base}barabati_fort_gateway.jpg`,
+              'region-utkala': `${base}puri_jagannatha_temple.jpg`,
+              'region-kalinga': `${base}simhachalam_temple.jpg`,
+              'region-trikalinga': `${base}odra_kalinga_map.jpg`
+            };
+            const thumbUrl = regionImgMap[reg.id] || `${base}odra_kalinga_map.jpg`;
             return (
               <div
                 key={reg.id}
                 onClick={() => setSelectedId(reg.id)}
-                className="p-5 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 cursor-pointer transition-all group flex flex-col justify-between"
+                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
               >
-                <div className="space-y-3">
-                  <div className={`p-2 w-fit rounded-lg ${reg.iconStyle}`}>
-                    <Icon className="w-5 h-5" />
+                <div>
+                  <div className="h-36 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                    <img
+                      src={thumbUrl}
+                      alt={reg.title}
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.dataset.fallback) {
+                          target.dataset.fallback = '1';
+                          target.src = `${base}barabati_fort_gateway.jpg`;
+                        }
+                      }}
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                    <div className={`absolute top-3 left-3 p-2 rounded-lg ${reg.iconStyle}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
                   </div>
-                  <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c] transition-colors">
-                    {reg.title}
-                  </h3>
-                  <p className="text-xs text-stone-400 leading-relaxed">
-                    {reg.desc}
-                  </p>
+                  <div className="p-5 pb-3 space-y-2.5">
+                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                      {reg.title}
+                    </h3>
+                    <p className="text-xs text-stone-400 leading-relaxed">
+                      {reg.desc}
+                    </p>
+                  </div>
                 </div>
-                <div className="pt-2 text-[11px] text-[#e8c872] font-semibold">
+                <div className="px-5 pb-5 pt-2 text-[11px] text-[#e8c872] font-semibold">
                   {reg.core}
                 </div>
               </div>
@@ -279,38 +305,49 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
       {/* Deep Dive Historical Narrative */}
       <div
         onClick={() => setSelectedId('odra-epigraphic-evolution')}
-        className="p-6 sm:p-8 rounded-3xl bg-[#111520] border border-[#c99738]/40 hover:border-[#c99738] space-y-6 cursor-pointer transition-all"
+        className="rounded-3xl bg-[#111520] border border-[#c99738]/40 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
       >
-        <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
-          {loc.evolutionTitle}
-        </h3>
-        <div className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed space-y-4">
-          <p>{loc.p1}</p>
-          <p>{loc.p2}</p>
-          <p>{loc.p3}</p>
+        <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+          <img
+            src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/hathigumpha_inscription.jpg`}
+            alt={loc.evolutionTitle}
+            loading="lazy"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111520] via-transparent to-transparent" />
         </div>
+        <div className="p-6 sm:p-8 space-y-6">
+          <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+            {loc.evolutionTitle}
+          </h3>
+          <div className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed space-y-4">
+            <p>{loc.p1}</p>
+            <p>{loc.p2}</p>
+            <p>{loc.p3}</p>
+          </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-stone-800">
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              onNavigate('/maps');
-            }}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>{loc.mapsBtn}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-          <button
-            onClick={e => {
-              e.stopPropagation();
-              onNavigate('/inscriptions');
-            }}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
-          >
-            <span>{loc.inscriptionsBtn}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-stone-800">
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                onNavigate('/maps');
+              }}
+              className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>{loc.mapsBtn}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={e => {
+                e.stopPropagation();
+                onNavigate('/inscriptions');
+              }}
+              className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>{loc.inscriptionsBtn}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 

@@ -371,6 +371,17 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
                 {GEOGRAPHICAL_SPREAD.map((reg) => {
                   const isSelected = selectedCorridor.id === reg.id;
                   const localizedTitle = reg.localized_region[language] || reg.region_name;
+                  const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+                  const corridorImageMap: Record<string, string> = {
+                    geo_rajasthan_sindh_punjab: `${base}oad_hydraulic_stepwell.jpg`,
+                    geo_gujarat: `${base}jasma_devi_sahasralinga.jpg`,
+                    geo_maharashtra: `${base}shivayogi_siddharama_solapur.jpg`,
+                    geo_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
+                    geo_andhra_telangana: `${base}kondavidu_fort_hills.jpg`,
+                    geo_tamil_nadu: `${base}srirangam_temple.jpg`,
+                    geo_odisha: `${base}barabati_fort_gateway.jpg`
+                  };
+                  const thumbUrl = corridorImageMap[reg.id] || `${base}odra_kalinga_map.jpg`;
                   return (
                     <div
                       key={reg.id}
@@ -393,23 +404,40 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
                           : 'bg-[#121622] border-stone-800 hover:border-stone-700 hover:bg-[#181e2e]'
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-royal-heading font-bold text-sm text-[#fcedc7]">
-                          {localizedTitle}
-                        </h4>
-                        <span className="text-[10px] text-stone-400 bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
-                          {reg.states_and_territories.length} States
-                        </span>
-                      </div>
-                      <p className="text-xs text-stone-400 line-clamp-1 mb-2">
-                        {reg.states_and_territories.join(', ')}
-                      </p>
-                      <div className="flex flex-wrap gap-1 text-[10px]">
-                        {reg.predominant_community_synonyms.map(syn => (
-                          <span key={syn} className="px-1.5 py-0.5 rounded bg-stone-900/80 text-amber-300 border border-amber-900/30">
-                            {syn}
-                          </span>
-                        ))}
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={thumbUrl}
+                          alt={localizedTitle}
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.fallback) {
+                              target.dataset.fallback = '1';
+                              target.src = `${base}barabati_fort_gateway.jpg`;
+                            }
+                          }}
+                          className="w-16 h-16 rounded-xl object-cover object-center shrink-0 border border-[#c99738]/40 bg-stone-950"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2 mb-1">
+                            <h4 className="font-royal-heading font-bold text-sm text-[#fcedc7] truncate">
+                              {localizedTitle}
+                            </h4>
+                            <span className="text-[10px] text-stone-400 bg-stone-900 px-2 py-0.5 rounded border border-stone-800 shrink-0">
+                              {reg.states_and_territories.length} States
+                            </span>
+                          </div>
+                          <p className="text-xs text-stone-400 line-clamp-1 mb-2">
+                            {reg.states_and_territories.join(', ')}
+                          </p>
+                          <div className="flex flex-wrap gap-1 text-[10px]">
+                            {reg.predominant_community_synonyms.map(syn => (
+                              <span key={syn} className="px-1.5 py-0.5 rounded bg-stone-900/80 text-amber-300 border border-amber-900/30">
+                                {syn}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
@@ -420,6 +448,26 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
             {/* Right Detailed Corridor Dossier */}
             <div className="lg:col-span-7">
               <div className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-6 shadow-xl">
+                <div className="h-52 w-full rounded-2xl overflow-hidden relative bg-stone-950 border border-stone-800/80">
+                  <img
+                    src={
+                      ({
+                        geo_rajasthan_sindh_punjab: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/oad_hydraulic_stepwell.jpg`,
+                        geo_gujarat: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/jasma_devi_sahasralinga.jpg`,
+                        geo_maharashtra: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/shivayogi_siddharama_solapur.jpg`,
+                        geo_karnataka: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/balavaddiraju_hero_stone.jpg`,
+                        geo_andhra_telangana: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kondavidu_fort_hills.jpg`,
+                        geo_tamil_nadu: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/srirangam_temple.jpg`,
+                        geo_odisha: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`
+                      } as Record<string, string>)[selectedCorridor.id] ||
+                      `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`
+                    }
+                    alt={selectedCorridor.localized_region[language] || selectedCorridor.region_name}
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                </div>
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
                     Corridor Dossier • {selectedCorridor.states_and_territories.join(', ')}

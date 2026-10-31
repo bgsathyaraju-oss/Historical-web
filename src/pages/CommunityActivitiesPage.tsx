@@ -251,24 +251,43 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {activities.map(act => {
           const Icon = act.icon;
+          const thumbUrl = actImgMap[act.id] || `${archiveBase}odia_palm_leaf_manuscript.jpg`;
           return (
             <div
               key={act.id}
               onClick={() => setSelectedId(act.id)}
-              className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 cursor-pointer transition-all group flex flex-col justify-between"
+              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
             >
-              <div className="space-y-3">
-                <div className={`p-3 w-fit rounded-xl ${act.iconStyle}`}>
-                  <Icon className="w-6 h-6" />
+              <div>
+                <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                  <img
+                    src={thumbUrl}
+                    alt={act.title}
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.dataset.fallback) {
+                        target.dataset.fallback = '1';
+                        target.src = `${archiveBase}barabati_fort_gateway.jpg`;
+                      }
+                    }}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                  <div className={`absolute top-3 left-3 p-2.5 rounded-xl ${act.iconStyle}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
                 </div>
-                <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
-                  {act.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-                  {act.summary}
-                </p>
+                <div className="p-6 pb-3 space-y-3">
+                  <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                    {act.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+                    {act.summary}
+                  </p>
+                </div>
               </div>
-              <div className="pt-2 text-xs font-semibold text-[#e8c872] flex items-center gap-1">
+              <div className="px-6 pb-6 pt-2 text-xs font-semibold text-[#e8c872] flex items-center gap-1">
                 <span>{hdr.viewDetails}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>

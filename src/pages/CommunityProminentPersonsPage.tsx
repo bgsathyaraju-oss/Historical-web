@@ -26,11 +26,18 @@ import {
   Home,
   ExternalLink,
   Printer,
+  Download,
   Copy,
   Link2
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageCode } from '../types';
+import {
+  downloadArticleAsPdf,
+  triggerArticlePrintWithTitle,
+  generateArticlePdfFilename,
+  PDF_EXPORT_UI_LABELS
+} from '../utils/pdfExport';
 import {
   PROMINENT_PERSONS,
   ALL_COMMUNITY_BRANCHES,
@@ -61,7 +68,14 @@ import {
   ChronologyDateCertainty,
   PERSON_BADGE_TRANSLATIONS
 } from '../data/communityProminentPersonsData';
-import { WhatsAppIcon } from '../components/PublisherCreditCard';
+import {
+  MASTER_70_REFERENCE_REGISTRY,
+  REFERENCE_70_UI_LABELS,
+  Reference70Entry,
+  matchReference70Terms,
+  getRelated70TermsForProminentLabel
+} from '../data/communityReference70Registry';
+import { WhatsAppIcon, PublisherCreditCard } from '../components/PublisherCreditCard';
 
 type CategoryFilter = 'all' | 'Royal Sovereignty' | 'Martial Guardians' | 'Civic & Builders' | 'Classical Realms';
 
@@ -1052,6 +1066,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [isPrintFallbackOpen, setIsPrintFallbackOpen] = useState(false);
   const [printUrlCopied, setPrintUrlCopied] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [pdfDownloadResult, setPdfDownloadResult] = useState<{ filename: string } | null>(null);
   const shareFeedbackTimerRef = useRef<number | null>(null);
   const printFallbackTimerRef = useRef<number | null>(null);
   const autoPrintTriggeredRef = useRef<string | null>(null);
@@ -1105,6 +1121,21 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       setActivePersonId(initialPersonId);
     } else {
       setActivePersonId(readPersonIdFromLocation());
+    }
+    if (typeof window !== 'undefined') {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const labelParam = params.get('label') as SearchableCommunityLabelId | null;
+        const aliasParam = params.get('alias') || params.get('search');
+        if (labelParam && SEARCHABLE_COMMUNITY_LABELS.some(l => l.id === labelParam)) {
+          setSelectedCommunityLabel(labelParam);
+        }
+        if (aliasParam) {
+          setSearchQuery(aliasParam);
+        }
+      } catch {
+        // Ignore malformed URL query
+      }
     }
   }, [initialPersonId]);
 
@@ -1165,6 +1196,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     setIsShareMenuOpen(false);
     setIsPrintFallbackOpen(false);
     setPrintUrlCopied(false);
+    setPdfDownloadResult(null);
     return () => {
       if (shareFeedbackTimerRef.current !== null && typeof window !== 'undefined') {
         window.clearTimeout(shareFeedbackTimerRef.current);
@@ -1288,6 +1320,22 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     // If the bridge is unavailable, default <a target="_blank"> external-browser navigation proceeds
   };
 
+  const getPersonPdfTitle = (person: ProminentPerson): string => {
+    const locName = person.name[currentLang] || person.name.en;
+    const biographySuffixMap: Record<LanguageCode, string> = {
+      en: 'Historical Biography',
+      hi: 'ऐतिहासिक जीवनी',
+      te: 'చారిత్రక జీవిత చరిత్ర',
+      kn: 'ಐತಿಹಾಸಿಕ ಜೀವನ ಚರಿತ್ರೆ',
+      ta: 'வரலாற்று வாழ்க்கை வரலாறு',
+      mr: 'ऐतिहासिक चरित्र',
+      or: 'ଐତିହାସିକ ଜୀବନୀ',
+      bn: 'ঐতিহাসিক জীবনী'
+    };
+    const suffix = biographySuffixMap[currentLang] || biographySuffixMap.en;
+    return `${locName} – ${suffix}`;
+  };
+
   const handlePrintArticle = () => {
     setIsShareMenuOpen(false);
     if (!activePerson) return;
@@ -1313,7 +1361,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     window.addEventListener('blur', onBeforePrintOrBlur, { once: true });
 
     try {
-      window.print();
+      triggerArticlePrintWithTitle(getPersonPdfTitle(activePerson), () => {
+        (window as unknown as { __UPDATE_PRINT_PAGINATION__?: () => void }).__UPDATE_PRINT_PAGINATION__?.();
+      });
     } catch {
       setIsPrintFallbackOpen(true);
     }
@@ -1329,6 +1379,27 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     } else {
       window.removeEventListener('beforeprint', onBeforePrintOrBlur);
       window.removeEventListener('blur', onBeforePrintOrBlur);
+    }
+  };
+
+  const handleDownloadPersonPdf = async () => {
+    if (!activePerson || isDownloadingPdf) return;
+    setIsShareMenuOpen(false);
+    setIsDownloadingPdf(true);
+    setPdfDownloadResult(null);
+    try {
+      const result = await downloadArticleAsPdf({
+        articleTitle: getPersonPdfTitle(activePerson),
+        language: currentLang
+      });
+      setPdfDownloadResult({ filename: result.filename });
+      window.setTimeout(() => {
+        setPdfDownloadResult(null);
+      }, 6000);
+    } catch {
+      handlePrintArticle();
+    } finally {
+      setIsDownloadingPdf(false);
     }
   };
 
@@ -1502,7 +1573,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'Key Historical Contributions & Feats',
         shareLink: 'Share Article Link',
         linkCopied: 'Link Copied!',
-        consultPublisher: 'Discuss with Dr G.Sathyanarayana Raju (+91 9480112897)',
+        consultPublisher: 'Discuss with Dr.G Sathyanarayana Raju (+91 9480112897)',
         emptyStateTitle: 'No prominent persons match your search criteria',
         emptyStateDesc: 'Try adjusting your branch, category, regional filter, or search keywords to view historical records.',
         clearFilters: 'Reset All Filters',
@@ -1562,7 +1633,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'प्रमुख ऐतिहासिक योगदान एवं उपलब्धियां',
         shareLink: 'लेख लिंक साझा करें',
         linkCopied: 'लिंक कॉपी हो गया!',
-        consultPublisher: 'डॉ. जी. सत्यनारायण राजू जी से संपर्क करें (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) जी से संपर्क करें (+91 9480112897)',
         emptyStateTitle: 'आपके खोज मानदंडों के अनुसार कोई परिणाम नहीं मिला',
         emptyStateDesc: 'कृपया शाखा, श्रेणी, राज्य फिल्टर या खोज शब्दों में परिवर्तन करें।',
         clearFilters: 'सभी फिल्टर हटाएं',
@@ -1622,7 +1693,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'ముఖ్య చారిత్రక విజయాలు & సేవలు',
         shareLink: 'లింక్ షేర్ చేయండి',
         linkCopied: 'లింక్ కాపీ చేయబడింది!',
-        consultPublisher: 'డాక్టర్ జి. సత్యనారాయణ రాజు గారితో చర్చించండి (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (డాక్టర్ జి. సత్యనారాయణ రాజు) గారితో చర్చించండి (+91 9480112897)',
         emptyStateTitle: 'మీ శోధనకు తగిన ప్రముఖుల వివరాలు కనుగొనబడలేదు',
         emptyStateDesc: 'దయచేసి మీ శోధన పదాలను లేదా ప్రాంతీయ/వర్గ ఎంపికను మార్చండి.',
         clearFilters: 'అన్ని ఫిల్టర్‌లను రీసెట్ చేయండి',
@@ -1682,7 +1753,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'ಪ್ರಮುಖ ಐತಿಹಾಸಿಕ ಕೊಡುಗೆಗಳು',
         shareLink: 'ಲಿಂಕ್ ಹಂಚಿಕೊಳ್ಳಿ',
         linkCopied: 'ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
-        consultPublisher: 'ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು) ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ (+91 9480112897)',
         emptyStateTitle: 'ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
         emptyStateDesc: 'ದಯವಿಟ್ಟು ಹುಡುಕಾಟದ ಪದಗಳನ್ನು ಅಥವಾ ಫಿಲ್ಟರ್ ಬದಲಾಯಿಸಿ.',
         clearFilters: 'ಎಲ್ಲಾ ಫಿಲ್ಟರ್ ಮರುಹೊಂದಿಸಿ',
@@ -1742,7 +1813,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'முக்கிய வரலாற்றுப் பங்களிப்புகள்',
         shareLink: 'பகிர்',
         linkCopied: 'இணைப்பு நகலெடுக்கப்பட்டது!',
-        consultPublisher: 'டாக்டர் ஜி. சத்யநாராயண ராஜுவைத் தொடர்பு கொள்ள (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு)வைத் தொடர்பு கொள்ள (+91 9480112897)',
         emptyStateTitle: 'முடிவுகள் எதுவும் கிடைக்கவில்லை',
         emptyStateDesc: 'தயவுசெய்து தேடல் சொற்களை அல்லது வடிகட்டிகளை மாற்றி முயற்சிக்கவும்.',
         clearFilters: 'வடிகட்டிகளை மீட்டமைக்க',
@@ -1802,7 +1873,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'प्रमुख ऐतिहासिक योगदान',
         shareLink: 'लिंक शेअर करा',
         linkCopied: 'लिंक कॉपी झाली!',
-        consultPublisher: 'डॉ. जी. सत्यनारायण राजू यांच्याशी चर्चा करा (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) यांच्याशी चर्चा करा (+91 9480112897)',
         emptyStateTitle: 'कोणतेही निकाल आढळले नाहीत',
         emptyStateDesc: 'कृपया शोध शब्द किंवा फिल्टर तपासा.',
         clearFilters: 'फिल्टर रीसेट करा',
@@ -1862,7 +1933,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'ମୁଖ୍ୟ ଐତିହାସିକ ଅବଦାନ',
         shareLink: 'ଲିଙ୍କ୍ ସେୟାର୍ କରନ୍ତୁ',
         linkCopied: 'ଲିଙ୍କ୍ କପି ହୋଇଗଲା!',
-        consultPublisher: 'ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)ଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
         emptyStateTitle: 'କୌଣସି ତଥ୍ୟ ମିଳିଲା ନାହିଁ',
         emptyStateDesc: 'ଦୟାକରି ଖୋଜିବା ଶବ୍ଦ ବା ଫିଲ୍ଟର୍ ପରିବର୍ତ୍ତନ କରନ୍ତୁ।',
         clearFilters: 'ସମସ୍ତ ଫିଲ୍ଟର୍ ରିସେଟ୍ କରନ୍ତୁ',
@@ -1922,7 +1993,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'প্রধান ঐতিহাসিক অবদান',
         shareLink: 'লিঙ্ক শেয়ার করুন',
         linkCopied: 'লিঙ্ক কপি হয়েছে!',
-        consultPublisher: 'ডক্টর জি. সত্যনারায়ণ রাজুর সাথে যোগাযোগ করুন (+91 9480112897)',
+        consultPublisher: 'Dr.G Sathyanarayana Raju (ডক্টর জি. সত্যনারায়ণ রাজু)-এর সাথে যোগাযোগ করুন (+91 9480112897)',
         emptyStateTitle: 'কোনো ফলাফল পাওয়া যায়নি',
         emptyStateDesc: 'অনুগ্রহ করে অনুসন্ধান শব্দ বা ফিল্টার পরিবর্তন করুন।',
         clearFilters: 'ফিল্টার রিসেট করুন',
@@ -2011,6 +2082,16 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     selectedEpistemicTier !== 'all' ||
     Boolean(searchQuery.trim());
 
+  const matched70EntriesForSearch = useMemo(
+    () => (searchQuery.trim() ? matchReference70Terms(searchQuery) : []),
+    [searchQuery]
+  );
+
+  const matchedProminentLabelIdsFrom70 = useMemo(
+    () => new Set(matched70EntriesForSearch.flatMap(entry => entry.relatedProminentLabelIds)),
+    [matched70EntriesForSearch]
+  );
+
   // Filter persons based on all Section 1–6 criteria while preserving chronological order
   const filteredPersons = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -2076,9 +2157,12 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         }
       }
 
-      // 10. Search query match across names, alternative names, titles, era, region, community labels, and professions
+      // 10. Search query match across names, alternative names, titles, era, region, community labels, 70-name aliases, and professions
       if (!q) return true;
 
+      const alias70Match = extMeta.communityLabels.some(lblId =>
+        matchedProminentLabelIdsFrom70.has(lblId)
+      );
       const nameMatch = Object.values(person.name).some(val => val.toLowerCase().includes(q));
       const altNameMatch = extMeta.alternativeNames.some(alt => alt.toLowerCase().includes(q));
       const titlesMatch = Object.values(person.titles).some(val => val.toLowerCase().includes(q));
@@ -2089,7 +2173,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       const stateMatch = meta.regionalStates.some(s => s.toLowerCase().includes(q));
       const communityLabelMatch = extMeta.communityLabels.some(lblId => {
         const lbl = SEARCHABLE_COMMUNITY_LABELS.find(l => l.id === lblId);
-        return lbl ? lbl.canonicalName.toLowerCase().includes(q) : false;
+        return lbl
+          ? lbl.canonicalName.toLowerCase().includes(q) ||
+              Object.values(lbl.label).some(v => v.toLowerCase().includes(q))
+          : false;
       });
       const dynastyMatch = chrono
         ? Object.values(chrono.dynastyOrKingdom).some(val => val.toLowerCase().includes(q)) ||
@@ -2097,6 +2184,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         : false;
 
       return (
+        alias70Match ||
         nameMatch ||
         altNameMatch ||
         titlesMatch ||
@@ -2120,7 +2208,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     selectedProfession,
     selectedPeriodBucket,
     selectedEpistemicTier,
-    searchQuery
+    searchQuery,
+    matchedProminentLabelIdsFrom70
   ]);
 
   // Filter Archival Research Placeholder entries for categories awaiting verified biographies
@@ -2134,10 +2223,13 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       if (selectedEpistemicTier !== 'all' && selectedEpistemicTier !== 'requires_verification') return false;
 
       if (!q) return true;
+      const alias70Match = entry.communityLabels.some(lblId =>
+        matchedProminentLabelIdsFrom70.has(lblId)
+      );
       const titleMatch = Object.values(entry.title).some(val => val.toLowerCase().includes(q));
       const altMatch = entry.alternativeNames.some(a => a.toLowerCase().includes(q));
       const summaryMatch = Object.values(entry.summary).some(val => val.toLowerCase().includes(q));
-      return titleMatch || altMatch || summaryMatch;
+      return alias70Match || titleMatch || altMatch || summaryMatch;
     });
   }, [
     selectedRulerDynasty,
@@ -2145,7 +2237,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     selectedCommunityLabel,
     selectedPeriodBucket,
     selectedEpistemicTier,
-    searchQuery
+    searchQuery,
+    matchedProminentLabelIdsFrom70
   ]);
 
   // Determine previous and next chronological articles for seamless article-to-article navigation
@@ -3119,7 +3212,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'Archival Inscriptions & Primary Research',
         footerHeading: 'Explore Verified Inscriptions & Royal Genealogy',
         footerBody:
-          'Every prominent figure documented above is grounded in epigraphical inscriptions, copper plates, temple chronicles, and colonial gazetteers curated by Dr G.Sathyanarayana Raju.'
+          'Every prominent figure documented above is grounded in epigraphical inscriptions, copper plates, temple chronicles, and colonial gazetteers curated by Dr.G Sathyanarayana Raju.'
       },
       hi: {
         heroBadge: 'ऐतिहासिक सम्राट, शासक, राजवंश एवं समाज विभूति निर्देशिका',
@@ -3163,7 +3256,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'अभिलेखीय शिलालेख एवं प्राथमिक शोध',
         footerHeading: 'प्रमाणित शिलालेख एवं राजवंशीय वंशावली देखें',
         footerBody:
-          'ऊपर प्रलेखित प्रत्येक प्रमुख व्यक्तित्व डॉ. जी. सत्यनारायण राजू द्वारा संकलित शिलालेखों, ताम्रपत्रों, मंदिर इतिहास और गजेटियर साक्ष्यों पर आधारित है।'
+          'ऊपर प्रलेखित प्रत्येक प्रमुख व्यक्तित्व Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) द्वारा संकलित शिलालेखों, ताम्रपत्रों, मंदिर इतिहास और गजेटियर साक्ष्यों पर आधारित है।'
       },
       te: {
         heroBadge: 'చారిత్రక చక్రవర్తులు, పాలకులు, రాజవంశాలు & సమాజ ప్రముఖుల డైరెక్టరీ',
@@ -3207,7 +3300,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'పురావస్తు శాసనాలు & ప్రాథమిక పరిశోధన',
         footerHeading: 'ధృవీకరించబడిన శాసనాలు & రాజవంశావళిని అన్వేషించండి',
         footerBody:
-          'పైన నమోదు చేయబడిన ప్రతి ప్రముఖ వ్యక్తి డా. జి. సత్యనారాయణ రాజు గారు సేకరించిన శిలాశాసనాలు, తామ్రపత్రాలు, ఆలయ రికార్డులు మరియు గెజిటీర్ ఆధారాలపై ఆధారపడి ఉన్నారు.'
+          'పైన నమోదు చేయబడిన ప్రతి ప్రముఖ వ్యక్తి Dr.G Sathyanarayana Raju (డా. జి. సత్యనారాయణ రాజు) గారు సేకరించిన శిలాశాసనాలు, తామ్రపత్రాలు, ఆలయ రికార్డులు మరియు గెజిటీర్ ఆధారాలపై ఆధారపడి ఉన్నారు.'
       },
       kn: {
         heroBadge: 'ಚಾರಿತ್ರಿಕ ಸಾಮ್ರಾಟರು, ಅರಸರು, ರಾಜವಂಶಗಳು ಮತ್ತು ಸಮಾಜದ ಗಣ್ಯರ ಕೈಪಿಡಿ',
@@ -3251,7 +3344,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'ಪತ್ರಾಗಾರ ಶಾಸನಗಳು ಮತ್ತು ಪ್ರಾಥಮಿಕ ಸಂಶೋಧನೆ',
         footerHeading: 'ದೃಢೀಕೃತ ಶಾಸನಗಳು ಮತ್ತು ರಾಜವಂಶಾವಳಿಯನ್ನು ಅನ್ವೇಷಿಸಿ',
         footerBody:
-          'ಮೇಲೆ ದಾಖಲಿಸಲಾದ ಪ್ರತಿಯೊಬ್ಬ ಪ್ರಮುಖ ವ್ಯಕ್ತಿಯ ವಿವರಗಳು ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು ಅವರು ಸಂಗ್ರಹಿಸಿದ ಶಿಲಾಶಾಸನಗಳು, ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ದಾಖಲೆಗಳು ಮತ್ತು ಗೆಜೆಟಿಯರ್ ಆಧಾರಗಳನ್ನು ಆಧರಿಸಿವೆ.'
+          'ಮೇಲೆ ದಾಖಲಿಸಲಾದ ಪ್ರತಿಯೊಬ್ಬ ಪ್ರಮುಖ ವ್ಯಕ್ತಿಯ ವಿವರಗಳು Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು) ಅವರು ಸಂಗ್ರಹಿಸಿದ ಶಿಲಾಶಾಸನಗಳು, ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ದಾಖಲೆಗಳು ಮತ್ತು ಗೆಜೆಟಿಯರ್ ಆಧಾರಗಳನ್ನು ಆಧರಿಸಿವೆ.'
       },
       ta: {
         heroBadge: 'வரலாற்றுப் பேரரசர்கள், மன்னர்கள், அரசவம்சங்கள் & சமூக ஆளுமைகள் அடைவு',
@@ -3295,7 +3388,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'ஆவணக் கல்வெட்டுகள் & முதன்மை ஆய்வு',
         footerHeading: 'சான்றுரைக்கப்பட்ட கல்வெட்டுகள் & அரச வம்சாவளியை ஆராயுங்கள்',
         footerBody:
-          'மேலே ஆவணப்படுத்தப்பட்டுள்ள ஒவ்வொரு ஆளுமையும் டாக்டர் ஜி. சத்யநாராயண ராஜு அவர்களால் தொகுக்கப்பட்ட கல்வெட்டுகள், செப்பேடுகள், கோயில் ஆவணங்கள் மற்றும் கெசட்டியர் சான்றுகளை அடிப்படையாகக் கொண்டது.'
+          'மேலே ஆவணப்படுத்தப்பட்டுள்ள ஒவ்வொரு ஆளுமையும் Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு) அவர்களால் தொகுக்கப்பட்ட கல்வெட்டுகள், செப்பேடுகள், கோயில் ஆவணங்கள் மற்றும் கெசட்டியர் சான்றுகளை அடிப்படையாகக் கொண்டது.'
       },
       mr: {
         heroBadge: 'ऐतिहासिक सम्राट, शासक, राजवंश व समाज रत्ने निर्देशिका',
@@ -3339,7 +3432,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'अभिलेखीय शिलालेख व प्राथमिक संशोधन',
         footerHeading: 'प्रमाणित शिलालेख व राजवंशावळ पहा',
         footerBody:
-          'वरील प्रत्येक प्रमुख व्यक्तिमत्त्व डॉ. जी. सत्यनारायण राजू यांनी संकलित केलेल्या शिलालेख, ताम्रपट, मंदिर नोंदी आणि गॅझेटियर पुराव्यांवर आधारित आहे.'
+          'वरील प्रत्येक प्रमुख व्यक्तिमत्त्व Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) यांनी संकलित केलेल्या शिलालेख, ताम्रपट, मंदिर नोंदी आणि गॅझेटियर पुराव्यांवर आधारित आहे.'
       },
       or: {
         heroBadge: 'ଐତିହାସିକ ସମ୍ରାଟ, ଶାସକ, ରାଜବଂଶ ଓ ସମାଜର ବିଶିଷ୍ଟ ବ୍ୟକ୍ତିତ୍ୱ ନିର୍ଦ୍ଦେଶିକା',
@@ -3383,7 +3476,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'ଅଭିଲେଖୀୟ ଶିଳାଲେଖ ଓ ପ୍ରାଥମିକ ଗବେଷଣା',
         footerHeading: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ରାଜବଂଶାବଳୀ ଅନ୍ୱେଷଣ କରନ୍ତୁ',
         footerBody:
-          'ଉପରେ ଉଲ୍ଲେଖିତ ପ୍ରତ୍ୟେକ ବିଶିଷ୍ଟ ବ୍ୟକ୍ତିତ୍ୱ ଡ. ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁଙ୍କ ଦ୍ୱାରା ସଂକଳିତ ଶିଳାଲେଖ, ତାମ୍ରପଟ୍ଟା, ମନ୍ଦିର ଇତିହାସ ଓ ଗେଜେଟିୟର ପ୍ରମାଣ ଉପରେ ଆଧାରିତ।'
+          'ଉପରେ ଉଲ୍ଲେଖିତ ପ୍ରତ୍ୟେକ ବିଶିଷ୍ଟ ବ୍ୟକ୍ତିତ୍ୱ Dr.G Sathyanarayana Raju (ଡ. ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)ଙ୍କ ଦ୍ୱାରା ସଂକଳିତ ଶିଳାଲେଖ, ତାମ୍ରପଟ୍ଟା, ମନ୍ଦିର ଇତିହାସ ଓ ଗେଜେଟିୟର ପ୍ରମାଣ ଉପରେ ଆଧାରିତ।'
       },
       bn: {
         heroBadge: 'ঐতিহাসিক সম্রাট, শাসক, রাজবংশ ও সমাজের বিশিষ্ট ব্যক্তিত্ব নির্দেশিকা',
@@ -3427,7 +3520,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'আর্কাইভাল শিলালিপি ও প্রাথমিক গবেষণা',
         footerHeading: 'প্রত্যয়িত শিলালিপি ও রাজবংশাবলী অন্বেষণ করুন',
         footerBody:
-          'উপরে নথিভুক্ত প্রতিটি বিশিষ্ট ব্যক্তিত্ব ড. জি. সত্যনারায়ণ রাজু কর্তৃক সংকলিত শিলালিপি, তাম্রশাসন, মন্দির ইতিহাস ও গেজেটিয়ার প্রমাণের ওপর ভিত্তি করে রচিত।'
+          'উপরে নথিভুক্ত প্রতিটি বিশিষ্ট ব্যক্তিত্ব Dr.G Sathyanarayana Raju (ড. জি. সত্যনারায়ণ রাজু) কর্তৃক সংকলিত শিলালিপি, তাম্রশাসন, মন্দির ইতিহাস ও গেজেটিয়ার প্রমাণের ওপর ভিত্তি করে রচিত।'
       }
     };
     return dict[currentLang] || dict.en;
@@ -3761,6 +3854,22 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   <span>{t.nav?.home || detailSectionHeadings.homeButton}</span>
                 </button>
 
+                {/* DOWNLOAD PDF BUTTON */}
+                <button
+                  type="button"
+                  onClick={handleDownloadPersonPdf}
+                  disabled={isDownloadingPdf}
+                  title={`${(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton} (${generateArticlePdfFilename(getPersonPdfTitle(activePerson))})`}
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] disabled:opacity-60 text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>
+                    {isDownloadingPdf
+                      ? (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadingPdf
+                      : (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton}
+                  </span>
+                </button>
+
                 {/* TASK 1 — PRINT BUTTON */}
                 <button
                   type="button"
@@ -3811,6 +3920,22 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 </button>
               </div>
             </div>
+
+            {pdfDownloadResult && (
+              <div className="px-3.5 py-2 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center justify-between gap-2">
+                <span>
+                  ✓ {(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).pdfReadyNotice}:{' '}
+                  <strong className="font-mono text-emerald-100 break-all">{pdfDownloadResult.filename}</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPdfDownloadResult(null)}
+                  className="text-emerald-300 hover:text-white shrink-0 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
 
             {/* Android WebViewer Print Fallback Banner (Multilingual) */}
             {isPrintFallbackOpen && (
@@ -3928,9 +4053,12 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           {/* Print-Only Website Identification Masthead */}
           <div className="print-only border-b-2 border-stone-800 pb-3 mb-4">
             <p className="text-xs font-bold uppercase tracking-wider">
-              {detailSectionHeadings.printWebsiteHeader}
+              Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal — {detailSectionHeadings.printWebsiteHeader}
             </p>
-            <p className="text-[10px]">
+            <p className="text-[11px] font-semibold mt-0.5">
+              Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
+            </p>
+            <p className="text-[10px] mt-0.5">
               {detailSectionHeadings.printCanonicalUrlLabel}: {canonicalArticleUrl}
             </p>
           </div>
@@ -5099,6 +5227,62 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   );
                 })}
               </div>
+
+              {/* Additive 25 Supplementary Reference Aliases & Related Heritage Topics */}
+              {(() => {
+                const refUi = REFERENCE_70_UI_LABELS[currentLang] || REFERENCE_70_UI_LABELS.en;
+                const supplementaryAliases = Array.from(
+                  new Map(
+                    relatedCommunities
+                      .flatMap(lbl => getRelated70TermsForProminentLabel(lbl.id))
+                      .filter(r => r.datasetGroup === 'supplementary_25')
+                      .map(r => [r.id, r] as const)
+                  ).values()
+                );
+                if (supplementaryAliases.length === 0) return null;
+
+                return (
+                  <div className="pt-3 border-t border-stone-800/80 space-y-2">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <span>
+                        {refUi.supplementary25Badge} — {refUi.relatedTopicsLabel} ({supplementaryAliases.length})
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {supplementaryAliases.map(aliasEntry => {
+                        const locAlias =
+                          aliasEntry.localizedLabel[currentLang] || aliasEntry.localizedLabel.en;
+                        const classText =
+                          refUi.classifications[aliasEntry.classification] ||
+                          aliasEntry.classification;
+                        return (
+                          <button
+                            key={aliasEntry.id}
+                            type="button"
+                            onClick={() => onNavigate(aliasEntry.primaryTargetLink)}
+                            title={
+                              aliasEntry.historicalContextNote[currentLang] ||
+                              aliasEntry.historicalContextNote.en
+                            }
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+                              aliasEntry.requiresVerification
+                                ? 'bg-[#1a1321] hover:bg-[#261b30] text-amber-200 border-amber-500/40'
+                                : 'bg-[#111927] hover:bg-[#19253a] text-cyan-200 border-cyan-500/30'
+                            }`}
+                          >
+                            <span>{locAlias}</span>
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/50 text-[#d4af37] border border-stone-700">
+                              {classText}
+                            </span>
+                            <ExternalLink className="w-3 h-3 opacity-80" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
             </section>
           )}
 
@@ -5226,6 +5410,21 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                 <button
                   type="button"
+                  onClick={handleDownloadPersonPdf}
+                  disabled={isDownloadingPdf}
+                  title={`${(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton} (${generateArticlePdfFilename(getPersonPdfTitle(activePerson))})`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#6e0018] hover:bg-[#8f0020] disabled:opacity-60 text-[#fff3d1] border border-[#d4af37] text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-[#d4af37]" />
+                  <span>
+                    {isDownloadingPdf
+                      ? (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadingPdf
+                      : (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={handlePrintArticle}
                   aria-label={detailSectionHeadings.printButtonAria}
                   title={detailSectionHeadings.printButtonAria}
@@ -5287,7 +5486,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
               <a
                 href={`https://wa.me/919480112897?text=${encodeURIComponent(
-                  `Namaste Dr G. Sathyanarayana Raju ji, regarding prominent person: ${localizedName}`
+                  `Namaste Dr.G Sathyanarayana Raju ji, regarding prominent person: ${localizedName}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -5371,6 +5570,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 </span>
               </div>
             )}
+          </div>
+
+          {/* Author Profile & Print/PDF Attribution */}
+          <div className="pt-2">
+            <PublisherCreditCard variant="article-profile" />
           </div>
         </article>
       </div>
@@ -5685,6 +5889,122 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               </div>
             </div>
           )}
+
+          {/* Additive 25 Supplementary Reference & Search Alias Terms (Making All 70 Terms Searchable) */}
+          {(() => {
+            const refUi = REFERENCE_70_UI_LABELS[currentLang] || REFERENCE_70_UI_LABELS.en;
+            const supplementary25 = MASTER_70_REFERENCE_REGISTRY.filter(
+              entry => entry.datasetGroup === 'supplementary_25'
+            );
+
+            return (
+              <div className="pt-3 border-t border-stone-800 space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>
+                      {refUi.supplementary25Badge} (25) — {refUi.sectionTitle}
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('/community-heritage?tab=synonyms')}
+                    className="text-[11px] font-semibold text-[#d4af37] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>{refUi.openLinkedArticleLabel}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {supplementary25.map((supp: Reference70Entry) => {
+                    const isQueried =
+                      searchQuery.trim().toLowerCase() === supp.canonicalTerm.toLowerCase();
+                    const locLabel = supp.localizedLabel[currentLang] || supp.localizedLabel.en;
+                    const classShort =
+                      refUi.classifications[supp.classification] || supp.classification;
+
+                    return (
+                      <button
+                        key={supp.id}
+                        type="button"
+                        onClick={() => {
+                          if (isQueried) {
+                            setSearchQuery('');
+                          } else {
+                            setSearchQuery(supp.canonicalTerm);
+                          }
+                        }}
+                        title={`${classShort}: ${
+                          supp.historicalContextNote[currentLang] || supp.historicalContextNote.en
+                        }`}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 border ${
+                          isQueried
+                            ? 'bg-[#580014] text-[#fae29c] border-[#d4af37] shadow-md'
+                            : supp.requiresVerification
+                            ? 'bg-[#17121e] hover:bg-[#22192d] text-amber-200 border-amber-500/40'
+                            : 'bg-[#101826] hover:bg-[#182438] text-cyan-100 border-cyan-500/30'
+                        }`}
+                      >
+                        <span>{locLabel}</span>
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/50 text-[#d4af37]">
+                          {classShort}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Contextual Alias Verification & Cross-Reference Banner when a 70-Name term is searched */}
+                {matched70EntriesForSearch.length > 0 && (
+                  <div className="p-3.5 rounded-xl bg-[#131929] border border-[#d4af37]/50 space-y-2">
+                    {matched70EntriesForSearch.slice(0, 3).map(matchedRef => {
+                      const locName =
+                        matchedRef.localizedLabel[currentLang] || matchedRef.localizedLabel.en;
+                      const locNote =
+                        matchedRef.historicalContextNote[currentLang] ||
+                        matchedRef.historicalContextNote.en;
+                      const classText =
+                        refUi.classifications[matchedRef.classification] ||
+                        matchedRef.classification;
+
+                      return (
+                        <div
+                          key={matchedRef.id}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b last:border-b-0 border-stone-800 pb-2 last:pb-0"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="font-bold text-[#fae29c]">
+                                #{matchedRef.order}/70 {locName}
+                              </span>
+                              <span className="px-2 py-0.5 rounded bg-[#580014] text-[#fae29c] text-[10px] font-semibold border border-[#d4af37]/40">
+                                {classText}
+                              </span>
+                              {matchedRef.requiresVerification && (
+                                <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-200 text-[10px] font-semibold border border-amber-500/40">
+                                  ⚠ {refUi.requiresVerificationBadge}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-stone-300 leading-relaxed">{locNote}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => onNavigate(matchedRef.primaryTargetLink)}
+                            className="shrink-0 self-start sm:self-center px-3 py-1.5 rounded-lg bg-[#580014] hover:bg-[#78001c] text-[#fae29c] border border-[#d4af37]/50 text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                          >
+                            <span>{refUi.openLinkedArticleLabel}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </section>
 
         {/* SECTION 3 — PROFESSIONS AND ACHIEVEMENT CATEGORIES (19 CATEGORIES) */}
@@ -6150,7 +6470,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       <span>{directoryLabels.placeholderStatusText}</span>
                       <a
                         href={`https://wa.me/919480112897?text=${encodeURIComponent(
-                          `Namaste Dr G. Sathyanarayana Raju ji, I would like to submit verified historical documentation for: ${ph.title.en}`
+                          `Namaste Dr.G Sathyanarayana Raju ji, I would like to submit verified historical documentation for: ${ph.title.en}`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"

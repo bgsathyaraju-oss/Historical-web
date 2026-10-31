@@ -368,8 +368,13 @@ contentRouter.get('/inscriptions', (req: Request, res: Response) => {
         name: tr.name || i.name,
         ruler: tr.ruler || i.ruler,
         location_found: tr.location || i.location_found,
+        dynasty: tr.dynasty || i.dynasty,
+        script: tr.script || i.script,
+        language: tr.language || i.language,
+        era_or_date: tr.era_or_date || i.era_or_date,
         historical_context: tr.summary || i.historical_context,
-        english_translation: tr.summary ? `${tr.summary}\n\n[English Archival Translation]: ${i.english_translation}` : i.english_translation
+        english_translation: tr.english_translation || tr.summary || i.english_translation,
+        scholarly_references: tr.scholarly_references || i.scholarly_references
       };
     }
     return i;
@@ -389,9 +394,12 @@ contentRouter.get('/monuments', (req: Request, res: Response) => {
         ...m,
         name: tr.name || m.name,
         location: tr.location || m.location,
+        state: tr.state || m.state,
         patron_ruler: tr.patron_ruler || m.patron_ruler,
+        century: tr.century || m.century,
         architectural_style: tr.architectural_style || m.architectural_style,
-        historical_significance: tr.historical_significance || m.historical_significance
+        historical_significance: tr.historical_significance || m.historical_significance,
+        sources: tr.sources || m.sources
       };
     }
     return m;

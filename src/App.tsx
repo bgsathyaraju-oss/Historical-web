@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { FloatingPageDock } from './components/FloatingPageDock';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { PrintRepeatingAuthorFooter } from './components/PrintRepeatingAuthorFooter';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -205,13 +206,14 @@ function AppContent() {
       case '/maps':
         return <HistoricalMapsPage onNavigate={navigateTo} />;
       case '/timeline':
-        return <HistoricalTimelinePage onNavigate={navigateTo} />;
+        return <HistoricalTimelinePage onNavigate={navigateTo} initialEventId={searchParam} />;
       case '/inscriptions':
+      case '/historical-records':
         return <InscriptionsPage onNavigate={navigateTo} initialInscriptionId={searchParam} />;
       case '/temples-monuments':
         return <TemplesMonumentsPage onNavigate={navigateTo} />;
       case '/documents':
-        return <HistoricalDocumentsPage />;
+        return <HistoricalDocumentsPage onNavigate={navigateTo} initialDocumentId={searchParam} />;
       case '/research':
       case '/articles':
         return <ResearchArticlesPage onNavigate={navigateTo} initialArticleId={searchParam} />;
@@ -224,7 +226,7 @@ function AppContent() {
       case '/publications':
         return <LiteraturePublicationsPage />;
       case '/references':
-        return <HistoricalReferencesPage />;
+        return <HistoricalReferencesPage onNavigate={navigateTo} initialReferenceId={searchParam} />;
       case '/community-heritage':
       case '/heritage':
         return <CommunityHeritagePage onNavigate={navigateTo} initialItemId={searchParam} />;
@@ -273,7 +275,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0b0d14] text-[#f5f3ed]">
+    <div className="min-h-screen flex flex-col bg-[#0b0d14] text-[#f5f3ed] print:block print:min-h-0 print:bg-white print:text-black">
       {/* Royal Header */}
       <Navbar
         currentPath={currentPath}
@@ -281,12 +283,30 @@ function AppContent() {
         onOpenSearch={() => setSearchModalOpen(true)}
       />
 
-      {/* Main Page Content */}
-      <main className="flex-1">
-        <ErrorBoundary key={currentPath} onReset={() => navigateTo('/')}>
-          {renderCurrentPage()}
-        </ErrorBoundary>
-      </main>
+      {/* Main Page Content with Repeating Print Footer Spacer on Every Page */}
+      <table className="print-document-frame">
+        <tbody className="print-document-tbody">
+          <tr className="print-document-tr">
+            <td className="print-document-td">
+              <main className="flex-1">
+                <ErrorBoundary key={currentPath} onReset={() => navigateTo('/')}>
+                  {renderCurrentPage()}
+                </ErrorBoundary>
+              </main>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot className="print-document-tfoot" aria-hidden="true">
+          <tr className="print-document-tr">
+            <td className="print-document-td">
+              <div className="print-footer-spacer" />
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+      {/* Repeating Author Footer on Every Printed / Exported PDF Page */}
+      <PrintRepeatingAuthorFooter />
 
       {/* Royal Footer */}
       <Footer onNavigate={navigateTo} />

@@ -2356,7 +2356,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
     ],
     evidenceSources: [
       'Balanagamma Katha (CP Brown Telugu Folk Ballad Manuscripts, Madras Oriental Manuscripts Library)',
-      'Dr. G. Sathyanarayana Raju, "Suryavamsha Odde / Vadde / Vaddar Charitra"',
+      'Dr.G Sathyanarayana Raju, "Suryavamsha Odde / Vadde / Vaddar Charitra"',
       'Archaeological Survey of India: Panagal (Panugal) Fort & Chhayasomeswara Inscriptions, Nalgonda',
       'Tangirala Venkata Subba Rao, "Telugu Veera Gathalu" (Heroic Ballads of Telugu Land), Andhra University'
     ],
@@ -2600,35 +2600,35 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
     ],
     evidenceSources: [
       'Ballad of Bala Vardhiraju (CP Brown Telugu Manuscript Folios 118-142, GOML Chennai)',
-      'Dr. G. Sathyanarayana Raju, "Suryavamsha Odde / Vadde / Vaddar Charitra"',
+      'Dr.G Sathyanarayana Raju, "Suryavamsha Odde / Vadde / Vaddar Charitra"',
       'Tangirala Venkata Subba Rao, "Telugu Veera Gathalu" (Heroic Ballads of Andhra), Andhra University Press',
       'Archaeological Survey of Andhra Pradesh: Panagal (Panugal) Fort Historical Archives'
     ],
     imageUrl: ARCHIVE_IMG('balavaddiraju_hero_stone.jpg')
   },
 
-  // 20. Dr. G. Sathyanarayana Raju
+  // 20. Dr.G Sathyanarayana Raju
   {
     id: 'dr_g_sathyanarayana_raju',
     name: {
-      en: 'Dr. G. Sathyanarayana Raju',
-      hi: 'डॉ. जी. सत्यनारायण राजू',
-      te: 'డాక్టర్ జి. సత్యనారాయణ రాజు',
-      kn: 'ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು',
-      ta: 'டாக்டர் ஜி. சத்யநாராயண ராஜு',
-      mr: 'डॉ. जी. सत्यनारायण राजू',
-      or: 'ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ',
-      bn: 'ডক্টর জি. সত্যনারায়ণ রাজু'
+      en: 'Dr.G Sathyanarayana Raju',
+      hi: 'Dr.G Sathyanarayana Raju (डॉ. जी सत्यनारायण राजू)',
+      te: 'Dr.G Sathyanarayana Raju (డాక్టర్ జి సత్యనారాయణ రాజు)',
+      kn: 'Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ ಸತ್ಯನಾರಾಯಣ ರಾಜು)',
+      ta: 'Dr.G Sathyanarayana Raju (டாக்டர் ஜி சத்யநாராயண ராஜு)',
+      mr: 'Dr.G Sathyanarayana Raju (डॉ. जी सत्यनारायण राजू)',
+      or: 'Dr.G Sathyanarayana Raju (ଡକ୍ଟର ଜି ସତ୍ୟନାରାୟଣ ରାଜୁ)',
+      bn: 'Dr.G Sathyanarayana Raju (ডক্টর জি সত্যনারায়ণ রাজু)'
     },
     titles: {
-      en: 'Leader of Suryavamsha Odiyaraju Kshatriya Community, Unifier of OddeRajulu, VaddeRajulu & Kshatriya Rajulu, Archival Publisher',
-      hi: 'सूर्यवंश ओडियाराजू क्षत्रिय समाज के शीर्ष नेता, ओड्डेराजुलु, वड्डेराजुलु व क्षत्रिय राजुलु के मार्गदर्शक, डिजिटल पोर्टल प्रकाशक',
-      te: 'సూర్యవంశ ఒడియారాజు క్షత్రియ సమాజ అగ్రనేత, ఒడ్డేరాజులు, వడ్డేరాజులు, క్షత్రియ రాజుల సమన్వయకర్త, డిజిటల్ పోర్టల్ రూపకర్త',
-      kn: 'ಸೂರ್ಯವಂಶ ಒಡಿಯಾರಾಜು ಕ್ಷತ್ರಿಯ ಸಮಾಜದ ನಾಯಕರು, ಇತಿಹಾಸ ಸಂಶೋಧಕರು',
-      ta: 'சூர்யவம்ச ஒடியாராஜு க்ஷத்திரிய சமூகத் தலைவர், வரலாற்று ஆவணப் பதிப்பாளர்',
-      mr: 'सूर्यवंशी ओडियाराजू क्षत्रिय समाजाचे मार्गदर्शक नेते, ऐतिहासिक दस्ताऐवज अभ्यासक',
-      or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ସମାଜର ମହାନେତା, ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ ପ୍ରବକ୍ତା',
-      bn: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় সমাজের শীর্ষ নেতা, ঐতিহাসিক মহাফেজখানা প্রতিষ্ঠাতা'
+      en: 'Founder & Historical Documentation Contributor | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      hi: 'Founder & Historical Documentation Contributor (संस्थापक एवं ऐतिहासिक दस्तावेजीकरण योगदानकर्ता) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      te: 'Founder & Historical Documentation Contributor (వ్యవస్థాపకులు & చారిత్రక పరిశోధన-సంకలనకర్త) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      kn: 'Founder & Historical Documentation Contributor (ಸ್ಥಾಪಕರು ಮತ್ತು ಐತಿಹಾಸಿಕ ದಾಖಲಾತಿ ಕೊಡುಗೆದಾರರು) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      ta: 'Founder & Historical Documentation Contributor (நிறுவனர் மற்றும் வரலாற்று ஆவணப்படுத்தல் பங்களிப்பாளர்) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      mr: 'Founder & Historical Documentation Contributor (संस्थापक आणि ऐतिहासिक दस्तऐवजीकरण योगदानकर्ते) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      or: 'Founder & Historical Documentation Contributor (প্রতিଷ୍ଠାତା ଏବଂ ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ ଯୋଗଦାନକାରୀ) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+      bn: 'Founder & Historical Documentation Contributor (প্রতিষ্ঠাতা ও ঐতিহাসিক নথিপত্র সংকলক) | Research, Documentation & Compilation by Dr.G Sathyanarayana Raju | Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'
     },
     branches: [
       'Suryavamsha Kshatriya',
@@ -2663,26 +2663,26 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       or: 'ସର୍ବଭାରତୀୟ (ଓଡ଼ିଶା, ଆନ୍ଧ୍ର ପ୍ରଦେଶ, କର୍ଣ୍ଣାଟକ, ମହାରାଷ୍ଟ୍ର ଓ ଗୁଜରାଟ)',
       bn: 'সর্বভারতীয় (ওড়িশা, অন্ধ্রপ্রদেশ, কর্ণাটক, মহারাষ্ট্র ও গুজরাট)'
     },
-    badge: 'Community Leader & Archival Publisher',
+    badge: 'Founder & Historical Documentation Contributor',
     summary: {
-      en: 'Visionary contemporary leader and scholar of the Suryavamsha Odiyaraju Kshatriya community. He has spearheaded the scientific documentation, epigraphic preservation, and digital archiving linking the OddeRajulu, VaddeRajulu, Kshatriya Rajulu, Suryavamsham Rajulu, and Oad-Rajput branches across India.',
-      hi: 'सूर्यवंश ओडियाराजू क्षत्रिय समाज के दूरदर्शी नेता और इतिहास-अन्वेषक। उन्होंने भारतभर के ओड्डेराजुलु, वड्डेराजुलु, क्षत्रिय राजुलु, सूर्यवंशम राजुलु और ओआड-राजपूत समुदायों को जोड़ने वाले ताम्रपत्रों, शिलालेखों और वंशावलियों के वैज्ञानिक दस्तावेजीकरण का सफल नेतृत्व किया है।',
-      te: 'సూర్యవంశ ఒడియారాజు క్షత్రియ సమాజపు మహోన్నత సమకాలీన నాయకుడు. దేశవ్యాప్తంగా విస్తరించి ఉన్న ఒడ్డేరాజులు, వడ్డేరాజులు, క్షత్రియ రాజులు, సూర్యవంశం రాజుల తామ్రపత్ర శాసనాలను సేకరించి, పురావస్తు ఆధారాలతో డిజిటల్ చారిత్రక భాండాగారాన్ని నిర్మించి భావితరాలకు అందించిన మార్గదర్శి.',
-      kn: 'ಸೂರ್ಯವಂಶ ಒಡಿಯಾರಾಜು ಕ್ಷತ್ರಿಯ ಸಮಾಜದ ಧೀಮಂತ ನಾಯಕರು. ಪ್ರಾಚೀನ ತಾಮ್ರಶಾಸನಗಳು ಮತ್ತು ತಾಳೆಗರಿ ಗ್ರಂಥಗಳನ್ನು ಸಂರಕ್ಷಿಸಿ ಡಿಜಿಟಲ್ ಇತಿಹಾಸ ಸಂಪುಟವನ್ನು ರೂಪಿಸಿದ್ದಾರೆ.',
-      ta: 'சூர்யவம்ச ஒடியாராஜு க்ஷத்திரிய சமூகத்தின் பெருமைமிகு தலைவர். செப்பேடுகளையும் கல்வெட்டுகளையும் திரட்டி இணைய ஆவணக் காப்பகத்தை உருவாக்கியவர்.',
-      mr: 'सूर्यवंशी ओडियाराजू क्षत्रिय समाजाचे नेते ज्यांनी देशभरातील शिलालेख, ताम्रपट गोळा करून डिजिटल पोर्टलची निर्मिती केली.',
-      or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ସମାଜର ଦୂରଦୃଷ୍ଟିସମ୍ପନ୍ନ ନେତା ଯିଏ ତାମ୍ରଫଳକ ଓ ଶିଳାଲେଖର ବୈଜ୍ଞାନିକ ଡିଜିଟାଲ୍ ସଂରକ୍ଷଣ କରିଛନ୍ତି।',
-      bn: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় সমাজের দূরদর্শী নেতা যিনি প্রাচীন তাম্রশাসন ও শিলালিপি সংরক্ষণে ঐতিহাসিক ভূমিকা পালন করেছেন।'
+      en: 'Dr.G Sathyanarayana Raju is the Founder & Historical Documentation Contributor of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal. Research, Documentation & Compilation by Dr.G Sathyanarayana Raju has spearheaded the scientific documentation, epigraphic preservation, and digital archiving linking the OddeRajulu, VaddeRajulu, Kshatriya Rajulu, Suryavamsham Rajulu, and Oad-Rajput branches across India.',
+      hi: 'Dr.G Sathyanarayana Raju सूर्यवंश ओडियाराजू क्षत्रिय हिस्टोरिकल डॉक्यूमेंट्री एंड रॉयल हेरिटेज पोर्टल के संस्थापक एवं ऐतिहासिक दस्तावेजीकरण योगदानकर्ता हैं। Research, Documentation & Compilation by Dr.G Sathyanarayana Raju के अंतर्गत भारतभर के ओड्डेराजुलु, वड्डेराजुलु, क्षत्रिय राजुलु, सूर्यवंशम राजुलु और ओआड-राजपूत समुदायों को जोड़ने वाले ताम्रपत्रों, शिलालेखों और वंशावलियों का वैज्ञानिक दस्तावेजीकरण किया गया है।',
+      te: 'Dr.G Sathyanarayana Raju సూర్యవంశ ఒడియారాజు క్షత్రియ హిస్టారికల్ డాక్యుమెంటరీ & రాయల్ హెరిటేజ్ పోర్టల్ వ్యవస్థాపకులు మరియు చారిత్రక పరిశోధన-సంకలనకర్త. Research, Documentation & Compilation by Dr.G Sathyanarayana Raju ఆధ్వర్యంలో దేశవ్యాప్తంగా విస్తరించి ఉన్న ఒడ్డేరాజులు, వడ్డేరాజులు, క్షత్రియ రాజులు, సూర్యవంశం రాజుల తామ్రపత్ర శాసనాలను సేకరించి డిజిటల్ చారిత్రక భాండాగారాన్ని నిర్మించారు.',
+      kn: 'Dr.G Sathyanarayana Raju ಸೂರ್ಯವಂಶ ಒಡಿಯಾರಾಜು ಕ್ಷತ್ರಿಯ ಹಿಸ್ಟಾರಿಕಲ್ ಡಾಕ್ಯುಮೆಂಟರಿ & ರಾಯಲ್ ಹೆರಿಟೇಜ್ ಪೋರ್ಟಲ್ ಸ್ಥಾಪಕರು ಮತ್ತು ಐತಿಹಾಸಿಕ ದಾಖಲಾತಿ ಕೊಡುಗೆದಾರರು. ಪ್ರಾಚೀನ ತಾಮ್ರಶಾಸನಗಳು ಮತ್ತು ತಾಳೆಗರಿ ಗ್ರಂಥಗಳನ್ನು ಸಂರಕ್ಷಿಸಿ ಡಿಜಿಟಲ್ ಇತಿಹಾಸ ಸಂಪುಟವನ್ನು ರೂಪಿಸಿದ್ದಾರೆ.',
+      ta: 'Dr.G Sathyanarayana Raju சூர்யவம்ச ஒடியாராஜு க்ஷத்திரிய வரலாற்று ஆவண மற்றும் அரச பாரம்பரிய இணையதளத்தின் நிறுவனர் மற்றும் வரலாற்று ஆவணப்படுத்தல் பங்களிப்பாளர். செப்பேடுகளையும் கல்வெட்டுகளையும் திரட்டி இணைய ஆவணக் காப்பகத்தை உருவாக்கியவர்.',
+      mr: 'Dr.G Sathyanarayana Raju सूर्यवंशी ओडियाराजू क्षत्रिय हिस्टोरिकल डॉक्युमेंटरी अँड रॉयल हेरिटेज पोर्टलचे संस्थापक आणि ऐतिहासिक दस्तऐवजीकरण योगदानकर्ते आहेत. देशभरातील शिलालेख आणि ताम्रपट गोळा करून त्यांनी या डिजिटल पोर्टलची निर्मिती केली.',
+      or: 'Dr.G Sathyanarayana Raju ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହାସିକ ଡକ୍ୟୁମେଣ୍ଟାରୀ ଓ ରାଜകୀୟ ଐତିହ୍ୟ ପୋର୍ଟାଲର ପ୍ରତିଷ୍ଠାତା ଏବଂ ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ ଯୋଗଦାନକାରୀ। ସେ ତାମ୍ରଫଳକ ଓ ଶିଳାଲେଖର ବୈଜ୍ଞାନିକ ଡିଜିଟାଲ୍ ସଂରକ୍ଷଣ କରିଛନ୍ତି।',
+      bn: 'Dr.G Sathyanarayana Raju সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় হিস্টোরিক্যাল ডকুমেন্টারি অ্যান্ড রয়্যাল হেরিটেজ পোর্টালের প্রতিষ্ঠাতা ও ঐতিহাসিক নথিপত্র সংকলক। তিনি প্রাচীন তাম্রশাসন ও শিলালিপি সংরক্ষণে ঐতিহাসিক ভূমিকা পালন করেছেন।'
     },
     biography: {
-      en: 'Deeply committed to methodological rigor and primary historical evidence, Dr. G. Sathyanarayana Raju has spent decades tracing inscriptions from Cuttack, Puri, and Simhachalam down to the Krishna-Godavari delta and Karnataka. He designed and published the comprehensive digital documentary portal (+91 9480112897), ensuring that community heritage is accessible in eight Indian languages.',
-      hi: 'प्रामाणिक इतिहास के प्रति समर्पित डॉ. जी. सत्यनारायण राजू ने दशकों तक कटक, पुरी, सिंहाचलम और कृष्णा-गोदावरी बेसिन में जाकर प्रत्यक्ष शिलालेखों का अध्ययन किया। उन्होंने इस बृहद आठ-भाषाई ऐतिहासिक पोर्टल का निर्माण व प्रकाशन किया (+91 9480112897)।',
-      te: 'చారిత్రక ప్రామాణికతే ధ్యేయంగా డాక్టర్ జి. సత్యనారాయణ రాజు దశాబ్దాల పాటు కటక్, పూరీ, సింహాచలం మరియు గోదావరి డెల్టాల్లో స్వయంగా పర్యటించి శిలాశాసనాలను అధ్యయనం చేశారు. ఈ సమగ్ర డిజిటల్ పోర్టల్‌ను రూపకల్పన చేసి ఎనిమిది భారతీయ భాషలలో ప్రచురించారు (+91 9480112897).',
-      kn: 'ಪ್ರಾಥಮಿಕ ಶಾಸನಾಧಾರಗಳ ಮೇಲೆ ಸಂಶೋಧನೆ ನಡೆಸಿ ಈ ಎಂಟು ಭಾಷೆಗಳ ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ ಅನ್ನು ಲೋಕಾರ್ಪಣೆಗೊಳಿಸಿದ್ದಾರೆ.',
-      ta: 'நேரடிக் கல்வெட்டு ஆதாரங்களைத் திரட்டி எட்டு மொழிகளில் இந்த இணையப் பொக்கிஷத்தை உருவாக்கியுள்ளார்.',
-      mr: 'दशकांपासून शिलालेख आणि ताम्रपटांचे संशोधन करून हे आठ भाषांमधील डिजिटल पोर्टल प्रकाशित केले.',
-      or: 'ଦଶନ୍ଧି ଧରି ଶିଳାଲେଖ ଓ ତାମ୍ରପତ୍ର ଗବେଷଣା କରି ଏହି ଆଠଭାଷୀ ଡିଜିଟାଲ୍ ପୋର୍ଟାଲ୍ ପ୍ରକାଶ କରିଛନ୍ତି।',
-      bn: 'কয়েক দশক ধরে শিলালিপি ও তাম্রশাসন নিয়ে গবেষণা করে আটটি ভাষায় এই ডিজিটাল পোর্টাল প্রকাশ করেছেন।'
+      en: 'Deeply committed to methodological rigor and primary historical evidence, Dr.G Sathyanarayana Raju (Founder & Historical Documentation Contributor) has spent decades tracing inscriptions from Cuttack, Puri, and Simhachalam down to the Krishna-Godavari delta and Karnataka. Through Research, Documentation & Compilation by Dr.G Sathyanarayana Raju for the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal (+91 9480112897), community heritage is preserved and accessible in eight Indian languages.',
+      hi: 'प्रामाणिक इतिहास के प्रति समर्पित Dr.G Sathyanarayana Raju ने दशकों तक कटक, पुरी, सिंहाचलम और कृष्णा-गोदावरी बेसिन में जाकर प्रत्यक्ष शिलालेखों का अध्ययन किया। उन्होंने Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal का निर्माण व प्रकाशन किया (+91 9480112897)।',
+      te: 'చారిత్రక ప్రామాణికతే ధ్యేయంగా Dr.G Sathyanarayana Raju దశాబ్దాల పాటు కటక్, పూరీ, సింహాచలం మరియు గోదావరి డెల్టాల్లో స్వయంగా పర్యటించి శిలాశాసనాలను అధ్యయనం చేశారు. Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal ను ఎనిమిది భారతీయ భాషలలో రూపొందించి ప్రచురించారు (+91 9480112897).',
+      kn: 'ಪ್ರಾಥಮಿಕ ಶಾಸನಾಧಾರಗಳ ಮೇಲೆ ಸಂಶೋಧನೆ ನಡೆಸಿ Dr.G Sathyanarayana Raju ಅವರು ಈ ಎಂಟು ಭಾಷೆಗಳ ಡಿಜಿಟಲ್ ಪೋರ್ಟಲ್ ಅನ್ನು ಲೋಕಾರ್ಪಣೆಗೊಳಿಸಿದ್ದಾರೆ.',
+      ta: 'நேரடிக் கல்வெட்டு ஆதாரங்களைத் திரட்டி Dr.G Sathyanarayana Raju எட்டு மொழிகளில் இந்த இணையப் பொக்கிஷத்தை உருவாக்கியுள்ளார்.',
+      mr: 'दशकांपासून शिलालेख आणि ताम्रपटांचे संशोधन करून Dr.G Sathyanarayana Raju यांनी हे आठ भाषांमधील डिजिटल पोर्टल प्रकाशित केले.',
+      or: 'ଦଶନ୍ଧି ଧରି ଶିଳାଲେଖ ଓ ତାମ୍ରପତ୍ର ଗବେଷଣା କରି Dr.G Sathyanarayana Raju ଏହି ଆଠଭାଷୀ ଡିଜିଟାଲ୍ ପୋର୍ଟାଲ୍ ପ୍ରକାଶ କରିଛନ୍ତି।',
+      bn: 'কয়েক দশক ধরে শিলালিপি ও তাম্রশাসন নিয়ে গবেষণা করে Dr.G Sathyanarayana Raju আটটি ভাষায় এই ডিজিটাল পোর্টাল প্রকাশ করেছেন।'
     },
     majorContributions: [
       {
@@ -5926,7 +5926,7 @@ export const EXTENDED_PERSON_DIRECTORY_META: Record<string, ExtendedPersonDirect
   },
   dr_g_sathyanarayana_raju: {
     personId: 'dr_g_sathyanarayana_raju',
-    alternativeNames: ['Dr. G. Sathyanarayana Raju', 'Royal Founder of Suryavamsha Odiyaraju Kshatriya Historical Archive'],
+    alternativeNames: ['Dr.G Sathyanarayana Raju', 'Founder & Historical Documentation Contributor', 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'],
     rulerDynastyCategories: ['suryavamshi_rulers'],
     communityLabels: [
       'suryavamshi_communities',
@@ -8416,7 +8416,7 @@ export const STRUCTURED_ARTICLE_DETAILS: Record<string, StructuredArticleDetailS
   dr_g_sathyanarayana_raju: {
     personId: 'dr_g_sathyanarayana_raju',
     portraitCaption: ml(
-      'Portrait of Dr. G. Sathyanarayana Raju, contemporary historical researcher, community leader, and Chief Archival Publisher of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.'
+      'Portrait of Dr.G Sathyanarayana Raju, Founder & Historical Documentation Contributor of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.'
     ),
     chronologyDetails: {
       chronologicalPlacement: ml(
@@ -8441,12 +8441,12 @@ export const STRUCTURED_ARTICLE_DETAILS: Record<string, StructuredArticleDetailS
       ]
     },
     educationAndVocation: ml(
-      'Dedicated historical researcher, community archivist, and publisher specializing in the comparative study of Eastern Ganga and Suryavamsha Gajapathi epigraphy, Mackenzie Kaifiyats, colonial ethnographic gazetteers, and multi-state community genealogies.'
+      'Founder & Historical Documentation Contributor specializing in the comparative study of Eastern Ganga and Suryavamsha Gajapathi epigraphy, Mackenzie Kaifiyats, colonial ethnographic gazetteers, and multi-state community genealogies.'
     ),
     domainSignificance: {
       domainHeading: ml('Historiographical Documentation, Digital Archiving & Community Unification Significance'),
       narrative: ml(
-        'Recognizing that the descendants of the ancient Odra-Kalinga and Suryavamsha Gajapathi martial and hydraulic-engineering lineages had become fragmented across state borders and linguistic boundaries—known variously as Odiyaraju, Vadde-GajapathiRajulu, Vaddera Rajulu, Vaddi-Rajulu, Oddar, Boyar, Bhovi, and Od-Rajputh—Dr. G. Sathyanarayana Raju spearheaded a rigorous, source-verified digital archive. Under his editorial stewardship, this portal brings together primary Archaeological Survey of India (ASI) inscriptions (such as the 1516 CE Malebennur inscription of Prince Virabhadra Deva Gajapathi), royal genealogies, and 8-language translations so that scholars and community members across India can study their shared history with epistemic transparency.'
+        'Recognizing that the descendants of the ancient Odra-Kalinga and Suryavamsha Gajapathi martial and hydraulic-engineering lineages had become fragmented across state borders and linguistic boundaries—known variously as Odiyaraju, Vadde-GajapathiRajulu, Vaddera Rajulu, Vaddi-Rajulu, Oddar, Boyar, Bhovi, and Od-Rajputh—Dr.G Sathyanarayana Raju spearheaded a rigorous, source-verified digital archive. Under Research, Documentation & Compilation by Dr.G Sathyanarayana Raju, the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal brings together primary Archaeological Survey of India (ASI) inscriptions (such as the 1516 CE Malebennur inscription of Prince Virabhadra Deva Gajapathi), royal genealogies, and 8-language translations so that scholars and community members across India can study their shared history with epistemic transparency.'
       )
     },
     kingdomsEventsInscriptions: {
@@ -8468,14 +8468,14 @@ export const STRUCTURED_ARTICLE_DETAILS: Record<string, StructuredArticleDetailS
     },
     historicalAnalysis: {
       verifiedHistoricalCore: ml(
-        'Dr. G. Sathyanarayana Raju’s editorial methodology strictly enforces a four-tier epistemic standard—separating verified primary stone/copper-plate inscriptions from traditional oral/literary chronicles, scholarly interpretations, and categories awaiting further verification.'
+        'Dr.G Sathyanarayana Raju’s editorial methodology strictly enforces a four-tier epistemic standard—separating verified primary stone/copper-plate inscriptions from traditional oral/literary chronicles, scholarly interpretations, and categories awaiting further verification.'
       ),
       traditionalAndScholarlyPerspectives: ml(
         'By rejecting fabricated dates and unverified claims while preserving authentic regional ballads alongside ASI epigraphy, this archival initiative serves both academic historical standards and inter-state community heritage preservation.'
       )
     },
     concludingSummary: ml(
-      'Dr. G. Sathyanarayana Raju’s archival scholarship bridges ancient epigraphy and modern multilingual digital preservation, uniting the pan-Indian Suryavamsha Odiyaraju heritage under rigorous historical standards.'
+      'Dr.G Sathyanarayana Raju’s archival scholarship bridges ancient epigraphy and modern multilingual digital preservation, uniting the pan-Indian Suryavamsha Odiyaraju heritage under rigorous historical standards.'
     )
   }
 };
@@ -10689,7 +10689,7 @@ export const ARTICLE_EVIDENCE_AND_ANALYSIS_REGISTRY: Record<string, ArticleEvide
     ],
     fourTierAnalysis: {
       factsFromPrimarySources: ml(
-        'Contemporary publication records and the open-access digital archive verify Dr. G. Sathyanarayana Raju’s role as Chief Archival Publisher and researcher of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.'
+        'Contemporary publication records and the open-access digital archive verify Dr.G Sathyanarayana Raju’s role as Founder & Historical Documentation Contributor of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.'
       ),
       historiansConclusions: ml(
         'The editorial framework established for this portal adheres to modern historiographical standards by separating primary epigraphic records (such as Epigraphia Indica, South Indian Inscriptions, and Epigraphia Carnatica) from oral ballads, traditional vamshavalis, and categories awaiting further verification.'
@@ -10698,17 +10698,17 @@ export const ARTICLE_EVIDENCE_AND_ANALYSIS_REGISTRY: Record<string, ArticleEvide
         'Community organizations across Karnataka, Andhra Pradesh, Telangana, Odisha, and Tamil Nadu recognize his work in connecting regionally dispersed branches (Odiyaraju, Vadde-GajapathiRajulu, Vaddera Rajulu, Bhovi, Boyar, Od-Kshatriya) to their shared historical heritage.'
       ),
       disputedOrUnverifiedClaims: ml(
-        'Archival Standard Note: Under Dr. G. Sathyanarayana Raju’s editorial policy, any historical or biographical submission that lacks primary epigraphic or published scholarly verification is explicitly marked "Verification Required" until documentary proof is catalogued.'
+        'Archival Standard Note: Under Dr.G Sathyanarayana Raju’s editorial policy, any historical or biographical submission that lacks primary epigraphic or published scholarly verification is explicitly marked "Verification Required" until documentary proof is catalogued.'
       ),
       evidenceRelevanceAndLimitations: ml(
-        'This contemporary biographical entry documents the portal’s publisher and historiographical methodology.'
+        'This contemporary biographical entry documents the portal’s Founder & Historical Documentation Contributor and historiographical methodology.'
       )
     },
     structuredSources: [
       {
         evidenceType: 'primary_text_archival_record',
         title: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal Archival Compendium',
-        authorOrAuthority: 'Dr. G. Sathyanarayana Raju (Chief Archival Publisher)',
+        authorOrAuthority: 'Dr.G Sathyanarayana Raju (Founder & Historical Documentation Contributor)',
         publicationOrHistoricalDate: '2010–2026 CE',
         supportsClaim: ml(
           'Primary editorial and research compilation cross-referencing ASI epigraphic corpora (Epigraphia Indica, South Indian Inscriptions, Epigraphia Carnatica) with multi-state community heritage records.'

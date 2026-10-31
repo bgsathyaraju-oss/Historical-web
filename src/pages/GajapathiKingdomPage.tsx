@@ -1100,6 +1100,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                 const dynasty = fig.dynasty_name[language] || fig.dynasty_name.en;
                 const bio = fig.biography[language] || fig.biography.en;
                 const titles = fig.known_titles[language] || fig.known_titles.en;
+                const fallbackImg = `${basePath ? basePath + '/' : '/'}assets/archive/kapilendra_deva_portrait.jpg`;
 
                 return (
                   <div
@@ -1113,44 +1114,65 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         openMonarchModal(fig.id);
                       }
                     }}
-                    className="p-6 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 cursor-pointer transition-all group flex flex-col justify-between shadow-lg hover:shadow-[0_4px_24px_rgba(201,151,56,0.15)]"
+                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-lg hover:shadow-[0_4px_24px_rgba(201,151,56,0.15)]"
                   >
-                    <div className="space-y-2.5">
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
-                          {reign}
-                        </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#580014]/80 text-[#fae29c] border border-[#c99738]/40">
-                          {dynasty}
-                        </span>
+                    <div>
+                      <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                        <img
+                          src={fig.image_url || fallbackImg}
+                          alt={name}
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.fallback) {
+                              target.dataset.fallback = '1';
+                              target.src = fallbackImg;
+                            }
+                          }}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
                       </div>
 
-                      <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
-                        {name}
-                      </h3>
+                      <div className="p-6 pb-3 space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
+                            {reign}
+                          </span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#580014]/80 text-[#fae29c] border border-[#c99738]/40">
+                            {dynasty}
+                          </span>
+                        </div>
 
-                      {titles && titles.length > 0 && (
-                        <p className="text-[11px] text-[#e8c872]/90 font-medium line-clamp-1">
-                          {titles[0]}
+                        <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                          {name}
+                        </h3>
+
+                        {titles && titles.length > 0 && (
+                          <p className="text-[11px] text-[#e8c872]/90 font-medium line-clamp-1">
+                            {titles[0]}
+                          </p>
+                        )}
+
+                        <p className="text-xs text-stone-400 leading-relaxed line-clamp-4">
+                          {bio}
                         </p>
-                      )}
-
-                      <p className="text-xs text-stone-400 leading-relaxed line-clamp-4">
-                        {bio}
-                      </p>
+                      </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={e => {
-                        e.stopPropagation();
-                        openMonarchModal(fig.id);
-                      }}
-                      className="text-xs font-semibold text-[#e8c872] group-hover:text-[#fae29c] flex items-center gap-1.5 pt-3 border-t border-stone-800/80 cursor-pointer w-full justify-between"
-                    >
-                      <span>{ui.viewProfileBtn}</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                    <div className="px-6 pb-6">
+                      <button
+                        type="button"
+                        onClick={e => {
+                          e.stopPropagation();
+                          openMonarchModal(fig.id);
+                        }}
+                        className="text-xs font-semibold text-[#e8c872] group-hover:text-[#fae29c] flex items-center gap-1.5 pt-3 border-t border-stone-800/80 cursor-pointer w-full justify-between"
+                      >
+                        <span>{ui.viewProfileBtn}</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -1174,6 +1196,13 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                 const capital = tr?.capital || dyn.enCapital;
                 const overview = tr?.overview || dyn.enOverview;
                 const period = dyn.period[language] || dyn.period.en;
+                const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
+                const dynImgMap: Record<string, string> = {
+                  dyn_suryavamsha_gajapathi: `${archiveBase}kapilendra_deva_portrait.jpg`,
+                  dyn_eastern_ganga: `${archiveBase}konark_sun_temple_structure.jpg`,
+                  dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`
+                };
+                const dynThumb = dynImgMap[dyn.id] || `${archiveBase}barabati_fort_gateway.jpg`;
 
                 return (
                   <div
@@ -1187,22 +1216,42 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         setSelectedTarget({ type: 'dynasty', id: dyn.id });
                       }
                     }}
-                    className="p-5 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-2.5 cursor-pointer transition-all group"
+                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
                   >
-                    <div className="flex items-center justify-between gap-2 text-xs text-[#d4af37] font-bold">
-                      <span>{period}</span>
-                      <span className="inline-flex items-center gap-1 text-stone-400 font-normal">
-                        <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
-                        {capital}
-                      </span>
-                    </div>
-                    <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#fae29c]">
-                      {name}
-                    </h3>
-                    <p className="text-xs text-stone-400 leading-relaxed">{overview}</p>
-                    <div className="text-xs font-semibold text-[#e8c872] flex items-center gap-1 pt-1">
-                      <span>{ui.viewRecordBtn}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                    <div>
+                      <div className="h-40 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                        <img
+                          src={dynThumb}
+                          alt={name}
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.fallback) {
+                              target.dataset.fallback = '1';
+                              target.src = `${archiveBase}barabati_fort_gateway.jpg`;
+                            }
+                          }}
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                      </div>
+                      <div className="p-5 space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 text-xs text-[#d4af37] font-bold">
+                          <span>{period}</span>
+                          <span className="inline-flex items-center gap-1 text-stone-400 font-normal">
+                            <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+                            {capital}
+                          </span>
+                        </div>
+                        <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#fae29c]">
+                          {name}
+                        </h3>
+                        <p className="text-xs text-stone-400 leading-relaxed">{overview}</p>
+                        <div className="text-xs font-semibold text-[#e8c872] flex items-center gap-1 pt-1">
+                          <span>{ui.viewRecordBtn}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
@@ -1223,6 +1272,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {gajapathiArticles.map(art => {
                 const { title, summary } = getArticleContent(art);
+                const fallbackImg = `${basePath ? basePath + '/' : '/'}assets/archive/barabati_fort_gateway.jpg`;
                 return (
                   <div
                     key={art.id}
@@ -1235,33 +1285,53 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         setSelectedTarget({ type: 'article', id: art.id });
                       }
                     }}
-                    className="p-6 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 cursor-pointer transition-all group flex flex-col justify-between"
+                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
                   >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between gap-2 text-[11px] text-[#d4af37] font-semibold">
-                        <span>{getMetadataLabel('category', art.category) || art.category}</span>
-                        <span className="text-stone-400">{art.publication_date}</span>
+                    <div>
+                      <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                        <img
+                          src={art.featured_image || fallbackImg}
+                          alt={title}
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.fallback) {
+                              target.dataset.fallback = '1';
+                              target.src = fallbackImg;
+                            }
+                          }}
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
                       </div>
-                      <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
-                        {title}
-                      </h3>
-                      <p className="text-xs text-stone-400 leading-relaxed line-clamp-3">
-                        {summary}
-                      </p>
+                      <div className="p-6 pb-3 space-y-2">
+                        <div className="flex items-center justify-between gap-2 text-[11px] text-[#d4af37] font-semibold">
+                          <span>{getMetadataLabel('category', art.category) || art.category}</span>
+                          <span className="text-stone-400">{art.publication_date}</span>
+                        </div>
+                        <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                          {title}
+                        </h3>
+                        <p className="text-xs text-stone-400 leading-relaxed line-clamp-3">
+                          {summary}
+                        </p>
+                      </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={e => {
-                        e.stopPropagation();
-                        setSelectedTarget({ type: 'article', id: art.id });
-                      }}
-                      className="text-xs font-semibold text-[#e8c872] flex items-center gap-1.5 pt-2 cursor-pointer"
-                    >
-                      <FileText className="w-3.5 h-3.5" />
-                      <span>{ui.readArticleBtn}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="px-6 pb-6">
+                      <button
+                        type="button"
+                        onClick={e => {
+                          e.stopPropagation();
+                          setSelectedTarget({ type: 'article', id: art.id });
+                        }}
+                        className="text-xs font-semibold text-[#e8c872] flex items-center gap-1.5 pt-2 cursor-pointer"
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>{ui.readArticleBtn}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -1279,37 +1349,64 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {gajapathiInscriptions.map(insc => (
-                <div
-                  key={insc.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedTarget({ type: 'inscription', id: insc.id })}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedTarget({ type: 'inscription', id: insc.id });
-                    }
-                  }}
-                  className="p-5 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-2.5 cursor-pointer transition-all group flex flex-col justify-between"
-                >
-                  <div className="space-y-2">
-                    <span className="text-[11px] font-bold text-[#d4af37] uppercase tracking-wider block">
-                      {insc.era_or_date} • {insc.ruler}
-                    </span>
-                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c]">
-                      {insc.name}
-                    </h3>
-                    <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
-                      {insc.historical_context}
-                    </p>
+              {gajapathiInscriptions.map(insc => {
+                const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
+                const inscImgMap: Record<string, string> = {
+                  insc_veligalani_1458: `${archiveBase}copper_plate_charter.jpg`,
+                  insc_lingaraja_1452: `${archiveBase}kapilendra_deva_lingaraja.jpg`,
+                  insc_simhachalam_prataparudra: `${archiveBase}simhachalam_temple.jpg`
+                };
+                const inscThumb = inscImgMap[insc.id] || `${archiveBase}copper_plate_charter.jpg`;
+                return (
+                  <div
+                    key={insc.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedTarget({ type: 'inscription', id: insc.id })}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setSelectedTarget({ type: 'inscription', id: insc.id });
+                      }
+                    }}
+                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="h-36 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                        <img
+                          src={inscThumb}
+                          alt={insc.name}
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.fallback) {
+                              target.dataset.fallback = '1';
+                              target.src = `${archiveBase}copper_plate_charter.jpg`;
+                            }
+                          }}
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                      </div>
+                      <div className="p-5 pb-2 space-y-2">
+                        <span className="text-[11px] font-bold text-[#d4af37] uppercase tracking-wider block">
+                          {insc.era_or_date} • {insc.ruler}
+                        </span>
+                        <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c]">
+                          {insc.name}
+                        </h3>
+                        <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
+                          {insc.historical_context}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="px-5 pb-5 text-xs font-semibold text-[#e8c872] flex items-center gap-1 pt-2">
+                      <span>{ui.viewInscriptionBtn}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
                   </div>
-                  <div className="text-xs font-semibold text-[#e8c872] flex items-center gap-1 pt-2">
-                    <span>{ui.viewInscriptionBtn}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -1325,35 +1422,53 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
             {ui.adminIntroDesc}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-            {adminDossiers.map(dossier => (
-              <div
-                key={dossier.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedTarget({ type: 'dossier', id: dossier.id })}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedTarget({ type: 'dossier', id: dossier.id });
-                  }
-                }}
-                className="p-5 rounded-xl bg-[#0c0f17] border border-stone-800 hover:border-[#c99738] space-y-2 cursor-pointer transition-all group"
-              >
-                <span className="text-[11px] text-[#d4af37] font-bold uppercase tracking-wider block">
-                  {dossier.era[language] || dossier.era.en}
-                </span>
-                <h4 className="font-bold text-base text-[#e8c872] group-hover:text-[#fae29c]">
-                  {dossier.title[language] || dossier.title.en}
-                </h4>
-                <p className="text-stone-400 text-xs leading-relaxed">
-                  {dossier.summary[language] || dossier.summary.en}
-                </p>
-                <span className="text-xs text-[#d4af37] font-semibold inline-flex items-center gap-1 pt-1">
-                  <span>{ui.viewRecordBtn}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </div>
-            ))}
+            {adminDossiers.map(dossier => {
+              const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
+              const dossierThumb =
+                dossier.id === 'admin-revenue'
+                  ? `${archiveBase}copper_plate_charter.jpg`
+                  : `${archiveBase}barabati_fort_gateway.jpg`;
+              return (
+                <div
+                  key={dossier.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedTarget({ type: 'dossier', id: dossier.id })}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedTarget({ type: 'dossier', id: dossier.id });
+                    }
+                  }}
+                  className="rounded-xl bg-[#0c0f17] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
+                >
+                  <div className="h-40 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                    <img
+                      src={dossierThumb}
+                      alt={dossier.title[language] || dossier.title.en}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f17] via-transparent to-transparent" />
+                  </div>
+                  <div className="p-5 space-y-2">
+                    <span className="text-[11px] text-[#d4af37] font-bold uppercase tracking-wider block">
+                      {dossier.era[language] || dossier.era.en}
+                    </span>
+                    <h4 className="font-bold text-base text-[#e8c872] group-hover:text-[#fae29c]">
+                      {dossier.title[language] || dossier.title.en}
+                    </h4>
+                    <p className="text-stone-400 text-xs leading-relaxed">
+                      {dossier.summary[language] || dossier.summary.en}
+                    </p>
+                    <span className="text-xs text-[#d4af37] font-semibold inline-flex items-center gap-1 pt-1">
+                      <span>{ui.viewRecordBtn}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -1370,28 +1485,39 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               setSelectedTarget({ type: 'dossier', id: militaryDossier.id });
             }
           }}
-          className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-6 cursor-pointer transition-all"
+          className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
         >
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
-              {militaryDossier.era[language] || militaryDossier.era.en}
-            </span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#580014] text-[#fae29c] border border-[#c99738]/40">
-              {militaryDossier.badge[language] || militaryDossier.badge.en}
-            </span>
+          <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+            <img
+              src={`${basePath ? basePath + '/' : '/'}assets/archive/kondavidu_fort_hills.jpg`}
+              alt={ui.militaryIntroTitle}
+              loading="lazy"
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
           </div>
-          <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
-            {ui.militaryIntroTitle}
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
-            {ui.militaryIntroDesc}
-          </p>
-          <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-900/40 text-xs text-amber-200 leading-relaxed">
-            <strong>{ui.militaryFindspotsLabel}</strong> {ui.militaryFindspotsText}
-          </div>
-          <div className="text-xs font-semibold text-[#e8c872] inline-flex items-center gap-1.5">
-            <span>{ui.viewRecordBtn}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+          <div className="p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
+                {militaryDossier.era[language] || militaryDossier.era.en}
+              </span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#580014] text-[#fae29c] border border-[#c99738]/40">
+                {militaryDossier.badge[language] || militaryDossier.badge.en}
+              </span>
+            </div>
+            <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+              {ui.militaryIntroTitle}
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
+              {ui.militaryIntroDesc}
+            </p>
+            <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-900/40 text-xs text-amber-200 leading-relaxed">
+              <strong>{ui.militaryFindspotsLabel}</strong> {ui.militaryFindspotsText}
+            </div>
+            <div className="text-xs font-semibold text-[#e8c872] inline-flex items-center gap-1.5">
+              <span>{ui.viewRecordBtn}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
           </div>
         </div>
       )}
@@ -1408,28 +1534,39 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               setSelectedTarget({ type: 'dossier', id: cultureDossier.id });
             }
           }}
-          className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-6 cursor-pointer transition-all"
+          className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
         >
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
-              {cultureDossier.era[language] || cultureDossier.era.en}
-            </span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#580014] text-[#fae29c] border border-[#c99738]/40">
-              {cultureDossier.badge[language] || cultureDossier.badge.en}
-            </span>
+          <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+            <img
+              src={`${basePath ? basePath + '/' : '/'}assets/archive/puri_jagannatha_temple.jpg`}
+              alt={ui.cultureIntroTitle}
+              loading="lazy"
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
           </div>
-          <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
-            {ui.cultureIntroTitle}
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
-            {ui.cultureIntroDesc}
-          </p>
-          <p className="text-xs text-stone-400 leading-relaxed">
-            {cultureDossier.summary[language] || cultureDossier.summary.en}
-          </p>
-          <div className="text-xs font-semibold text-[#e8c872] inline-flex items-center gap-1.5">
-            <span>{ui.viewRecordBtn}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+          <div className="p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
+                {cultureDossier.era[language] || cultureDossier.era.en}
+              </span>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#580014] text-[#fae29c] border border-[#c99738]/40">
+                {cultureDossier.badge[language] || cultureDossier.badge.en}
+              </span>
+            </div>
+            <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+              {ui.cultureIntroTitle}
+            </h3>
+            <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
+              {ui.cultureIntroDesc}
+            </p>
+            <p className="text-xs text-stone-400 leading-relaxed">
+              {cultureDossier.summary[language] || cultureDossier.summary.en}
+            </p>
+            <div className="text-xs font-semibold text-[#e8c872] inline-flex items-center gap-1.5">
+              <span>{ui.viewRecordBtn}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </div>
           </div>
         </div>
       )}

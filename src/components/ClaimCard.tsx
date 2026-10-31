@@ -17,12 +17,22 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
   const [expanded, setExpanded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const archiveBase = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+  const claimImgMap: Record<string, string> = {
+    claim_suryavamsha_origin: `${archiveBase}copper_plate_charter.jpg`,
+    claim_kapilendra_early_life: `${archiveBase}kapilendra_deva_portrait.jpg`,
+    claim_kanchi_expedition: `${archiveBase}purushottama_deva.jpg`
+  };
+  const claimThumb = claimImgMap[claim.id] || `${archiveBase}copper_plate_charter.jpg`;
+
   const modalItem: ContentDetailItem | null = modalOpen
     ? {
         id: claim.id,
         title: claim.topic,
         subtitle: `${ui.claimReviewedLabel}: ${claim.review_date}`,
         badge: claim.status,
+        imageUrl: claimThumb,
+        imageLayout: 'banner',
         summary: `"${claim.claim_statement}"`,
         content: `${ui.reliabilityNotesLabel}\n${claim.source_reliability_notes}\n\n${ui.editorialFindingLabel}\n${claim.reviewer_comments}`,
         sections: [
@@ -47,22 +57,37 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
         className="rounded-2xl bg-[#131724] border border-[#c99738]/40 hover:border-[#c99738] overflow-hidden shadow-lg transition-all duration-200 cursor-pointer"
       >
         {/* Top Header */}
-        <div className="p-4 sm:p-5 bg-gradient-to-r from-[#171e2e] to-[#121622] border-b border-stone-800">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] px-2.5 py-0.5 rounded bg-stone-900 border border-stone-800">
-                {claim.topic}
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-[#171e2e] to-[#121622] border-b border-stone-800 flex flex-col sm:flex-row gap-4 items-start">
+          <img
+            src={claimThumb}
+            alt={claim.topic}
+            loading="lazy"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (!target.dataset.fallback) {
+                target.dataset.fallback = '1';
+                target.src = `${archiveBase}copper_plate_charter.jpg`;
+              }
+            }}
+            className="w-20 h-20 rounded-xl object-cover object-center shrink-0 border border-[#c99738]/40 bg-stone-950"
+          />
+          <div className="flex-1 min-w-0 w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] px-2.5 py-0.5 rounded bg-stone-900 border border-stone-800">
+                  {claim.topic}
+                </span>
+                <EvidenceBadge status={claim.status} size="sm" />
+              </div>
+              <span className="text-xs text-stone-400">
+                {ui.claimReviewedLabel}: {claim.review_date}
               </span>
-              <EvidenceBadge status={claim.status} size="sm" />
             </div>
-            <span className="text-xs text-stone-400">
-              {ui.claimReviewedLabel}: {claim.review_date}
-            </span>
-          </div>
 
-          <h3 className="font-royal-heading font-bold text-sm sm:text-base text-stone-100 leading-snug">
-            "{claim.claim_statement}"
-          </h3>
+            <h3 className="font-royal-heading font-bold text-sm sm:text-base text-stone-100 leading-snug">
+              "{claim.claim_statement}"
+            </h3>
+          </div>
         </div>
 
         {/* Evidence Balance Columns */}

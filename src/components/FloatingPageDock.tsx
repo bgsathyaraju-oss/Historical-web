@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home, X, Globe, Check, ChevronUp, ChevronDown, ArrowLeft, Languages } from 'lucide-react';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../context/LanguageContext';
 import { LanguageCode } from '../types';
@@ -19,11 +19,55 @@ const SCRIPT_ICONS: Record<LanguageCode, string> = {
   bn: 'বা'
 };
 
+const checkIsArticleReadingActive = (): boolean => {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return false;
+  if (document.body.getAttribute('data-article-reading') === 'true') {
+    return true;
+  }
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return Boolean(
+      params.get('id') ||
+        params.get('figure') ||
+        params.get('article') ||
+        params.get('record') ||
+        params.get('monograph')
+    );
+  } catch {
+    return false;
+  }
+};
+
 export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath, onNavigate }) => {
   const { language, setLanguage, t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isArticleOpen, setIsArticleOpen] = useState<boolean>(() => checkIsArticleReadingActive());
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    const syncState = () => {
+      setIsArticleOpen(checkIsArticleReadingActive());
+    };
+    syncState();
+
+    const observer = new MutationObserver(syncState);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['data-article-reading']
+    });
+    window.addEventListener('popstate', syncState);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('popstate', syncState);
+    };
+  }, [currentPath]);
 
   const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === language) || SUPPORTED_LANGUAGES[0];
+
+  if (isArticleOpen) {
+    return null;
+  }
 
   const handleCloseOrBack = () => {
     if (currentPath !== '/') {
@@ -42,7 +86,7 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
   };
 
   return (
-    <aside aria-label="Floating Navigation & Language Controls" className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-max max-w-[96vw] transition-all duration-300">
+    <aside aria-label="Floating Navigation & Language Controls" className="no-print print:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-max max-w-[96vw] transition-all duration-300">
       {/* Expanded 8-Language Selector Flyout */}
       {isExpanded && (
         <div className="mb-2 p-3 sm:p-4 rounded-2xl bg-[#0f1320]/95 backdrop-blur-xl border border-[#c99738]/50 shadow-[0_10px_35px_rgba(0,0,0,0.8)] animate-in fade-in slide-in-from-bottom-2 duration-150">

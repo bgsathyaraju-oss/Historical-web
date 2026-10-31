@@ -81,6 +81,22 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
     e.rulers_involved.toLowerCase().includes(searchFilter.toLowerCase())
   );
 
+  const getEventImage = (item: HistoricalEvent) => {
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const eventImgMap: Record<string, string> = {
+      ev_kalinga_war_261bce: `${base}kalinga_war_daya_river.jpg`,
+      ev_kharavela_1st_bce: `${base}hathigumpha_inscription.jpg`,
+      ev_konark_1250: `${base}konark_sun_temple_structure.jpg`,
+      ev_kapilendra_coronation_1435: `${base}kapilendra_deva_portrait.jpg`,
+      ev_veligalani_1458: `${base}copper_plate_charter.jpg`,
+      ev_srirangam_1464: `${base}srirangam_temple.jpg`,
+      ev_purushottama_1467: `${base}purushottama_deva.jpg`,
+      ev_prataparudra_1497: `${base}prataparudra_deva.jpg`,
+      ev_mukunda_1559: `${base}mukunda_deva_barabati.jpg`
+    };
+    return eventImgMap[item.id] || `${base}barabati_fort_gateway.jpg`;
+  };
+
   const buildEventModalItem = (item: HistoricalEvent | null): ContentDetailItem | null => {
     if (!item) return null;
     const sections: NonNullable<ContentDetailItem['sections']> = [
@@ -103,6 +119,8 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
       subtitle: `${t.timeline.rulerLabel}: ${item.rulers_involved}`,
       badge: `${item.year_text} • ${item.period}`,
       verificationStatus: 'Documented Chronological Record',
+      imageUrl: getEventImage(item),
+      imageLayout: 'banner',
       metadata: [
         { label: ui.dateLabel, value: item.year_text },
         { label: ui.epochLabel, value: item.period },
@@ -143,7 +161,9 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
 
       {/* Interactive Timeline Stream */}
       <div className="relative border-l-2 border-[#c99738]/40 ml-4 sm:ml-8 pl-6 sm:pl-8 space-y-8">
-        {filteredEvents.map((item, idx) => (
+        {filteredEvents.map((item, idx) => {
+          const thumbUrl = getEventImage(item);
+          return (
           <div key={item.id || idx} className="relative group">
             {/* Timeline Dot Marker */}
             <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-5 h-5 rounded-full bg-[#580014] border-2 border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.4)] flex items-center justify-center group-hover:scale-125 transition-transform">
@@ -163,23 +183,40 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
               }}
               className="p-5 rounded-2xl bg-[#131724] border border-stone-800/90 hover:border-[#c99738]/60 hover:bg-[#181e2e] transition-all cursor-pointer shadow-md"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e8c872] bg-[#2a1b12] px-3 py-1 rounded-full border border-[#c99738]/40 w-fit">
-                  <Calendar className="w-3.5 h-3.5 text-[#d4af37]" />
-                  {item.year_text} ({item.period})
-                </span>
-                <span className="text-xs text-stone-400 font-medium">
-                  {t.timeline.rulerLabel}: <strong className="text-stone-200">{item.rulers_involved}</strong>
-                </span>
+              <div className="flex flex-col sm:flex-row gap-4 items-start mb-3">
+                <img
+                  src={thumbUrl}
+                  alt={item.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.dataset.fallback) {
+                      target.dataset.fallback = '1';
+                      target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
+                    }
+                  }}
+                  className="w-full sm:w-28 h-32 sm:h-24 rounded-xl object-cover object-center shrink-0 border border-[#c99738]/40 bg-stone-950"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e8c872] bg-[#2a1b12] px-3 py-1 rounded-full border border-[#c99738]/40 w-fit">
+                      <Calendar className="w-3.5 h-3.5 text-[#d4af37]" />
+                      {item.year_text} ({item.period})
+                    </span>
+                    <span className="text-xs text-stone-400 font-medium">
+                      {t.timeline.rulerLabel}: <strong className="text-stone-200">{item.rulers_involved}</strong>
+                    </span>
+                  </div>
+
+                  <h4 className="text-base sm:text-lg font-bold text-stone-100 font-royal-heading mb-1.5 group-hover:text-[#fcedc7] transition-colors">
+                    {item.title}
+                  </h4>
+
+                  <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                    {item.political_development}
+                  </p>
+                </div>
               </div>
-
-              <h4 className="text-base sm:text-lg font-bold text-stone-100 font-royal-heading mb-2 group-hover:text-[#fcedc7] transition-colors">
-                {item.title}
-              </h4>
-
-              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mb-3">
-                {item.political_development}
-              </p>
 
               {/* Inscriptions / Monuments Pill */}
               <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400 mb-2">
@@ -218,7 +255,8 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Detailed Timeline Event Modal */}

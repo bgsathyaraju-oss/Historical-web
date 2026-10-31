@@ -53,18 +53,18 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
           <div className="w-5 h-5 rounded-full overflow-hidden border border-[#d4af37] shrink-0">
             <img
               src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
-              alt={t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}
+              alt={t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
               className="w-full h-full object-cover object-top"
             />
           </div>
-          <span className="text-stone-300 hidden md:inline">{t.publisher?.designedAndPublishedBy || 'WebSite Design & Published by'}:</span>
-          <span className="font-bold text-[#fae29c]">{t.publisher?.publisherName || 'Dr G.Sathyanarayana Raju'}</span>
-          <span className="hidden lg:inline text-stone-300">• {t.publisher?.leaderTitle || 'Leader of Suryavamsha Odiyaraju Kshatriya Community'}</span>
+          <span className="text-stone-300 hidden md:inline">{t.publisher?.designedAndPublishedBy || 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}:</span>
+          <span className="font-bold text-[#fae29c]">{t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}</span>
+          <span className="hidden lg:inline text-stone-300">• {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}</span>
         </div>
 
         <div className="flex items-center gap-3 ml-auto">
           <a
-            href={`https://wa.me/919480112897?text=${encodeURIComponent(t.publisher?.whatsappGreeting || 'Namaste Dr G. Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Heritage Portal')}`}
+            href={`https://wa.me/919480112897?text=${encodeURIComponent(t.publisher?.whatsappGreeting || 'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] font-bold text-[10px] sm:text-[11px] transition-all shadow-sm"

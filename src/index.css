@@ -93,29 +93,112 @@
   display: none;
 }
 
-/* Professional Print Layout for Community Prominent Persons Full Articles */
+/* Screen Layout Rules for Print Frame Wrapper (Zero visual change on screen) */
+@media screen {
+  .print-document-frame,
+  .print-document-tbody,
+  .print-document-tr,
+  .print-document-td {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .print-document-tfoot,
+  .print-repeating-author-footer {
+    display: none !important;
+  }
+}
+
+/* Professional Print & PDF Export Layout for Articles, Historical Records & Repeating Author Footer */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 15mm 14mm 16mm 14mm;
+    margin: 14mm 14mm 15mm 14mm;
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-size: 7.5pt;
+      font-weight: 700;
+      color: #580014;
+      vertical-align: top;
+      padding-top: 1.5mm;
+    }
+    @bottom-left {
+      content: "Dr.G Sathyanarayana Raju • Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal";
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-size: 7pt;
+      font-weight: 600;
+      color: #4b5563;
+      vertical-align: top;
+      padding-top: 1.5mm;
+    }
   }
 
   html,
-  body {
+  body,
+  #root,
+  main {
     background: #ffffff !important;
     background-color: #ffffff !important;
     color: #111827 !important;
-    font-size: 11pt !important;
+    font-size: 10.5pt !important;
     line-height: 1.55 !important;
+    height: auto !important;
+    max-height: none !important;
     overflow: visible !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  /* Hide global navigation, footer, floating dock, and article action controls */
-  header:not(.print-article-header),
+  /* Repeating Table Frame & Footer Spacer: Reserves 21mm at the bottom of EVERY PDF page so content never overlaps the fixed Author Footer */
+  .print-document-frame {
+    display: table !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-document-tbody {
+    display: table-row-group !important;
+  }
+
+  .print-document-tfoot {
+    display: table-footer-group !important;
+  }
+
+  .print-document-tr {
+    display: table-row !important;
+  }
+
+  .print-document-td {
+    display: table-cell !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    vertical-align: top !important;
+  }
+
+  .print-footer-spacer {
+    display: block !important;
+    width: 100% !important;
+    height: 21mm !important;
+    min-height: 21mm !important;
+  }
+
+  /* Hide global navigation, global footer, floating dock, and article action controls — NEVER hide <header> or <footer> inside an <article> or the repeating author footer */
+  header:not(.print-article-header):not(article header),
   nav,
-  footer,
+  footer:not(.print-article-footer):not(.print-repeating-author-footer):not(article footer),
   aside[aria-label*="Floating Navigation"],
   .no-print {
     display: none !important;
@@ -129,39 +212,250 @@
     display: inline !important;
   }
 
+  /* ==========================================================================
+     REPEATING PDF PAGE AUTHOR FOOTER (FIXED AT BOTTOM OF EVERY PRINTED PAGE)
+     ========================================================================== */
+  .print-repeating-author-footer {
+    display: block !important;
+    visibility: visible !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 17.5mm !important;
+    max-height: 17.5mm !important;
+    background: #faf7f0 !important;
+    background-color: #faf7f0 !important;
+    border-top: 1.5px solid #c99738 !important;
+    border-bottom: 2px solid #580014 !important;
+    padding: 1.8mm 3mm !important;
+    z-index: 99999 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print-repeating-author-footer-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+  }
+
+  .print-author-footer-left {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    background: transparent !important;
+  }
+
+  .print-author-avatar-frame {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    border-radius: 9999px !important;
+    overflow: hidden !important;
+    border: 1.5px solid #c99738 !important;
+    box-shadow: 0 0 0 1px #580014 !important;
+    flex-shrink: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .print-repeating-author-footer img.print-author-avatar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    border-radius: 9999px !important;
+    object-fit: cover !important;
+    object-position: top center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-author-details-block {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    line-height: 1.25 !important;
+    background: transparent !important;
+  }
+
+  .print-author-line-primary {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: baseline !important;
+    gap: 4px !important;
+    font-size: 7.8pt !important;
+    line-height: 1.25 !important;
+    color: #111827 !important;
+    background: transparent !important;
+  }
+
+  .print-author-name {
+    font-family: 'Cinzel', Georgia, serif !important;
+    font-weight: 800 !important;
+    font-size: 8.2pt !important;
+    color: #580014 !important;
+    -webkit-text-fill-color: #580014 !important;
+    letter-spacing: 0.01em !important;
+  }
+
+  .print-author-role {
+    font-weight: 700 !important;
+    font-size: 7.2pt !important;
+    color: #1f2937 !important;
+    -webkit-text-fill-color: #1f2937 !important;
+  }
+
+  .print-author-line-secondary {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: baseline !important;
+    gap: 4px !important;
+    font-size: 6.8pt !important;
+    line-height: 1.25 !important;
+    color: #374151 !important;
+    background: transparent !important;
+    margin-top: 1px !important;
+  }
+
+  .print-author-credit {
+    font-weight: 700 !important;
+    color: #78350f !important;
+    -webkit-text-fill-color: #78350f !important;
+  }
+
+  .print-author-org {
+    font-weight: 600 !important;
+    color: #111827 !important;
+    -webkit-text-fill-color: #111827 !important;
+  }
+
+  .print-author-sep {
+    color: #c99738 !important;
+    -webkit-text-fill-color: #c99738 !important;
+    font-weight: 700 !important;
+  }
+
+  .print-author-footer-right {
+    flex-shrink: 0 !important;
+    text-align: right !important;
+    padding-left: 6px !important;
+    border-left: 1px solid #d4af37 !important;
+    background: transparent !important;
+  }
+
+  .print-footer-page-counter {
+    display: inline-block !important;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    font-size: 7.5pt !important;
+    font-weight: 800 !important;
+    color: #580014 !important;
+    -webkit-text-fill-color: #580014 !important;
+    white-space: nowrap !important;
+    background: #fffbeb !important;
+    border: 1px solid #c99738 !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
+  }
+
+  .print-footer-page-counter::after {
+    content: attr(data-page-word) " " counter(page) " " attr(data-of-word) " " attr(data-total-pages);
+  }
+
+  /* ==========================================================================
+     ARTICLE CONTENT CONTAINERS & MULTI-PAGE PAGINATION RULES
+     ========================================================================== */
   .print-article-wrapper {
     background: #ffffff !important;
     color: #111827 !important;
     min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
     padding: 0 !important;
     margin: 0 !important;
   }
 
-  .print-article-container {
+  .print-article-container,
+  article.print-article-container {
+    background: #ffffff !important;
+    color: #111827 !important;
     max-width: 100% !important;
     width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
     padding: 0 !important;
     margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
   /* Reset dark backgrounds and light text inside the printed article for crisp readability */
   .print-article-container header,
   .print-article-container section,
+  .print-article-container footer,
+  .print-article-container figure,
+  .print-article-container figcaption,
   .print-article-container div,
   .print-article-container dl,
-  .print-article-container ul {
+  .print-article-container ul,
+  .print-article-container ol,
+  .print-article-container table,
+  .print-article-container thead,
+  .print-article-container tbody,
+  .print-article-container tr,
+  .print-article-container th,
+  .print-article-container td {
     background: #ffffff !important;
     background-image: none !important;
     color: #111827 !important;
     box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .print-article-container table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .print-article-container th,
+  .print-article-container td {
+    border: 1px solid #d1d5db !important;
+    padding: 6px 8px !important;
+    word-break: break-word !important;
   }
 
   .print-article-container header,
   .print-article-container section {
     border: 1px solid #d1d5db !important;
     border-radius: 8px !important;
-    padding: 14px 16px !important;
-    margin-bottom: 14px !important;
+    padding: 12px 15px !important;
+    margin-bottom: 12px !important;
   }
 
   .print-article-container h1,
@@ -174,15 +468,20 @@
   .print-article-container li,
   .print-article-container span,
   .print-article-container strong,
+  .print-article-container figcaption,
+  .print-article-container th,
+  .print-article-container td,
   .print-article-container a {
     color: #111827 !important;
     -webkit-text-fill-color: #111827 !important;
   }
 
   .print-article-container h1 {
-    font-size: 20pt !important;
-    line-height: 1.25 !important;
-    margin-bottom: 4px !important;
+    display: block !important;
+    visibility: visible !important;
+    font-size: 19pt !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
   }
 
   .print-article-container h2 {
@@ -203,11 +502,48 @@
     break-after: avoid !important;
   }
 
+  /* Lead Article Figure & Main Image Print Rules */
+  .print-lead-figure {
+    display: block !important;
+    visibility: visible !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    margin: 10px 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-lead-figure-box {
+    display: block !important;
+    visibility: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    padding: 8px !important;
+    text-align: center !important;
+  }
+
+  .print-lead-image {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: 260px !important;
+    object-fit: contain !important;
+    margin: 0 auto !important;
+  }
+
   /* Prevent awkward page breaks across images, cards, chronology rows, and bibliographic entries */
   .print-article-header,
   .print-avoid-break,
   .print-article-container img,
   .print-article-container dl > div,
+  .print-article-container tr,
   .print-article-container li {
     page-break-inside: avoid !important;
     break-inside: avoid !important;

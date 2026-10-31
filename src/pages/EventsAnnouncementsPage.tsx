@@ -252,7 +252,9 @@ export const EventsAnnouncementsPage: React.FC<EventsPageProps> = ({ onNavigate 
   const evImgMap: Record<string, string> = {
     ev_01: `${archiveBase}barabati_fort_gateway.jpg`,
     ev_02: `${archiveBase}odia_palm_leaf_manuscript.jpg`,
-    ev_03: `${archiveBase}kondavidu_fort_hills.jpg`
+    ev_03: `${archiveBase}kondavidu_fort_hills.jpg`,
+    ev_symposium_2025: `${archiveBase}barabati_fort_gateway.jpg`,
+    ev_barabati_walk_2025: `${archiveBase}kondavidu_fort_hills.jpg`
   };
 
   const modalItem: ContentDetailItem | null = selectedEvent
@@ -297,72 +299,93 @@ export const EventsAnnouncementsPage: React.FC<EventsPageProps> = ({ onNavigate 
       )}
 
       <div className="space-y-6">
-        {localizedEvents.map(ev => {
+        {localizedEvents.map((ev, idx) => {
           const isFull = ev.registered_count >= ev.max_attendees;
+          const fallbackImgs = [
+            `${archiveBase}barabati_fort_gateway.jpg`,
+            `${archiveBase}odia_palm_leaf_manuscript.jpg`,
+            `${archiveBase}kondavidu_fort_hills.jpg`
+          ];
+          const thumbUrl = evImgMap[ev.id] || fallbackImgs[idx % fallbackImgs.length];
           return (
             <div
               key={ev.id}
               onClick={() => setSelectedEventId(ev.id)}
-              className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-stone-800 space-y-4 shadow-xl hover:border-[#c99738] transition-all cursor-pointer group"
+              className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-stone-800 shadow-xl hover:border-[#c99738] transition-all cursor-pointer group flex flex-col md:flex-row gap-6 items-start"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-3 py-1 rounded-full bg-stone-900 border border-stone-800">
-                    {ev.event_type}
-                  </span>
-                  {ev.is_virtual && (
-                    <span className="text-xs text-sky-400 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-950/60 border border-sky-800">
-                      <Video className="w-3 h-3" /> {ui.virtualStream}
+              <img
+                src={thumbUrl}
+                alt={ev.title}
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.dataset.fallback) {
+                    target.dataset.fallback = '1';
+                    target.src = `${archiveBase}barabati_fort_gateway.jpg`;
+                  }
+                }}
+                className="w-full md:w-52 h-48 md:h-44 rounded-2xl object-cover object-center shrink-0 border border-[#c99738]/40 bg-stone-950"
+              />
+              <div className="flex-1 space-y-4 min-w-0 w-full">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-3 py-1 rounded-full bg-stone-900 border border-stone-800">
+                      {ev.event_type}
                     </span>
+                    {ev.is_virtual && (
+                      <span className="text-xs text-sky-400 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sky-950/60 border border-sky-800">
+                        <Video className="w-3 h-3" /> {ui.virtualStream}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-xs text-stone-400 flex items-center gap-4">
+                    <span>{ui.capacityLabel}: {ev.registered_count} / {ev.max_attendees} {ui.registeredLabel}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                    {ev.title}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-[#e8c872] mt-1.5 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5" /> {ev.date_text}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5" /> {ev.location}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-royal-serif">
+                  {ev.description}
+                </p>
+
+                <div className="pt-3 border-t border-stone-800 flex items-center justify-between">
+                  {ev.is_registered ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded-xl border border-emerald-800/60">
+                      <CheckCircle className="w-4 h-4" /> {ui.youAreRegistered}
+                    </span>
+                  ) : isFull ? (
+                    <span className="text-xs text-rose-400 font-semibold">
+                      {ui.closedCapacity}
+                    </span>
+                  ) : (
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        handleRegister(ev.id);
+                      }}
+                      className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer flex items-center gap-1.5"
+                    >
+                      <span>{ui.registerBtn}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   )}
+
+                  <span className="text-xs font-semibold text-[#e8c872]">{ui.viewDetails}</span>
                 </div>
-
-                <div className="text-xs text-stone-400 flex items-center gap-4">
-                  <span>{ui.capacityLabel}: {ev.registered_count} / {ev.max_attendees} {ui.registeredLabel}</span>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#fae29c] transition-colors">
-                  {ev.title}
-                </h3>
-                <div className="flex flex-wrap items-center gap-4 text-xs text-[#e8c872] mt-1.5 font-medium">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" /> {ev.date_text}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5" /> {ev.location}
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-royal-serif">
-                {ev.description}
-              </p>
-
-              <div className="pt-3 border-t border-stone-800 flex items-center justify-between">
-                {ev.is_registered ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded-xl border border-emerald-800/60">
-                    <CheckCircle className="w-4 h-4" /> {ui.youAreRegistered}
-                  </span>
-                ) : isFull ? (
-                  <span className="text-xs text-rose-400 font-semibold">
-                    {ui.closedCapacity}
-                  </span>
-                ) : (
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      handleRegister(ev.id);
-                    }}
-                    className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer flex items-center gap-1.5"
-                  >
-                    <span>{ui.registerBtn}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                )}
-
-                <span className="text-xs font-semibold text-[#e8c872]">{ui.viewDetails}</span>
               </div>
             </div>
           );

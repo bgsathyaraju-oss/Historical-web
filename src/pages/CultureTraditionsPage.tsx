@@ -320,24 +320,43 @@ export const CultureTraditionsPage: React.FC = () => {
         {loc.pillars.map((p, idx) => {
           const Icon = PILLAR_ICONS[idx % PILLAR_ICONS.length];
           const iconStyle = PILLAR_STYLES[idx % PILLAR_STYLES.length];
+          const thumbUrl = pillarImgMap[p.id] || `${archiveBase}surya_konark_sculpture.jpg`;
           return (
             <div
               key={p.id}
               onClick={() => setSelectedId(p.id)}
-              className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-4 shadow-lg cursor-pointer transition-all group flex flex-col justify-between"
+              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden shadow-lg cursor-pointer transition-all group flex flex-col justify-between"
             >
-              <div className="space-y-4">
-                <div className={`p-3 w-fit rounded-xl ${iconStyle}`}>
-                  <Icon className="w-6 h-6 text-[#d4af37]" />
+              <div>
+                <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                  <img
+                    src={thumbUrl}
+                    alt={p.title}
+                    loading="lazy"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.dataset.fallback) {
+                        target.dataset.fallback = '1';
+                        target.src = `${archiveBase}barabati_fort_gateway.jpg`;
+                      }
+                    }}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                  <div className={`absolute top-3 left-3 p-2.5 rounded-xl ${iconStyle}`}>
+                    <Icon className="w-5 h-5 text-[#d4af37]" />
+                  </div>
                 </div>
-                <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
-                  {p.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-                  {p.summary}
-                </p>
+                <div className="p-6 pb-3 space-y-3">
+                  <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                    {p.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+                    {p.summary}
+                  </p>
+                </div>
               </div>
-              <div className="pt-2 text-xs text-[#e8c872] font-semibold flex items-center justify-between">
+              <div className="px-6 pb-6 pt-2 text-xs text-[#e8c872] font-semibold flex items-center justify-between">
                 <span>{p.badge}</span>
                 <span>{loc.readMore}</span>
               </div>

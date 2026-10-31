@@ -344,35 +344,53 @@ export const LiteraturePublicationsPage: React.FC = () => {
       </div>
 
       <div className="space-y-6">
-        {loc.items.map(item => (
-          <div
-            key={item.id}
-            onClick={() => setSelectedId(item.id)}
-            className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] space-y-3 shadow-lg cursor-pointer transition-all group"
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
-                {item.lang}
-              </span>
-              <span className="text-xs text-stone-400">{item.author}</span>
-            </div>
+        {loc.items.map(item => {
+          const thumbUrl = pubImgMap[item.id] || `${archiveBase}odia_palm_leaf_manuscript.jpg`;
+          return (
+            <div
+              key={item.id}
+              onClick={() => setSelectedId(item.id)}
+              className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] shadow-lg cursor-pointer transition-all group flex flex-col sm:flex-row gap-5 items-start"
+            >
+              <img
+                src={thumbUrl}
+                alt={item.title}
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (!target.dataset.fallback) {
+                    target.dataset.fallback = '1';
+                    target.src = `${archiveBase}odia_palm_leaf_manuscript.jpg`;
+                  }
+                }}
+                className="w-full sm:w-44 h-44 sm:h-36 rounded-2xl object-cover object-top shrink-0 border border-[#c99738]/40 bg-stone-950"
+              />
+              <div className="flex-1 space-y-3 min-w-0 w-full">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
+                    {item.lang}
+                  </span>
+                  <span className="text-xs text-stone-400">{item.author}</span>
+                </div>
 
-            <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#fae29c] transition-colors">
-              {item.title}
-            </h3>
+                <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                  {item.title}
+                </h3>
 
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-royal-serif">
-              {item.desc}
-            </p>
+                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-royal-serif">
+                  {item.desc}
+                </p>
 
-            <div className="pt-2 border-t border-stone-800 text-xs text-[#e8c872] flex items-center justify-between">
-              <div>
-                <strong className="text-stone-300">{loc.sigLabel}:</strong> {item.significance}
+                <div className="pt-2 border-t border-stone-800 text-xs text-[#e8c872] flex items-center justify-between">
+                  <div>
+                    <strong className="text-stone-300">{loc.sigLabel}:</strong> {item.significance}
+                  </div>
+                  <span className="font-semibold shrink-0 ml-2">{loc.inspectBtn}</span>
+                </div>
               </div>
-              <span className="font-semibold shrink-0 ml-2">{loc.inspectBtn}</span>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <ContentDetailModal item={modalItem} onClose={() => setSelectedId(null)} />

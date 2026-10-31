@@ -10,6 +10,10 @@ import {
   Search,
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  ChevronUp,
+  Globe,
   Flame,
   Droplets,
   Landmark,
@@ -18,10 +22,29 @@ import {
   Building,
   CheckCircle2,
   Calendar,
-  Layers
+  Layers,
+  ArrowLeft,
+  Home,
+  Printer,
+  Download,
+  Share2,
+  Copy,
+  Check,
+  Link2,
+  Clock,
+  Award,
+  AlertCircle
 } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
+import { WhatsAppIcon, PublisherCreditCard } from '../components/PublisherCreditCard';
 import { useLanguage } from '../context/LanguageContext';
+import { SUPPORTED_LANGUAGES } from '../i18n/translations';
+import {
+  downloadArticleAsPdf,
+  triggerArticlePrintWithTitle,
+  generateArticlePdfFilename,
+  PDF_EXPORT_UI_LABELS
+} from '../utils/pdfExport';
 import {
   HISTORICAL_FIGURES,
   COMMUNITY_SYNONYMS,
@@ -51,6 +74,32 @@ import {
   SYNONYM_COMPREHENSIVE_MONOGRAPHS,
   SYNONYM_MONOGRAPH_SECTION_HEADINGS
 } from '../data/communityHeritageArticlesData';
+import {
+  MASTER_70_REFERENCE_REGISTRY,
+  REFERENCE_70_UI_LABELS,
+  CLASSIFICATION_ORDER,
+  ReferenceTermClassification,
+  Reference70Entry,
+  matchReference70Terms,
+  getRelated70TermsForHeritageItem
+} from '../data/communityReference70Registry';
+
+const hasAppInventorBridge = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const win = window as unknown as {
+    AppInventor?: {
+      setWebViewString?: (val: string) => void;
+    };
+  };
+  return Boolean(win.AppInventor && typeof win.AppInventor.setWebViewString === 'function');
+};
+
+const isAndroidWebViewEnvironment = (): boolean => {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+  if (hasAppInventorBridge()) return true;
+  const ua = navigator.userAgent || '';
+  return /;\s*wv\)|Version\/\d+\.\d+\s+Chrome\/\d+.*Mobile|AppInventor/i.test(ua);
+};
 
 interface CommunityHeritagePageProps {
   onNavigate: (path: string) => void;
@@ -89,6 +138,21 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   const [synonymCategoryFilter, setSynonymCategoryFilter] = useState<string>('all');
   const [directoryGroupFilter, setDirectoryGroupFilter] = useState<string>('all');
   const [selectedProfessionCatNumber, setSelectedProfessionCatNumber] = useState<number | 'all'>('all');
+  const [ref70ClassFilter, setRef70ClassFilter] = useState<ReferenceTermClassification | 'all'>('all');
+
+  // Article Detail View Print, Share, and Scroll-Restoration States
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const [isActionsMenuOpen, setIsActionsMenuOpen] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState<'none' | 'link' | 'title_link'>('none');
+  const [isPrintFallbackOpen, setIsPrintFallbackOpen] = useState(false);
+  const [printUrlCopied, setPrintUrlCopied] = useState(false);
+  const [hasInternalArticleHistory, setHasInternalArticleHistory] = useState(false);
+
+  const savedListingScrollYRef = React.useRef<number>(0);
+  const shouldRestoreScrollRef = React.useRef<boolean>(false);
+  const shareFeedbackTimerRef = React.useRef<number | null>(null);
+  const printFallbackTimerRef = React.useRef<number | null>(null);
+  const autoPrintTriggeredRef = React.useRef<string | null>(null);
 
   const referenceMenuRef = React.useRef<HTMLDivElement | null>(null);
   const targetContentRef = React.useRef<HTMLDivElement | null>(null);
@@ -164,6 +228,65 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   const translateKeyword = (kw: string) =>
     KEYWORD_TRANSLATIONS[kw]?.[language] || KEYWORD_TRANSLATIONS[kw]?.en || kw;
 
+  const HERITAGE_PHRASE_TRANSLATIONS: Record<string, Record<LanguageCode, string>> = {
+    'Odisha': { en: 'Odisha', hi: 'ओडिशा', te: 'ఒడిశా', kn: 'ಒಡಿಶಾ', ta: 'ஒடிசா', mr: 'ओडिशा', or: 'ଓଡ଼ିଶା', bn: 'ওড়িশা' },
+    'Andhra Pradesh': { en: 'Andhra Pradesh', hi: 'आंध्र प्रदेश', te: 'ఆంధ్రప్రదేశ్', kn: 'ಆಂಧ್ರಪ್ರದೇಶ', ta: 'ஆந்திரப் பிரதேசம்', mr: 'आंध्र प्रदेश', or: 'ଆନ୍ଧ୍ରପ୍ରଦେଶ', bn: 'অন্ধ্রপ্রদেশ' },
+    'Telangana': { en: 'Telangana', hi: 'तेलंगाना', te: 'తెలంగాణ', kn: 'ತೆಲಂಗಾಣ', ta: 'தெலுங்கானா', mr: 'तेलंगणा', or: 'ତେଲେଙ୍ଗାନା', bn: 'তেলেঙ্গানা' },
+    'Karnataka': { en: 'Karnataka', hi: 'कर्नाटक', te: 'కర్ణాటక', kn: 'ಕರ್ನಾಟಕ', ta: 'கர்நாடகா', mr: 'कर्नाटक', or: 'କର୍ଣ୍ଣାଟକ', bn: 'কর্ণাটক' },
+    'Tamil Nadu': { en: 'Tamil Nadu', hi: 'तमिलनाडु', te: 'తమిళనాడు', kn: 'ತಮಿಳುನಾಡು', ta: 'தமிழ்நாடு', mr: 'तामिळनाडू', or: 'ତାମିଲନାଡୁ', bn: 'তামিলনাড়ু' },
+    'Maharashtra': { en: 'Maharashtra', hi: 'महाराष्ट्र', te: 'మహారాష్ట్ర', kn: 'ಮಹಾರಾಷ್ಟ್ರ', ta: 'மகாராஷ்டிரா', mr: 'महाराष्ट्र', or: 'ମହାରାଷ୍ଟ୍ର', bn: 'মহারাষ্ট্র' },
+    'Gujarat': { en: 'Gujarat', hi: 'गुजरात', te: 'గుజరాత్', kn: 'ಗುಜರಾತ್', ta: 'குஜராத்', mr: 'गुजरात', or: 'ଗୁଜରାଟ', bn: 'গুজরাট' },
+    'Rajasthan': { en: 'Rajasthan', hi: 'राजस्थान', te: 'రాజస్థాన్', kn: 'ರಾಜಸ್ಥಾನ', ta: 'ராஜஸ்தான்', mr: 'राजस्थान', or: 'ରାଜସ୍ଥାନ', bn: 'রাজস্থান' },
+    'Punjab': { en: 'Punjab', hi: 'पंजाब', te: 'పంజాబ్', kn: 'ಪಂಜಾಬ್', ta: 'பஞ்சாப்', mr: 'पंजाब', or: 'ପଞ୍ଜାବ', bn: 'পাঞ্জাব' },
+    'Haryana': { en: 'Haryana', hi: 'हरियाणा', te: 'హర్యానా', kn: 'ಹರಿಯಾಣ', ta: 'ஹரியானா', mr: 'हरियाणा', or: 'ହରିୟାଣା', bn: 'হরিয়ানা' },
+    'Delhi NCR': { en: 'Delhi NCR', hi: 'दिल्ली एनसीआर', te: 'ఢిల్లీ ఎన్.సి.ఆర్', kn: 'ದೆಹಲಿ ಎನ್‌ಸಿಆರ್', ta: 'டெல்லி என்.சி.ஆர்', mr: 'दिल्ली एनसीआर', or: 'ଦିଲ୍ଲୀ ଏନ୍.ସି.ଆର୍', bn: 'দিল্লি এনসিআর' },
+    'Sindh (Historical)': { en: 'Sindh (Historical)', hi: 'सिंध (ऐतिहासिक)', te: 'సింధ్ (చారిత్రక)', kn: 'ಸಿಂಧ್ (ಐತಿಹಾಸಿಕ)', ta: 'சிந்து (வரலாற்று)', mr: 'सिंध (ऐतिहासिक)', or: 'ସିନ୍ଧୁ (ଐତିହାସିକ)', bn: 'সিন্ধু (ঐতিহাসিক)' },
+    'Western Uttar Pradesh': { en: 'Western Uttar Pradesh', hi: 'पश्चिमी उत्तर प्रदेश', te: 'పశ్చిమ ఉత్తర ప్రదేశ్', kn: 'ಪಶ್ಚಿಮ ಉತ್ತರ ಪ್ರದೇಶ', ta: 'மேற்கு உத்தரப் பிரதேசம்', mr: 'पश्चिम उत्तर प्रदेश', or: 'ପଶ୍ଚିମ ଉତ୍ତର ପ୍ରଦେଶ', bn: 'পশ্চিম উত্তরপ্রদেশ' },
+    'Madhya Pradesh': { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', te: 'మధ్యప్రదేశ్', kn: 'ಮಧ್ಯಪ್ರದೇಶ', ta: 'மத்தியப் பிரதேசம்', mr: 'मध्य प्रदेश', or: 'ମଧ୍ୟପ୍ରଦେଶ', bn: 'মধ্যপ্রদেশ' },
+    'West Bengal': { en: 'West Bengal', hi: 'पश्चिम बंगाल', te: 'పశ్చిమ బెంగాల్', kn: 'ಪಶ್ಚಿಮ ಬಂಗಾಳ', ta: 'மேற்கு வங்காளம்', mr: 'पश्चिम बंगाल', or: 'ପଶ୍ଚିମବଙ୍ଗ', bn: 'পশ্চিমবঙ্গ' },
+    'Jharkhand': { en: 'Jharkhand', hi: 'झारखंड', te: 'జార్ఖండ్', kn: 'ಜಾರ್ಖಂಡ್', ta: 'ஜார்க்கண்ட்', mr: 'झारखंड', or: 'ଝାଡ଼ଖଣ୍ଡ', bn: 'ঝাড়খণ্ড' },
+    'Kerala': { en: 'Kerala', hi: 'केरल', te: 'కేరళ', kn: 'ಕೇರಳ', ta: 'கேரளா', mr: 'केरळ', or: 'କେରଳ', bn: 'কেরালা' },
+    'Goa': { en: 'Goa', hi: 'गोवा', te: 'గోవా', kn: 'ಗೋವಾ', ta: 'கோவா', mr: 'गोवा', or: 'ଗୋଆ', bn: 'গোয়া' },
+    'Puducherry': { en: 'Puducherry', hi: 'पुदुच्चेरी', te: 'పుదుచ్చేరి', kn: 'ಪುದುಚೇರಿ', ta: 'புதுச்சேரி', mr: 'पुदुच्चेरी', or: 'ପୁଦୁଚେରୀ', bn: 'পুদুচেরি' },
+    'Eastern Karnataka': { en: 'Eastern Karnataka', hi: 'पूर्वी कर्नाटक', te: 'తూర్పు కర్ణాటక', kn: 'ಪೂರ್ವ ಕರ್ನಾಟಕ', ta: 'கிழக்கு கர்நாடகா', mr: 'पूर्व कर्नाटक', or: 'ପୂର୍ବ କର୍ଣ୍ଣାଟକ', bn: 'পূর্ব কর্ণাটক' },
+    'Southern Andhra': { en: 'Southern Andhra', hi: 'दक्षिणी आंध्र', te: 'దక్షిణ ఆంధ్ర', kn: 'ದಕ್ಷಿಣ ಆಂಧ್ರ', ta: 'தெற்கு ஆந்திரா', mr: 'दक्षिण आंध्र', or: 'ଦକ୍ଷିଣ ଆନ୍ଧ୍ର', bn: 'দক্ষিণ অন্ধ্র' },
+    'Northern Andhra borders': { en: 'Northern Andhra borders', hi: 'उत्तरी आंध्र सीमांत', te: 'ఉత్తరాంధ్ర సరిహద్దులు', kn: 'ಉತ್ತರ ಆಂಧ್ರ ಗಡಿಗಳು', ta: 'வடக்கு ஆந்திர எல்லைகள்', mr: 'उत्तर आंध्र सीमा', or: 'ଉତ୍ତର ଆନ୍ଧ୍ର ସୀମାନ୍ତ', bn: 'উত্তর অন্ধ্র সীমান্ত' },
+    'Karnataka borderlands': { en: 'Karnataka borderlands', hi: 'कर्नाटक सीमांत क्षेत्र', te: 'కర్ణాటక సరిహద్దు ప్రాంతాలు', kn: 'ಕರ್ನಾಟಕ ಗಡಿ ಪ್ರದೇಶಗಳು', ta: 'கர்நாடக எல்லைப் பகுதிகள்', mr: 'कर्नाटक सीमावर्ती भाग', or: 'କର୍ଣ୍ଣାଟକ ସୀମାନ୍ତ ଅଞ୍ଚଳ', bn: 'কর্ণাটক সীমান্ত অঞ্চল' },
+    'All Indian States (Pan-Indian)': { en: 'All Indian States (Pan-Indian)', hi: 'सभी भारतीय राज्य (अखिल भारतीय)', te: 'అన్ని భారతీయ రాష్ట్రాలు (పాన్-ఇండియన్)', kn: 'ಎಲ್ಲಾ ಭಾರತೀಯ ರಾಜ್ಯಗಳು (ಪ್ಯಾನ್-ಇಂಡಿಯನ್)', ta: 'அனைத்து இந்திய மாநிலங்கள் (பான்-இந்தியன்)', mr: 'सर्व भारतीय राज्ये (अखिल भारतीय)', or: 'ସମସ୍ତ ଭାରତୀୟ ରାଜ୍ୟ (ସର୍ବଭାରତୀୟ)', bn: 'সকল ভারতীয় রাজ্য (সর্বভারতীয়)' },
+    'All Indian States & Trans-Indus Diaspora': { en: 'All Indian States & Trans-Indus Diaspora', hi: 'सभी भारतीय राज्य एवं सिंधु-पार प्रवासी क्षेत्र', te: 'అన్ని భారతీయ రాష్ట్రాలు & సింధు-ఆవల విస్తరణ', kn: 'ಎಲ್ಲಾ ಭಾರತೀಯ ರಾಜ್ಯಗಳು ಮತ್ತು ಸಿಂಧೂ-ಆಚೆಗಿನ ವಲಸೆ', ta: 'அனைத்து இந்திய மாநிலங்கள் & சிந்து-கடந்த புலம்பெயர் பகுதிகள்', mr: 'सर्व भारतीय राज्ये आणि सिंधू-पार विस्तार', or: 'ସମସ୍ତ ଭାରତୀୟ ରାଜ୍ୟ ଓ ସିନ୍ଧୁ-ପାର ପ୍ରବାସ', bn: 'সকল ভারতীয় রাজ্য ও সিন্ধু-পার প্রবাস' },
+    'Epigraphic Record': { en: 'Epigraphic Record', hi: 'शिलालेखीय अभिलेख', te: 'శాసన ఆధారం', kn: 'ಶಾಸನ ದಾಖಲೆ', ta: 'கல்வெட்டு ஆவணம்', mr: 'शिलालेखीय नोंद', or: 'ଶିଳାଲେଖ ଦସ୍ତାବିଜ', bn: 'শিলালিপি নথি' },
+    'Colonial Gazetteer / Census': { en: 'Colonial Gazetteer / Census', hi: 'औपनिवेशिक गजेटियर / जनगणना', te: 'కలోనియల్ గెజిటీర్ / జనాభా లెక్కలు', kn: 'ವಸಾಹತುಶಾಹಿ ಗೆಜೆಟಿಯರ್ / ಜನಗಣತಿ', ta: 'காலனித்துவ கெசட்டியர் / மக்கள்தொகை கணக்கெடுப்பு', mr: 'वसाहतकालीन गॅझेटियर / जनगणना', or: 'ଔପନିବେଶିକ ଗେଜେଟିୟର / ଜନଗଣନା', bn: 'ঔপনিবেশিক গেজেটিয়ার / আদমশুমারি' },
+    'Archaeological & Regional Gazetteer Record': { en: 'Archaeological & Regional Gazetteer Record', hi: 'पुरातत्त्वीय एवं क्षेत्रीय गजेटियर अभिलेख', te: 'పురావస్తు & ప్రాంతీయ గెజిటీర్ ఆధారం', kn: 'ಪುರಾತತ್ವ ಮತ್ತು ಪ್ರಾದೇಶಿಕ ಗೆಜೆಟಿಯರ್ ದಾಖಲೆ', ta: 'தொல்லியல் & பிராந்திய கெசட்டியர் ஆவணம்', mr: 'पुरातत्त्वीय व प्रादेशिक गॅझेटियर नोंद', or: 'ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଓ ଆଞ୍ଚଳିକ ଗେଜେଟିୟର ଦସ୍ତାବିଜ', bn: 'প্রত্নতাত্ত্বিক ও আঞ্চলিক গেজেটিয়ার নথি' },
+    'Archival Visual & Monument Record': { en: 'Archival Visual & Monument Record', hi: 'अभिलेखीय दृश्य एवं स्मारक प्रमाण', te: 'పురాతన చిత్ర & స్మారక ఆధారం', kn: 'ಪತ್ರಾಗಾರ ದೃಶ್ಯ ಮತ್ತು ಸ್ಮಾರಕ ದಾಖಲೆ', ta: 'ஆவணக் காட்சி & நினைவுச்சின்னப் பதிவு', mr: 'अभिलेखीय दृश्य व स्मारक नोंद', or: 'ଅଭିଲେଖୀୟ ଦୃଶ୍ୟ ଓ ସ୍ମାରକୀ ଦସ୍ତାବିଜ', bn: 'আর্কাইভাল দৃশ্য ও স্মৃতিস্তম্ভ নথি' },
+    'Archival & Epigraphic Dossier': { en: 'Archival & Epigraphic Dossier', hi: 'अभिलेखीय एवं शिलालेखीय डोजियर', te: 'పురాతన & శాసన పరిశోధన పత్రం', kn: 'ಪತ್ರಾಗಾರ ಮತ್ತು ಶಾಸನ ದಾಖಲೆ ಸಂಗ್ರಹ', ta: 'ஆவண & கல்வெட்டுத் தொகுப்பு', mr: 'अभिलेखीय व शिलालेखीय संचिका', or: 'ଅଭିଲେଖ ଓ ଶିଳାଲେଖ ଦସ୍ତାବିଜ', bn: 'আর্কাইভাল ও শিলালিপি ডসিয়ার' },
+    'Classical Sanskrit / Epic Text': { en: 'Classical Sanskrit / Epic Text', hi: 'शास्त्रीय संस्कृत / महाकाव्य ग्रंथ', te: 'శాస్త్రీయ సంస్కృత / ఇతిహాస గ్రంథం', kn: 'ಶಾಸ್ತ್ರೀಯ ಸಂಸ್ಕೃತ / ಮಹಾಕಾವ್ಯ ಗ್ರಂಥ', ta: 'செவ்வியல் சமஸ்கிருத / இதிகாச நூல்', mr: 'अभिजात संस्कृत / महाकाव्य ग्रंथ', or: 'ଶାସ୍ତ୍ରୀୟ ସଂସ୍କୃତ / ମହାକାବ୍ୟ ଗ୍ରନ୍ଥ', bn: 'ধ্রুপদী সংস্কৃত / মহাকাব্য গ্রন্থ' },
+    'Historical Monograph': { en: 'Historical Monograph', hi: 'ऐतिहासिक शोध-प्रबंध (मोनोग्राफ)', te: 'చారిత్రక పరిశోధనా గ్రంథం (మోనోగ్రాఫ్)', kn: 'ಐತಿಹಾಸಿಕ ಸಂಶೋಧನಾ ಗ್ರಂಥ (ಮೊನೊಗ್ರಾಫ್)', ta: 'வரலாற்று ஆய்வு நூல்', mr: 'ऐतिहासिक शोधग्रंथ (मोनोग्राफ)', or: 'ଐତିହାସିକ ଗବେଷଣା ଗ୍ରନ୍ଥ', bn: 'ঐতিহাসিক গবেষণা গ্রন্থ (মনোগ্রাফ)' },
+    'Regional Historical Chronicle': { en: 'Regional Historical Chronicle', hi: 'क्षेत्रीय ऐतिहासिक इतिवृत्त', te: 'ప్రాంతీయ చారిత్రక వృత్తాంతం', kn: 'ಪ್ರಾದೇಶಿಕ ಐತಿಹಾಸಿಕ ವೃತ್ತಾಂತ', ta: 'பிராந்திய வரலாற்று ஆவணம்', mr: 'प्रादेशिक ऐतिहासिक बखर / इतिवृत्त', or: 'ଆଞ୍ଚଳିକ ଐତିହାସିକ ଇତିବୃତ୍ତ', bn: 'আঞ্চলিক ঐতিহাসিক ইতিবৃত্ত' },
+    'Vachana Sahitya / Literary & Epigraphic Record': { en: 'Vachana Sahitya / Literary & Epigraphic Record', hi: 'वचन साहित्य / साहित्यिक एवं शिलालेखीय प्रमाण', te: 'వచన సాహిత్యం / సాహిత్య & శాసన ఆధారం', kn: 'ವಚನ ಸಾಹಿತ್ಯ / ಸಾಹಿತ್ಯಿಕ ಮತ್ತು ಶಾಸನ ದಾಖಲೆ', ta: 'வசன இலக்கியம் / இலக்கிய & கல்வெட்டு ஆவணம்', mr: 'वचन साहित्य / साहित्यिक व शिलालेखीय नोंद', or: 'ବଚନ ସାହିତ୍ୟ / ସାହିତ୍ୟିକ ଓ ଶିଳାଲେଖ ଦସ୍ତାବିଜ', bn: 'বচন সাহিত্য / সাহিত্যিক ও শিলালিপি নথি' },
+    'Folkloric & Architectural Chronicle': { en: 'Folkloric & Architectural Chronicle', hi: 'लोक-ऐतिहासिक एवं स्थापत्य इतिवृत्त', te: 'జానపద-చారిత్రక & వాస్తుశిల్ప వృత్తాంతం', kn: 'ಜಾನಪದ ಮತ್ತು ವಾಸ್ತುಶಿಲ್ಪ ವೃತ್ತಾಂತ', ta: 'நாட்டுப்புற & கட்டிடக்கலை வரலாற்று ஆவணம்', mr: 'लोक-ऐतिहासिक व स्थापत्य इतिवृत्त', or: 'ଲୋକ-ଐତିହାସିକ ଓ ସ୍ଥାପତ୍ୟ ଇତିବୃତ୍ତ', bn: 'লোক-ঐতিহাসিক ও স্থাপত্য ইতিবৃত্ত' }
+  };
+
+  const localizeHeritagePhrase = (text: string): string => {
+    if (!text || language === 'en') return text;
+    const trimmed = text.trim();
+    if (HERITAGE_PHRASE_TRANSLATIONS[trimmed]?.[language]) {
+      return HERITAGE_PHRASE_TRANSLATIONS[trimmed][language];
+    }
+    if (KEYWORD_TRANSLATIONS[trimmed]?.[language]) {
+      return KEYWORD_TRANSLATIONS[trimmed][language];
+    }
+    let result = text;
+    for (const [engKey, langMap] of Object.entries(HERITAGE_PHRASE_TRANSLATIONS)) {
+      if (result.includes(engKey) && langMap[language]) {
+        result = result.split(engKey).join(langMap[language]);
+      }
+    }
+    return result;
+  };
+
+  const localizeHeritageList = (items: string[]): string[] =>
+    items.map(item => localizeHeritagePhrase(item));
+
   const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const target = e.currentTarget;
     if (target.src !== fallbackArchiveImg) {
@@ -210,20 +333,84 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     'Oad-Rajputh': 'syn_oad_rajputh',
     'Oad': 'syn_od_oad_odra',
     'Od-Rajput': 'comm_dir_02_od_rajputh',
+    'Od-Rajputh': 'comm_dir_02_od_rajputh',
+    'OD-Community': 'comm_dir_01_od',
     'Od': 'comm_dir_01_od',
     'Oad Patel (Artisan Title)': 'syn_oad_rajputh',
     'Waddar': 'syn_waddar_vaddar',
+    'Wadar': 'syn_waddar_vaddar',
     'Vaddar': 'comm_dir_15_voddar',
+    'Voddar': 'comm_dir_15_voddar',
+    'Woddar': 'comm_dir_15_voddar',
     'Vadar': 'syn_waddar_vaddar',
     'Od-Kshatriya': 'syn_od_kshatriya',
+    'Odra-Kshatriya': 'comm_dir_03_odra_kshatriya',
+    'Odra-Kshtriya': 'comm_dir_03_odra_kshatriya',
+    'Odisha-Kshatriya': 'syn_odisha_kshatriya',
     'Odde': 'syn_odde_vadde',
     'Vadde': 'syn_odde_vadde',
+    'vadde': 'syn_odde_vadde',
+    'Vaddera': 'comm_dir_10_vaddera',
+    'Vaddelu': 'comm_dir_11_vaddeelu',
+    'Vaddeelu': 'comm_dir_11_vaddeelu',
+    'Vaddi': 'comm_dir_09_vaddi',
+    'Vaddi Rajulu': 'comm_dir_12_vaddirajulu',
+    'VaddiRajulu': 'comm_dir_12_vaddirajulu',
+    'Vaddera Rajulu': 'comm_dir_13_vadderarajulu',
+    'VadderaRajulu': 'comm_dir_13_vadderarajulu',
     'OddeRajulu': 'syn_odderajulu',
+    'OddeRazulu': 'syn_odderajulu',
     'VaddeRajulu': 'comm_dir_13_vadderarajulu',
     'Vadiyarajulu': 'comm_dir_12_vaddirajulu',
+    'Odiyaraju': 'syn_odiyaraju_karnataka',
+    'Odiyarajulu': 'syn_odiyaraju_karnataka',
     'Oddar': 'syn_oddar',
+    'Odar': 'syn_oddar',
+    'Oddaru': 'comm_dir_16_oddaru',
+    'Oddaru / Odra communities': 'comm_dir_16_oddaru',
+    'Odan': 'comm_dir_08_odan',
+    'Ottar': 'syn_ottar',
+    'OddaNayakkar': 'syn_odda_nayakkar_tn',
+    'OttaNayakkar': 'syn_odda_nayakkar_tn',
+    'BoyaNayakkar': 'syn_odda_nayakkar_tn',
+    'Boyar': 'syn_ottar',
+    'Pawar': 'comm_dir_02_od_rajputh',
+    'Bhoi': 'comm_dir_07_od_paika',
+    'Bhoyudu': 'comm_dir_10_vaddera',
+    'Bhoyilu': 'comm_dir_10_vaddera',
+    'Boyidu': 'comm_dir_10_vaddera',
+    'Boyilu': 'comm_dir_10_vaddera',
+    'Pedda-Bhoyudu': 'comm_dir_10_vaddera',
+    'Oddarasa': 'syn_odiyaraju_karnataka',
+    'OddeDora': 'syn_odderajulu',
+    'VaddeDoralu': 'comm_dir_13_vadderarajulu',
+    'Kshatriya Kings': 'prof_cat_8_royal_dynasties',
+    'Oddan-Arasa': 'syn_odda_nayakkar_tn',
+    'Ottan-Arasa': 'syn_ottar',
+    'Kallu Oddar': 'prof_cat_3_construction_hydraulic',
+    'Mannu Oddar': 'prof_cat_3_construction_hydraulic',
+    'Bandi Oddar': 'prof_cat_3_construction_hydraulic',
+    'Girini Oddar': 'prof_cat_6_lokashilpi',
+    'Uppu Oddar': 'prof_cat_9_other_professions',
+    'Shilpi Oddar': 'prof_cat_4_shilpi',
     'Odra': 'comm_dir_03_odra_kshatriya',
-    'Suryavamshi Odiyaraju': 'syn_suryavamshi'
+    'Kalinga': 'comm_dir_04_kalingarajulu',
+    'Utkala': 'comm_dir_03_odra_kshatriya',
+    'Trikalinga': 'comm_dir_04_kalingarajulu',
+    'Gajapathis': 'comm_dir_14_gajapathulu',
+    'Gajapathulu': 'comm_dir_14_gajapathulu',
+    'Gajapathi RauthRai': 'comm_dir_14_gajapathulu',
+    'paikas': 'comm_dir_07_od_paika',
+    'Od-Paika': 'comm_dir_07_od_paika',
+    'Od-Khandayaths': 'comm_dir_05_od_khandayath',
+    'Od-Khandayath': 'comm_dir_05_od_khandayath',
+    'Oda-Chasa': 'comm_dir_06_oda_chassa',
+    'Oda-Chassa': 'comm_dir_06_oda_chassa',
+    'Suryavamshi Odiyaraju': 'syn_suryavamshi',
+    'Suryavamshi communities': 'syn_suryavamshi',
+    'Sagara Vamshi traditions': 'syn_sagaravamshi',
+    'Bhagiratha Vamshi traditions': 'syn_sagaravamshi',
+    'Raghu Vamshi traditions': 'syn_raghuvamshi'
   };
 
   const REGION_RELATED_ARTICLE_IDS: Record<string, string[]> = {
@@ -307,6 +494,10 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     if (DESIGNATION_TO_ARTICLE_ID[trimmed]) {
       return DESIGNATION_TO_ARTICLE_ID[trimmed];
     }
+    const ref70Matches = matchReference70Terms(trimmed);
+    if (ref70Matches.length > 0 && ref70Matches[0].relatedHeritageIds.length > 0) {
+      return ref70Matches[0].relatedHeritageIds[0];
+    }
     const commMatch = COMMUNITY_DIRECTORY_ITEMS.find(
       c =>
         c.canonicalName.toLowerCase() === trimmed.toLowerCase() ||
@@ -322,25 +513,99 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     return 'syn_od_oad_odra';
   };
 
+  const recordScrollBeforeOpen = () => {
+    if (typeof window === 'undefined') return;
+    if (!selectedModalRef && !selectedFigure) {
+      savedListingScrollYRef.current = window.scrollY || document.documentElement.scrollTop || 0;
+    }
+    setHasInternalArticleHistory(true);
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  };
+
   const openSynonymModal = (item: CommunitySynonym) => {
+    recordScrollBeforeOpen();
     setSelectedFigure(null);
     setSelectedModalRef({ type: 'synonym', id: item.id });
     syncUrlParams('synonyms', item.id);
   };
 
   const openCommunityDirModal = (item: CommunityDirectoryEntry) => {
+    recordScrollBeforeOpen();
     setSelectedFigure(null);
     setSelectedModalRef({ type: 'community_dir', id: item.id });
     syncUrlParams('synonyms', item.id);
   };
 
   const openProfessionModal = (cat: ProfessionalHeritageCategoryArticle) => {
+    recordScrollBeforeOpen();
     setSelectedFigure(null);
     setSelectedModalRef({ type: 'profession_cat', id: cat.id });
     syncUrlParams('professions', cat.id);
   };
 
+  const openFigureModal = (fig: HistoricalFigureSummary) => {
+    recordScrollBeforeOpen();
+    setSelectedModalRef(null);
+    setSelectedFigure(fig);
+    syncUrlParams('figures', fig.id);
+  };
+
+  const openRegionModal = (reg: GeographicalSpreadRegion) => {
+    recordScrollBeforeOpen();
+    setSelectedRegionId(reg.id);
+    setSelectedFigure(null);
+    setSelectedModalRef({ type: 'region', id: reg.id });
+    syncUrlParams('geography', reg.id, reg.id);
+  };
+
+  const openMonographModal = (secId: string) => {
+    recordScrollBeforeOpen();
+    setSelectedFigure(null);
+    setSelectedModalRef({ type: 'monograph', id: secId });
+    syncUrlParams('history', secId);
+  };
+
+  const closeActiveArticle = React.useCallback(() => {
+    shouldRestoreScrollRef.current = hasInternalArticleHistory;
+    setSelectedFigure(null);
+    setSelectedModalRef(null);
+    syncUrlParams(activeTab, null);
+  }, [hasInternalArticleHistory, activeTab, syncUrlParams]);
+
+  const handleBackFromArticle = () => {
+    if (hasInternalArticleHistory && typeof window !== 'undefined' && window.history.length > 1) {
+      try {
+        shouldRestoreScrollRef.current = true;
+        window.history.back();
+        return;
+      } catch {
+        // Fallback to closing article if history API is restricted in embedded WebView
+      }
+    }
+    closeActiveArticle();
+  };
+
+  useEffect(() => {
+    if (!selectedModalRef && !selectedFigure && shouldRestoreScrollRef.current && typeof window !== 'undefined') {
+      const targetScrollY = savedListingScrollYRef.current;
+      shouldRestoreScrollRef.current = false;
+      const rafId = window.requestAnimationFrame(() => {
+        try {
+          window.scrollTo({ top: targetScrollY, left: 0, behavior: 'auto' });
+        } catch {
+          window.scrollTo(0, targetScrollY);
+        }
+      });
+      return () => window.cancelAnimationFrame(rafId);
+    }
+  }, [selectedModalRef, selectedFigure]);
+
   const handleNavigateRelatedId = (targetId: string) => {
+    recordScrollBeforeOpen();
     const commItem = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === targetId);
     if (commItem) {
       setSelectedFigure(null);
@@ -420,6 +685,127 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     return targetId;
   };
 
+  const resolveRelatedCardPreview = (
+    targetId: string
+  ): {
+    id: string;
+    title: string;
+    categoryBadge: string;
+    eraOrRegion: string;
+    summary: string;
+    imageUrl: string;
+  } | null => {
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const vis = STEP4_VISUAL_ASSET_REGISTRY[targetId];
+    const commItem = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === targetId);
+    if (commItem) {
+      const detailed = COMMUNITY_HERITAGE_DETAILED_ARTICLES.find(a => a.id === commItem.id);
+      return {
+        id: commItem.id,
+        title: `#${commItem.orderNumber} ${commItem.localizedName[language] || commItem.canonicalName}`,
+        categoryBadge: commItem.localizedCategoryGroup[language] || commItem.localizedCategoryGroup.en,
+        eraOrRegion: commItem.geographicalSpread[language] || commItem.geographicalSpread.en,
+        summary: commItem.overview[language] || commItem.overview.en,
+        imageUrl: vis?.imageUrl || detailed?.imageUrl || fallbackArchiveImg
+      };
+    }
+    const profItem = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.id === targetId);
+    if (profItem) {
+      const primaryVis = profItem.visualAssets && profItem.visualAssets.length > 0 ? profItem.visualAssets[0] : undefined;
+      return {
+        id: profItem.id,
+        title: profItem.title[language] || profItem.title.en,
+        categoryBadge: `${step5Ui.catPrefix}${profItem.categoryNumber}`,
+        eraOrRegion: `${profItem.includedSubClassifications.length} ${step2Labels.subcategoriesLabel}`,
+        summary: profItem.shortSummary[language] || profItem.shortSummary.en,
+        imageUrl: primaryVis?.imageUrl || `${base}kondavidu_fort_hills.jpg`
+      };
+    }
+    const synItem = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
+    if (synItem) {
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[synItem.id];
+      const synImgMap: Record<string, string> = {
+        syn_suryavamshi: `${base}surya_konark_sculpture.jpg`,
+        syn_sagaravamshi: `${base}samrat_sagara_surya.jpg`,
+        syn_raghuvamshi: `${base}sri_rama_sculpture.jpg`,
+        syn_od_oad_odra: `${base}hathigumpha_inscription.jpg`,
+        syn_odisha_kshatriya: `${base}barabati_fort_gateway.jpg`,
+        syn_odiyaraju_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
+        syn_ottar: `${base}srirangam_temple.jpg`,
+        syn_od_kshatriya: `${base}puri_jagannatha_temple.jpg`,
+        syn_odde_vadde: `${base}kondavidu_fort_hills.jpg`,
+        syn_waddar_vaddar: `${base}shivayogi_siddharama_solapur.jpg`,
+        syn_oddar: `${base}srirangam_temple.jpg`,
+        syn_vadde_gajapathirajulu: `${base}kapilendra_deva_portrait.jpg`,
+        syn_odda_nayakkar_tn: `${base}kumara_hamvira_warangal_srirangam.jpg`,
+        syn_oad_rajputh: `${base}oad_hydraulic_stepwell.jpg`,
+        syn_odderajulu: `${base}kolleru_lake_citadel.jpg`
+      };
+      return {
+        id: synItem.id,
+        title: mono ? mono.localizedTitle[language] || mono.localizedTitle.en : synItem.title,
+        categoryBadge: step5Ui.synonymCategories[synItem.category] || synItem.category,
+        eraOrRegion: localizeHeritagePhrase(translateText(synItem.geographical_association)),
+        summary: synItem.historical_role[language] || synItem.historical_role.en,
+        imageUrl: vis?.imageUrl || synImgMap[synItem.id] || fallbackArchiveImg
+      };
+    }
+    const regItem = GEOGRAPHICAL_SPREAD.find(r => r.id === targetId);
+    if (regItem) {
+      const regImgMap: Record<string, string> = {
+        geo_rajasthan_sindh_punjab: `${base}oad_hydraulic_stepwell.jpg`,
+        geo_gujarat: `${base}jasma_devi_sahasralinga.jpg`,
+        geo_maharashtra: `${base}shivayogi_siddharama_solapur.jpg`,
+        geo_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
+        geo_andhra_telangana: `${base}kondavidu_fort_hills.jpg`,
+        geo_tamil_nadu: `${base}srirangam_temple.jpg`,
+        geo_odisha: `${base}barabati_fort_gateway.jpg`
+      };
+      return {
+        id: regItem.id,
+        title: regItem.localized_region[language] || regItem.region_name,
+        categoryBadge: step5Ui.geographyTab.spotlightPanelBadge,
+        eraOrRegion: localizeHeritageList(regItem.states_and_territories).join(' • '),
+        summary: regItem.regional_overview[language] || regItem.regional_overview.en,
+        imageUrl: vis?.imageUrl || regImgMap[regItem.id] || fallbackArchiveImg
+      };
+    }
+    const monoItem = HISTORICAL_MONOGRAPH_SECTIONS.find(m => m.id === targetId);
+    if (monoItem) {
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[monoItem.id];
+      const monoImgMap: Record<string, string> = {
+        mono_part_1_primordial: `${base}surya_konark_sculpture.jpg`,
+        mono_part_2_kharavela: `${base}emperor_kharavela_udayagiri.jpg`,
+        mono_part_3_synonyms: `${base}copper_plate_charter.jpg`,
+        mono_part_4_jasma_siddharama: `${base}jasma_devi_sahasralinga.jpg`,
+        mono_part_5_gajapathi_diaspora: `${base}kondavidu_fort_hills.jpg`,
+        mono_part_6_geographical_map: `${base}gajapathi_empire_map_1465.jpg`,
+        mono_part_7_kolletikota: `${base}peddintlamma_temple_kolletikota.jpg`,
+        mono_part_8_epigraphic_evolution: `${base}hathigumpha_inscription.jpg`
+      };
+      return {
+        id: monoItem.id,
+        title: mono ? mono.localizedTitle[language] || mono.localizedTitle.en : monoItem.section_title[language] || monoItem.section_title.en,
+        categoryBadge: step5Ui.monographTab.badge,
+        eraOrRegion: step5Ui.monographTab.heading,
+        summary: mono ? mono.executiveSummaryAndScope[language] || mono.executiveSummaryAndScope.en : monoItem.content[language] || monoItem.content.en,
+        imageUrl: vis?.imageUrl || monoImgMap[monoItem.id] || fallbackArchiveImg
+      };
+    }
+    const figItem = HISTORICAL_FIGURES.find(f => f.id === targetId);
+    if (figItem) {
+      return {
+        id: figItem.id,
+        title: figItem.localized_name[language] || figItem.canonical_name,
+        categoryBadge: step5Ui.figuresTab.epigraphicStatus[figItem.epigraphic_status] || figItem.epigraphic_status,
+        eraOrRegion: localizeHeritagePhrase(translateText(figItem.reign_or_dates)),
+        summary: figItem.summary[language] || figItem.summary.en,
+        imageUrl: figItem.image_url || fallbackArchiveImg
+      };
+    }
+    return null;
+  };
+
   const handleModalTagClick = (tagItem: string) => {
     const rawTrimmed = tagItem.startsWith('#') ? tagItem.slice(1).trim() : tagItem.trim();
     const parenMatch = rawTrimmed.match(/\(([^)]+)\)$/);
@@ -454,6 +840,277 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       if (fallbackId) {
         handleNavigateRelatedId(fallbackId);
         return;
+      }
+    }
+  };
+
+  // Canonical URL, Print, and Share Helpers for Community-Heritage Articles
+  const activeArticleId = selectedFigure ? selectedFigure.id : selectedModalRef ? selectedModalRef.id : null;
+
+  useEffect(() => {
+    setShareFeedback('none');
+    setIsShareMenuOpen(false);
+    setIsActionsMenuOpen(false);
+    setIsPrintFallbackOpen(false);
+    setPrintUrlCopied(false);
+    if (typeof document !== 'undefined') {
+      document.body.setAttribute('data-article-reading', activeArticleId ? 'true' : 'false');
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        document.body.setAttribute('data-article-reading', 'false');
+      }
+      if (shareFeedbackTimerRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(shareFeedbackTimerRef.current);
+      }
+      if (printFallbackTimerRef.current !== null && typeof window !== 'undefined') {
+        window.clearTimeout(printFallbackTimerRef.current);
+      }
+    };
+  }, [activeArticleId]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang') as LanguageCode | null;
+      if (
+        langParam &&
+        ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
+        langParam !== language
+      ) {
+        setLanguage(langParam);
+      }
+      const autoPrint = params.get('autoprint');
+      const targetId = params.get('id') || params.get('figure') || params.get('article') || activeArticleId;
+      if (autoPrint === '1' && targetId) {
+        if (isAndroidWebViewEnvironment()) {
+          setIsPrintFallbackOpen(true);
+        } else if (autoPrintTriggeredRef.current !== `${targetId}-${langParam || language}`) {
+          autoPrintTriggeredRef.current = `${targetId}-${langParam || language}`;
+          const timer = window.setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autoprint');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore history replaceState errors
+            }
+            if (typeof window.print === 'function') {
+              window.print();
+            }
+          }, 550);
+          return () => window.clearTimeout(timer);
+        }
+      }
+    } catch {
+      // Ignore malformed query string
+    }
+  }, [activeArticleId, language, setLanguage]);
+
+  const getCanonicalHeritageUrl = (itemId: string): string => {
+    const fallbackHttpsOrigin = 'https://historical-web.web.app';
+    if (typeof window === 'undefined') {
+      return `${fallbackHttpsOrigin}/community-heritage?tab=${encodeURIComponent(activeTab)}&id=${encodeURIComponent(itemId)}`;
+    }
+    const rawOrigin = window.location.origin || '';
+    const isLocalDev = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(rawOrigin);
+    let safeOrigin = fallbackHttpsOrigin;
+    if (rawOrigin.startsWith('https://') || isLocalDev) {
+      safeOrigin = rawOrigin;
+    } else if (rawOrigin.startsWith('http://')) {
+      safeOrigin = rawOrigin.replace(/^http:\/\//i, 'https://');
+    }
+    const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+    return `${safeOrigin}${basePath}/community-heritage?tab=${encodeURIComponent(activeTab)}&id=${encodeURIComponent(itemId)}`;
+  };
+
+  const getExternalPrintHeritageUrl = (itemId: string, langCode: LanguageCode = language): string => {
+    const baseCanonical = getCanonicalHeritageUrl(itemId);
+    return `${baseCanonical}&lang=${encodeURIComponent(langCode)}&autoprint=1`;
+  };
+
+  const copyTextToClipboard = async (textToCopy: string): Promise<boolean> => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        return true;
+      } catch {
+        // Fall through to textarea copy fallback
+      }
+    }
+    if (typeof document !== 'undefined') {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.top = '-9999px';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return copied;
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  const showTemporaryShareFeedback = (type: 'link' | 'title_link') => {
+    setShareFeedback(type);
+    if (shareFeedbackTimerRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(shareFeedbackTimerRef.current);
+    }
+    if (typeof window !== 'undefined') {
+      shareFeedbackTimerRef.current = window.setTimeout(() => {
+        setShareFeedback('none');
+      }, 3500);
+    }
+  };
+
+  const sendArticleUrlToAppInventor = (articleUrl: string): boolean => {
+    if (typeof window === 'undefined') return false;
+    const trimmedUrl = (articleUrl || '').trim();
+    if (!trimmedUrl || !/^https?:\/\/.+\/community-heritage\?/i.test(trimmedUrl)) {
+      return false;
+    }
+    if (!hasAppInventorBridge()) {
+      return false;
+    }
+    try {
+      const win = window as unknown as {
+        AppInventor: {
+          setWebViewString: (val: string) => void;
+        };
+      };
+      win.AppInventor.setWebViewString(trimmedUrl);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCopyPrintHeritageUrl = async (itemId: string) => {
+    const externalUrl = getExternalPrintHeritageUrl(itemId, language);
+    await copyTextToClipboard(externalUrl);
+    setPrintUrlCopied(true);
+    if (printFallbackTimerRef.current !== null && typeof window !== 'undefined') {
+      window.clearTimeout(printFallbackTimerRef.current);
+    }
+    if (typeof window !== 'undefined') {
+      printFallbackTimerRef.current = window.setTimeout(() => {
+        setPrintUrlCopied(false);
+      }, 3500);
+    }
+  };
+
+  const handleExternalBrowserLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    articleUrl: string
+  ) => {
+    const sentViaBridge = sendArticleUrlToAppInventor(articleUrl);
+    if (sentViaBridge) {
+      e.preventDefault();
+    }
+  };
+
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [pdfDownloadResult, setPdfDownloadResult] = useState<{
+    filename: string;
+    downloadUrl?: string;
+  } | null>(null);
+  const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
+
+  const handleDownloadHeritagePdf = async (articleTitle: string) => {
+    if (isDownloadingPdf) return;
+    setIsDownloadingPdf(true);
+    setPdfDownloadResult(null);
+    try {
+      const result = await downloadArticleAsPdf({
+        articleTitle,
+        language
+      });
+      setPdfDownloadResult({
+        filename: result.filename,
+        downloadUrl: result.downloadUrl
+      });
+    } catch (err) {
+      console.error('Heritage PDF export failed:', err);
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handlePrintHeritageArticle = (articleTitle?: string) => {
+    setIsShareMenuOpen(false);
+    if (!activeArticleId) return;
+
+    const inAndroidWebView = isAndroidWebViewEnvironment();
+    const canCallWindowPrint = typeof window !== 'undefined' && typeof window.print === 'function';
+
+    if (inAndroidWebView || !canCallWindowPrint) {
+      setIsPrintFallbackOpen(true);
+      return;
+    }
+
+    let printDialogStarted = false;
+    const onBeforePrintOrBlur = () => {
+      printDialogStarted = true;
+    };
+
+    window.addEventListener('beforeprint', onBeforePrintOrBlur, { once: true });
+    window.addEventListener('blur', onBeforePrintOrBlur, { once: true });
+
+    try {
+      triggerArticlePrintWithTitle(articleTitle || 'Community_Heritage_Article');
+    } catch {
+      setIsPrintFallbackOpen(true);
+    }
+
+    if (typeof navigator !== 'undefined' && /Android/i.test(navigator.userAgent || '')) {
+      window.setTimeout(() => {
+        window.removeEventListener('beforeprint', onBeforePrintOrBlur);
+        window.removeEventListener('blur', onBeforePrintOrBlur);
+        if (!printDialogStarted) {
+          setIsPrintFallbackOpen(true);
+        }
+      }, 500);
+    } else {
+      window.removeEventListener('beforeprint', onBeforePrintOrBlur);
+      window.removeEventListener('blur', onBeforePrintOrBlur);
+    }
+  };
+
+  const handleCopyHeritageLink = async (itemId: string) => {
+    const canonicalUrl = getCanonicalHeritageUrl(itemId);
+    await copyTextToClipboard(canonicalUrl);
+    showTemporaryShareFeedback('link');
+  };
+
+  const handleCopyHeritageTitleAndLink = async (itemId: string, articleTitle: string) => {
+    const canonicalUrl = getCanonicalHeritageUrl(itemId);
+    const combined = `${articleTitle} — ${canonicalUrl}`;
+    await copyTextToClipboard(combined);
+    showTemporaryShareFeedback('title_link');
+  };
+
+  const handleShareHeritageArticle = async (itemId: string, articleTitle: string, articleSummary: string) => {
+    const canonicalUrl = getCanonicalHeritageUrl(itemId);
+    setIsShareMenuOpen(prev => !prev);
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: articleTitle,
+          text: `${articleTitle} — ${articleSummary}`,
+          url: canonicalUrl
+        });
+      } catch {
+        // User cancelled native share sheet or browser restricted share in iframe
       }
     }
   };
@@ -868,9 +1525,9 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       return {
         id: item.id,
         title: mono ? mono.localizedTitle[language] || mono.localizedTitle.en : item.title,
-        subtitle: `${localizeSynonymGroup(item.designation_group)} • ${item.geographical_association}`,
+        subtitle: `${localizeSynonymGroup(item.designation_group)} • ${localizeHeritagePhrase(translateText(item.geographical_association))}`,
         badge: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification,
-        location: item.geographical_association,
+        location: localizeHeritagePhrase(translateText(item.geographical_association)),
         imageUrl: vis?.imageUrl || synImgMap[item.id] || `${base}barabati_fort_gateway.jpg`,
         imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
         imageLayout: 'banner',
@@ -879,11 +1536,11 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         content: `${item.historical_role[language] || item.historical_role.en}\n\n${synonymSectionLabels.epistemicLabel} ${epistemicText}`,
         metadata: [
           { label: synonymSectionLabels.colCategory, value: localizeSynonymGroup(item.designation_group) },
-          { label: synonymSectionLabels.colGeography, value: item.geographical_association },
+          { label: synonymSectionLabels.colGeography, value: localizeHeritagePhrase(translateText(item.geographical_association)) },
           { label: synonymSectionLabels.colEpistemic, value: synonymSectionLabels.epistemicClasses[item.epistemic_classification] || item.epistemic_classification },
-          { label: step5Ui.synonymModal.linguisticOrigin, value: item.linguistic_origin },
-          { label: step5Ui.synonymModal.primaryRegions, value: item.primary_regions.join(', ') },
-          { label: step5Ui.synonymModal.prominentStates, value: item.prominent_states.join(', ') }
+          { label: step5Ui.synonymModal.linguisticOrigin, value: localizeHeritagePhrase(translateText(item.linguistic_origin)) },
+          { label: step5Ui.synonymModal.primaryRegions, value: localizeHeritageList(item.primary_regions).join(', ') },
+          { label: step5Ui.synonymModal.prominentStates, value: localizeHeritageList(item.prominent_states).join(', ') }
         ],
         sections: [
           ...monographSections,
@@ -896,14 +1553,14 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
           {
             heading: step5Ui.synonymModal.sacredAssociations,
             type: 'list',
-            items: Array.from(new Set(item.sacred_associations))
+            items: Array.from(new Set(item.sacred_associations)).map(sa => localizeHeritagePhrase(translateText(sa)))
           },
           ...(mono && mono.references.length > 0
             ? [
                 {
                   heading: step3Labels.referencesHeading,
                   type: 'list' as const,
-                  items: mono.references.map(r => `${r.citation} [${r.type}]`)
+                  items: mono.references.map(r => `${r.citation} [${localizeHeritagePhrase(r.type)}]`)
                 }
               ]
             : []),
@@ -927,7 +1584,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   })
                 }
               ]
-            : [])
+            : []),
+          ...(() => {
+            const rel70 = getRelated70TermsForHeritageItem(item.id);
+            const rUi = REFERENCE_70_UI_LABELS[language] || REFERENCE_70_UI_LABELS.en;
+            if (rel70.length === 0) return [];
+            return [
+              {
+                heading: `${rUi.sectionTitle} (${rel70.length})`,
+                type: 'tags' as const,
+                items: rel70.map(
+                  r =>
+                    `${r.localizedLabel[language] || r.canonicalTerm} [${
+                      rUi.classifications[r.classification] || r.classification
+                    }] (${r.canonicalTerm})`
+                )
+              }
+            ];
+          })()
         ]
       };
     }
@@ -950,10 +1624,10 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       return {
         id: activeReg.id,
         title: regTitle,
-        subtitle: activeReg.states_and_territories.join(' • '),
+        subtitle: localizeHeritageList(activeReg.states_and_territories).join(' • '),
         badge: step5Ui.geographyTab.spotlightPanelBadge,
         era: step5Ui.geographyTab.migrationEpochs[activeReg.id] || activeReg.migration_epoch_and_corridor,
-        location: activeReg.prominent_cities_districts.join(', '),
+        location: localizeHeritageList(activeReg.prominent_cities_districts).join(', '),
         imageUrl: vis?.imageUrl || regImgMap[activeReg.id] || `${base}odra_kalinga_map.jpg`,
         imageCaption: vis ? (vis.caption[language] || vis.caption.en) : undefined,
         imageLayout: 'banner',
@@ -968,12 +1642,12 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
           {
             heading: step5Ui.geographyTab.landmarkFortsLabel,
             type: 'list',
-            items: Array.from(new Set(activeReg.historical_forts_and_landmarks))
+            items: Array.from(new Set(activeReg.historical_forts_and_landmarks)).map(f => localizeHeritagePhrase(translateText(f)))
           },
           {
             heading: step5Ui.geographyTab.sacredCentersLabel,
             type: 'list',
-            items: Array.from(new Set(activeReg.sacred_centers))
+            items: Array.from(new Set(activeReg.sacred_centers)).map(sc => localizeHeritagePhrase(translateText(sc)))
           },
           ...(relatedIds.length > 0
             ? [
@@ -1087,7 +1761,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 {
                   heading: step3Labels.referencesHeading,
                   type: 'list' as const,
-                  items: mono.references.map(r => `${r.citation} [${r.type}]`)
+                  items: mono.references.map(r => `${r.citation} [${localizeHeritagePhrase(r.type)}]`)
                 }
               ]
             : []),
@@ -1188,7 +1862,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
           { label: synonymSectionLabels.colCategory, value: locGroup },
           { label: synonymSectionLabels.colGeography, value: locGeo },
           { label: synonymSectionLabels.colEpistemic, value: locEpistemic },
-          { label: synonymSectionLabels.statesLabel, value: entry.prominentStates.join(', ') }
+          { label: synonymSectionLabels.statesLabel, value: localizeHeritageList(entry.prominentStates).join(', ') }
         ],
         sections: [
           ...buildVisualDocSection(entry.id),
@@ -1207,7 +1881,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 {
                   heading: step3Labels.referencesHeading,
                   type: 'list' as const,
-                  items: detailed.references.map(r => `${r.citation} [${r.type}]`)
+                  items: detailed.references.map(r => `${r.citation} [${localizeHeritagePhrase(r.type)}]`)
                 }
               ]
             : []),
@@ -1231,7 +1905,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   })
                 }
               ]
-            : [])
+            : []),
+          ...(() => {
+            const rel70 = getRelated70TermsForHeritageItem(entry.id);
+            const rUi = REFERENCE_70_UI_LABELS[language] || REFERENCE_70_UI_LABELS.en;
+            if (rel70.length === 0) return [];
+            return [
+              {
+                heading: `${rUi.sectionTitle} (${rel70.length})`,
+                type: 'tags' as const,
+                items: rel70.map(
+                  r =>
+                    `${r.localizedLabel[language] || r.canonicalTerm} [${
+                      rUi.classifications[r.classification] || r.classification
+                    }] (${r.canonicalTerm})`
+                )
+              }
+            ];
+          })()
         ]
       };
     }
@@ -1304,7 +1995,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 {
                   heading: getHeading('secS'),
                   type: 'list' as const,
-                  items: cat.references.map(r => `${r.citation} [${r.type}]`)
+                  items: cat.references.map(r => `${r.citation} [${localizeHeritagePhrase(r.type)}]`)
                 }
               ]
             : []),
@@ -1328,7 +2019,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   })
                 }
               ]
-            : [])
+            : []),
+          ...(() => {
+            const rel70 = getRelated70TermsForHeritageItem(cat.id);
+            const rUi = REFERENCE_70_UI_LABELS[language] || REFERENCE_70_UI_LABELS.en;
+            if (rel70.length === 0) return [];
+            return [
+              {
+                heading: `${rUi.sectionTitle} (${rel70.length})`,
+                type: 'tags' as const,
+                items: rel70.map(
+                  r =>
+                    `${r.localizedLabel[language] || r.canonicalTerm} [${
+                      rUi.classifications[r.classification] || r.classification
+                    }] (${r.canonicalTerm})`
+                )
+              }
+            ];
+          })()
         ]
       };
     }
@@ -1464,6 +2172,16 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     });
   };
 
+  const matched70SearchEntries = React.useMemo(
+    () => (searchTerm.trim() ? matchReference70Terms(searchTerm) : []),
+    [searchTerm]
+  );
+
+  const matched70HeritageIds = React.useMemo(
+    () => new Set(matched70SearchEntries.flatMap(entry => entry.relatedHeritageIds)),
+    [matched70SearchEntries]
+  );
+
   // Filtered 16-Community Directory Items
   const filteredCommunityDirectory = COMMUNITY_DIRECTORY_ITEMS.filter(item => {
     const term = searchTerm.toLowerCase();
@@ -1473,6 +2191,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
     const matchesSearch =
       !term ||
+      matched70HeritageIds.has(item.id) ||
       item.canonicalName.toLowerCase().includes(term) ||
       locName.includes(term) ||
       locOverview.includes(term) ||
@@ -1494,6 +2213,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     const def = (cat.definitionAndExplanation[language] || cat.definitionAndExplanation.en).toLowerCase();
     const matchesSearch =
       !term ||
+      matched70HeritageIds.has(cat.id) ||
       title.includes(term) ||
       sub.includes(term) ||
       def.includes(term) ||
@@ -1513,6 +2233,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   const filteredSynonyms = COMMUNITY_SYNONYMS.filter(s => {
     const term = searchTerm.toLowerCase();
     const matchesSearch =
+      !term ||
+      matched70HeritageIds.has(s.id) ||
       s.title.toLowerCase().includes(term) ||
       s.geographical_association.toLowerCase().includes(term) ||
       s.designation_group.toLowerCase().includes(term) ||
@@ -1667,6 +2389,2050 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
   const activeReferenceOption =
     referenceTabs.find(tab => tab.id === activeTab) || referenceTabs[0];
+
+  const articleDetailUi = React.useMemo(() => {
+    const dict: Record<
+      LanguageCode,
+      {
+        backButton: string;
+        homeButton: string;
+        printButton: string;
+        shareButton: string;
+        closeButton: string;
+        copyLinkButton: string;
+        copyTitleAndLinkButton: string;
+        whatsappShareButton: string;
+        linkCopiedMessage: string;
+        titleAndLinkCopiedMessage: string;
+        webViewPrintFallbackNotice: string;
+        openInExternalBrowserButton: string;
+        copyPrintUrlButton: string;
+        printHeaderTitle: string;
+        canonicalUrlLabel: string;
+        executiveSummaryHeading: string;
+        completeHistoricalContentHeading: string;
+        subjectAnalysisHeading: string;
+        analysisVerifiedCoreTitle: string;
+        analysisCulturalContextTitle: string;
+        analysisEpistemicScopeTitle: string;
+        chronologicalTimelineHeading: string;
+        chronologicalTimelineSub: string;
+        inscriptionsEvidenceHeading: string;
+        inscriptionsEvidenceSub: string;
+        sourceReferencesHeading: string;
+        sourceReferencesSub: string;
+        relatedContextHeading: string;
+        relatedArticlesHeading: string;
+        relatedArticlesSub: string;
+        readFullArticleBtn: string;
+        relatedKeywordsHeading: string;
+        relatedKeywordsSub: string;
+        hashtagsHeading: string;
+        hashtagsSub: string;
+        previousArticleLabel: string;
+        nextArticleLabel: string;
+        consultPublisherLabel: string;
+        verifiedSourceBadge: string;
+        epigraphicEraBadge: string;
+        historicalPeriodBadge: string;
+        traditionalChronologyBadge: string;
+        actionsMenuLabel: string;
+        civicWaterLegacyHeading: string;
+      }
+    > = {
+      en: {
+        backButton: 'Back',
+        homeButton: 'Home',
+        printButton: 'Print / PDF',
+        shareButton: 'Share',
+        closeButton: '✕ Close',
+        copyLinkButton: 'Copy Direct Link',
+        copyTitleAndLinkButton: 'Copy Title & Link',
+        whatsappShareButton: 'Share on WhatsApp',
+        linkCopiedMessage: 'Direct Article Link Copied!',
+        titleAndLinkCopiedMessage: 'Article Title & Link Copied!',
+        webViewPrintFallbackNotice:
+          'To print or save this historical article as a PDF from the mobile app, open it in your external browser or copy the print link below:',
+        openInExternalBrowserButton: 'Open in External Browser to Print',
+        copyPrintUrlButton: 'Copy Print URL',
+        printHeaderTitle: 'Suryavamsha Odiyaraju Kshatriya — Community Heritage Archival Dossier',
+        canonicalUrlLabel: 'Canonical Archival URL',
+        executiveSummaryHeading: 'Executive Historical Summary & Scope',
+        completeHistoricalContentHeading: 'Complete Historical Account & Archival Text',
+        subjectAnalysisHeading: 'Detailed Subject Analysis & Epistemic Classification',
+        analysisVerifiedCoreTitle: '1. Verified Epigraphic, Archaeological & Gazetteer Core',
+        analysisCulturalContextTitle: '2. Cultural, Linguistic & Occupational Significance',
+        analysisEpistemicScopeTitle: '3. Epistemic Distinction & Non-Conflation Research Note',
+        chronologicalTimelineHeading: 'Chronological Timeline & Historical Milestones',
+        chronologicalTimelineSub:
+          'Key chronological epochs, epigraphic attestations, and historical transitions associated with this heritage dossier.',
+        inscriptionsEvidenceHeading: 'Verified Inscriptions, Monuments & Archaeological Evidence',
+        inscriptionsEvidenceSub:
+          'Documented stone inscriptions, copper-plate charters, hero stones, fortresses, hydraulic works, and sacred monuments.',
+        sourceReferencesHeading: 'Historical Source References & Scholarly Citations',
+        sourceReferencesSub:
+          'Primary epigraphic records, colonial gazetteers, archaeological reports, and scholarly monographs.',
+        relatedContextHeading: 'Related Historical Context & 74-Name Master Reference Mapping',
+        relatedArticlesHeading: 'Related Heritage Articles',
+        relatedArticlesSub: 'Click any related article card below to open its full historical dossier.',
+        readFullArticleBtn: 'Read Full Article',
+        relatedKeywordsHeading: 'Related Keywords & Research Topics',
+        relatedKeywordsSub: 'Select any keyword to search or navigate to connected historical records.',
+        hashtagsHeading: 'Relevant Archival Hashtags',
+        hashtagsSub: 'Indexed topic hashtags for quick cross-referencing.',
+        previousArticleLabel: 'Previous Article in Section',
+        nextArticleLabel: 'Next Article in Section',
+        consultPublisherLabel: 'Discuss with Dr.G Sathyanarayana Raju (+91 9480112897)',
+        verifiedSourceBadge: 'Documented Reference',
+        epigraphicEraBadge: 'Verified Epigraphic / Primary Era',
+        historicalPeriodBadge: 'Documented Historical Period',
+        traditionalChronologyBadge: 'Puranic / Ancestral Tradition',
+        actionsMenuLabel: 'Print / Share',
+        civicWaterLegacyHeading: 'Civil & Water-Engineering Legacy'
+      },
+      hi: {
+        backButton: 'वापस',
+        homeButton: 'मुख्य पृष्ठ',
+        printButton: 'प्रिंट / PDF',
+        shareButton: 'साझा करें',
+        closeButton: '✕ बंद करें',
+        copyLinkButton: 'सीधा लिंक कॉपी करें',
+        copyTitleAndLinkButton: 'शीर्षक व लिंक कॉपी करें',
+        whatsappShareButton: 'WhatsApp पर साझा करें',
+        linkCopiedMessage: 'लेख का लिंक कॉपी हो गया!',
+        titleAndLinkCopiedMessage: 'शीर्षक और लिंक कॉपी हो गया!',
+        webViewPrintFallbackNotice:
+          'मोबाइल ऐप से इस ऐतिहासिक लेख को प्रिंट या PDF के रूप में सहेजने के लिए इसे बाहरी ब्राउज़र में खोलें या नीचे दिया गया लिंक कॉपी करें:',
+        openInExternalBrowserButton: 'प्रिंट करने के लिए बाहरी ब्राउज़र में खोलें',
+        copyPrintUrlButton: 'प्रिंट लिंक कॉपी करें',
+        printHeaderTitle: 'सूर्यवंश ओडियाराजू क्षत्रिय — सामुदायिक विरासत अभिलेख',
+        canonicalUrlLabel: 'अभिलेखीय लिंक',
+        executiveSummaryHeading: 'ऐतिहासिक सारांश एवं विषय-क्षेत्र',
+        completeHistoricalContentHeading: 'संपूर्ण ऐतिहासिक विवरण एवं मूल पाठ',
+        subjectAnalysisHeading: 'विस्तृत विषय विश्लेषण एवं ऐतिहासिक वर्गीकरण',
+        analysisVerifiedCoreTitle: '1. प्रमाणित शिलालेख, पुरातात्विक एवं गजेटियर साक्ष्य',
+        analysisCulturalContextTitle: '2. सांस्कृतिक, भाषाई एवं व्यावसायिक महत्व',
+        analysisEpistemicScopeTitle: '3. ऐतिहासिक प्रामाणिकता एवं गैर-समीकरण टिप्पणी',
+        chronologicalTimelineHeading: 'कालानुक्रमिक समयरेखा एवं प्रमुख ऐतिहासिक पड़ाव',
+        chronologicalTimelineSub: 'इस विषय से संबंधित प्रमुख ऐतिहासिक कालखंड, शिलालेख प्रमाण और क्रमिक विकास।',
+        inscriptionsEvidenceHeading: 'प्रमाणित शिलालेख, स्मारक एवं पुरातात्विक साक्ष्य',
+        inscriptionsEvidenceSub: 'शिलालेख, ताम्रपत्र, वीरगल, दुर्ग, जल-स्थापत्य और पवित्र मंदिर प्रमाण।',
+        sourceReferencesHeading: 'ऐतिहासिक स्रोत संदर्भ एवं प्रामाणिक उद्धरण',
+        sourceReferencesSub: 'प्राथमिक अभिलेखीय स्रोत, गजेटियर, पुरातत्व रिपोर्ट एवं शोध ग्रंथ।',
+        relatedContextHeading: 'संबंधित ऐतिहासिक संदर्भ एवं 74-नाम संदर्भ सूची मानचित्रण',
+        relatedArticlesHeading: 'संबंधित विरासत लेख',
+        relatedArticlesSub: 'पूर्ण ऐतिहासिक विवरण पढ़ने के लिए किसी भी संबंधित लेख कार्ड पर क्लिक करें।',
+        readFullArticleBtn: 'पूरा लेख पढ़ें',
+        relatedKeywordsHeading: 'संबंधित मुख्य शब्द (Keywords)',
+        relatedKeywordsSub: 'संबंधित ऐतिहासिक अभिलेख खोजने के लिए किसी भी शब्द पर क्लिक करें।',
+        hashtagsHeading: 'संबंधित हैशटैग (Hashtags)',
+        hashtagsSub: 'त्वरित संदर्भ के लिए अनुक्रमित विषय हैशटैग।',
+        previousArticleLabel: 'पिछला लेख',
+        nextArticleLabel: 'अगला लेख',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) जी से संपर्क करें (+91 9480112897)',
+        verifiedSourceBadge: 'प्रमाणित संदर्भ',
+        epigraphicEraBadge: 'प्रमाणित अभिलेखीय कालखंड',
+        historicalPeriodBadge: 'दस्तावेजी ऐतिहासिक काल',
+        traditionalChronologyBadge: 'पौराणिक / वंश परंपरा काल',
+        actionsMenuLabel: 'प्रिंट / साझा',
+        civicWaterLegacyHeading: 'नागरिक एवं जल-अभियांत्रिकी विरासत'
+      },
+      te: {
+        backButton: 'వెనుకకు',
+        homeButton: 'హోమ్',
+        printButton: 'ప్రింట్ / PDF',
+        shareButton: 'షేర్',
+        closeButton: '✕ మూసివేయండి',
+        copyLinkButton: 'లింక్ కాపీ చేయండి',
+        copyTitleAndLinkButton: 'శీర్షిక & లింక్ కాపీ',
+        whatsappShareButton: 'WhatsApp లో షేర్ చేయండి',
+        linkCopiedMessage: 'వ్యాస లింక్ కాపీ చేయబడింది!',
+        titleAndLinkCopiedMessage: 'శీర్షిక & లింక్ కాపీ చేయబడింది!',
+        webViewPrintFallbackNotice:
+          'ఈ చారిత్రక వ్యాసాన్ని ప్రింట్ చేయడానికి లేదా PDF గా సేవ్ చేయడానికి బాహ్య బ్రౌజర్‌లో తెరవండి లేదా క్రింది లింక్‌ను కాపీ చేయండి:',
+        openInExternalBrowserButton: 'ప్రింట్ కోసం బాహ్య బ్రౌజర్‌లో తెరవండి',
+        copyPrintUrlButton: 'ప్రింట్ URL కాపీ చేయండి',
+        printHeaderTitle: 'సూర్యవంశ ఒడియరాజు క్షత్రియ — సామాజిక వారసత్వ చారిత్రక పత్రం',
+        canonicalUrlLabel: 'చారిత్రక లింక్',
+        executiveSummaryHeading: 'చారిత్రక సారాంశం & పరిధి',
+        completeHistoricalContentHeading: 'పూర్తి చారిత్రక కథనం & పురాతన పాఠం',
+        subjectAnalysisHeading: 'వివరణాత్మక విషయ విశ్లేಷణ & చారిత్రక వర్గీకరణ',
+        analysisVerifiedCoreTitle: '1. ధృవీకరించబడిన శాసన, పురావస్తు & గెజిటీర్ ఆధారాలు',
+        analysisCulturalContextTitle: '2. సాంస్కృతిక, భాషా & వృత్తిపరమైన ప్రాముఖ్యత',
+        analysisEpistemicScopeTitle: '3. చారిత్రక ప్రామాణికత & పరిశోధనా పరిధి గమనిక',
+        chronologicalTimelineHeading: 'కాలక్రమానుసార కాలరేఖ & చారిత్రక ఘట్టాలు',
+        chronologicalTimelineSub: 'ఈ అంశానికి సంబంధించిన ప్రధాన చారిత్రక యుగాలు, శాసన ఆధారాలు మరియు పరిణామ క్రమం.',
+        inscriptionsEvidenceHeading: 'ధృవీకరించబడిన శాసనాలు, కోటలు & పురావస్తు ఆధారాలు',
+        inscriptionsEvidenceSub: 'శిలాశాసనాలు, తామ్రశాసనాలు, వీరగల్లులు, కోటలు, జలాశయాలు మరియు పవిత్ర దేవాలయాలు.',
+        sourceReferencesHeading: 'చారిత్రక ఆధారాలు & గ్రంథ సూచిక (Citations)',
+        sourceReferencesSub: 'ప్రాథమిక శాసన ఆధారాలు, గెజిటీర్లు, పురావస్తు నివేదికలు మరియు పరిశోధనా గ్రంథాలు.',
+        relatedContextHeading: 'సంబంధిత చారిత్రక సందర్భం & 74-పేర్ల రిఫరెన్స్ మ్యాపింగ్',
+        relatedArticlesHeading: 'సంబంధిత వారసత్వ వ్యాసాలు (Related Articles)',
+        relatedArticlesSub: 'పూర్తి వ్యాసాన్ని చదవడానికి క్రింది సంబంధిత కార్డుపై క్లిక్ చేయండి.',
+        readFullArticleBtn: 'పూర్తి వ్యాసం చదవండి',
+        relatedKeywordsHeading: 'సంబంధిత కీలక పదాలు (Related Keywords)',
+        relatedKeywordsSub: 'సంబంధిత చారిత్రక వివరాలను వెతకడానికి ఏదైనా కీలక పదంపై నొక్కండి.',
+        hashtagsHeading: 'సంబంధిత హ్యాష్‌ట్యాగ్‌లు (Hashtags)',
+        hashtagsSub: 'శీఘ్ర శోధన కోసం చారిత్రక హ్యాష్‌ట్యాగ్‌లు.',
+        previousArticleLabel: 'మునుపటి వ్యాసం',
+        nextArticleLabel: 'తదుపరి వ్యాసం',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (డా. జి. సత్యనారాయణ రాజు) గారితో చర్చించండి (+91 9480112897)',
+        verifiedSourceBadge: 'ధృవీకరించబడిన ఆధారం',
+        epigraphicEraBadge: 'శాసన / ప్రాథమిక ఆధార యుగం',
+        historicalPeriodBadge: 'చారిత్రక కాలం',
+        traditionalChronologyBadge: 'పురాణ / వంశావళి సంప్రదాయం',
+        actionsMenuLabel: 'ప్రింట్ / షేర్',
+        civicWaterLegacyHeading: 'పౌర & జల-ఇంజనీరింగ్ వారసత్వం'
+      },
+      kn: {
+        backButton: 'ಹಿಂದೆ',
+        homeButton: 'ಮುಖಪುಟ',
+        printButton: 'ಮುದ್ರಿಸಿ / PDF',
+        shareButton: 'ಹಂಚಿಕೊಳ್ಳಿ',
+        closeButton: '✕ ಮುಚ್ಚಿ',
+        copyLinkButton: 'ನೇರ ಲಿಂಕ್ ನಕಲಿಸಿ',
+        copyTitleAndLinkButton: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಿ',
+        whatsappShareButton: 'WhatsApp ನಲ್ಲಿ ಹಂಚಿಕೊಳ್ಳಿ',
+        linkCopiedMessage: 'ಲೇಖನದ ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
+        titleAndLinkCopiedMessage: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
+        webViewPrintFallbackNotice:
+          'ಮೊಬೈಲ್ ಅಪ್ಲಿಕೇಶನ್‌ನಿಂದ ಈ ಐತಿಹಾಸಿಕ ಲೇಖನವನ್ನು ಮುದ್ರಿಸಲು ಅಥವಾ PDF ಆಗಿ ಉಳಿಸಲು ಬಾಹ್ಯ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ:',
+        openInExternalBrowserButton: 'ಮುದ್ರಿಸಲು ಬಾಹ್ಯ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ',
+        copyPrintUrlButton: 'ಪ್ರಿಂಟ್ ಲಿಂಕ್ ನಕಲಿಸಿ',
+        printHeaderTitle: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ — ಸಮುದಾಯ ಪರಂಪರೆಯ ಐತಿಹಾಸಿಕ ದಾಖಲೆ',
+        canonicalUrlLabel: 'ಐತಿಹಾಸಿಕ ಲಿಂಕ್',
+        executiveSummaryHeading: 'ಐತಿಹಾಸಿಕ ಸಾರಾಂಶ ಮತ್ತು ವ್ಯಾಪ್ತಿ',
+        completeHistoricalContentHeading: 'ಸಂಪೂರ್ಣ ಐತಿಹಾಸಿಕ ವಿವರಣೆ ಮತ್ತು ಮೂಲ ಪಠ್ಯ',
+        subjectAnalysisHeading: 'ವಿವರವಾದ ವಿಷಯ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಐತಿಹಾಸಿಕ ವರ್ಗೀಕರಣ',
+        analysisVerifiedCoreTitle: '1. ದೃಢೀಕೃತ ಶಾಸನ, ಪುರಾತತ್ವ ಮತ್ತು ಗೆಜೆಟಿಯರ್ ಆಧಾರಗಳು',
+        analysisCulturalContextTitle: '2. ಸಾಂಸ್ಕೃತಿಕ, ಭಾಷಿಕ ಮತ್ತು ವೃತ್ತಿಪರ ಮಹತ್ವ',
+        analysisEpistemicScopeTitle: '3. ಐತಿಹಾಸಿಕ ನಿಖರತೆ ಮತ್ತು ಸಂಶೋಧನಾ ವ್ಯಾಪ್ತಿ ಸೂಚನೆ',
+        chronologicalTimelineHeading: 'ಕಾಲಾನುಕ್ರಮಣಿಕೆ ಮತ್ತು ಪ್ರಮುಖ ಐತಿಹಾಸಿಕ ಘಟ್ಟಗಳು',
+        chronologicalTimelineSub: 'ಈ ವಿಷಯಕ್ಕೆ ಸಂಬಂಧಿಸಿದ ಪ್ರಮುಖ ಐತಿಹಾಸಿಕ ಕಾಲಘಟ್ಟಗಳು ಮತ್ತು ಶಾಸನ ದಾಖಲೆಗಳು.',
+        inscriptionsEvidenceHeading: 'ದೃಢೀಕೃತ ಶಾಸನಗಳು, ಸ್ಮಾರಕಗಳು ಮತ್ತು ಪುರಾತತ್ವ ಸಾಕ್ಷ್ಯಗಳು',
+        inscriptionsEvidenceSub: 'ಶಿಲಾಶಾಸನಗಳು, ತಾಮ್ರಪಟಗಳು, ವೀರಗಲ್ಲುಗಳು, ಕೋಟೆಗಳು, ಜಲಾಶಯಗಳು ಮತ್ತು ದೇವಾಲಯಗಳು.',
+        sourceReferencesHeading: 'ಐತಿಹಾಸಿಕ ಆಕರಗಳು ಮತ್ತು ಉಲ್ಲೇಖಗಳು (Citations)',
+        sourceReferencesSub: 'ಪ್ರಾಥಮಿಕ ಶಾಸನ ದಾಖಲೆಗಳು, ಗೆಜೆಟಿಯರ್‌ಗಳು ಮತ್ತು ಸಂಶೋಧನಾ ಗ್ರಂಥಗಳು.',
+        relatedContextHeading: 'ಸಂಬಂಧಿತ ಐತಿಹಾಸಿಕ ಹಿನ್ನೆಲೆ ಮತ್ತು 74-ಹೆಸರುಗಳ ಉಲ್ಲೇಖ ಪಟ್ಟಿ',
+        relatedArticlesHeading: 'ಸಂಬಂಧಿತ ಪರಂಪರೆಯ ಲೇಖನಗಳು',
+        relatedArticlesSub: 'ಸಂಪೂರ್ಣ ಲೇಖನವನ್ನು ಓದಲು ಕೆಳಗಿನ ಯಾವುದೇ ಕಾರ್ಡ್ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ.',
+        readFullArticleBtn: 'ಪೂರ್ಣ ಲೇಖನ ಓದಿ',
+        relatedKeywordsHeading: 'ಸಂಬಂಧಿತ ಮುಖ್ಯ ಪದಗಳು (Keywords)',
+        relatedKeywordsSub: 'ಸಂಬಂಧಿತ ದಾಖಲೆಗಳನ್ನು ಹುಡುಕಲು ಯಾವುದೇ ಮುಖ್ಯ ಪದವನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
+        hashtagsHeading: 'ಸಂಬಂಧಿತ ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು (Hashtags)',
+        hashtagsSub: 'ತ್ವರಿತ ಉಲ್ಲೇಖಕ್ಕಾಗಿ ವಿಷಯ ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು.',
+        previousArticleLabel: 'ಹಿಂದಿನ ಲೇಖನ',
+        nextArticleLabel: 'ಮುಂದಿನ ಲೇಖನ',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು) ಅವರೊಂದಿಗೆ ಚರ್ಚಿಸಿ (+91 9480112897)',
+        verifiedSourceBadge: 'ದೃಢೀಕೃತ ಆಕರ',
+        epigraphicEraBadge: 'ದೃಢೀಕೃತ ಶಾಸನ ಕಾಲಘಟ್ಟ',
+        historicalPeriodBadge: 'ಐತಿಹಾಸಿಕ ಕಾಲಘಟ್ಟ',
+        traditionalChronologyBadge: 'ಪುರಾಣ / ವಂಶಾವಳಿ ಪರಂಪರೆ',
+        actionsMenuLabel: 'ಮುದ್ರಿಸಿ / ಹಂಚಿಕೊಳ್ಳಿ',
+        civicWaterLegacyHeading: 'ನಾಗರಿಕ ಮತ್ತು ಜಲ-ಇಂಜಿನಿಯರಿಂಗ್ ಪರಂಪರೆ'
+      },
+      ta: {
+        backButton: 'பின்செல்',
+        homeButton: 'முகப்பு',
+        printButton: 'அச்சிடு / PDF',
+        shareButton: 'பகிர்',
+        closeButton: '✕ மூடுக',
+        copyLinkButton: 'இணைப்பை நகலெடு',
+        copyTitleAndLinkButton: 'தலைப்பு & இணைப்பு நகலெடு',
+        whatsappShareButton: 'WhatsApp இல் பகிர்',
+        linkCopiedMessage: 'கட்டுரை இணைப்பு நகலெடுக்கப்பட்டது!',
+        titleAndLinkCopiedMessage: 'தலைப்பு மற்றும் இணைப்பு நகலெடுக்கப்பட்டது!',
+        webViewPrintFallbackNotice:
+          'இந்த வரலாற்றுக் கட்டுரையை அச்சிட அல்லது PDF ஆகச் சேமிக்க வெளிப்புற உலாவியில் திறக்கவும்:',
+        openInExternalBrowserButton: 'அச்சிட வெளிப்புற உலாவியில் திறக்கவும்',
+        copyPrintUrlButton: 'அச்சு இணைப்பை நகலெடு',
+        printHeaderTitle: 'சூரியவம்ச ஒடியராஜு க்ஷத்ரிய — சமூக பாரம்பரிய வரலாற்று ஆவணம்',
+        canonicalUrlLabel: 'ஆவண இணைப்பு',
+        executiveSummaryHeading: 'வரலாற்றுச் சுருக்கம் மற்றும் நோக்கம்',
+        completeHistoricalContentHeading: 'முழுமையான வரலாற்று விவரம் மற்றும் ஆவண உரை',
+        subjectAnalysisHeading: 'விரிவான பொருள் பகுப்பாய்வு மற்றும் வரலாற்று வகைப்பாடு',
+        analysisVerifiedCoreTitle: '1. கல்வெட்டு, தொல்லியல் மற்றும் அரசிதழ் சான்றுகள்',
+        analysisCulturalContextTitle: '2. பண்பாட்டு, மொழி மற்றும் தொழில்முறை முக்கியத்துவம்',
+        analysisEpistemicScopeTitle: '3. வரலாற்றுத் துல்லியம் மற்றும் ஆய்வுக் குறிப்பு',
+        chronologicalTimelineHeading: 'காலவரிசை மற்றும் முக்கிய வரலாற்று நிகழ்வுகள்',
+        chronologicalTimelineSub: 'இத்தலைப்புடன் தொடர்புடைய முக்கிய வரலாற்றுக் காலங்கள் மற்றும் கல்வெட்டுச் சான்றுகள்.',
+        inscriptionsEvidenceHeading: 'சரிபார்க்கப்பட்ட கல்வெட்டுகள் மற்றும் தொல்லியல் சான்றுகள்',
+        inscriptionsEvidenceSub: 'கல்வெட்டுகள், செப்பேடுகள், நடுகற்கள், கோட்டைகள், நீர்நிலைகள் மற்றும் திருக்கோயில்கள்.',
+        sourceReferencesHeading: 'வரலாற்று ஆதாரங்கள் மற்றும் மேற்கோள்கள் (Citations)',
+        sourceReferencesSub: 'முதன்மைக் கல்வெட்டுப் பதிவுகள், அரசிதழ்கள் மற்றும் ஆய்வு நூல்கள்.',
+        relatedContextHeading: 'தொடர்புடைய வரலாற்றுச் சூழல் & 74-பெயர்கள் குறிப்புப் பட்டியல்',
+        relatedArticlesHeading: 'தொடர்புடைய பாரம்பரியக் கட்டுரைகள்',
+        relatedArticlesSub: 'முழுக் கட்டுரையையும் படிக்க கீழே உள்ள எந்தவொரு அட்டையையும் சொடுக்கவும்.',
+        readFullArticleBtn: 'முழுக் கட்டுரையைப் படிக்க',
+        relatedKeywordsHeading: 'தொடர்புடைய முக்கியச் சொற்கள் (Keywords)',
+        relatedKeywordsSub: 'தொடர்புடைய வரலாற்றுப் பதிவுகளைத் தேட எந்தவொரு சொல்லையும் தேர்ந்தெடுக்கவும்.',
+        hashtagsHeading: 'தொடர்புடைய ஹேஷ்டேக்குகள் (Hashtags)',
+        hashtagsSub: 'விரைவான தேடலுக்கான தலைப்பு ஹேஷ்டேக்குகள்.',
+        previousArticleLabel: 'முந்தைய கட்டுரை',
+        nextArticleLabel: 'அடுத்த கட்டுரை',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு) அவர்களுடன் உரையாட (+91 9480112897)',
+        verifiedSourceBadge: 'சரிபார்க்கப்பட்ட ஆதாரம்',
+        epigraphicEraBadge: 'கல்வெட்டு / முதன்மை ஆதார காலம்',
+        historicalPeriodBadge: 'ஆவணப்படுத்தப்பட்ட வரலாற்றுக் காலம்',
+        traditionalChronologyBadge: 'புராண / வம்சாவளி மரபு',
+        actionsMenuLabel: 'அச்சிடு / பகிர்',
+        civicWaterLegacyHeading: 'குடிமை மற்றும் நீர்-பொறியியல் மரபு'
+      },
+      mr: {
+        backButton: 'मागे',
+        homeButton: 'मुख्यपृष्ठ',
+        printButton: 'प्रिंट / PDF',
+        shareButton: 'शेअर',
+        closeButton: '✕ बंद करा',
+        copyLinkButton: 'थेट लिंक कॉपी करा',
+        copyTitleAndLinkButton: 'शीर्षक आणि लिंक कॉपी करा',
+        whatsappShareButton: 'WhatsApp वर शेअर करा',
+        linkCopiedMessage: 'लेखाची लिंक कॉपी झाली!',
+        titleAndLinkCopiedMessage: 'शीर्षक आणि लिंक कॉपी झाले!',
+        webViewPrintFallbackNotice:
+          'मोबाईल अ‍ॅपमधून हा ऐतिहासिक लेख प्रिंट करण्यासाठी किंवा PDF म्हणून सेव्ह करण्यासाठी बाह्य ब्राउझरमध्ये उघडा:',
+        openInExternalBrowserButton: 'प्रिंटसाठी बाह्य ब्राउझरमध्ये उघडा',
+        copyPrintUrlButton: 'प्रिंट लिंक कॉपी करा',
+        printHeaderTitle: 'सूर्यवंश ओडियाराजू क्षत्रिय — सामाजिक वारसा ऐतिहासिक दस्तऐवज',
+        canonicalUrlLabel: 'अभिलेख लिंक',
+        executiveSummaryHeading: 'ऐतिहासिक सारांश आणि व्याप्ती',
+        completeHistoricalContentHeading: 'संपूर्ण ऐतिहासिक वृत्तांत आणि मूळ मजकूर',
+        subjectAnalysisHeading: 'सविस्तर विषय विश्लेषण आणि ऐतिहासिक वर्गीकरण',
+        analysisVerifiedCoreTitle: '1. प्रमाणित शिलालेख, पुरातत्त्वीय आणि गॅझेटिअर पुरावे',
+        analysisCulturalContextTitle: '2. सांस्कृतिक, भाषिक आणि व्यावसायिक महत्त्व',
+        analysisEpistemicScopeTitle: '3. ऐतिहासिक अचूकता आणि संशोधन व्याप्ती टीप',
+        chronologicalTimelineHeading: 'कालानुक्रमिक कालरेषा आणि ऐतिहासिक टप्पे',
+        chronologicalTimelineSub: 'या विषयाशी संबंधित प्रमुख ऐतिहासिक कालखंड, शिलालेख संदर्भ आणि स्थित्यंतरे.',
+        inscriptionsEvidenceHeading: 'प्रमाणित शिलालेख, स्मारके आणि पुरातत्त्वीय पुरावे',
+        inscriptionsEvidenceSub: 'शिलालेख, ताम्रपट, वीरगळ, किल्ले, जल-स्थापत्य आणि पवित्र मंदिरे.',
+        sourceReferencesHeading: 'ऐतिहासिक स्रोत संदर्भ आणि उद्धरणे (Citations)',
+        sourceReferencesSub: 'प्राथमिक शिलालेख नोंदी, गॅझेटिअर्स आणि संशोधन ग्रंथ.',
+        relatedContextHeading: 'संबंधित ऐतिहासिक संदर्भ आणि 74-नावे संदर्भ सूची',
+        relatedArticlesHeading: 'संबंधित वारसा लेख (Related Articles)',
+        relatedArticlesSub: 'संपूर्ण लेख वाचण्यासाठी खालील कोणत्याही संबंधित कार्डवर क्लिक करा.',
+        readFullArticleBtn: 'संपूर्ण लेख वाचा',
+        relatedKeywordsHeading: 'संबंधित मुख्य शब्द (Keywords)',
+        relatedKeywordsSub: 'संबंधित ऐतिहासिक नोंदी शोधण्यासाठी कोणत्याही शब्दावर क्लिक करा.',
+        hashtagsHeading: 'संबंधित हॅशटॅग (Hashtags)',
+        hashtagsSub: 'जलद संदर्भासाठी विषय हॅशटॅग.',
+        previousArticleLabel: 'मागील लेख',
+        nextArticleLabel: 'पुढील लेख',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) यांच्याशी संपर्क साधा (+91 9480112897)',
+        verifiedSourceBadge: 'प्रमाणित संदर्भ',
+        epigraphicEraBadge: 'प्रमाणित शिलालेख कालखंड',
+        historicalPeriodBadge: 'दस्तऐवजी ऐतिहासिक कालखंड',
+        traditionalChronologyBadge: 'पौराणिक / वंशावळ परंपरा',
+        actionsMenuLabel: 'प्रिंट / शेअर',
+        civicWaterLegacyHeading: 'नागरी व जल-अभियांत्रिकी वारसा'
+      },
+      or: {
+        backButton: 'ପଛକୁ',
+        homeButton: 'ମୁଖ୍ୟ ପୃଷ୍ଠା',
+        printButton: 'ପ୍ରିଣ୍ଟ / PDF',
+        shareButton: 'ସେୟାର',
+        closeButton: '✕ ବନ୍ଦ କରନ୍ତୁ',
+        copyLinkButton: 'ସିଧା ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+        copyTitleAndLinkButton: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+        whatsappShareButton: 'WhatsApp ରେ ସେୟାର କରନ୍ତୁ',
+        linkCopiedMessage: 'ଲେଖାର ଲିଙ୍କ୍ କପି ହୋଇଛି!',
+        titleAndLinkCopiedMessage: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି ହୋଇଛି!',
+        webViewPrintFallbackNotice:
+          'ମୋବାଇଲ୍ ଆପ୍ ରୁ ଏହି ଐତିହାସିକ ଲେଖାକୁ ପ୍ରିଣ୍ଟ ବା PDF ଭାବେ ସେଭ୍ କରିବା ପାଇଁ ବାହ୍ୟ ବ୍ରାଉଜରରେ ଖୋଲନ୍ତୁ:',
+        openInExternalBrowserButton: 'ପ୍ରିଣ୍ଟ ପାଇଁ ବାହ୍ୟ ବ୍ରାଉଜରରେ ଖୋଲନ୍ତୁ',
+        copyPrintUrlButton: 'ପ୍ରିଣ୍ଟ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+        printHeaderTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ — ସାମୁଦାୟିକ ଐତିହ୍ୟ ଦଲିଲ',
+        canonicalUrlLabel: 'ଅଭିଲେଖ ଲିଙ୍କ୍',
+        executiveSummaryHeading: 'ଐତିହାସିକ ସାରାଂଶ ଓ ପରିସର',
+        completeHistoricalContentHeading: 'ସମ୍ପୂର୍ଣ୍ଣ ଐତିହାସିକ ବିବରଣୀ ଓ ମୂଳ ପାଠ',
+        subjectAnalysisHeading: 'ବିସ୍ତୃତ ବିଷୟ ବିଶ୍ଳେଷଣ ଓ ଐତିହାସିକ ବର୍ଗୀକରଣ',
+        analysisVerifiedCoreTitle: '1. ପ୍ରମାଣିତ ଶିଳାଲେଖ, ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଓ ଗେଜେଟିୟର ପ୍ରମାଣ',
+        analysisCulturalContextTitle: '2. ସାଂସ୍କୃତିକ, ଭାଷାଗତ ଓ ବୃତ୍ତିଗତ ମହତ୍ତ୍ୱ',
+        analysisEpistemicScopeTitle: '3. ଐତିହାସିକ ସତ୍ୟତା ଓ ଗବେଷଣା ପରିସର ଟିପ୍ପଣୀ',
+        chronologicalTimelineHeading: 'କାଳାନୁକ୍ରମିକ ସମୟରେଖା ଓ ଐତିହାସିକ ପର୍ଯ୍ୟାୟ',
+        chronologicalTimelineSub: 'ଏହି ବିଷୟ ସହିତ ଜଡ଼ିତ ପ୍ରମୁଖ ଐତିହାସିକ କାଳଖଣ୍ଡ ଓ ଶିଳାଲେଖ ପ୍ରମାଣ।',
+        inscriptionsEvidenceHeading: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ, ଦୁର୍ଗ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ପ୍ରମାଣ',
+        inscriptionsEvidenceSub: 'ଶିଳାଲେଖ, ତାମ୍ରପଟ୍ଟା, ବୀରସ୍ତମ୍ଭ, ଦୁର୍ଗ, ଜଳାଶୟ ଓ ପବିତ୍ର ମନ୍ଦିର।',
+        sourceReferencesHeading: 'ଐତିହାସିକ ଉତ୍ସ ଓ ଗ୍ରନ୍ଥ ସନ୍ଦର୍ଭ (Citations)',
+        sourceReferencesSub: 'ପ୍ରାଥମିକ ଶିଳାଲେଖ ତଥ୍ୟ, ଗେଜେଟିୟର ଓ ଗବେଷଣା ଗ୍ରନ୍ଥ।',
+        relatedContextHeading: 'ସମ୍ପୃକ୍ତ ଐତିହାସିକ ପ୍ରସଙ୍ଗ ଓ 74-ନାମ ସନ୍ଦର୍ଭ ତାଲିକା',
+        relatedArticlesHeading: 'ସମ୍ପୃକ୍ତ ଐତିହ୍ୟ ଲେଖା (Related Articles)',
+        relatedArticlesSub: 'ସମ୍ପୂର୍ଣ୍ଣ ଲେଖା ପଢ଼ିବା ପାଇଁ ତଳେ ଥିବା ଯେକୌଣସି କାର୍ଡ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ।',
+        readFullArticleBtn: 'ସମ୍ପୂର୍ଣ୍ଣ ଲେଖା ପଢ଼ନ୍ତୁ',
+        relatedKeywordsHeading: 'ସମ୍ପୃକ୍ତ ମୁଖ୍ୟ ଶବ୍ଦ (Keywords)',
+        relatedKeywordsSub: 'ସମ୍ପୃକ୍ତ ଐତିହାସିକ ତଥ୍ୟ ଖୋଜିବା ପାଇଁ ଯେକୌଣସି ଶବ୍ଦ ବାଛନ୍ତୁ।',
+        hashtagsHeading: 'ସମ୍ପୃକ୍ତ ହ୍ୟାଶଟ୍ୟାଗ୍ (Hashtags)',
+        hashtagsSub: 'ଦ୍ରୁତ ସନ୍ଧାନ ପାଇଁ ବିଷୟ ହ୍ୟାଶଟ୍ୟାଗ୍।',
+        previousArticleLabel: 'ପୂର୍ବବର୍ତ୍ତୀ ଲେଖା',
+        nextArticleLabel: 'ପରବର୍ତ୍ତୀ ଲେଖା',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (ଡ. ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)ଙ୍କ ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
+        verifiedSourceBadge: 'ପ୍ରମାଣିତ ସନ୍ଦର୍ଭ',
+        epigraphicEraBadge: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ କାଳଖଣ୍ଡ',
+        historicalPeriodBadge: 'ଐତିହାସିକ କାଳଖଣ୍ଡ',
+        traditionalChronologyBadge: 'ପୌରାଣିକ / ବଂଶ ପରମ୍ପରା',
+        actionsMenuLabel: 'ପ୍ରିଣ୍ଟ / ସେୟାର',
+        civicWaterLegacyHeading: 'ନାଗରିକ ଓ ଜଳ-ଯାନ୍ତ୍ରିକ ଐତିହ୍ୟ'
+      },
+      bn: {
+        backButton: 'পিছনে',
+        homeButton: 'হোম',
+        printButton: 'প্রিন্ট / PDF',
+        shareButton: 'শেয়ার',
+        closeButton: '✕ বন্ধ করুন',
+        copyLinkButton: 'সরাসরি লিঙ্ক কপি করুন',
+        copyTitleAndLinkButton: 'শিরোনাম ও লিঙ্ক কপি করুন',
+        whatsappShareButton: 'WhatsApp-এ শেয়ার করুন',
+        linkCopiedMessage: 'নিবন্ধের লিঙ্ক কপি হয়েছে!',
+        titleAndLinkCopiedMessage: 'শিরোনাম ও লিঙ্ক কপি হয়েছে!',
+        webViewPrintFallbackNotice:
+          'মোবাইল অ্যাপ থেকে এই ঐতিহাসিক নিবন্ধটি প্রিন্ট বা PDF হিসেবে সংরক্ষণ করতে বাহ্যিক ব্রাউজারে খুলুন:',
+        openInExternalBrowserButton: 'প্রিন্ট করতে বাহ্যিক ব্রাউজারে খুলুন',
+        copyPrintUrlButton: 'প্রিন্ট লিঙ্ক কপি করুন',
+        printHeaderTitle: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় — সম্প্রদায় ঐতিহ্য আর্কাইভ দলিল',
+        canonicalUrlLabel: 'আর্কাইভ লিঙ্ক',
+        executiveSummaryHeading: 'ঐতিহাসিক সারাংশ ও পরিধি',
+        completeHistoricalContentHeading: 'সম্পূর্ণ ঐতিহাসিক বিবরণ ও মূল পাঠ',
+        subjectAnalysisHeading: 'বিস্তারিত বিষয় বিশ্লেষণ ও ঐতিহাসিক শ্রেণীবিন্যাস',
+        analysisVerifiedCoreTitle: '১. প্রত্যয়িত শিলালিপি, প্রত্নতাত্ত্বিক ও গেজেটিয়ার প্রমাণ',
+        analysisCulturalContextTitle: '২. সাংস্কৃতিক, ভাষাগত ও পেশাগত গুরুত্ব',
+        analysisEpistemicScopeTitle: '৩. ঐতিহাসিক প্রামাণ্যতা ও গবেষণা পরিধি নোট',
+        chronologicalTimelineHeading: 'কালানুক্রমিক সময়রেখা ও ঐতিহাসিক মাইলফলক',
+        chronologicalTimelineSub: 'এই বিষয়ের সাথে যুক্ত প্রধান ঐতিহাসিক কালখণ্ড ও শিলালিপি প্রমাণ।',
+        inscriptionsEvidenceHeading: 'প্রত্যয়িত শিলালিপি, দুর্গ ও প্রত্নতাত্ত্বিক প্রমাণ',
+        inscriptionsEvidenceSub: 'শিলালিপি, তাম্রশাসন, বীরস্তম্ভ, দুর্গ, জলাশয় ও পবিত্র মন্দির।',
+        sourceReferencesHeading: 'ঐতিহাসিক তথ্যসূত্র ও উদ্ধৃতি (Citations)',
+        sourceReferencesSub: 'প্রাথমিক শিলালিপি নথি, গেজেটিয়ার ও গবেষণা গ্রন্থ।',
+        relatedContextHeading: 'সংশ্লিষ্ট ঐতিহাসিক প্রেক্ষাপট ও ৭৪-নাম রেফারেন্স তালিকা',
+        relatedArticlesHeading: 'সংশ্লিষ্ট ঐতিহ্য নিবন্ধ (Related Articles)',
+        relatedArticlesSub: 'সম্পূর্ণ নিবন্ধটি পড়তে নিচের যেকোনো সম্পর্কিত কার্ডে ক্লিক করুন।',
+        readFullArticleBtn: 'সম্পূর্ণ নিবন্ধ পড়ুন',
+        relatedKeywordsHeading: 'সংশ্লিষ্ট মূল শব্দ (Keywords)',
+        relatedKeywordsSub: 'সম্পর্কিত ঐতিহাসিক নথি খুঁজতে যেকোনো শব্দে ক্লিক করুন।',
+        hashtagsHeading: 'সংশ্লিষ্ট হ্যাশট্যাগ (Hashtags)',
+        hashtagsSub: 'দ্রুত অনুসন্ধানের জন্য বিষয়ভিত্তিক হ্যাশট্যাগ।',
+        previousArticleLabel: 'পূর্ববর্তী নিবন্ধ',
+        nextArticleLabel: 'পরবর্তী নিবন্ধ',
+        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (ড. জি. সত্যনারায়ণ রাজু)-এর সাথে আলোচনা করুন (+91 9480112897)',
+        verifiedSourceBadge: 'প্রত্যয়িত তথ্যসূত্র',
+        epigraphicEraBadge: 'প্রত্যয়িত শিলালিপি কালখণ্ড',
+        historicalPeriodBadge: 'ঐতিহাসিক সময়কাল',
+        traditionalChronologyBadge: 'পৌরাণিক / বংশ পরম্পরা',
+        actionsMenuLabel: 'প্রিন্ট / শেয়ার',
+        civicWaterLegacyHeading: 'নাগরিক ও জল-প্রকৌশল ঐতিহ্য'
+      }
+    };
+    return dict[language] || dict.en;
+  }, [language]);
+
+  // Unified Full Article Detail Dossier Builder (covers all 6 collections: community_dir, synonym, profession_cat, figure, region, monograph)
+  const fullArticleData = React.useMemo(() => {
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const toHashtagToken = (raw: string): string => {
+      const withoutParens = raw.replace(/\([^)]*\)/g, ' ').trim();
+      const cleaned = withoutParens
+        .split(/[\s,./·—–-]+/)
+        .map(part => part.replace(/[^\p{L}\p{N}\p{M}]/gu, ''))
+        .filter(Boolean)
+        .slice(0, 4)
+        .join('');
+      return cleaned ? `#${cleaned}` : '';
+    };
+
+    // Case A: Historical Figure selected
+    if (selectedFigure) {
+      const fig = selectedFigure;
+      const figTitle = fig.localized_name[language] || fig.canonical_name;
+      const figSubtitle = fig.titles[language] || fig.titles.en;
+      const figSummary = fig.summary[language] || fig.summary.en;
+      const figNarrative = fig.detailed_narrative[language] || fig.detailed_narrative.en;
+      const figCivic = fig.engineering_and_civic_legacy[language] || fig.engineering_and_civic_legacy.en;
+      const figDynasty = localizeHeritagePhrase(translateText(fig.dynasty_lineage));
+      const figReignDates = localizeHeritagePhrase(translateText(fig.reign_or_dates));
+      const figPlaces = fig.associated_places.map(p => localizeHeritagePhrase(translateText(p)));
+      const epigraphicBadge =
+        step5Ui.figuresTab.epigraphicStatus[fig.epigraphic_status] || fig.epigraphic_status;
+      const isEpigraphic =
+        fig.epigraphic_status.toLowerCase().includes('epigraphic') ||
+        fig.epigraphic_status.toLowerCase().includes('inscript');
+
+      const figIdx = HISTORICAL_FIGURES.findIndex(f => f.id === fig.id);
+      const prevFig = figIdx > 0 ? HISTORICAL_FIGURES[figIdx - 1] : null;
+      const nextFig = figIdx >= 0 && figIdx < HISTORICAL_FIGURES.length - 1 ? HISTORICAL_FIGURES[figIdx + 1] : null;
+
+      const candidateRelIds: string[] = [
+        ...HISTORICAL_FIGURES.filter(f => f.id !== fig.id).slice(0, 3).map(f => f.id),
+        'syn_suryavamshi',
+        'comm_dir_03_odra_kshatriya',
+        'prof_cat_8_royal_dynasties'
+      ];
+      const relatedCards = Array.from(new Set(candidateRelIds))
+        .map(id => resolveRelatedCardPreview(id))
+        .filter((v): v is NonNullable<typeof v> => Boolean(v))
+        .slice(0, 6);
+
+      const keywords = Array.from(
+        new Set([
+          figTitle,
+          fig.canonical_name,
+          ...fig.alternate_names,
+          figDynasty,
+          ...figPlaces
+        ])
+      ).slice(0, 12);
+
+      const hashtags = Array.from(
+        new Set(keywords.map(k => toHashtagToken(translateKeyword(k))).filter(tkn => tkn.length >= 3))
+      ).slice(0, 10);
+
+      return {
+        id: fig.id,
+        collectionType: 'figure' as const,
+        title: figTitle,
+        subtitle: figSubtitle,
+        badge: epigraphicBadge,
+        epistemicBadge: epigraphicBadge,
+        isEpigraphic,
+        eraOrPeriod: figReignDates,
+        location: figPlaces.join(', '),
+        imageUrl: fig.image_url || fallbackArchiveImg,
+        imageCaption: `${figTitle} — ${figSubtitle} (${figReignDates})`,
+        visualClassLabel: epigraphicBadge,
+        companionMap: undefined as
+          | { url: string; title: string; caption: string; disclaimer: string }
+          | undefined,
+        nativeScripts: fig.alternate_names,
+        metadata: [
+          { label: step5Ui.figuresTab.modalDynasty, value: figDynasty },
+          { label: '⏳', value: figReignDates },
+          { label: step5Ui.figuresTab.modalSacredGeo, value: figPlaces.join(', ') },
+          { label: synonymSectionLabels.colEpistemic, value: epigraphicBadge }
+        ],
+        summaryLabel: articleDetailUi.executiveSummaryHeading,
+        summary: figSummary,
+        content: `${figNarrative}\n\n■ ${articleDetailUi.civicWaterLegacyHeading}:\n${figCivic}`,
+        sections: [] as NonNullable<ContentDetailItem['sections']>,
+        subjectAnalysis: {
+          verifiedCore: `${epigraphicBadge} — ${figDynasty} (${figReignDates}). ${figSummary}`,
+          culturalContext: figCivic,
+          epistemicScope: synonymSectionLabels.accuracyBody
+        },
+        timelineEvents: [
+          {
+            period: figReignDates,
+            certainty: isEpigraphic ? articleDetailUi.epigraphicEraBadge : articleDetailUi.traditionalChronologyBadge,
+            isVerified: isEpigraphic,
+            title: `${figTitle} (${figDynasty})`,
+            description: figSummary
+          },
+          {
+            period: figPlaces.slice(0, 2).join(' • '),
+            certainty: articleDetailUi.historicalPeriodBadge,
+            isVerified: true,
+            title: articleDetailUi.civicWaterLegacyHeading,
+            description: figCivic
+          }
+        ],
+        inscriptionsAndArchaeology: [
+          ...fig.canonical_sources.map(src => ({
+            title: localizeHeritagePhrase(translateText(src)),
+            badge: epigraphicBadge,
+            details: `${figTitle} — ${figPlaces.join(', ')}`
+          }))
+        ],
+        references: fig.canonical_sources.map(src => ({
+          citation: localizeHeritagePhrase(translateText(src)),
+          type: epigraphicBadge
+        })),
+        related70Entries: getRelated70TermsForHeritageItem(fig.id),
+        relatedCards,
+        keywords,
+        hashtags,
+        prevItem: prevFig
+          ? {
+              id: prevFig.id,
+              title: prevFig.localized_name[language] || prevFig.canonical_name,
+              onClick: () => openFigureModal(prevFig)
+            }
+          : null,
+        nextItem: nextFig
+          ? {
+              id: nextFig.id,
+              title: nextFig.localized_name[language] || nextFig.canonical_name,
+              onClick: () => openFigureModal(nextFig)
+            }
+          : null,
+        actionButton: undefined as ContentDetailItem['actionButton']
+      };
+    }
+
+    // Case B: Any modalItem (synonym, community_dir, profession_cat, region, monograph)
+    if (!modalItem || !selectedModalRef) return null;
+    const vis = STEP4_VISUAL_ASSET_REGISTRY[modalItem.id];
+    const visClassLabel = vis ? step4VisualLabels.visualClasses[vis.visualClass] : modalItem.badge || '';
+    const companionMap =
+      vis && vis.companionMapUrl && vis.companionMapTitle && vis.companionMapCaption
+        ? {
+            url: vis.companionMapUrl,
+            title: vis.companionMapTitle[language] || vis.companionMapTitle.en,
+            caption: vis.companionMapCaption[language] || vis.companionMapCaption.en,
+            disclaimer: step4VisualLabels.mapDisclaimerText
+          }
+        : undefined;
+
+    // Extract related article IDs, keywords, and references according to selectedModalRef.type
+    let rawRelatedIds: string[] = [];
+    let rawKeywords: string[] = [];
+    let rawReferences: Array<{ citation: string; type: string }> = [];
+    let nativeScriptPills: string[] = [];
+    let verifiedCoreText = '';
+    let culturalContextText = '';
+    let epistemicScopeText = '';
+    let eraOrPeriodText = modalItem.era || modalItem.datesOrEra || modalItem.period || '';
+    let timelineEvents: Array<{
+      period: string;
+      certainty: string;
+      isVerified: boolean;
+      title: string;
+      description: string;
+    }> = [];
+    let inscriptionsList: Array<{ title: string; badge: string; details: string }> = [];
+    let prevItem: { id: string; title: string; onClick: () => void } | null = null;
+    let nextItem: { id: string; title: string; onClick: () => void } | null = null;
+
+    if (selectedModalRef.type === 'synonym') {
+      const item = COMMUNITY_SYNONYMS.find(s => s.id === selectedModalRef.id);
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[selectedModalRef.id];
+      const idx = COMMUNITY_SYNONYMS.findIndex(s => s.id === selectedModalRef.id);
+      if (idx > 0) {
+        const p = COMMUNITY_SYNONYMS[idx - 1];
+        const pMono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[p.id];
+        prevItem = {
+          id: p.id,
+          title: pMono ? pMono.localizedTitle[language] || pMono.localizedTitle.en : p.title,
+          onClick: () => openSynonymModal(p)
+        };
+      }
+      if (idx >= 0 && idx < COMMUNITY_SYNONYMS.length - 1) {
+        const n = COMMUNITY_SYNONYMS[idx + 1];
+        const nMono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[n.id];
+        nextItem = {
+          id: n.id,
+          title: nMono ? nMono.localizedTitle[language] || nMono.localizedTitle.en : n.title,
+          onClick: () => openSynonymModal(n)
+        };
+      }
+      if (item) {
+        nativeScriptPills = Object.entries(item.native_scripts).map(([k, v]) => `${k}: ${v}`);
+        eraOrPeriodText = localizeSynonymGroup(item.designation_group);
+        verifiedCoreText = mono
+          ? mono.epigraphicAndDocumentaryEvidence[language] || mono.epigraphicAndDocumentaryEvidence.en
+          : item.historical_role[language] || item.historical_role.en;
+        culturalContextText = mono
+          ? mono.culturalAndSocialTraditions[language] || mono.culturalAndSocialTraditions.en
+          : item.sacred_associations.map(sa => localizeHeritagePhrase(translateText(sa))).join(' • ');
+        epistemicScopeText = mono
+          ? mono.epistemicEvaluationAndResearchGaps[language] || mono.epistemicEvaluationAndResearchGaps.en
+          : item.epistemic_note[language] || item.epistemic_note.en;
+
+        if (mono) {
+          rawRelatedIds = mono.relatedArticleIds;
+          rawKeywords = mono.relatedKeywords;
+          rawReferences = mono.references.map(r => ({
+            citation: r.citation,
+            type: localizeHeritagePhrase(r.type)
+          }));
+          timelineEvents = [
+            {
+              period: localizeHeritagePhrase(translateText(item.linguistic_origin)),
+              certainty: articleDetailUi.epigraphicEraBadge,
+              isVerified: true,
+              title: SYNONYM_MONOGRAPH_SECTION_HEADINGS[language]?.sec2_linguistics || 'Terminology & Linguistic Origin',
+              description: mono.terminologyAndLinguisticAnalysis[language] || mono.terminologyAndLinguisticAnalysis.en
+            },
+            {
+              period: localizeHeritagePhrase(translateText(item.geographical_association)),
+              certainty: articleDetailUi.historicalPeriodBadge,
+              isVerified: true,
+              title: SYNONYM_MONOGRAPH_SECTION_HEADINGS[language]?.sec3_chronology || 'Chronological History',
+              description: mono.chronologicalHistory[language] || mono.chronologicalHistory.en
+            },
+            {
+              period: localizeHeritageList(item.prominent_states).join(' • '),
+              certainty: articleDetailUi.historicalPeriodBadge,
+              isVerified: true,
+              title: SYNONYM_MONOGRAPH_SECTION_HEADINGS[language]?.sec4_geography || 'Geographical & Settlement Analysis',
+              description: mono.geographicalAndSettlementAnalysis[language] || mono.geographicalAndSettlementAnalysis.en
+            }
+          ];
+          inscriptionsList = [
+            {
+              title: SYNONYM_MONOGRAPH_SECTION_HEADINGS[language]?.sec7_evidence || 'Epigraphic & Documentary Evidence',
+              badge: modalItem.badge || '',
+              details: mono.epigraphicAndDocumentaryEvidence[language] || mono.epigraphicAndDocumentaryEvidence.en
+            },
+            ...(vis
+              ? [
+                  {
+                    title: vis.title[language] || vis.title.en,
+                    badge: vis.sourceAttribution,
+                    details: vis.caption[language] || vis.caption.en
+                  }
+                ]
+              : [])
+          ];
+        }
+      }
+    } else if (selectedModalRef.type === 'community_dir') {
+      const entry = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === selectedModalRef.id);
+      const detailed = COMMUNITY_HERITAGE_DETAILED_ARTICLES.find(a => a.id === selectedModalRef.id);
+      const idx = COMMUNITY_DIRECTORY_ITEMS.findIndex(c => c.id === selectedModalRef.id);
+      if (idx > 0) {
+        const p = COMMUNITY_DIRECTORY_ITEMS[idx - 1];
+        prevItem = {
+          id: p.id,
+          title: `#${p.orderNumber} ${p.localizedName[language] || p.canonicalName}`,
+          onClick: () => openCommunityDirModal(p)
+        };
+      }
+      if (idx >= 0 && idx < COMMUNITY_DIRECTORY_ITEMS.length - 1) {
+        const n = COMMUNITY_DIRECTORY_ITEMS[idx + 1];
+        nextItem = {
+          id: n.id,
+          title: `#${n.orderNumber} ${n.localizedName[language] || n.canonicalName}`,
+          onClick: () => openCommunityDirModal(n)
+        };
+      }
+      if (entry) {
+        nativeScriptPills = Object.entries(entry.nativeScripts).map(([k, v]) => `${k}: ${v}`);
+        eraOrPeriodText = entry.localizedCategoryGroup[language] || entry.localizedCategoryGroup.en;
+        verifiedCoreText = detailed
+          ? detailed.historicalAnalysis[language] || detailed.historicalAnalysis.en
+          : entry.overview[language] || entry.overview.en;
+        culturalContextText = detailed
+          ? `${detailed.culturalBackground[language] || detailed.culturalBackground.en}\n\n${
+              detailed.professionalHeritageSummary[language] || detailed.professionalHeritageSummary.en
+            }`
+          : entry.overview[language] || entry.overview.en;
+        epistemicScopeText = detailed
+          ? detailed.epistemicDistinctionNote[language] || detailed.epistemicDistinctionNote.en
+          : entry.epistemicClassification[language] || entry.epistemicClassification.en;
+
+        if (detailed) {
+          rawRelatedIds = detailed.relatedArticleIds;
+          rawKeywords = detailed.relatedKeywords;
+          rawReferences = detailed.references.map(r => ({
+            citation: r.citation,
+            type: localizeHeritagePhrase(r.type)
+          }));
+          timelineEvents = [
+            {
+              period: entry.localizedCategoryGroup[language] || entry.localizedCategoryGroup.en,
+              certainty: articleDetailUi.epigraphicEraBadge,
+              isVerified: true,
+              title: step3Labels.historicalAnalysisHeading,
+              description: detailed.historicalAnalysis[language] || detailed.historicalAnalysis.en
+            },
+            {
+              period: entry.geographicalSpread[language] || entry.geographicalSpread.en,
+              certainty: articleDetailUi.historicalPeriodBadge,
+              isVerified: true,
+              title: step3Labels.documentedExamplesHeading,
+              description: detailed.documentedExamples[language] || detailed.documentedExamples.en
+            },
+            {
+              period: localizeHeritageList(entry.prominentStates).join(' • '),
+              certainty: articleDetailUi.historicalPeriodBadge,
+              isVerified: true,
+              title: step3Labels.professionalHeritageHeading,
+              description: detailed.professionalHeritageSummary[language] || detailed.professionalHeritageSummary.en
+            }
+          ];
+          inscriptionsList = [
+            {
+              title: step3Labels.documentedExamplesHeading,
+              badge: entry.epistemicClassification[language] || entry.epistemicClassification.en,
+              details: detailed.documentedExamples[language] || detailed.documentedExamples.en
+            },
+            ...(vis
+              ? [
+                  {
+                    title: vis.title[language] || vis.title.en,
+                    badge: vis.sourceAttribution,
+                    details: vis.caption[language] || vis.caption.en
+                  }
+                ]
+              : [])
+          ];
+        }
+      }
+    } else if (selectedModalRef.type === 'profession_cat') {
+      const cat = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.find(p => p.id === selectedModalRef.id);
+      const idx = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.findIndex(p => p.id === selectedModalRef.id);
+      if (idx > 0) {
+        const p = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES[idx - 1];
+        prevItem = {
+          id: p.id,
+          title: p.title[language] || p.title.en,
+          onClick: () => openProfessionModal(p)
+        };
+      }
+      if (idx >= 0 && idx < COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES.length - 1) {
+        const n = COMPLETE_PROFESSIONAL_HERITAGE_CATEGORIES[idx + 1];
+        nextItem = {
+          id: n.id,
+          title: n.title[language] || n.title.en,
+          onClick: () => openProfessionModal(n)
+        };
+      }
+      if (cat) {
+        const primaryVis = cat.visualAssets && cat.visualAssets.length > 0 ? cat.visualAssets[0] : undefined;
+        eraOrPeriodText = `${step5Ui.catPrefix}${cat.categoryNumber} • ${cat.includedSubClassifications.length} ${step2Labels.subcategoriesLabel}`;
+        rawRelatedIds = cat.relatedArticles.map(r => r.targetIdOrPath);
+        rawKeywords = cat.relatedKeywords;
+        rawReferences = cat.references.map(r => ({
+          citation: r.citation,
+          type: localizeHeritagePhrase(r.type)
+        }));
+        verifiedCoreText = `${cat.historicalBackground[language] || cat.historicalBackground.en}\n\n${
+          cat.documentedHistoricalExamples[language] || cat.documentedHistoricalExamples.en
+        }`;
+        culturalContextText = `${cat.culturalAndRegionalSignificance[language] || cat.culturalAndRegionalSignificance.en}\n\n${
+          cat.toolsMaterialsAndTechniques[language] || cat.toolsMaterialsAndTechniques.en
+        }`;
+        epistemicScopeText = `${
+          cat.communitySpecificConnectionsAndDistinctions[language] ||
+          cat.communitySpecificConnectionsAndDistinctions.en
+        }\n\n${cat.epistemicAndMethodologicalNote[language] || cat.epistemicAndMethodologicalNote.en}`;
+
+        timelineEvents = [
+          {
+            period: getHeading('secC'),
+            certainty: articleDetailUi.epigraphicEraBadge,
+            isVerified: true,
+            title: cat.title[language] || cat.title.en,
+            description: cat.historicalBackground[language] || cat.historicalBackground.en
+          },
+          {
+            period: getHeading('secO'),
+            certainty: articleDetailUi.historicalPeriodBadge,
+            isVerified: true,
+            title: getHeading('secO'),
+            description: cat.documentedHistoricalExamples[language] || cat.documentedHistoricalExamples.en
+          }
+        ];
+        inscriptionsList = [
+          {
+            title: getHeading('secO'),
+            badge: step2Labels.profCategoriesBadge,
+            details: cat.documentedHistoricalExamples[language] || cat.documentedHistoricalExamples.en
+          },
+          ...(primaryVis
+            ? [
+                {
+                  title: primaryVis.title[language] || primaryVis.title.en,
+                  badge: primaryVis.sourceAttribution,
+                  details: primaryVis.caption[language] || primaryVis.caption.en
+                }
+              ]
+            : [])
+        ];
+      }
+    } else if (selectedModalRef.type === 'region') {
+      const reg = GEOGRAPHICAL_SPREAD.find(r => r.id === selectedModalRef.id);
+      const idx = GEOGRAPHICAL_SPREAD.findIndex(r => r.id === selectedModalRef.id);
+      if (idx > 0) {
+        const p = GEOGRAPHICAL_SPREAD[idx - 1];
+        prevItem = {
+          id: p.id,
+          title: p.localized_region[language] || p.region_name,
+          onClick: () => openRegionModal(p)
+        };
+      }
+      if (idx >= 0 && idx < GEOGRAPHICAL_SPREAD.length - 1) {
+        const n = GEOGRAPHICAL_SPREAD[idx + 1];
+        nextItem = {
+          id: n.id,
+          title: n.localized_region[language] || n.region_name,
+          onClick: () => openRegionModal(n)
+        };
+      }
+      if (reg) {
+        const locForts = reg.historical_forts_and_landmarks.map(f => localizeHeritagePhrase(translateText(f)));
+        const locSacred = reg.sacred_centers.map(sc => localizeHeritagePhrase(translateText(sc)));
+        const locStates = localizeHeritageList(reg.states_and_territories);
+        rawRelatedIds = REGION_RELATED_ARTICLE_IDS[reg.id] || [];
+        rawKeywords = [
+          ...reg.predominant_community_synonyms,
+          ...locStates,
+          ...reg.prominent_cities_districts.slice(0, 4).map(c => localizeHeritagePhrase(translateText(c)))
+        ];
+        rawReferences = [
+          {
+            citation: `${reg.localized_region[language] || reg.region_name} — ${locForts.join('; ')}`,
+            type: localizeHeritagePhrase('Archaeological & Regional Gazetteer Record')
+          },
+          ...(vis
+            ? [
+                {
+                  citation: vis.sourceAttribution,
+                  type: localizeHeritagePhrase('Archival Visual & Monument Record')
+                }
+              ]
+            : [])
+        ];
+        verifiedCoreText = reg.regional_overview[language] || reg.regional_overview.en;
+        culturalContextText = `${step5Ui.geographyTab.landmarkFortsLabel}: ${locForts.join(
+          ' • '
+        )}\n${step5Ui.geographyTab.sacredCentersLabel}: ${locSacred.join(' • ')}`;
+        epistemicScopeText = synonymSectionLabels.accuracyBody;
+        timelineEvents = [
+          {
+            period: step5Ui.geographyTab.migrationEpochs[reg.id] || reg.migration_epoch_and_corridor,
+            certainty: articleDetailUi.historicalPeriodBadge,
+            isVerified: true,
+            title: reg.localized_region[language] || reg.region_name,
+            description: reg.regional_overview[language] || reg.regional_overview.en
+          }
+        ];
+        inscriptionsList = locForts.map(fort => ({
+          title: fort,
+          badge: locStates.join(' • '),
+          details: `${step5Ui.geographyTab.sacredCentersLabel}: ${locSacred.join(' • ')}`
+        }));
+      }
+    } else if (selectedModalRef.type === 'monograph') {
+      const sec = HISTORICAL_MONOGRAPH_SECTIONS.find(s => s.id === selectedModalRef.id);
+      const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[selectedModalRef.id];
+      const idx = HISTORICAL_MONOGRAPH_SECTIONS.findIndex(s => s.id === selectedModalRef.id);
+      if (idx > 0) {
+        const p = HISTORICAL_MONOGRAPH_SECTIONS[idx - 1];
+        prevItem = {
+          id: p.id,
+          title: p.section_title[language] || p.section_title.en,
+          onClick: () => openMonographModal(p.id)
+        };
+      }
+      if (idx >= 0 && idx < HISTORICAL_MONOGRAPH_SECTIONS.length - 1) {
+        const n = HISTORICAL_MONOGRAPH_SECTIONS[idx + 1];
+        nextItem = {
+          id: n.id,
+          title: n.section_title[language] || n.section_title.en,
+          onClick: () => openMonographModal(n.id)
+        };
+      }
+      if (sec) {
+        rawRelatedIds = mono ? mono.relatedArticleIds : ['comm_dir_01_od', 'syn_suryavamshi', 'fig_king_kharavela'];
+        rawKeywords = mono ? mono.relatedKeywords : step5Ui.monographTab.chapterKeyPoints[sec.id] || sec.key_points;
+        rawReferences = mono
+          ? mono.references.map(r => ({
+              citation: r.citation,
+              type: localizeHeritagePhrase(r.type)
+            }))
+          : vis
+          ? [{ citation: vis.sourceAttribution, type: localizeHeritagePhrase('Archival & Epigraphic Dossier') }]
+          : [];
+        verifiedCoreText = mono
+          ? mono.epigraphicAndDocumentaryEvidence[language] || mono.epigraphicAndDocumentaryEvidence.en
+          : sec.content[language] || sec.content.en;
+        culturalContextText = mono
+          ? mono.culturalAndSocialTraditions[language] || mono.culturalAndSocialTraditions.en
+          : (step5Ui.monographTab.chapterKeyPoints[sec.id] || sec.key_points).join(' • ');
+        epistemicScopeText = mono
+          ? mono.epistemicEvaluationAndResearchGaps[language] || mono.epistemicEvaluationAndResearchGaps.en
+          : synonymSectionLabels.accuracyBody;
+        timelineEvents = [
+          {
+            period: step5Ui.monographTab.badge,
+            certainty: articleDetailUi.epigraphicEraBadge,
+            isVerified: true,
+            title: sec.section_title[language] || sec.section_title.en,
+            description: mono
+              ? mono.chronologicalHistory[language] || mono.chronologicalHistory.en
+              : sec.content[language] || sec.content.en
+          }
+        ];
+        inscriptionsList = [
+          ...(mono
+            ? [
+                {
+                  title: SYNONYM_MONOGRAPH_SECTION_HEADINGS[language]?.sec7_evidence || 'Epigraphic & Documentary Evidence',
+                  badge: step5Ui.monographTab.badge,
+                  details: mono.epigraphicAndDocumentaryEvidence[language] || mono.epigraphicAndDocumentaryEvidence.en
+                }
+              ]
+            : []),
+          ...(vis
+            ? [
+                {
+                  title: vis.title[language] || vis.title.en,
+                  badge: vis.sourceAttribution,
+                  details: vis.caption[language] || vis.caption.en
+                }
+              ]
+            : [])
+        ];
+      }
+    }
+
+    const relatedCards = Array.from(new Set(rawRelatedIds))
+      .filter(id => id !== modalItem.id)
+      .map(id => resolveRelatedCardPreview(id))
+      .filter((v): v is NonNullable<typeof v> => Boolean(v))
+      .slice(0, 6);
+
+    const cleanKeywords = Array.from(new Set(rawKeywords)).slice(0, 14);
+    const hashtags = Array.from(
+      new Set(
+        [modalItem.title, ...cleanKeywords]
+          .map(k => toHashtagToken(translateKeyword(k)))
+          .filter(tkn => tkn.length >= 3)
+      )
+    ).slice(0, 12);
+
+    return {
+      id: modalItem.id,
+      collectionType: selectedModalRef.type,
+      title: modalItem.title,
+      subtitle: modalItem.subtitle || '',
+      badge: modalItem.badge || step5Ui.heroBadge,
+      epistemicBadge: modalItem.badge || step5Ui.heroBadge,
+      isEpigraphic: true,
+      eraOrPeriod: eraOrPeriodText,
+      location: modalItem.location || '',
+      imageUrl: modalItem.imageUrl || fallbackArchiveImg,
+      imageCaption: modalItem.imageCaption || (vis ? vis.caption[language] || vis.caption.en : modalItem.title),
+      visualClassLabel: visClassLabel,
+      companionMap,
+      nativeScripts: nativeScriptPills,
+      metadata: modalItem.metadata || [],
+      summaryLabel: modalItem.summaryLabel || articleDetailUi.executiveSummaryHeading,
+      summary: modalItem.summary || '',
+      content: modalItem.content || '',
+      sections: (modalItem.sections || []).filter(
+        sec =>
+          sec.heading !== step3Labels.relatedArticlesHeading &&
+          sec.heading !== step3Labels.relatedKeywordsHeading &&
+          sec.heading !== step3Labels.referencesHeading &&
+          sec.heading !== getHeading('secS')
+      ),
+      subjectAnalysis: {
+        verifiedCore: verifiedCoreText,
+        culturalContext: culturalContextText,
+        epistemicScope: epistemicScopeText
+      },
+      timelineEvents,
+      inscriptionsAndArchaeology: inscriptionsList,
+      references: rawReferences,
+      related70Entries: getRelated70TermsForHeritageItem(modalItem.id),
+      relatedCards,
+      keywords: cleanKeywords,
+      hashtags,
+      prevItem,
+      nextItem,
+      actionButton: modalItem.actionButton
+    };
+  }, [
+    selectedFigure,
+    modalItem,
+    selectedModalRef,
+    language,
+    articleDetailUi,
+    step2Labels,
+    step3Labels,
+    step4VisualLabels,
+    step5Ui,
+    synonymSectionLabels
+  ]);
+
+  // ============================================================================
+  // DEDICATED FULL ARTICLE DETAIL VIEW (Mobile-First, Non-Overlapping Reading View)
+  // ============================================================================
+  if (fullArticleData) {
+    const canonicalArticleUrl = getCanonicalHeritageUrl(fullArticleData.id);
+    const externalPrintArticleUrl = getExternalPrintHeritageUrl(fullArticleData.id, language);
+    const r70Ui = REFERENCE_70_UI_LABELS[language] || REFERENCE_70_UI_LABELS.en;
+
+    return (
+      <div className="min-h-screen bg-[#07090e] text-stone-200 print-article-wrapper">
+        {/* Full Structured Article Container — Natural Vertical Scrolling, No Sticky Overlays */}
+        <article className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-7 print-article-container">
+          {/* Print-Only Website Identification Masthead */}
+          <div className="print-only border-b-2 border-stone-800 pb-3 mb-4">
+            <p className="text-xs font-bold uppercase tracking-wider">
+              Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal — {articleDetailUi.printHeaderTitle}
+            </p>
+            <p className="text-[11px] font-semibold mt-0.5">
+              Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
+            </p>
+            <p className="text-[10px] mt-0.5">
+              {articleDetailUi.canonicalUrlLabel}: {canonicalArticleUrl}
+            </p>
+          </div>
+
+          {/* ====================================================================
+              SECTION 1 — COMPACT NAVIGATION BAR, ARTICLE TITLE, LEAD IMAGE & METADATA
+              ==================================================================== */}
+          <header className="print-article-header bg-[#0e131f] border border-[#c99738]/40 rounded-2xl p-4 sm:p-7 shadow-2xl space-y-4 sm:space-y-5">
+            {/* Compact Non-Sticky Top Navigation & Collapsible Actions Bar */}
+            <div className="no-print pb-3 border-b border-stone-800/90 space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                {/* Left: Compact Back, Home & Section Breadcrumb */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handleBackFromArticle}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#141a29] hover:bg-[#1e273d] text-stone-100 border border-stone-700 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{articleDetailUi.backButton}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('/')}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#182135] hover:bg-[#23304d] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Home className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{t.nav?.home || articleDetailUi.homeButton}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={closeActiveArticle}
+                    className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#121826] hover:bg-[#1a2236] text-stone-300 hover:text-[#d4af37] border border-stone-800 text-xs font-medium transition-colors cursor-pointer max-w-[200px] truncate"
+                  >
+                    <span className="truncate">{activeReferenceOption.label}</span>
+                  </button>
+                </div>
+
+                {/* Right: Compact Language Selector + Collapsible Article Actions + Close */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <label className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#121826] border border-[#c99738]/45 text-xs font-semibold text-[#fae29c]">
+                    <Globe className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+                    <select
+                      aria-label="Select Article Language"
+                      value={language}
+                      onChange={e => setLanguage(e.target.value as LanguageCode)}
+                      className="bg-transparent text-[#fae29c] font-bold text-xs focus:outline-none cursor-pointer pr-1"
+                    >
+                      {SUPPORTED_LANGUAGES.map(langObj => (
+                        <option
+                          key={langObj.code}
+                          value={langObj.code}
+                          className="bg-[#0e131f] text-stone-100"
+                        >
+                          {langObj.nativeName} ({langObj.label})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadHeritagePdf(fullArticleData.title)}
+                    disabled={isDownloadingPdf}
+                    title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(fullArticleData.title)})`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#c99738] hover:bg-[#dfb04c] text-[#290106] border border-[#f5d78e] text-xs font-bold transition-colors cursor-pointer disabled:opacity-60"
+                  >
+                    <Download className="w-3.5 h-3.5 shrink-0" />
+                    <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsActionsMenuOpen(prev => !prev)}
+                    aria-expanded={isActionsMenuOpen}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer border ${
+                      isActionsMenuOpen || isPrintFallbackOpen || shareFeedback !== 'none'
+                        ? 'bg-[#580014] text-[#fae29c] border-[#d4af37]'
+                        : 'bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border-[#c99738]/50'
+                    }`}
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{articleDetailUi.actionsMenuLabel}</span>
+                    {isActionsMenuOpen ? (
+                      <ChevronUp className="w-3.5 h-3.5 text-[#d4af37]" />
+                    ) : (
+                      <ChevronDown className="w-3.5 h-3.5 text-[#d4af37]" />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={closeActiveArticle}
+                    title={articleDetailUi.closeButton}
+                    className="inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <span>{articleDetailUi.closeButton}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Collapsible Article Actions Drawer (Download PDF, Print, Share, Copy Link, WhatsApp) */}
+              {(isActionsMenuOpen ||
+                isPrintFallbackOpen ||
+                shareFeedback !== 'none' ||
+                pdfDownloadResult) && (
+                <div className="p-3 rounded-xl bg-[#121826] border border-[#c99738]/40 space-y-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadHeritagePdf(fullArticleData.title)}
+                      disabled={isDownloadingPdf}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c99738] hover:bg-[#dfb04c] text-[#290106] border border-[#f5d78e] text-xs font-bold transition-colors cursor-pointer disabled:opacity-60"
+                    >
+                      <Download className="w-3.5 h-3.5 shrink-0" />
+                      <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handlePrintHeritageArticle(fullArticleData.title)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <span>{pdfUi.printBtn}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleShareHeritageArticle(
+                          fullArticleData.id,
+                          fullArticleData.title,
+                          fullArticleData.summary || fullArticleData.subtitle
+                        )
+                      }
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <span>{articleDetailUi.shareButton}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCopyHeritageLink(fullArticleData.id)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <Link2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <span>{articleDetailUi.copyLinkButton}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleCopyHeritageTitleAndLink(fullArticleData.id, fullArticleData.title)
+                      }
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-stone-200 hover:text-[#fae29c] border border-stone-700 hover:border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <span>{articleDetailUi.copyTitleAndLinkButton}</span>
+                    </button>
+
+                    <a
+                      href={`https://wa.me/?text=${encodeURIComponent(
+                        `${fullArticleData.title} — ${canonicalArticleUrl}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 text-emerald-300 border border-emerald-500/40 text-xs font-semibold transition-colors cursor-pointer"
+                    >
+                      <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
+                      <span>{articleDetailUi.whatsappShareButton}</span>
+                    </a>
+
+                    {shareFeedback !== 'none' && (
+                      <span
+                        role="status"
+                        aria-live="polite"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-600/50 text-xs font-bold"
+                      >
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>
+                          {shareFeedback === 'link'
+                            ? articleDetailUi.linkCopiedMessage
+                            : articleDetailUi.titleAndLinkCopiedMessage}
+                        </span>
+                      </span>
+                    )}
+                  </div>
+
+                  {pdfDownloadResult && (
+                    <div className="p-2.5 rounded-lg bg-emerald-950/70 border border-emerald-500/40 text-xs text-emerald-200 flex flex-wrap items-center justify-between gap-2">
+                      <span className="font-semibold flex items-center gap-1.5 break-all">
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
+                      </span>
+                      {pdfDownloadResult.downloadUrl && (
+                        <a
+                          href={pdfDownloadResult.downloadUrl}
+                          download={pdfDownloadResult.filename}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#c99738] text-[#290106] font-bold text-[11px]"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>{pdfUi.directDownloadLinkLabel}</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Android WebViewer Print Fallback Banner */}
+                  {isPrintFallbackOpen && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="p-3 rounded-xl bg-[#161f33] border border-[#d4af37]/60 space-y-2"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="text-xs text-[#fcedc7] leading-relaxed">
+                          {articleDetailUi.webViewPrintFallbackNotice}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setIsPrintFallbackOpen(false)}
+                          className="p-1 rounded-md text-stone-400 hover:text-white hover:bg-stone-800 shrink-0 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        <a
+                          href={externalPrintArticleUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => handleExternalBrowserLinkClick(e, externalPrintArticleUrl)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
+                          <span>{articleDetailUi.openInExternalBrowserButton}</span>
+                        </a>
+
+                        <button
+                          type="button"
+                          onClick={() => handleCopyPrintHeritageUrl(fullArticleData.id)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-colors cursor-pointer"
+                        >
+                          {printUrlCopied ? (
+                            <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                          )}
+                          <span>
+                            {printUrlCopied
+                              ? articleDetailUi.linkCopiedMessage
+                              : articleDetailUi.copyPrintUrlButton}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Article Badges, Main Title & Subtitle — Placed First for Immediate Mobile Readability */}
+            <div className="space-y-2.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
+                  <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{fullArticleData.badge}</span>
+                </span>
+
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-600/40">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>{fullArticleData.epistemicBadge}</span>
+                </span>
+
+                {fullArticleData.eraOrPeriod && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-[#151c2c] text-[#fae29c] border border-stone-700">
+                    <Clock className="w-3 h-3 text-[#d4af37]" />
+                    <span>{fullArticleData.eraOrPeriod}</span>
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#fae29c] leading-snug break-words">
+                {fullArticleData.title}
+              </h1>
+
+              {fullArticleData.subtitle && (
+                <p className="text-sm sm:text-base text-[#e8c872] font-medium leading-relaxed break-words">
+                  {fullArticleData.subtitle}
+                </p>
+              )}
+            </div>
+
+            {/* Lead Article Image & Quick Reference Metadata */}
+            <div className="flex flex-col md:flex-row items-start gap-5 sm:gap-7 pt-1">
+              {/* Lead Thumbnail / Historical Visual Record */}
+              <div className="w-full md:w-80 shrink-0 space-y-2">
+                <figure className="print-lead-figure relative rounded-2xl overflow-hidden border-2 border-[#d4af37]/60 bg-stone-950 shadow-xl">
+                  <img
+                    src={fullArticleData.imageUrl}
+                    alt={fullArticleData.title}
+                    loading="eager"
+                    decoding="sync"
+                    fetchPriority="high"
+                    onError={handleImgError}
+                    className="w-full h-56 sm:h-64 object-cover"
+                  />
+                  {fullArticleData.visualClassLabel && (
+                    <span className="no-print absolute top-2.5 left-2.5 px-2.5 py-1 rounded-md bg-black/80 text-[#fae29c] border border-[#d4af37]/50 text-[10px] font-bold backdrop-blur-sm">
+                      {fullArticleData.visualClassLabel}
+                    </span>
+                  )}
+                </figure>
+                {fullArticleData.imageCaption && (
+                  <p className="text-xs text-stone-300 leading-relaxed bg-[#121826] p-3 rounded-xl border border-stone-800/80">
+                    {fullArticleData.imageCaption}
+                  </p>
+                )}
+              </div>
+
+              {/* Native Script Attestations & Quick Reference Metadata Grid */}
+              <div className="flex-1 min-w-0 w-full space-y-4">
+                {/* Native Script Attestations / Alternative Names */}
+                {fullArticleData.nativeScripts.length > 0 && (
+                  <div className="bg-[#121826] border border-stone-800/90 rounded-xl p-3.5 space-y-1.5">
+                    <h2 className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
+                      {step5Ui.nativeScriptAttestations}
+                    </h2>
+                    <div className="flex flex-wrap gap-1.5">
+                      {fullArticleData.nativeScripts.map((ns, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-[#182135] text-[#fcedc7] border border-[#c99738]/30"
+                        >
+                          {ns}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Metadata Grid */}
+                {fullArticleData.metadata.length > 0 && (
+                  <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    {fullArticleData.metadata.map((m, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-[#141a29] p-3 rounded-xl border border-stone-800/80 space-y-1"
+                      >
+                        <dt className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
+                          {m.label}
+                        </dt>
+                        <dd className="text-stone-100 font-semibold leading-snug break-words">{m.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+              </div>
+            </div>
+
+            {/* Companion Historical Reference Map (if available) */}
+            {fullArticleData.companionMap && (
+              <figure className="rounded-2xl overflow-hidden border border-[#c99738]/40 bg-stone-950 grid grid-cols-1 md:grid-cols-3">
+                <div className="md:col-span-1 h-48 md:h-auto overflow-hidden">
+                  <img
+                    src={fullArticleData.companionMap.url}
+                    alt={fullArticleData.companionMap.title}
+                    onError={handleImgError}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <figcaption className="md:col-span-2 p-4 sm:p-5 space-y-1.5 flex flex-col justify-center">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37]">
+                    {step4VisualLabels.companionMapHeading}
+                  </span>
+                  <div className="text-sm sm:text-base font-bold text-[#fae29c]">
+                    {fullArticleData.companionMap.title}
+                  </div>
+                  <p className="text-xs text-stone-300 leading-relaxed">
+                    {fullArticleData.companionMap.caption}
+                  </p>
+                  <p className="text-[11px] text-amber-300/90">
+                    {fullArticleData.companionMap.disclaimer}
+                  </p>
+                </figcaption>
+              </figure>
+            )}
+          </header>
+
+          {/* ====================================================================
+              SECTION 2 — EXECUTIVE HISTORICAL SUMMARY
+              ==================================================================== */}
+          {fullArticleData.summary && (
+            <section className="bg-gradient-to-r from-[#20050c]/80 via-[#141926] to-[#121622] border-l-4 border-[#d4af37] border-y border-r border-stone-800 rounded-2xl p-6 space-y-2.5 shadow-lg">
+              <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#d4af37] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#d4af37]" />
+                <span>{fullArticleData.summaryLabel}</span>
+              </h2>
+              <p className="text-sm sm:text-base text-[#fcedc7]/95 font-royal-serif leading-relaxed whitespace-pre-line">
+                {fullArticleData.summary}
+              </p>
+            </section>
+          )}
+
+          {/* ====================================================================
+              SECTION 3 — COMPLETE EXISTING HISTORICAL CONTENT & MONOGRAPH SECTIONS
+              ==================================================================== */}
+          {fullArticleData.content && (
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2 border-b border-stone-800 pb-3">
+                <BookOpen className="w-4 h-4 text-[#d4af37]" />
+                <span>{articleDetailUi.completeHistoricalContentHeading}</span>
+              </h2>
+              <div className="text-sm sm:text-base text-stone-200 font-royal-serif leading-relaxed whitespace-pre-line bg-[#111623] p-5 sm:p-6 rounded-xl border border-stone-800/80">
+                {fullArticleData.content}
+              </div>
+
+              {fullArticleData.sections.length > 0 && (
+                <div className="space-y-5 pt-2">
+                  {fullArticleData.sections.map((sec, sIdx) => {
+                    const hasContent = Boolean(sec.content && sec.content.trim());
+                    const hasItems = Boolean(sec.items && sec.items.length > 0);
+                    if (!hasContent && !hasItems) return null;
+                    const secHeading = sec.title || sec.heading || '';
+                    return (
+                      <div key={sIdx} className="space-y-2.5">
+                        <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-2">
+                          <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+                          <span>{secHeading}</span>
+                        </h3>
+                        {sec.content && (
+                          <div className="p-4 sm:p-5 rounded-xl bg-[#121724] border border-stone-800 text-xs sm:text-sm text-stone-200 font-royal-serif leading-relaxed whitespace-pre-line">
+                            {sec.content}
+                          </div>
+                        )}
+                        {sec.type === 'tags' && sec.items && (
+                          <div className="flex flex-wrap gap-2">
+                            {sec.items.map((tagItem, tIdx) => (
+                              <button
+                                key={tIdx}
+                                type="button"
+                                onClick={() => handleModalTagClick(tagItem)}
+                                className="px-3 py-1 rounded-lg bg-[#182030] hover:bg-[#580014] border border-stone-700 hover:border-[#d4af37] text-xs text-[#fae29c] hover:text-white font-medium transition-colors cursor-pointer text-left"
+                              >
+                                {tagItem}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        {(!sec.type || sec.type === 'list') && sec.items && (
+                          <div className="space-y-2">
+                            {sec.items.map((listItem, lIdx) => (
+                              <div
+                                key={lIdx}
+                                className="p-3.5 rounded-xl bg-[#141926] border border-stone-800/80 text-xs sm:text-sm text-stone-200 flex items-start gap-2.5"
+                              >
+                                <span className="w-2 h-2 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
+                                <span>{listItem}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ====================================================================
+              SECTION 4 — DETAILED SUBJECT ANALYSIS & EPISTEMIC CLASSIFICATION
+              ==================================================================== */}
+          <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-3">
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                <Shield className="w-4 h-4 text-[#d4af37]" />
+                <span>{articleDetailUi.subjectAnalysisHeading}</span>
+              </h2>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-300 border border-emerald-600/40">
+                <Check className="w-3 h-3 shrink-0" />
+                <span>{fullArticleData.epistemicBadge}</span>
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-emerald-950/20 border border-emerald-700/40 rounded-xl p-4 sm:p-5 space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>{articleDetailUi.analysisVerifiedCoreTitle}</span>
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed whitespace-pre-line">
+                  {fullArticleData.subjectAnalysis.verifiedCore}
+                </p>
+              </div>
+
+              <div className="bg-[#141a29] border border-[#c99738]/40 rounded-xl p-4 sm:p-5 space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-[#fae29c] flex items-center gap-1.5">
+                  <Landmark className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+                  <span>{articleDetailUi.analysisCulturalContextTitle}</span>
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed whitespace-pre-line">
+                  {fullArticleData.subjectAnalysis.culturalContext}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-amber-950/20 border border-amber-600/40 rounded-xl p-4 sm:p-5 space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>{articleDetailUi.analysisEpistemicScopeTitle}</span>
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-200 leading-relaxed whitespace-pre-line">
+                {fullArticleData.subjectAnalysis.epistemicScope}
+              </p>
+            </div>
+          </section>
+
+          {/* ====================================================================
+              SECTION 5 — CHRONOLOGICAL TIMELINE & HISTORICAL MILESTONES
+              ==================================================================== */}
+          {fullArticleData.timelineEvents.length > 0 && (
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+              <div className="border-b border-stone-800 pb-3 space-y-1">
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[#d4af37]" />
+                  <span>{articleDetailUi.chronologicalTimelineHeading}</span>
+                </h2>
+                <p className="text-xs text-stone-400">{articleDetailUi.chronologicalTimelineSub}</p>
+              </div>
+
+              <div className="space-y-3">
+                {fullArticleData.timelineEvents.map((ev, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-[#121725] border border-stone-800/90 rounded-xl p-4 flex flex-col sm:flex-row sm:items-start gap-4"
+                  >
+                    <div className="sm:w-64 shrink-0 space-y-1.5">
+                      <span className="inline-block text-xs font-extrabold text-[#fae29c] bg-[#1a2236] px-3 py-1 rounded-lg border border-[#c99738]/40">
+                        {ev.period}
+                      </span>
+                      <div>
+                        <span
+                          className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
+                            ev.isVerified
+                              ? 'bg-emerald-950/70 text-emerald-300 border-emerald-600/40'
+                              : 'bg-amber-950/70 text-amber-300 border-amber-600/40'
+                          }`}
+                        >
+                          {ev.certainty}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] leading-snug">
+                        {ev.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-200 leading-relaxed whitespace-pre-line">
+                        {ev.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ====================================================================
+              SECTION 6 — VERIFIED INSCRIPTIONS & ARCHAEOLOGICAL EVIDENCE
+              ==================================================================== */}
+          {fullArticleData.inscriptionsAndArchaeology.length > 0 && (
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+              <div className="border-b border-stone-800 pb-3 space-y-1">
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <Landmark className="w-4 h-4 text-[#d4af37]" />
+                  <span>{articleDetailUi.inscriptionsEvidenceHeading}</span>
+                </h2>
+                <p className="text-xs text-stone-400">{articleDetailUi.inscriptionsEvidenceSub}</p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                {fullArticleData.inscriptionsAndArchaeology.map((ins, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 sm:p-5 rounded-xl bg-[#121826] border border-stone-800/90 space-y-2"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] flex items-center gap-2">
+                        <Scroll className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+                        <span>{ins.title}</span>
+                      </h3>
+                      {ins.badge && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
+                          {ins.badge}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-200 leading-relaxed whitespace-pre-line">
+                      {ins.details}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ====================================================================
+              SECTION 7 — HISTORICAL SOURCE REFERENCES & CITATIONS
+              ==================================================================== */}
+          {fullArticleData.references.length > 0 && (
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+              <div className="border-b border-stone-800 pb-3 space-y-1">
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <Scroll className="w-4 h-4 text-[#d4af37]" />
+                  <span>
+                    {articleDetailUi.sourceReferencesHeading} ({fullArticleData.references.length})
+                  </span>
+                </h2>
+                <p className="text-xs text-stone-400">{articleDetailUi.sourceReferencesSub}</p>
+              </div>
+
+              <div className="space-y-3">
+                {fullArticleData.references.map((ref, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-xl bg-[#121826] border border-stone-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-[#1d263b] text-[#d4af37] border border-[#c99738]/40">
+                          {ref.type}
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/70 text-emerald-300 border border-emerald-600/40">
+                          <Check className="w-2.5 h-2.5 shrink-0" />
+                          <span>{articleDetailUi.verifiedSourceBadge}</span>
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-stone-200 font-medium leading-relaxed">
+                        {ref.citation}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ====================================================================
+              SECTION 8 — RELATED HISTORICAL CONTEXT & 70-NAME REFERENCE MAPPING
+              ==================================================================== */}
+          {fullArticleData.related70Entries.length > 0 && (
+            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg">
+              <div className="border-b border-stone-800 pb-3 space-y-1">
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <Users className="w-4 h-4 text-[#d4af37]" />
+                  <span>
+                    {articleDetailUi.relatedContextHeading} ({fullArticleData.related70Entries.length})
+                  </span>
+                </h2>
+                <p className="text-xs text-stone-400">{r70Ui.nonConflationDisclaimer}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {fullArticleData.related70Entries.map(entry70 => {
+                  const locLabel = entry70.localizedLabel[language] || entry70.canonicalTerm;
+                  const clsLabel =
+                    r70Ui.classifications[entry70.classification] || entry70.classification;
+                  const noteText =
+                    entry70.historicalContextNote[language] || entry70.historicalContextNote.en;
+                  return (
+                    <div
+                      key={entry70.id}
+                      className={`p-3.5 rounded-xl border space-y-1.5 ${
+                        entry70.requiresVerification
+                          ? 'bg-[#17121e] border-amber-500/40'
+                          : 'bg-[#121826] border-stone-800'
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-1.5">
+                        <span className="font-bold text-xs sm:text-sm text-[#fae29c]">
+                          #{entry70.order}/{MASTER_70_REFERENCE_REGISTRY.length} {locLabel}{' '}
+                          {locLabel !== entry70.canonicalTerm ? `(${entry70.canonicalTerm})` : ''}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-[#580014] text-[#fae29c] text-[10px] font-semibold border border-[#d4af37]/40">
+                          {clsLabel}
+                        </span>
+                      </div>
+                      {entry70.requiresVerification && (
+                        <div className="text-[10px] font-semibold text-amber-300">
+                          ⚠ {r70Ui.requiresVerificationBadge}
+                        </div>
+                      )}
+                      <p className="text-xs text-stone-300 leading-relaxed">{noteText}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* ====================================================================
+              SECTION 9 — ARTICLE FOOTER: RELATED ARTICLES (WITH SMALL THUMBNAILS),
+              RELATED KEYWORDS, HASHTAGS, AND BACK / HOME / PRINT / SHARE CONTROLS
+              ==================================================================== */}
+          {fullArticleData.relatedCards.length > 0 && (
+            <section className="bg-[#0e131f] border border-[#c99738]/35 rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
+              <div className="border-b border-stone-800 pb-3 space-y-1">
+                <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-[#d4af37]" />
+                  <span>{articleDetailUi.relatedArticlesHeading}</span>
+                </h2>
+                <p className="text-xs text-stone-400">{articleDetailUi.relatedArticlesSub}</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {fullArticleData.relatedCards.map(relCard => (
+                  <div
+                    key={relCard.id}
+                    onClick={() => handleNavigateRelatedId(relCard.id)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleNavigateRelatedId(relCard.id);
+                      }
+                    }}
+                    className="group bg-[#121826] hover:bg-[#172033] border border-stone-800 hover:border-[#c99738]/60 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5 transition-all cursor-pointer shadow-md"
+                  >
+                    <img
+                      src={relCard.imageUrl}
+                      alt={relCard.title}
+                      loading="lazy"
+                      onError={handleImgError}
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#d4af37]/50 shrink-0 bg-stone-950 group-hover:scale-105 transition-transform"
+                    />
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#580014]/80 text-[#fae29c] border border-[#c99738]/30 truncate max-w-full">
+                          {relCard.categoryBadge}
+                        </span>
+                        {relCard.eraOrRegion && (
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#1a2234] text-[#d4af37] border border-stone-700 truncate max-w-[180px]">
+                            {relCard.eraOrRegion}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] group-hover:text-[#ffd966] transition-colors line-clamp-1 font-royal-heading">
+                        {relCard.title}
+                      </h3>
+                      <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
+                        {relCard.summary}
+                      </p>
+                      <div className="pt-0.5 flex items-center justify-end">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#d4af37] group-hover:text-[#fae29c] transition-colors">
+                          <span>{articleDetailUi.readFullArticleBtn}</span>
+                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Related Keywords & Relevant Hashtags */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {fullArticleData.keywords.length > 0 && (
+              <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
+                <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
+                  <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                    <Search className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{articleDetailUi.relatedKeywordsHeading}</span>
+                  </h2>
+                  <p className="text-[11px] text-stone-400">{articleDetailUi.relatedKeywordsSub}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {fullArticleData.keywords.map((kw, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setSearchTerm(kw);
+                        closeActiveArticle();
+                      }}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#141a29] hover:bg-[#1f2940] text-stone-200 hover:text-[#fae29c] border border-stone-700/80 hover:border-[#c99738]/60 transition-colors cursor-pointer text-left"
+                    >
+                      {translateKeyword(kw)}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {fullArticleData.hashtags.length > 0 && (
+              <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
+                <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
+                  <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                    <Layers className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{articleDetailUi.hashtagsHeading}</span>
+                  </h2>
+                  <p className="text-[11px] text-stone-400">{articleDetailUi.hashtagsSub}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {fullArticleData.hashtags.map((ht, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleModalTagClick(ht)}
+                      className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#21020b]/60 hover:bg-[#580014] text-[#d4af37] hover:text-[#fae29c] border border-[#c99738]/35 hover:border-[#d4af37] transition-colors cursor-pointer"
+                    >
+                      {ht}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Bottom Article Navigation Controls (Prev/Next + Back, Home, Print, Share) */}
+          <div className="no-print space-y-4 pt-2">
+            {(fullArticleData.prevItem || fullArticleData.nextItem) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {fullArticleData.prevItem ? (
+                  <button
+                    type="button"
+                    onClick={fullArticleData.prevItem.onClick}
+                    className="p-4 rounded-xl bg-[#0f1420] hover:bg-[#161d2e] border border-stone-800 hover:border-[#c99738]/60 text-left transition-all flex items-center gap-3 cursor-pointer group"
+                  >
+                    <ChevronLeft className="w-5 h-5 text-[#d4af37] shrink-0 group-hover:-translate-x-0.5 transition-transform" />
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                        {articleDetailUi.previousArticleLabel}
+                      </span>
+                      <span className="text-xs sm:text-sm font-bold text-[#fae29c] truncate block">
+                        {fullArticleData.prevItem.title}
+                      </span>
+                    </div>
+                  </button>
+                ) : (
+                  <div />
+                )}
+
+                {fullArticleData.nextItem ? (
+                  <button
+                    type="button"
+                    onClick={fullArticleData.nextItem.onClick}
+                    className="p-4 rounded-xl bg-[#0f1420] hover:bg-[#161d2e] border border-stone-800 hover:border-[#c99738]/60 text-right transition-all flex items-center justify-end gap-3 cursor-pointer group"
+                  >
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                        {articleDetailUi.nextArticleLabel}
+                      </span>
+                      <span className="text-xs sm:text-sm font-bold text-[#fae29c] truncate block">
+                        {fullArticleData.nextItem.title}
+                      </span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-[#d4af37] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                ) : (
+                  <div />
+                )}
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={handleBackFromArticle}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#141a29] hover:bg-[#1e273d] text-stone-100 border border-stone-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4 text-[#d4af37]" />
+                  <span>{articleDetailUi.backButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/')}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#182135] hover:bg-[#23304d] text-[#fae29c] border border-[#c99738]/40 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  <Home className="w-4 h-4 text-[#d4af37]" />
+                  <span>{t.nav?.home || articleDetailUi.homeButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handlePrintHeritageArticle}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  <Printer className="w-4 h-4 text-[#d4af37]" />
+                  <span>{articleDetailUi.printButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleShareHeritageArticle(
+                      fullArticleData.id,
+                      fullArticleData.title,
+                      fullArticleData.summary || fullArticleData.subtitle
+                    )
+                  }
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                >
+                  <Share2 className="w-4 h-4 text-[#d4af37]" />
+                  <span>{articleDetailUi.shareButton}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleCopyHeritageLink(fullArticleData.id)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#141c2e] hover:bg-[#1f2b46] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-all cursor-pointer"
+                >
+                  <Link2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span>{articleDetailUi.copyLinkButton}</span>
+                </button>
+
+                {fullArticleData.actionButton && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      closeActiveArticle();
+                      fullArticleData.actionButton?.onClick();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-[#182030] hover:bg-[#20293d] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold transition-all cursor-pointer"
+                  >
+                    <Compass className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{fullArticleData.actionButton.label}</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={closeActiveArticle}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#6e0018] hover:bg-[#8f0020] text-[#fff3d1] border-2 border-[#d4af37] text-xs sm:text-sm font-extrabold transition-all shadow-md cursor-pointer"
+                >
+                  <span>{articleDetailUi.closeButton}</span>
+                </button>
+              </div>
+
+              <a
+                href={`https://wa.me/919480112897?text=${encodeURIComponent(
+                  `Namaste Dr.G Sathyanarayana Raju ji, regarding Community Heritage article: ${fullArticleData.title}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] transition-all cursor-pointer"
+              >
+                <WhatsAppIcon className="w-4 h-4 fill-current" />
+                <span>{articleDetailUi.consultPublisherLabel}</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Author Profile & Print/PDF Attribution */}
+          <div className="pt-2">
+            <PublisherCreditCard variant="article-profile" />
+          </div>
+        </article>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
@@ -2195,24 +4961,27 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         className="bg-[#121624] border border-[#c99738]/35 rounded-2xl overflow-hidden hover:border-[#d4af37] transition-all flex flex-col justify-between shadow-lg group hover:shadow-[0_0_20px_rgba(201,151,56,0.18)] cursor-pointer"
                       >
                         <div>
-                          {vis && (
-                            <figure className="relative h-40 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
-                              <img
-                                src={vis.imageUrl}
-                                alt={vis.altText[language] || vis.altText.en}
-                                loading="lazy"
-                                onError={handleImgError}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
-                              <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold backdrop-blur-sm">
-                                {step4VisualLabels.visualClasses[vis.visualClass]}
+                          <figure className="relative h-40 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                            <img
+                              src={vis ? vis.imageUrl : fallbackArchiveImg}
+                              alt={vis ? vis.altText[language] || vis.altText.en : item.title}
+                              loading="lazy"
+                              onError={handleImgError}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
+                            <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold backdrop-blur-sm">
+                              {vis ? step4VisualLabels.visualClasses[vis.visualClass] : epistemicLabel}
+                            </span>
+                            {mono && (
+                              <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded bg-[#580014]/90 text-[#fcedc7] border border-[#d4af37]/40 text-[9px] font-semibold backdrop-blur-sm">
+                                {mono.references.length} {step3Labels.referencesHeading.split(' ')[0]}
                               </span>
-                              <figcaption className="absolute bottom-1.5 left-3 right-3 text-[10px] text-stone-200 font-medium line-clamp-1">
-                                {vis.title[language] || vis.title.en}
-                              </figcaption>
-                            </figure>
-                          )}
+                            )}
+                            <figcaption className="absolute bottom-1.5 left-3 right-3 text-[10px] text-stone-200 font-medium line-clamp-1">
+                              {vis ? vis.title[language] || vis.title.en : item.geographical_association}
+                            </figcaption>
+                          </figure>
                           <div className="p-5 sm:p-6 space-y-3">
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -2390,7 +5159,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         </span>
                       </td>
                       <td className="py-3.5 px-4 align-top font-semibold text-stone-200">
-                        {item.geographical_association}
+                        {localizeHeritagePhrase(translateText(item.geographical_association))}
                       </td>
                       <td className="py-3.5 px-4 align-top text-stone-300">
                         <span className="text-[11px] text-[#d4af37] font-medium">
@@ -2407,6 +5176,206 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               </table>
             </div>
           </div>
+
+          {/* ==================================================================== */}
+          {/* STAGE 2: 74-NAME MASTER REFERENCE & SEARCH ALIAS CROSS-REFERENCE INDEX */}
+          {/* ==================================================================== */}
+          {(() => {
+            const refUi = REFERENCE_70_UI_LABELS[language] || REFERENCE_70_UI_LABELS.en;
+            const visible70Entries = (searchTerm.trim() ? matched70SearchEntries : MASTER_70_REFERENCE_REGISTRY).filter(
+              entry => ref70ClassFilter === 'all' || entry.classification === ref70ClassFilter
+            );
+            const origCount = MASTER_70_REFERENCE_REGISTRY.filter(e => e.datasetGroup === 'original_45').length;
+            const suppCount = MASTER_70_REFERENCE_REGISTRY.length - origCount;
+
+            return (
+              <div className="bg-[#111522] border border-[#c99738]/45 rounded-3xl p-5 sm:p-8 space-y-6 shadow-2xl">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-stone-800 pb-5">
+                  <div className="space-y-1.5">
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>
+                        {refUi.original45Badge} ({origCount}) + {refUi.supplementary25Badge} ({suppCount}) = {MASTER_70_REFERENCE_REGISTRY.length}
+                      </span>
+                    </div>
+                    <h3 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7]">
+                      {refUi.sectionTitle}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+                      {refUi.sectionSubtitle}
+                    </p>
+                  </div>
+
+                  {/* 6-Classification Filter Pills */}
+                  <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setRef70ClassFilter('all')}
+                      className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
+                        ref70ClassFilter === 'all'
+                          ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
+                          : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                      }`}
+                    >
+                      {refUi.allClassifications} ({MASTER_70_REFERENCE_REGISTRY.length})
+                    </button>
+                    {CLASSIFICATION_ORDER.map(cls => {
+                      const clsCount = MASTER_70_REFERENCE_REGISTRY.filter(
+                        e => e.classification === cls
+                      ).length;
+                      return (
+                        <button
+                          key={cls}
+                          type="button"
+                          onClick={() => setRef70ClassFilter(ref70ClassFilter === cls ? 'all' : cls)}
+                          className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
+                            ref70ClassFilter === cls
+                              ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
+                              : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                          }`}
+                        >
+                          {refUi.classifications[cls]} ({clsCount})
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Non-Conflation Historical Disclaimer */}
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-[#240610] via-[#141929] to-[#1a0912] border border-[#d4af37]/40 text-xs text-stone-200 leading-relaxed flex items-start gap-3">
+                  <Shield className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+                  <span>{refUi.nonConflationDisclaimer}</span>
+                </div>
+
+                {/* Categorized 74-Name Cross-Reference Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {visible70Entries.map((refEntry: Reference70Entry) => {
+                    const locLabel = refEntry.localizedLabel[language] || refEntry.localizedLabel.en;
+                    const locNote =
+                      refEntry.historicalContextNote[language] || refEntry.historicalContextNote.en;
+                    const classLabel =
+                      refUi.classifications[refEntry.classification] || refEntry.classification;
+                    const primaryHeritageId = refEntry.relatedHeritageIds[0];
+                    const primaryProminentLabelId = refEntry.relatedProminentLabelIds[0];
+
+                    return (
+                      <div
+                        key={refEntry.id}
+                        className={`rounded-2xl p-4 flex flex-col justify-between gap-3 border transition-all ${
+                          refEntry.requiresVerification
+                            ? 'bg-[#17121e] border-amber-500/40 hover:border-amber-400'
+                            : 'bg-[#141928] border-[#c99738]/30 hover:border-[#d4af37]'
+                        }`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center justify-between gap-1.5">
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                                refEntry.datasetGroup === 'original_45'
+                                  ? 'bg-[#580014] text-[#fae29c] border-[#d4af37]/40'
+                                  : 'bg-[#1a253a] text-cyan-200 border-cyan-500/30'
+                              }`}
+                            >
+                              #{refEntry.order}/{MASTER_70_REFERENCE_REGISTRY.length} •{' '}
+                              {refEntry.datasetGroup === 'original_45'
+                                ? refUi.original45Badge
+                                : refUi.supplementary25Badge}
+                            </span>
+
+                            <span className="px-2 py-0.5 rounded bg-stone-900 text-[10px] font-semibold text-[#d4af37] border border-stone-700">
+                              {classLabel}
+                            </span>
+                          </div>
+
+                          <div>
+                            <h4 className="font-royal-heading font-bold text-base text-[#fae29c]">
+                              {locLabel}
+                            </h4>
+                            {locLabel !== refEntry.canonicalTerm && (
+                              <div className="text-[11px] font-semibold text-[#d4af37]">
+                                {refEntry.canonicalTerm}
+                              </div>
+                            )}
+                          </div>
+
+                          {refEntry.requiresVerification && (
+                            <div className="px-2.5 py-1 rounded-lg bg-amber-950/70 border border-amber-500/40 text-[10px] font-semibold text-amber-200">
+                              ⚠ {refUi.requiresVerificationBadge}
+                            </div>
+                          )}
+
+                          <p className="text-xs text-stone-300 leading-relaxed">{locNote}</p>
+                        </div>
+
+                        <div className="pt-2.5 border-t border-stone-800/80 space-y-2">
+                          {/* Related Heritage Articles Links */}
+                          <div className="flex flex-wrap items-center gap-1">
+                            <span className="text-[10px] font-bold text-[#d4af37]">
+                              {refUi.relatedTopicsLabel}:
+                            </span>
+                            {refEntry.relatedHeritageIds.slice(0, 3).map(hId => (
+                              <button
+                                key={hId}
+                                type="button"
+                                onClick={() => handleNavigateRelatedId(hId)}
+                                className="px-2 py-0.5 rounded bg-stone-900 hover:bg-[#580014] text-[10px] text-stone-200 hover:text-[#fae29c] border border-stone-700 transition-colors cursor-pointer"
+                              >
+                                ⇄ {resolveRelatedLabel(hId)}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Keywords */}
+                          <div className="flex flex-wrap gap-1">
+                            {refEntry.relatedTopicsAndKeywords.slice(0, 4).map(kw => (
+                              <button
+                                key={kw}
+                                type="button"
+                                onClick={() => setSearchTerm(kw)}
+                                className="px-1.5 py-0.5 rounded bg-stone-950 hover:bg-stone-800 text-[9px] text-amber-200/90 border border-stone-800 cursor-pointer"
+                              >
+                                #{translateKeyword(kw)}
+                              </button>
+                            ))}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="pt-1 flex flex-wrap items-center justify-between gap-2">
+                            {primaryHeritageId && (
+                              <button
+                                type="button"
+                                onClick={() => handleNavigateRelatedId(primaryHeritageId)}
+                                className="px-2.5 py-1 rounded-lg bg-[#580014] hover:bg-[#78001c] text-[11px] font-semibold text-[#fae29c] border border-[#d4af37]/40 transition-colors cursor-pointer inline-flex items-center gap-1"
+                              >
+                                <span>{refUi.openLinkedArticleLabel}</span>
+                                <ChevronRight className="w-3 h-3" />
+                              </button>
+                            )}
+                            {primaryProminentLabelId && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onNavigate(
+                                    `/community-prominent-persons?label=${encodeURIComponent(
+                                      primaryProminentLabelId
+                                    )}&alias=${encodeURIComponent(refEntry.canonicalTerm)}`
+                                  )
+                                }
+                                className="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-800 text-[11px] font-semibold text-[#d4af37] border border-stone-700 transition-colors cursor-pointer inline-flex items-center gap-1"
+                              >
+                                <span>{refUi.viewProminentFiguresLabel}</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -2485,25 +5454,30 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   className="bg-[#121624] border border-[#c99738]/40 hover:border-[#d4af37] rounded-3xl overflow-hidden flex flex-col justify-between shadow-xl transition-all cursor-pointer group hover:-translate-y-0.5"
                 >
                   <div>
-                    {primaryVis && (
-                      <figure className="relative h-48 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
-                        <img
-                          src={primaryVis.imageUrl}
-                          alt={primaryVis.altText[language] || primaryVis.altText.en}
-                          loading="lazy"
-                          onError={handleImgError}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
+                    <figure className="relative h-48 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                      <img
+                        src={primaryVis ? primaryVis.imageUrl : fallbackArchiveImg}
+                        alt={primaryVis ? primaryVis.altText[language] || primaryVis.altText.en : titleText}
+                        loading="lazy"
+                        onError={handleImgError}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
+                      {primaryVis && (
                         <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[10px] font-semibold backdrop-blur-sm">
                           {step5Ui.visualTypeLabels[primaryVis.visualType] || primaryVis.visualType}
                         </span>
+                      )}
+                      <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#580014]/90 text-[#fcedc7] border border-[#d4af37]/40 text-[10px] font-semibold backdrop-blur-sm">
+                        {cat.references.length} {step3Labels.referencesHeading.split(' ')[0]}
+                      </span>
+                      {primaryVis && (
                         <figcaption className="absolute bottom-2 left-4 right-4 text-[11px] text-stone-200 font-medium line-clamp-1">
                           {primaryVis.title[language] || primaryVis.title.en} •{' '}
                           <span className="text-stone-400">{primaryVis.sourceAttribution}</span>
                         </figcaption>
-                      </figure>
-                    )}
+                      )}
+                    </figure>
 
                     <div className="p-6 space-y-4">
                       <div className="flex items-start justify-between gap-3">
@@ -2629,24 +5603,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               return (
                 <div
                   key={fig.id}
-                  onClick={() => {
-                    setSelectedFigure(fig);
-                    syncUrlParams('figures', fig.id);
-                  }}
+                  onClick={() => openFigureModal(fig)}
                   className="bg-[#121624] border border-[#c99738]/30 hover:border-[#d4af37] rounded-2xl overflow-hidden shadow-lg transition-all flex flex-col justify-between group cursor-pointer hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(201,151,56,0.2)]"
                 >
                   <div className="relative h-48 w-full overflow-hidden bg-stone-950">
                     <img
-                      src={fig.image_url}
+                      src={fig.image_url || fallbackArchiveImg}
                       alt={`${displayName} — ${displayTitle}`}
                       loading="lazy"
                       onError={handleImgError}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-transparent" />
-                    <div className="absolute top-3 left-3">
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#580014]/90 text-[#fcedc7] border border-[#d4af37]/40 backdrop-blur-sm">
                         {step5Ui.figuresTab.epigraphicStatus[fig.epigraphic_status] || fig.epigraphic_status}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-black/75 text-[#fae29c] border border-stone-700 backdrop-blur-sm">
+                        {fig.canonical_sources.length} {step3Labels.referencesHeading.split(' ')[0]}
                       </span>
                     </div>
                   </div>
@@ -2662,8 +5636,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-3 text-[11px] text-stone-400">
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-stone-400">
                         <span>⏳ {fig.reign_or_dates}</span>
+                        {fig.dynasty_lineage && (
+                          <span className="px-2 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-300 truncate max-w-[200px]">
+                            👑 {fig.dynasty_lineage}
+                          </span>
+                        )}
                       </div>
 
                       <p className="text-xs text-stone-300 leading-relaxed line-clamp-3">
@@ -2672,7 +5651,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     </div>
 
                     <div className="pt-3 border-t border-stone-800/80 flex items-center justify-between text-xs">
-                      <span className="text-[11px] text-stone-400">
+                      <span className="text-[11px] text-stone-400 truncate max-w-[160px]">
                         📍 {fig.associated_places[0]}
                       </span>
                       <span className="text-[#d4af37] font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
@@ -2713,45 +5692,50 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               {GEOGRAPHICAL_SPREAD.map(reg => {
                 const isSelected = (selectedRegionId || GEOGRAPHICAL_SPREAD[0].id) === reg.id;
                 const regTitle = reg.localized_region[language] || reg.region_name;
+                const regVis = STEP4_VISUAL_ASSET_REGISTRY[reg.id];
 
                 return (
                   <div
                     key={reg.id}
-                    onClick={() => {
-                      setSelectedRegionId(reg.id);
-                      setSelectedFigure(null);
-                      setSelectedModalRef({ type: 'region', id: reg.id });
-                      syncUrlParams('geography', reg.id, reg.id);
-                    }}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                    onClick={() => openRegionModal(reg)}
+                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                       isSelected
                         ? 'bg-[#201520] border-[#d4af37] shadow-lg shadow-[#580014]/20'
                         : 'bg-[#121624] border-stone-800 hover:border-stone-700 hover:bg-[#161b2e]'
                     }`}
                   >
-                    <div className="space-y-1.5 min-w-0 pr-2">
-                      <h4 className={`text-sm font-bold ${isSelected ? 'text-[#fae29c]' : 'text-stone-200'}`}>
-                        {regTitle}
-                      </h4>
-                      <div className="flex flex-wrap gap-1">
-                        {reg.predominant_community_synonyms.map(syn => {
-                          const targetId = resolveDesignationTargetId(syn);
-                          return (
-                            <button
-                              key={syn}
-                              type="button"
-                              onClick={e => {
-                                e.stopPropagation();
-                                setSelectedRegionId(reg.id);
-                                handleNavigateRelatedId(targetId);
-                              }}
-                              className="px-1.5 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-[#fcedc7] border border-stone-800 hover:border-[#d4af37]/50 transition-colors cursor-pointer"
-                              title={resolveRelatedLabel(targetId)}
-                            >
-                              {syn}
-                            </button>
-                          );
-                        })}
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <img
+                        src={regVis ? regVis.imageUrl : fallbackArchiveImg}
+                        alt={regTitle}
+                        loading="lazy"
+                        onError={handleImgError}
+                        className="w-14 h-14 rounded-xl object-cover border border-[#d4af37]/40 shrink-0 bg-stone-950"
+                      />
+                      <div className="space-y-1.5 min-w-0 pr-1 flex-1">
+                        <h4 className={`text-sm font-bold leading-snug ${isSelected ? 'text-[#fae29c]' : 'text-stone-200'}`}>
+                          {regTitle}
+                        </h4>
+                        <div className="flex flex-wrap gap-1">
+                          {reg.predominant_community_synonyms.map(syn => {
+                            const targetId = resolveDesignationTargetId(syn);
+                            return (
+                              <button
+                                key={syn}
+                                type="button"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  setSelectedRegionId(reg.id);
+                                  handleNavigateRelatedId(targetId);
+                                }}
+                                className="px-1.5 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-[#fcedc7] border border-stone-800 hover:border-[#d4af37]/50 transition-colors cursor-pointer"
+                                title={resolveRelatedLabel(targetId)}
+                              >
+                                {syn}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                     <ChevronRight className={`w-4 h-4 shrink-0 ${isSelected ? 'text-[#d4af37]' : 'text-stone-600'}`} />
@@ -2772,11 +5756,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
               return (
                 <div
-                  onClick={() => {
-                    setSelectedFigure(null);
-                    setSelectedModalRef({ type: 'region', id: activeReg.id });
-                    syncUrlParams('geography', activeReg.id, activeReg.id);
-                  }}
+                  onClick={() => openRegionModal(activeReg)}
                   className="lg:col-span-2 bg-[#121624] border border-[#c99738]/40 hover:border-[#c99738] rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl cursor-pointer transition-all"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-4">
@@ -2989,18 +5969,16 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               return (
                 <section
                   key={sec.id}
-                  onClick={() => {
-                    setSelectedModalRef({ type: 'monograph', id: sec.id });
-                    syncUrlParams('history', sec.id);
-                  }}
+                  onClick={() => openMonographModal(sec.id)}
                   className="space-y-4 pb-6 border-b border-stone-800/60 last:border-0 cursor-pointer p-4 -mx-4 rounded-2xl hover:bg-stone-900/40 transition-colors group"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] group-hover:text-white transition-colors">
                       {secTitle}
                     </h3>
-                    <span className="text-xs font-sans font-semibold text-[#d4af37] shrink-0">
-                      {step5Ui.monographTab.openChapterBtn}
+                    <span className="px-3 py-1 rounded-lg bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 text-xs font-sans font-semibold shrink-0 inline-flex items-center gap-1">
+                      <span>{step5Ui.monographTab.openChapterBtn}</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
 

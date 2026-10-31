@@ -35,6 +35,22 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
     return `${ui.genealogicalTierLabel} ${g}`;
   };
 
+  const getNodeImage = (node: GenealogyNode) => {
+    const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
+    const nodeImgMap: Record<string, string> = {
+      gen_surya_ikshvaku: `${base}surya_konark_sculpture.jpg`,
+      gen_rama_kusha: `${base}surya_konark_sculpture.jpg`,
+      gen_jakesvara: `${base}copper_plate_charter.jpg`,
+      gen_kapilendra: `${base}kapilendra_deva_portrait.jpg`,
+      gen_hamvira: `${base}hamvira_deva_cavalry.jpg`,
+      gen_purushottama: `${base}purushottama_deva.jpg`,
+      gen_prataparudra: `${base}prataparudra_deva.jpg`,
+      gen_virabhadra: `${base}virabhadra_deva_archer.jpg`,
+      gen_kakharua_kalua: `${base}barabati_fort_gateway.jpg`
+    };
+    return nodeImgMap[node.id] || `${base}kapilendra_deva_portrait.jpg`;
+  };
+
   const modalItem: ContentDetailItem | null = modalNode
     ? {
         id: modalNode.id,
@@ -46,6 +62,8 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
             : ui.traditionalBadge,
         era: modalNode.reign || ui.historicalPeriodRecord,
         dynasty: ui.suryavamshaLineage,
+        imageUrl: getNodeImage(modalNode),
+        imageLayout: 'portrait',
         content: modalNode.notes || modalNode.titles,
         metadata: [
           ...(modalNode.spouse ? [{ label: ui.consortLabel, value: modalNode.spouse }] : []),
@@ -97,6 +115,7 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
                 {genNodes.map(node => {
                   const isDocumented = node.relationship_type.includes('documented') || node.relationship_type.includes('epigraphic');
                   const isSelected = selectedNode?.id === node.id;
+                  const nodeThumb = getNodeImage(node);
 
                   return (
                     <div
@@ -113,15 +132,30 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
                           : 'bg-[#151a26] border-indigo-900/40 hover:border-indigo-600/60 hover:bg-[#1a2130]'
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className={`p-1.5 rounded-lg shrink-0 ${isDocumented ? 'bg-emerald-950 text-emerald-400' : 'bg-indigo-950 text-indigo-400'}`}>
-                            {isDocumented ? <ShieldCheck className="w-4 h-4" /> : <Scroll className="w-4 h-4" />}
-                          </div>
+                      <div className="flex items-start justify-between gap-2.5 mb-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <img
+                            src={nodeThumb}
+                            alt={node.name}
+                            loading="lazy"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              if (!target.dataset.fallback) {
+                                target.dataset.fallback = '1';
+                                target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_portrait.jpg`;
+                              }
+                            }}
+                            className="w-12 h-12 rounded-xl object-cover object-top shrink-0 border border-[#c99738]/40 bg-stone-950"
+                          />
                           <div className="min-w-0">
-                            <h5 className="text-sm font-bold text-stone-100 font-royal-heading leading-tight break-words">
-                              {node.name}
-                            </h5>
+                            <div className="flex items-center gap-1.5">
+                              <span className={`p-1 rounded-md shrink-0 ${isDocumented ? 'bg-emerald-950 text-emerald-400' : 'bg-indigo-950 text-indigo-400'}`}>
+                                {isDocumented ? <ShieldCheck className="w-3 h-3" /> : <Scroll className="w-3 h-3" />}
+                              </span>
+                              <h5 className="text-sm font-bold text-stone-100 font-royal-heading leading-tight break-words">
+                                {node.name}
+                              </h5>
+                            </div>
                             {node.reign && (
                               <span className="text-[11px] text-[#d4af37] font-medium block mt-0.5">
                                 {node.reign}

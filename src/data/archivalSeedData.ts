@@ -799,8 +799,13 @@ export function getCanonicalInscriptions(lang: LanguageCode = 'en'): Inscription
       name: tr.name || insc.name,
       ruler: tr.ruler || insc.ruler,
       location_found: tr.location || insc.location_found,
+      dynasty: tr.dynasty || insc.dynasty,
+      script: tr.script || insc.script,
+      language: tr.language || insc.language,
+      era_or_date: tr.era_or_date || insc.era_or_date,
       historical_context: tr.summary || insc.historical_context,
-      english_translation: tr.summary ? `${tr.summary}\n\n[English Archival Translation]: ${insc.english_translation}` : insc.english_translation
+      english_translation: tr.english_translation || tr.summary || insc.english_translation,
+      scholarly_references: tr.scholarly_references || insc.scholarly_references
     };
   });
 }
@@ -814,9 +819,12 @@ export function getCanonicalMonuments(lang: LanguageCode = 'en'): TempleMonument
       ...mon,
       name: tr.name || mon.name,
       location: tr.location || mon.location,
+      state: tr.state || mon.state,
       patron_ruler: tr.patron_ruler || mon.patron_ruler,
+      century: tr.century || mon.century,
       architectural_style: tr.architectural_style || mon.architectural_style,
-      historical_significance: tr.historical_significance || mon.historical_significance
+      historical_significance: tr.historical_significance || mon.historical_significance,
+      sources: tr.sources || mon.sources
     };
   });
 }
@@ -863,18 +871,18 @@ export const CANONICAL_MEMBERS: UserProfile[] = [
   },
   {
     user_id: 'usr_member_001',
-    full_name: 'Sathya Narayana Raju',
+    full_name: 'Dr.G Sathyanarayana Raju',
     gender: 'Male',
     country: 'India',
     state_or_province: 'Karnataka',
     district: 'Bengaluru Urban',
     city_town_village: 'Bengaluru',
     profile_photo_url: `${(import.meta as any).env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`,
-    education: 'B.Tech in Computer Science, Independent Genealogy Researcher',
-    profession: 'Software Engineer & Genealogist',
-    current_work: 'Digital preservation of community palm-leaf manuscripts and family trees',
-    organization: 'Global Suryavamsha Kshatriya Heritage Forum',
-    biography: 'Passionate community member researching the diaspora of Odiyaraju families across Karnataka, Andhra Pradesh, Tamil Nadu, and Maharashtra.',
+    education: 'Independent Historical Documentation & Epigraphy Researcher',
+    profession: 'Founder & Historical Documentation Contributor',
+    current_work: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju',
+    organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
+    biography: 'Founder & Historical Documentation Contributor researching the epigraphy and diaspora of Suryavamsha Odiyaraju families across Karnataka, Andhra Pradesh, Telangana, Odisha, Tamil Nadu, and Maharashtra.',
     areas_of_historical_interest: ['Genealogical Records', 'Diaspora Movements', 'Oral Traditions', 'Madala Panji Studies'],
     languages_known: ['Kannada', 'Telugu', 'English', 'Odia'],
     research_contributions: 'Documented 12 oral family histories linking medieval Odra migrations to Deccan settlements.',
