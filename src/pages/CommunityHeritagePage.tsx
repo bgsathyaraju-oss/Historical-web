@@ -4357,7 +4357,22 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
                 <button
                   type="button"
-                  onClick={handlePrintHeritageArticle}
+                  onClick={() => handleDownloadHeritagePdf(fullArticleData.title)}
+                  disabled={isDownloadingPdf}
+                  title={`${(PDF_EXPORT_UI_LABELS[language as LanguageCode] || PDF_EXPORT_UI_LABELS.en).downloadPdfBtn} (${generateArticlePdfFilename(fullArticleData.title)})`}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#6e0018] hover:bg-[#8f0020] disabled:opacity-60 text-[#fff3d1] border border-[#d4af37] text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                >
+                  <Download className="w-4 h-4 text-[#d4af37]" />
+                  <span>
+                    {isDownloadingPdf
+                      ? (PDF_EXPORT_UI_LABELS[language as LanguageCode] || PDF_EXPORT_UI_LABELS.en).generatingPdfBtn
+                      : (PDF_EXPORT_UI_LABELS[language as LanguageCode] || PDF_EXPORT_UI_LABELS.en).downloadPdfBtn}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handlePrintHeritageArticle(fullArticleData.title)}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1a2438] hover:bg-[#253350] text-[#fae29c] border border-[#c99738]/50 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-[#d4af37]" />

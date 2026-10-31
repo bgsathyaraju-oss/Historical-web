@@ -3859,14 +3859,14 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   type="button"
                   onClick={handleDownloadPersonPdf}
                   disabled={isDownloadingPdf}
-                  title={`${(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton} (${generateArticlePdfFilename(getPersonPdfTitle(activePerson))})`}
+                  title={`${(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfBtn} (${generateArticlePdfFilename(getPersonPdfTitle(activePerson))})`}
                   className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#6e0018] hover:bg-[#8f0020] disabled:opacity-60 text-[#fff3d1] border border-[#d4af37] text-xs font-bold transition-colors cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span>
                     {isDownloadingPdf
-                      ? (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadingPdf
-                      : (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton}
+                      ? (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).generatingPdfBtn
+                      : (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfBtn}
                   </span>
                 </button>
 
@@ -3924,8 +3924,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             {pdfDownloadResult && (
               <div className="px-3.5 py-2 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center justify-between gap-2">
                 <span>
-                  ✓ {(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).pdfReadyNotice}:{' '}
-                  <strong className="font-mono text-emerald-100 break-all">{pdfDownloadResult.filename}</strong>
+                  ✓ {(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).pdfSavedNotice(pdfDownloadResult.filename)}
                 </span>
                 <button
                   type="button"
@@ -5412,14 +5411,14 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   type="button"
                   onClick={handleDownloadPersonPdf}
                   disabled={isDownloadingPdf}
-                  title={`${(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton} (${generateArticlePdfFilename(getPersonPdfTitle(activePerson))})`}
+                  title={`${(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfBtn} (${generateArticlePdfFilename(getPersonPdfTitle(activePerson))})`}
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#6e0018] hover:bg-[#8f0020] disabled:opacity-60 text-[#fff3d1] border border-[#d4af37] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-[#d4af37]" />
                   <span>
                     {isDownloadingPdf
-                      ? (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadingPdf
-                      : (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfButton}
+                      ? (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).generatingPdfBtn
+                      : (PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).downloadPdfBtn}
                   </span>
                 </button>
 
