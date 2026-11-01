@@ -275,7 +275,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0b0d14] text-[#f5f3ed] print:block print:min-h-0 print:bg-white print:text-black">
+    <div className="min-h-screen flex flex-col bg-[#F5EBD9] text-[#292521] print:block print:min-h-0 print:bg-white print:text-black">
       {/* Royal Header */}
       <Navbar
         currentPath={currentPath}

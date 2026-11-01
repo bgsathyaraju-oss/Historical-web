@@ -2,6 +2,7 @@ import React from 'react';
 import { ShieldCheck, BookOpen, Scroll, Compass, Mail, Heart, ExternalLink, Crown, Phone } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { WhatsAppIcon } from './PublisherCreditCard';
+import { handleWhatsAppLinkClick } from '../utils/androidBridge';
 
 interface FooterProps {
   onNavigate: (path: string) => void;
@@ -13,35 +14,35 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   return (
-    <footer className="w-full bg-[#080a10] border-t border-[#c99738]/30 text-stone-300">
+    <footer className="w-full bg-[#FFF9EF] border-t-2 border-[#A87924] text-[#292521]">
       {/* Research, Documentation & Compilation by Dr.G Sathyanarayana Raju */}
-      <div className="bg-gradient-to-r from-[#21020b] via-[#101420] to-[#21020b] border-b border-[#c99738]/40 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="bg-[#F5EBD9] border-b border-[#A87924]/50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-5">
             <div className="relative shrink-0">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#e8c872] shadow-xl ring-2 ring-[#580014]">
+              <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-md ring-2 ring-[#762D35]">
                 <img
                   src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
                   alt={t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
                   className="w-full h-full object-cover object-top"
                 />
               </div>
-              <div className="absolute -bottom-1 -right-1 bg-[#580014] text-[#fae29c] p-1 rounded-full border border-[#d4af37]">
-                <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+              <div className="absolute -bottom-1 -right-1 bg-[#762D35] text-white p-1 rounded-full border border-[#A87924]">
+                <Crown className="w-3.5 h-3.5 text-white" />
               </div>
             </div>
 
             <div className="space-y-1">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37]">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-[#76501F]">
                 {t.publisher?.designedAndPublishedBy || 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
               </div>
-              <h3 className="font-royal-heading font-black text-xl text-[#fcedc7]">
+              <h3 className="font-royal-heading font-black text-xl text-[#54351F]">
                 {t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
               </h3>
-              <p className="text-xs sm:text-sm font-semibold text-stone-300">
+              <p className="text-xs sm:text-sm font-semibold text-[#292521]">
                 {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}
               </p>
-              <p className="text-xs text-[#d4af37]/90">
+              <p className="text-xs text-[#76501F] font-medium">
                 {t.publisher?.organization || 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'}
               </p>
             </div>
@@ -52,7 +53,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] hover:text-black shadow-md transition-all cursor-pointer"
+              onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#762D35] hover:bg-[#5e2229] text-white shadow-sm transition-all cursor-pointer"
             >
               <WhatsAppIcon className="w-4 h-4 fill-current" />
               <span>{t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)'}</span>
@@ -60,9 +62,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
             <a
               href="tel:+919480112897"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-[#141a29] hover:bg-[#1e273d] text-stone-300 border border-stone-700 hover:border-[#c99738] transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] transition-all"
             >
-              <Phone className="w-3.5 h-3.5 text-[#d4af37]" />
+              <Phone className="w-3.5 h-3.5 text-[#762D35]" />
               <span>+91 9480112897</span>
             </a>
           </div>
@@ -70,16 +72,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       </div>
 
       {/* Methodological Integrity Banner */}
-      <div className="bg-[#121622] border-b border-stone-800 py-6 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 text-xs sm:text-sm text-stone-300">
-          <div className="p-2.5 rounded-xl bg-[#580014]/60 border border-[#d4af37]/40 shrink-0">
-            <ShieldCheck className="w-6 h-6 text-[#d4af37]" />
+      <div className="bg-[#FFFCF5] border-b border-[#A87924]/40 py-6 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 text-xs sm:text-sm text-[#292521]">
+          <div className="p-2.5 rounded-xl bg-[#FFF9EF] border border-[#A87924] shrink-0">
+            <ShieldCheck className="w-6 h-6 text-[#762D35]" />
           </div>
           <div className="space-y-1 text-center md:text-left">
-            <span className="font-semibold text-[#fcedc7] uppercase tracking-wider text-xs">
+            <span className="font-bold text-[#54351F] uppercase tracking-wider text-xs">
               {t.evidenceNotice.title}
             </span>
-            <p className="text-stone-400 text-xs leading-relaxed">
+            <p className="text-[#292521] text-xs leading-relaxed">
               {t.evidenceNotice.description}
             </p>
           </div>
@@ -92,26 +94,26 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand & Project Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#580014] border border-[#d4af37] p-1 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-full h-full fill-[#d4af37]">
-                  <circle cx="50" cy="50" r="24" fill="#d4af37" />
-                  <path d="M50 8 L54 30 L50 25 L46 30 Z M50 92 L54 70 L50 75 L46 70 Z M8 50 L30 54 L25 50 L30 46 Z M92 50 L70 54 L75 50 L70 46 Z" fill="#d4af37" />
+              <div className="w-10 h-10 rounded-full bg-[#762D35] border border-[#A87924] p-1 flex items-center justify-center">
+                <svg viewBox="0 0 100 100" className="w-full h-full fill-[#FFFCF5]">
+                  <circle cx="50" cy="50" r="24" fill="#A87924" />
+                  <path d="M50 8 L54 30 L50 25 L46 30 Z M50 92 L54 70 L50 75 L46 70 Z M8 50 L30 54 L25 50 L30 46 Z M92 50 L70 54 L75 50 L70 46 Z" fill="#FFFCF5" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+                <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
                   SURYAVAMSHA ODIYARAJU KSHATRIYA
                 </h3>
-                <p className="text-[11px] text-[#c99738] font-medium tracking-wider">
+                <p className="text-[11px] text-[#76501F] font-semibold tracking-wider">
                   HISTORICAL DOCUMENTARY & COMMUNITY ARCHIVE
                 </p>
               </div>
             </div>
-            <p className="text-xs text-stone-400 leading-relaxed pr-4">
+            <p className="text-xs text-[#292521] leading-relaxed pr-4">
               Dedicated to empirical epigraphic research, historical geography of Odra Desha, Gajapathi dynasty inscriptions, royal genealogies, and preserving living cultural traditions across eight supported languages.
             </p>
-            <div className="pt-2 text-xs text-stone-400">
-              <span className="font-semibold text-stone-300">Supported Languages:</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
+            <div className="pt-2 text-xs text-[#292521]">
+              <span className="font-bold text-[#54351F]">Supported Languages:</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
             </div>
           </div>
 

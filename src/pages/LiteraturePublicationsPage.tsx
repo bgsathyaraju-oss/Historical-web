@@ -330,15 +330,15 @@ export const LiteraturePublicationsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       {/* Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-          <BookOpen className="w-4 h-4" />
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+          <BookOpen className="w-4 h-4 text-[#A87924]" />
           <span>{loc.badge}</span>
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           {loc.title}
         </h1>
-        <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6B5948] max-w-3xl leading-relaxed">
           {loc.subtitle}
         </p>
       </div>
@@ -350,7 +350,7 @@ export const LiteraturePublicationsPage: React.FC = () => {
             <div
               key={item.id}
               onClick={() => setSelectedId(item.id)}
-              className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] shadow-lg cursor-pointer transition-all group flex flex-col sm:flex-row gap-5 items-start"
+              className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] shadow-md cursor-pointer transition-all group flex flex-col sm:flex-row gap-5 items-start"
             >
               <img
                 src={thumbUrl}
@@ -363,29 +363,29 @@ export const LiteraturePublicationsPage: React.FC = () => {
                     target.src = `${archiveBase}odia_palm_leaf_manuscript.jpg`;
                   }
                 }}
-                className="w-full sm:w-44 h-44 sm:h-36 rounded-2xl object-cover object-top shrink-0 border border-[#c99738]/40 bg-stone-950"
+                className="w-full sm:w-44 h-44 sm:h-36 rounded-2xl object-cover object-top shrink-0 border border-[#D8C3A2] bg-[#EFE3D0]"
               />
               <div className="flex-1 space-y-3 min-w-0 w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#76501F]">
                     {item.lang}
                   </span>
-                  <span className="text-xs text-stone-400">{item.author}</span>
+                  <span className="text-xs text-[#6B5948]">{item.author}</span>
                 </div>
 
-                <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] group-hover:text-[#762D35] transition-colors">
                   {item.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed font-royal-serif">
+                <p className="text-xs sm:text-sm text-[#292521] leading-relaxed font-royal-serif">
                   {item.desc}
                 </p>
 
-                <div className="pt-2 border-t border-stone-800 text-xs text-[#e8c872] flex items-center justify-between">
+                <div className="pt-2 border-t border-[#D8C3A2] text-xs text-[#76501F] flex items-center justify-between">
                   <div>
-                    <strong className="text-stone-300">{loc.sigLabel}:</strong> {item.significance}
+                    <strong className="text-[#54351F]">{loc.sigLabel}:</strong> {item.significance}
                   </div>
-                  <span className="font-semibold shrink-0 ml-2">{loc.inspectBtn}</span>
+                  <span className="font-semibold shrink-0 ml-2 group-hover:text-[#A87924]">{loc.inspectBtn}</span>
                 </div>
               </div>
             </div>

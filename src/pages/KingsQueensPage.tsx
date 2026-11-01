@@ -38,7 +38,12 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
-  PDF_EXPORT_UI_LABELS
+  PDF_EXPORT_UI_LABELS,
+  hasAppInventorBridge,
+  isAndroidWebViewEnvironment,
+  sendUrlToAppInventorBridge,
+  handleWhatsAppLinkClick,
+  handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
 import { getAllDocumentedFigures, DOCUMENTED_FIGURES_REPO } from '../data/documentedFiguresRepository';
 import { HISTORICAL_FIGURES } from '../data/historyContent';
@@ -716,6 +721,8 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
   const [pdfDownloadResult, setPdfDownloadResult] = useState<{
     filename: string;
     downloadUrl?: string;
+    externalArticleUrl?: string;
+    isAndroidWebView?: boolean;
   } | null>(null);
   const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
 
@@ -742,11 +749,14 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
       const fullTitle = getFigureBiographyArticleTitle(figure);
       const result = await downloadArticleAsPdf({
         articleTitle: fullTitle,
-        language
+        language,
+        articleUrl: getDirectFigureUrl(figure.id, false)
       });
       setPdfDownloadResult({
         filename: result.filename,
-        downloadUrl: result.downloadUrl
+        downloadUrl: result.downloadUrl,
+        externalArticleUrl: result.externalArticleUrl,
+        isAndroidWebView: result.isAndroidWebView
       });
     } catch (err) {
       console.error('Biography PDF export failed:', err);
@@ -756,10 +766,12 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
   };
 
   const handlePrint = (figure: HistoricalFigure) => {
-    const ua = navigator.userAgent || '';
-    const isEmbeddedWebView = /wv|WebView|Android.*Version\/[0-9]/i.test(ua);
-    if (isEmbeddedWebView) {
-      const printUrl = getDirectFigureUrl(figure.id, true);
+    const printUrl = getDirectFigureUrl(figure.id, true);
+    if (hasAppInventorBridge()) {
+      sendUrlToAppInventorBridge(printUrl);
+      return;
+    }
+    if (isAndroidWebViewEnvironment()) {
       window.open(printUrl, '_system');
       return;
     }
@@ -1057,7 +1069,10 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={() => setShareMenuOpen(false)}
+                      onClick={e => {
+                        handleWhatsAppLinkClick(e);
+                        setShareMenuOpen(false);
+                      }}
                       className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold text-emerald-300"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -1091,16 +1106,41 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
               </span>
-              {pdfDownloadResult.downloadUrl && (
-                <a
-                  href={pdfDownloadResult.downloadUrl}
-                  download={pdfDownloadResult.filename}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500 text-stone-950 font-bold text-xs"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>{pdfUi.directDownloadLinkLabel}</span>
-                </a>
-              )}
+              <div className="flex flex-wrap items-center gap-2">
+                {pdfDownloadResult.downloadUrl && (
+                  <a
+                    href={pdfDownloadResult.downloadUrl}
+                    download={pdfDownloadResult.filename}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e =>
+                      handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
+                    }
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500 text-stone-950 font-bold text-xs"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>{pdfUi.directDownloadLinkLabel}</span>
+                  </a>
+                )}
+                {pdfDownloadResult.externalArticleUrl && pdfDownloadResult.isAndroidWebView && (
+                  <a
+                    href={pdfDownloadResult.externalArticleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-external-chrome="true"
+                    onClick={e =>
+                      handleExternalBrowserUrlClick(
+                        e,
+                        pdfDownloadResult.externalArticleUrl || ''
+                      )
+                    }
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#580014] text-[#fae29c] border border-[#d4af37] font-bold text-xs"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span>{pdfUi.openInChromePdfBtn}</span>
+                  </a>
+                )}
+              </div>
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, X, Globe, Check, ChevronUp, ChevronDown, ArrowLeft, Languages } from 'lucide-react';
+import { Home, X, Globe, ChevronUp, ChevronDown, Languages } from 'lucide-react';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../context/LanguageContext';
 import { LanguageCode } from '../types';
 
@@ -89,15 +89,15 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
     <aside aria-label="Floating Navigation & Language Controls" className="no-print print:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-max max-w-[96vw] transition-all duration-300">
       {/* Expanded 8-Language Selector Flyout */}
       {isExpanded && (
-        <div className="mb-2 p-3 sm:p-4 rounded-2xl bg-[#0f1320]/95 backdrop-blur-xl border border-[#c99738]/50 shadow-[0_10px_35px_rgba(0,0,0,0.8)] animate-in fade-in slide-in-from-bottom-2 duration-150">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-stone-800 text-xs">
-            <div className="flex items-center gap-1.5 font-bold text-[#fcedc7]">
-              <Languages className="w-3.5 h-3.5 text-[#d4af37]" />
+        <div className="mb-2 p-3 sm:p-4 rounded-2xl bg-[#F1E4D0] border-2 border-[#A87924] shadow-[0_12px_36px_rgba(75,51,31,0.22)] animate-in fade-in slide-in-from-bottom-2 duration-150">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#D8C3A2] text-xs">
+            <div className="flex items-center gap-1.5 font-bold text-[#54351F]">
+              <Languages className="w-3.5 h-3.5 text-[#A87924]" />
               <span>Select Language (8 Supported)</span>
             </div>
             <button
               onClick={() => setIsExpanded(false)}
-              className="p-1 text-stone-400 hover:text-white rounded-md hover:bg-stone-800"
+              className="p-1 text-[#6B5948] hover:text-[#292521] rounded-md hover:bg-[#E9D9BE]"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -118,22 +118,24 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
                   }}
                   className={`p-2 rounded-xl text-left transition-all flex items-center gap-2 cursor-pointer border ${
                     isSelected
-                      ? 'bg-gradient-to-r from-[#580014] to-[#78001b] border-[#d4af37] text-[#fcedc7] font-bold shadow-md'
-                      : 'bg-[#141926] border-stone-800 text-stone-300 hover:border-[#c99738]/50 hover:bg-[#1c2336] hover:text-[#fae29c]'
+                      ? 'bg-[#762D35] border-[#A87924] text-white font-bold shadow-sm'
+                      : 'bg-[#FFFCF5] border-[#D8C3A2] text-[#292521] hover:border-[#A87924] hover:bg-[#E9D9BE] hover:text-[#54351F]'
                   }`}
                 >
                   <span
                     className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
                       isSelected
-                        ? 'bg-[#d4af37] text-[#3d0208]'
-                        : 'bg-stone-800 text-[#d4af37]'
+                        ? 'bg-[#FFFCF5] text-[#762D35]'
+                        : 'bg-[#E9D9BE] text-[#54351F]'
                     }`}
                   >
                     {glyph}
                   </span>
                   <div className="min-w-0">
                     <div className="text-xs truncate">{langOpt.nativeName}</div>
-                    <div className="text-[10px] text-stone-400 truncate">{langOpt.label}</div>
+                    <div className={`text-[10px] truncate ${isSelected ? 'text-[#FFF9EF]' : 'text-[#6B5948]'}`}>
+                      {langOpt.label}
+                    </div>
                   </div>
                 </button>
               );
@@ -143,19 +145,19 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
       )}
 
       {/* Main Floating Pill Bar */}
-      <div className="flex items-center justify-center gap-1.5 p-1.5 sm:p-2 rounded-2xl bg-[#0a0d17]/95 backdrop-blur-xl border border-[#c99738]/40 shadow-[0_8px_30px_rgba(0,0,0,0.7)] text-xs text-stone-200">
+      <div className="flex items-center justify-center gap-1.5 p-1.5 sm:p-2 rounded-2xl bg-[#F1E4D0]/98 backdrop-blur-md border-2 border-[#A87924] shadow-[0_8px_28px_rgba(75,51,31,0.18)] text-xs text-[#292521]">
         {/* Home Button */}
         <button
           type="button"
           onClick={() => onNavigate('/')}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer shadow-sm ${
             currentPath === '/'
-              ? 'bg-[#580014] text-[#fcedc7] border border-[#d4af37]/60'
-              : 'bg-stone-900/90 hover:bg-[#580014] text-stone-300 hover:text-[#fcedc7] border border-stone-700/80'
+              ? 'bg-[#762D35] text-white border border-[#A87924]'
+              : 'bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2]'
           }`}
           title="Go to Homepage"
         >
-          <Home className="w-3.5 h-3.5 text-[#d4af37]" />
+          <Home className={`w-3.5 h-3.5 ${currentPath === '/' ? 'text-white' : 'text-[#A87924]'}`} />
           <span className="hidden sm:inline">{t.nav?.home || 'Home'}</span>
         </button>
 
@@ -164,10 +166,10 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
           <button
             type="button"
             onClick={handleCloseOrBack}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold bg-stone-900/90 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-700/80 transition-all cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] transition-all cursor-pointer shadow-sm"
             title="Close page / return to Home"
           >
-            <X className="w-3.5 h-3.5 text-rose-400" />
+            <X className="w-3.5 h-3.5 text-[#762D35]" />
             <span className="hidden sm:inline">{t.common?.close || 'Close'}</span>
           </button>
         )}
@@ -176,16 +178,16 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] border border-[#e8c872] transition-all cursor-pointer shadow-md"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm"
           title="Toggle Language Menu (8 Supported)"
         >
-          <Globe className="w-3.5 h-3.5 text-[#290106]" />
+          <Globe className="w-3.5 h-3.5 text-white" />
           <span>{currentLang.nativeName}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#290106]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FFFCF5]" />
           {isExpanded ? (
-            <ChevronDown className="w-3 h-3 text-[#290106]" />
+            <ChevronDown className="w-3 h-3 text-white" />
           ) : (
-            <ChevronUp className="w-3 h-3 text-[#290106]" />
+            <ChevronUp className="w-3 h-3 text-white" />
           )}
         </button>
       </div>

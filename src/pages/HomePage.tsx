@@ -105,32 +105,32 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       </section>
 
       {/* SECTION A: Royal Hero Section */}
-      <section className="relative w-full min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0c0d15] via-[#1b0a11] to-[#0c0d15] px-4 sm:px-6 lg:px-8 border-b border-[#c99738]/30">
+      <section className="relative w-full min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#FFF9EF] via-[#F5EBD9] to-[#FFF9EF] px-4 sm:px-6 lg:px-8 border-b-2 border-[#A87924]/40">
         {/* Architectural Backdrop Glow & Subtle Motif */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#c99738_1px,transparent_1px)] [background-size:32px_32px]"></div>
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#580014]/25 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#A87924_1px,transparent_1px)] [background-size:32px_32px]"></div>
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#A87924]/15 blur-[120px] rounded-full pointer-events-none"></div>
 
         <div className="relative max-w-5xl mx-auto text-center space-y-8 py-16 sm:py-24">
           {/* Historical Emblem with Sun Rays */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1e1318]/90 border border-[#c99738]/50 shadow-[0_0_20px_rgba(201,151,56,0.25)] animate-in fade-in duration-500">
-            <div className="w-5 h-5 rounded-full bg-[#c99738] flex items-center justify-center p-0.5">
-              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#3a000d]">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFFCF5] border border-[#A87924]/60 shadow-sm animate-in fade-in duration-500">
+            <div className="w-5 h-5 rounded-full bg-[#A87924] flex items-center justify-center p-0.5">
+              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#FFFFFF]">
                 <circle cx="50" cy="50" r="28" />
                 <path d="M50 4 L53 26 L50 22 L47 26 Z M50 96 L53 74 L50 78 L47 74 Z M4 50 L26 53 L22 50 L26 47 Z M96 50 L74 53 L78 50 L74 47 Z" />
               </svg>
             </div>
-            <span className="text-xs sm:text-sm font-semibold tracking-wide text-[#fcedc7]">
+            <span className="text-xs sm:text-sm font-semibold tracking-wide text-[#54351F]">
               {t.hero.badge}
             </span>
           </div>
 
           {/* Headline */}
-          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl lg:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-[#fff3d4] via-[#e8c872] to-[#c99738] leading-[1.15] tracking-tight drop-shadow-sm">
+          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#54351F] leading-[1.15] tracking-tight">
             {t.hero.headline}
           </h1>
 
           {/* Subtitle */}
-          <p className="max-w-3xl mx-auto text-base sm:text-lg text-stone-300 font-royal-serif font-normal leading-relaxed">
+          <p className="max-w-3xl mx-auto text-base sm:text-lg text-[#292521] font-royal-serif font-normal leading-relaxed">
             {t.hero.subtitle}
           </p>
 
@@ -138,7 +138,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-4">
             <button
               onClick={() => onNavigate('/documentary')}
-              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-[#997022] via-[#c99738] to-[#997022] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] shadow-[0_4px_20px_rgba(201,151,56,0.3)] transition-all cursor-pointer flex items-center gap-2 group"
+              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#762D35] text-white hover:bg-[#5e2229] border border-[#A87924] shadow-md transition-all cursor-pointer flex items-center gap-2 group"
             >
               <span>{t.hero.exploreBtn}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -146,25 +146,25 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
             <button
               onClick={() => onNavigate('/dynasties')}
-              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#161a26] text-[#e8c872] border border-[#c99738]/50 hover:bg-[#202738] hover:border-[#c99738] transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#FFFCF5] text-[#54351F] border border-[#A87924]/70 hover:bg-[#FFF9EF] hover:border-[#A87924] transition-all cursor-pointer flex items-center gap-2 shadow-sm"
             >
-              <Crown className="w-4 h-4 text-[#d4af37]" />
+              <Crown className="w-4 h-4 text-[#A87924]" />
               <span>{t.hero.dynastiesBtn}</span>
             </button>
 
             <button
               onClick={() => onNavigate('/gallery')}
-              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#161a26] text-stone-200 border border-stone-700 hover:border-[#c99738]/60 hover:text-[#e8c872] transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#FFFCF5] text-[#54351F] border border-[#A87924]/60 hover:bg-[#FFF9EF] hover:border-[#A87924] transition-all cursor-pointer flex items-center gap-2 shadow-sm"
             >
-              <Landmark className="w-4 h-4 text-[#d4af37]" />
+              <Landmark className="w-4 h-4 text-[#A87924]" />
               <span>{t.hero.galleryBtn}</span>
             </button>
 
             <button
               onClick={() => onNavigate('/register')}
-              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#580014] text-[#fcedc7] border border-[#d4af37]/60 hover:bg-[#780016] transition-all cursor-pointer flex items-center gap-2"
+              className="px-6 py-3.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#762D35] text-white border border-[#A87924] hover:bg-[#5e2229] transition-all cursor-pointer flex items-center gap-2 shadow-md"
             >
-              <Users className="w-4 h-4 text-[#d4af37]" />
+              <Users className="w-4 h-4 text-white" />
               <span>{t.hero.joinBtn}</span>
             </button>
           </div>
@@ -173,13 +173,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
           <div className="pt-6 max-w-xl mx-auto">
             <div
               onClick={onOpenSearch}
-              className="p-3 px-5 rounded-2xl bg-[#121622]/90 border border-stone-700/80 hover:border-[#c99738] flex items-center justify-between text-stone-400 text-xs sm:text-sm cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(201,151,56,0.15)] transition-all"
+              className="p-3 px-5 rounded-2xl bg-[#FFFCF5] border border-[#A87924]/60 hover:border-[#A87924] flex items-center justify-between text-[#54351F] text-xs sm:text-sm cursor-pointer shadow-md hover:shadow-lg transition-all"
             >
               <div className="flex items-center gap-3">
-                <Search className="w-4 h-4 text-[#d4af37]" />
+                <Search className="w-4 h-4 text-[#A87924]" />
                 <span>{t.common.searchPlaceholder}</span>
               </div>
-              <span className="text-[11px] bg-stone-800 px-2.5 py-0.5 rounded text-stone-300 font-mono">
+              <span className="text-[11px] bg-[#FFF9EF] border border-[#A87924]/40 px-2.5 py-0.5 rounded text-[#54351F] font-mono">
                 ⌘K / Click
               </span>
             </div>
@@ -190,14 +190,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       {/* SECTION B: Featured Historical Topics */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+            <Sparkles className="w-3.5 h-3.5 text-[#A87924]" />
             <span>{t.home.pillarsBadge}</span>
           </div>
-          <h2 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+          <h2 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
             {t.home.pillarsTitle}
           </h2>
-          <p className="max-w-2xl mx-auto text-xs sm:text-sm text-stone-400">
+          <p className="max-w-2xl mx-auto text-xs sm:text-sm text-[#292521]">
             {t.home.pillarsSubtitle}
           </p>
         </div>
@@ -222,33 +222,32 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
             return (
               <div
                 key={i}
-                className="group relative rounded-2xl bg-[#121622] border border-stone-800/80 hover:border-[#c99738]/60 overflow-hidden shadow-lg hover:shadow-[0_4px_25px_rgba(201,151,56,0.15)] transition-all flex flex-col"
+                className="group relative rounded-2xl bg-[#FFFCF5] border border-[#A87924]/45 hover:border-[#A87924] overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col"
               >
-                <div className="h-44 w-full overflow-hidden relative">
+                <div className="h-44 w-full overflow-hidden relative border-b border-[#A87924]/30">
                   <img
                     src={img}
                     alt={topic.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-[#121622]/40 to-transparent"></div>
-                  <div className="absolute top-3 right-3 p-2 rounded-xl bg-black/60 backdrop-blur-md border border-[#c99738]/40 text-[#d4af37]">
+                  <div className="absolute top-3 right-3 p-2 rounded-xl bg-[#FFFCF5]/95 backdrop-blur-md border border-[#A87924]/60 text-[#76501F] shadow-sm">
                     <Icon className="w-4 h-4" />
                   </div>
                 </div>
 
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#e8c872] transition-colors">
+                    <h3 className="font-royal-heading font-bold text-base text-[#54351F] group-hover:text-[#762D35] transition-colors">
                       {topic.title}
                     </h3>
-                    <p className="text-xs text-stone-400 mt-2 leading-relaxed">
+                    <p className="text-xs text-[#292521] mt-2 leading-relaxed">
                       {topic.desc}
                     </p>
                   </div>
 
                   <button
                     onClick={() => onNavigate(path)}
-                    className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-[#181f2f] hover:bg-[#580014] text-[#e8c872] hover:text-white border border-[#c99738]/30 hover:border-[#d4af37] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                   >
                     <span>{t.common.readMore}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -262,19 +261,19 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
       {/* SECTION C: Interactive Historical Timeline Snapshot */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#A87924]/40 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-              <Calendar className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+              <Calendar className="w-3.5 h-3.5 text-[#A87924]" />
               <span>{t.home.timelineBadge}</span>
             </div>
-            <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7] mt-1">
+            <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F] mt-1">
               {t.home.timelineTitle}
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/timeline')}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+            className="text-xs font-semibold text-[#76501F] hover:text-[#54351F] flex items-center gap-1.5 cursor-pointer"
           >
             <span>{t.home.viewFullTimeline}</span>
             <ArrowRight className="w-4 h-4" />
@@ -286,19 +285,19 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
       {/* SECTION D: Featured Research Articles */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#A87924]/40 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-              <BookOpen className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+              <BookOpen className="w-3.5 h-3.5 text-[#A87924]" />
               <span>{t.home.researchBadge}</span>
             </div>
-            <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7] mt-1">
+            <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F] mt-1">
               {t.home.researchTitle}
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/research')}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+            className="text-xs font-semibold text-[#76501F] hover:text-[#54351F] flex items-center gap-1.5 cursor-pointer"
           >
             <span>{t.home.viewAllResearch}</span>
             <ArrowRight className="w-4 h-4" />
@@ -313,11 +312,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               <div
                 key={art.id}
                 onClick={() => setSelectedFullArticle(art)}
-                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+                className="rounded-2xl bg-[#FFFCF5] border border-[#A87924]/45 hover:border-[#A87924] overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
                 title="Click to read Complete Research Article"
               >
                 <div>
-                  <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                  <div className="h-44 w-full overflow-hidden relative bg-[#FFF9EF] border-b border-[#A87924]/30">
                     <img
                       src={art.featured_image || fallbackThumb}
                       alt={artTitle}
@@ -331,29 +330,28 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                       }}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
                   </div>
 
                   <div className="p-5 pb-3 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[11px] font-semibold text-[#d4af37] uppercase tracking-wider">
+                      <span className="text-[11px] font-semibold text-[#76501F] uppercase tracking-wider">
                         {getMetadataLabel('category', art.category) || art.category}
                       </span>
                       <EvidenceBadge category={art.evidence_category} size="sm" />
                     </div>
 
-                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug">
+                    <h3 className="font-royal-heading font-bold text-base text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug">
                       {artTitle}
                     </h3>
 
-                    <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
+                    <p className="text-xs text-[#292521] line-clamp-3 leading-relaxed">
                       {artSummary}
                     </p>
                   </div>
                 </div>
 
-                <div className="px-5 pb-5 pt-3 border-t border-stone-800/80 space-y-2.5">
-                  <div className="flex items-center justify-between text-[11px] text-stone-500">
+                <div className="px-5 pb-5 pt-3 border-t border-[#A87924]/30 space-y-2.5 bg-[#FFF9EF]/60">
+                  <div className="flex items-center justify-between text-[11px] text-[#54351F]">
                     <span>By {art.author_name}</span>
                     <span>{art.publication_date}</span>
                   </div>
@@ -364,14 +362,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                         e.stopPropagation();
                         setSelectedBriefArticle(art);
                       }}
-                      className="text-[11px] text-[#fae29c] hover:underline font-medium flex items-center gap-1 group-hover:text-white transition-colors cursor-pointer"
+                      className="text-[11px] text-[#76501F] hover:underline font-medium flex items-center gap-1 transition-colors cursor-pointer"
                     >
-                      <Sparkles className="w-3 h-3 text-[#d4af37]" />
+                      <Sparkles className="w-3 h-3 text-[#A87924]" />
                       <span>Brief Summary</span>
                     </button>
-                    <span className="text-xs font-semibold text-[#e8c872] flex items-center gap-1">
+                    <span className="text-xs font-semibold text-[#762D35] flex items-center gap-1">
                       <span>Read Full Article</span>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#d4af37] group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-3.5 h-3.5 text-[#A87924] group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
                 </div>
@@ -383,19 +381,19 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
       {/* SECTION E: Historical Gallery Showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-stone-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#A87924]/40 pb-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-              <Landmark className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+              <Landmark className="w-3.5 h-3.5 text-[#A87924]" />
               <span>{t.home.galleryBadge}</span>
             </div>
-            <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7] mt-1">
+            <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F] mt-1">
               {t.home.galleryTitle}
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/gallery')}
-            className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+            className="text-xs font-semibold text-[#76501F] hover:text-[#54351F] flex items-center gap-1.5 cursor-pointer"
           >
             <span>{t.home.viewFullGallery}</span>
             <ArrowRight className="w-4 h-4" />
@@ -407,21 +405,21 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
             <div
               key={item.id}
               onClick={() => setSelectedGalleryItem(item)}
-              className="group relative rounded-xl overflow-hidden bg-stone-900 border border-stone-800 hover:border-[#c99738] cursor-pointer h-64 shadow-md transition-all"
+              className="group relative rounded-xl overflow-hidden bg-[#FFFCF5] border border-[#A87924]/50 hover:border-[#A87924] cursor-pointer h-64 shadow-md transition-all"
             >
               <img
                 src={item.image_url}
                 alt={item.alt_text}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37]">
+              <div className="absolute inset-x-0 bottom-0 bg-[#FFFCF5]/95 backdrop-blur-sm border-t border-[#A87924]/40 flex flex-col justify-end p-3.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#76501F]">
                   {item.category} • {item.period}
                 </span>
-                <h4 className="font-royal-heading font-bold text-sm text-stone-100 group-hover:text-[#fcedc7] transition-colors leading-tight mt-1">
+                <h4 className="font-royal-heading font-bold text-sm text-[#54351F] group-hover:text-[#762D35] transition-colors leading-tight mt-0.5">
                   {item.title}
                 </h4>
-                <p className="text-[11px] text-stone-400 mt-1 line-clamp-1">
+                <p className="text-[11px] text-[#292521] mt-0.5 line-clamp-1">
                   {item.location}
                 </p>
               </div>
@@ -432,12 +430,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
       {/* SECTION F: Website Archival Statistics (Computed from Real DB) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-gradient-to-r from-[#170a10] via-[#1a1324] to-[#0e1424] border border-[#c99738]/40 p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+        <div className="rounded-3xl bg-[#FFF9EF] border-2 border-[#A87924]/55 p-8 sm:p-12 shadow-lg relative overflow-hidden">
           <div className="relative z-10 text-center space-y-3 mb-10">
-            <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
+            <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F]">
               {t.stats.title}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-400 max-w-xl mx-auto">
+            <p className="text-xs sm:text-sm text-[#292521] max-w-xl mx-auto">
               {t.stats.subtitle}
             </p>
           </div>
@@ -452,11 +450,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               { label: t.stats.members, val: stats?.registered_members || 3 },
               { label: t.stats.events, val: stats?.community_events || 3 }
             ].map((stat, idx) => (
-              <div key={idx} className="p-4 rounded-xl bg-black/40 border border-stone-800">
-                <div className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#ffe19c] to-[#c99738] font-royal-heading">
+              <div key={idx} className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/45 shadow-sm">
+                <div className="text-2xl sm:text-3xl font-extrabold text-[#54351F] font-royal-heading">
                   {stat.val}
                 </div>
-                <div className="text-[11px] font-medium text-stone-400 mt-1 uppercase tracking-wider">
+                <div className="text-[11px] font-semibold text-[#76501F] mt-1 uppercase tracking-wider">
                   {stat.label}
                 </div>
               </div>
@@ -467,26 +465,26 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
       {/* SECTION G: Community Call to Action */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-6">
-        <div className="p-8 sm:p-12 rounded-3xl bg-[#141824] border border-[#c99738]/50 shadow-xl space-y-4">
-          <div className="w-12 h-12 rounded-full bg-[#580014] border border-[#d4af37] flex items-center justify-center mx-auto text-[#d4af37]">
+        <div className="p-8 sm:p-12 rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924]/60 shadow-lg space-y-4">
+          <div className="w-12 h-12 rounded-full bg-[#762D35] border border-[#A87924] flex items-center justify-center mx-auto text-white">
             <Users className="w-6 h-6" />
           </div>
-          <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
+          <h2 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F]">
             {t.home.communityTitle}
           </h2>
-          <p className="text-xs sm:text-sm text-stone-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#292521] max-w-2xl mx-auto leading-relaxed">
             {t.home.communitySubtitle}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <button
               onClick={() => onNavigate('/register')}
-              className="px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] shadow-lg transition-all cursor-pointer"
+              className="px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] shadow-md transition-all cursor-pointer"
             >
               {t.home.joinBtn}
             </button>
             <button
               onClick={() => onNavigate('/members')}
-              className="px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-[#1c2333] text-stone-200 border border-stone-700 hover:border-[#c99738] hover:text-[#e8c872] transition-all cursor-pointer"
+              className="px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm bg-[#FFF9EF] text-[#54351F] border border-[#A87924]/60 hover:border-[#A87924] transition-all cursor-pointer"
             >
               {t.home.directoryBtn}
             </button>

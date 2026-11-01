@@ -119,14 +119,14 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
       {/* 1. Header Banner */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#c99738]/15 border border-[#c99738]/40 text-[#e6be6c] text-xs font-semibold tracking-wider uppercase">
-          <Crown className="w-3.5 h-3.5" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE3D0] border border-[#A87924]/40 text-[#762D35] text-xs font-semibold tracking-wider uppercase">
+          <Crown className="w-3.5 h-3.5 text-[#A87924]" />
           <span>Suryavamsha Odiyaraju Kshatriya Design Tokens</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-royal-heading tracking-wide royal-gold-text">
+        <h1 className="text-3xl sm:text-5xl font-royal-heading tracking-wide text-[#54351F] font-bold">
           Royal UI Design System
         </h1>
-        <p className="text-stone-300 text-sm sm:text-base font-royal-serif leading-relaxed">
+        <p className="text-[#6B5948] text-sm sm:text-base font-royal-serif leading-relaxed">
           The official component library unifying visual hierarchy, historical dignity, and responsive
           interaction standards across the historical documentary portal.
         </p>
@@ -138,76 +138,76 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Palette className="w-5 h-5 text-[#c99738]" />
-            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#faf7f0]">
-              1. Royal Design Tokens in index.css
+            <Palette className="w-5 h-5 text-[#A87924]" />
+            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#54351F] font-bold">
+              1. Light Almond &amp; Warm Ivory Theme Tokens in index.css
             </h2>
           </div>
           <Badge variant="gold">Theme Tokens</Badge>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div className="p-4 rounded-2xl bg-[#580014] border border-[#c99738]/40 text-center shadow-lg">
-            <div className="text-xs font-bold text-amber-200">#580014</div>
-            <div className="text-xs font-medium text-stone-200 mt-1">Royal Maroon</div>
-            <div className="text-[10px] text-amber-300/70 mt-0.5">--royal-maroon</div>
+          <div className="p-4 rounded-2xl bg-[#F5EBD9] text-[#292521] border border-[#D8C3A2] text-center shadow-sm">
+            <div className="text-xs font-bold text-[#54351F]">#F5EBD9</div>
+            <div className="text-xs font-medium text-[#292521] mt-1">Light Almond</div>
+            <div className="text-[10px] text-[#6B5948] mt-0.5">--page-bg</div>
           </div>
-          <div className="p-4 rounded-2xl bg-[#3a000d] border border-stone-700 text-center shadow-lg">
-            <div className="text-xs font-bold text-amber-200">#3a000d</div>
-            <div className="text-xs font-medium text-stone-200 mt-1">Maroon Dark</div>
-            <div className="text-[10px] text-amber-300/70 mt-0.5">--royal-maroon-dark</div>
+          <div className="p-4 rounded-2xl bg-[#FFFCF5] text-[#292521] border border-[#D8C3A2] text-center shadow-sm">
+            <div className="text-xs font-bold text-[#54351F]">#FFFCF5</div>
+            <div className="text-xs font-medium text-[#292521] mt-1">Warm Ivory Card</div>
+            <div className="text-[10px] text-[#6B5948] mt-0.5">--card-bg</div>
           </div>
-          <div className="p-4 rounded-2xl bg-[#c99738] text-[#070d18] border border-amber-300 text-center font-bold shadow-lg">
-            <div className="text-xs">#c99738</div>
-            <div className="text-xs font-medium text-[#070d18] mt-1">Royal Gold</div>
-            <div className="text-[10px] text-[#3a000d] mt-0.5">--royal-gold</div>
+          <div className="p-4 rounded-2xl bg-[#EFE3D0] text-[#292521] border border-[#D8C3A2] text-center shadow-sm">
+            <div className="text-xs font-bold text-[#54351F]">#EFE3D0</div>
+            <div className="text-xs font-medium text-[#292521] mt-1">Section Surface</div>
+            <div className="text-[10px] text-[#6B5948] mt-0.5">--section-bg</div>
           </div>
-          <div className="p-4 rounded-2xl bg-[#e6be6c] text-[#070d18] border border-amber-200 text-center font-bold shadow-lg">
-            <div className="text-xs">#e6be6c</div>
-            <div className="text-xs font-medium text-[#070d18] mt-1">Gold Light</div>
-            <div className="text-[10px] text-[#3a000d] mt-0.5">--royal-gold-light</div>
+          <div className="p-4 rounded-2xl bg-[#762D35] text-white border border-[#5E2229] text-center font-bold shadow-sm">
+            <div className="text-xs">#762D35</div>
+            <div className="text-xs font-medium text-white mt-1">Primary Maroon</div>
+            <div className="text-[10px] text-[#EFE3D0] mt-0.5">--primary-button</div>
           </div>
-          <div className="p-4 rounded-2xl bg-[#0b1528] border border-[#c99738]/40 text-center shadow-lg">
-            <div className="text-xs font-bold text-sky-200">#0b1528</div>
-            <div className="text-xs font-medium text-stone-200 mt-1">Royal Navy</div>
-            <div className="text-[10px] text-sky-400/70 mt-0.5">--royal-navy</div>
+          <div className="p-4 rounded-2xl bg-[#A87924] text-white border border-[#8E641B] text-center font-bold shadow-sm">
+            <div className="text-xs">#A87924</div>
+            <div className="text-xs font-medium text-white mt-1">Accent Gold</div>
+            <div className="text-[10px] text-[#FFF9EF] mt-0.5">--accent-gold</div>
           </div>
-          <div className="p-4 rounded-2xl bg-[#faf7f0] text-[#070d18] border border-[#c99738] text-center font-bold shadow-lg">
-            <div className="text-xs">#faf7f0</div>
-            <div className="text-xs font-medium text-[#070d18] mt-1">Royal Ivory</div>
-            <div className="text-[10px] text-[#580014] mt-0.5">--royal-ivory</div>
+          <div className="p-4 rounded-2xl bg-[#54351F] text-white border border-[#292521] text-center font-bold shadow-sm">
+            <div className="text-xs">#54351F</div>
+            <div className="text-xs font-medium text-white mt-1">Heading Espresso</div>
+            <div className="text-[10px] text-[#EFE3D0] mt-0.5">--heading-text</div>
           </div>
         </div>
 
         {/* Typography & Borders Tokens Bar */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-[#0b1528]/80 royal-border space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-[#c99738]">
+          <div className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-2">
+            <div className="text-xs font-semibold uppercase tracking-wider text-[#76501F]">
               Typography Tokens
             </div>
-            <div className="font-royal-heading text-lg text-[#faf7f0]">
+            <div className="font-royal-heading text-lg text-[#54351F] font-bold">
               Cinzel: SŪRYAVAṀŚA GAJAPATHI RĀJULU
             </div>
-            <div className="font-royal-serif text-sm text-stone-300 italic">
+            <div className="font-royal-serif text-sm text-[#292521] italic">
               Cormorant Garamond: "Epigraphic chronicles of Odra Desha, Kalinga, and Trikalinga."
             </div>
-            <div className="text-xs text-stone-400">
+            <div className="text-xs text-[#6B5948]">
               Plus Jakarta Sans: Clean, highly legible body text for documentary archives.
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-[#0b1528]/80 royal-border-glow space-y-2">
-            <div className="text-xs font-semibold uppercase tracking-wider text-[#c99738]">
-              Royal Borders & Gradients
+          <div className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#A87924]/50 shadow-sm space-y-2">
+            <div className="text-xs font-semibold uppercase tracking-wider text-[#76501F]">
+              Royal Borders &amp; Surfaces
             </div>
-            <div className="text-xs text-stone-300">
-              <span className="font-semibold text-amber-300">.royal-border:</span> 1px gold border with subtle inner/outer atmospheric shadow.
+            <div className="text-xs text-[#292521]">
+              <span className="font-semibold text-[#54351F]">.royal-border:</span> 1px warm gold border (#D8C3A2) with subtle warm shadow.
             </div>
-            <div className="text-xs text-stone-300">
-              <span className="font-semibold text-amber-300">.royal-border-glow:</span> Enhanced golden luminescence for primary edicts.
+            <div className="text-xs text-[#292521]">
+              <span className="font-semibold text-[#54351F]">.royal-border-glow:</span> Enhanced golden highlight for primary edicts.
             </div>
-            <div className="text-xs text-stone-300">
-              <span className="font-semibold text-amber-300">.royal-gold-gradient:</span> 135° metallic reflection (#e6be6c → #c99738 → #8b6218).
+            <div className="text-xs text-[#292521]">
+              <span className="font-semibold text-[#54351F]">.royal-gold-gradient:</span> Warm heritage metallic reflection (#A87924).
             </div>
           </div>
         </div>
@@ -217,8 +217,8 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Sliders className="w-5 h-5 text-[#c99738]" />
-            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#faf7f0]">
+            <Sliders className="w-5 h-5 text-[#A87924]" />
+            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#54351F] font-bold">
               2. RoyalButton Component
             </h2>
           </div>
@@ -235,10 +235,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
           </RoyalCardHeader>
           <RoyalCardContent className="pt-6 space-y-6">
             {/* Control Panel */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-xl bg-[#070d18] border border-[#c99738]/20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2]">
               {/* Variant selector */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   Variant
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -247,10 +247,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                       key={v}
                       type="button"
                       onClick={() => setBtnVariant(v)}
-                      className={`text-xs px-2.5 py-1.5 rounded-lg border capitalize transition-all ${
+                      className={`text-xs px-2.5 py-1.5 rounded-lg border capitalize transition-all cursor-pointer ${
                         btnVariant === v
-                          ? 'border-[#c99738] bg-[#c99738]/20 text-[#e6be6c] font-semibold'
-                          : 'border-stone-800 bg-stone-900/60 text-stone-400 hover:text-stone-200'
+                          ? 'border-[#762D35] bg-[#762D35] text-white font-semibold'
+                          : 'border-[#D8C3A2] bg-white text-[#54351F] hover:bg-[#EFE3D0]'
                       }`}
                     >
                       {v}
@@ -261,7 +261,7 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
 
               {/* Size selector */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   Size
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
@@ -270,10 +270,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                       key={s}
                       type="button"
                       onClick={() => setBtnSize(s)}
-                      className={`text-xs px-2.5 py-1.5 rounded-lg border uppercase transition-all ${
+                      className={`text-xs px-2.5 py-1.5 rounded-lg border uppercase transition-all cursor-pointer ${
                         btnSize === s
-                          ? 'border-[#c99738] bg-[#c99738]/20 text-[#e6be6c] font-semibold'
-                          : 'border-stone-800 bg-stone-900/60 text-stone-400 hover:text-stone-200'
+                          ? 'border-[#762D35] bg-[#762D35] text-white font-semibold'
+                          : 'border-[#D8C3A2] bg-white text-[#54351F] hover:bg-[#EFE3D0]'
                       }`}
                     >
                       {s}
@@ -284,7 +284,7 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
 
               {/* Icon selector */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   Icon Slot
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -293,10 +293,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                       key={ic}
                       type="button"
                       onClick={() => setBtnIcon(ic)}
-                      className={`text-xs px-2.5 py-1.5 rounded-lg border capitalize transition-all ${
+                      className={`text-xs px-2.5 py-1.5 rounded-lg border capitalize transition-all cursor-pointer ${
                         btnIcon === ic
-                          ? 'border-[#c99738] bg-[#c99738]/20 text-[#e6be6c] font-semibold'
-                          : 'border-stone-800 bg-stone-900/60 text-stone-400 hover:text-stone-200'
+                          ? 'border-[#762D35] bg-[#762D35] text-white font-semibold'
+                          : 'border-[#D8C3A2] bg-white text-[#54351F] hover:bg-[#EFE3D0]'
                       }`}
                     >
                       {ic}
@@ -307,25 +307,25 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
 
               {/* Toggles */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   State Toggles
                 </label>
                 <div className="space-y-1.5">
-                  <label className="flex items-center gap-2 text-xs text-stone-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-[#292521] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={btnLoading}
                       onChange={e => setBtnLoading(e.target.checked)}
-                      className="rounded accent-[#c99738]"
+                      className="rounded accent-[#762D35]"
                     />
                     <span>Loading Spinner (isLoading)</span>
                   </label>
-                  <label className="flex items-center gap-2 text-xs text-stone-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-[#292521] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={btnDisabled}
                       onChange={e => setBtnDisabled(e.target.checked)}
-                      className="rounded accent-[#c99738]"
+                      className="rounded accent-[#762D35]"
                     />
                     <span>Disabled State</span>
                   </label>
@@ -334,8 +334,8 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
             </div>
 
             {/* Live Interactive Preview */}
-            <div className="p-8 rounded-2xl bg-[#0c0e16] border border-[#c99738]/30 flex flex-col items-center justify-center gap-4 text-center">
-              <span className="text-[11px] uppercase tracking-widest text-stone-400">
+            <div className="p-8 rounded-2xl bg-[#EFE3D0]/60 border border-[#D8C3A2] flex flex-col items-center justify-center gap-4 text-center">
+              <span className="text-[11px] uppercase tracking-widest text-[#6B5948] font-semibold">
                 Live Component Preview
               </span>
               <RoyalButton
@@ -350,19 +350,19 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
             </div>
 
             {/* Code Output */}
-            <div className="relative rounded-xl bg-[#070d18] border border-stone-800 p-4">
-              <div className="flex items-center justify-between text-xs text-stone-400 mb-2">
-                <span className="flex items-center gap-1.5 font-mono">
-                  <Code2 className="w-3.5 h-3.5 text-[#c99738]" /> JSX Code Snippet
+            <div className="relative rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] p-4">
+              <div className="flex items-center justify-between text-xs text-[#6B5948] mb-2">
+                <span className="flex items-center gap-1.5 font-mono text-[#54351F] font-semibold">
+                  <Code2 className="w-3.5 h-3.5 text-[#A87924]" /> JSX Code Snippet
                 </span>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(generatedButtonCode, 'btn')}
-                  className="flex items-center gap-1 text-xs text-[#c99738] hover:text-[#e6be6c] transition-colors"
+                  className="flex items-center gap-1 text-xs text-[#76501F] hover:text-[#A87924] transition-colors font-semibold cursor-pointer"
                 >
                   {copiedSnippet === 'btn' ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied!
+                      <Check className="w-3.5 h-3.5 text-[#1E5631]" /> Copied!
                     </>
                   ) : (
                     <>
@@ -371,14 +371,14 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                   )}
                 </button>
               </div>
-              <pre className="text-xs font-mono text-[#fcedc7] overflow-x-auto whitespace-pre leading-relaxed">
+              <pre className="text-xs font-mono text-[#292521] overflow-x-auto whitespace-pre leading-relaxed">
                 {generatedButtonCode}
               </pre>
             </div>
 
             {/* Fixed Matrix of Variants */}
-            <div className="space-y-3 pt-4 border-t border-[#c99738]/20">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-[#c99738]">
+            <div className="space-y-3 pt-4 border-t border-[#D8C3A2]">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-[#54351F]">
                 Standard Variant Showcase
               </h4>
               <div className="flex flex-wrap gap-4 items-center">
@@ -389,7 +389,7 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                   Imperial Maroon
                 </RoyalButton>
                 <RoyalButton variant="outline" leftIcon={<Bookmark className="w-4 h-4" />}>
-                  Navy Outline
+                  Almond Outline
                 </RoyalButton>
                 <RoyalButton variant="ghost" leftIcon={<Share2 className="w-4 h-4" />}>
                   Ghost Action
@@ -410,8 +410,8 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Layers className="w-5 h-5 text-[#c99738]" />
-            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#faf7f0]">
+            <Layers className="w-5 h-5 text-[#A87924]" />
+            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#54351F] font-bold">
               3. RoyalCard Component Suite
             </h2>
           </div>
@@ -428,10 +428,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
           </RoyalCardHeader>
           <RoyalCardContent className="pt-6 space-y-6">
             {/* Control Panel */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-[#070d18] border border-[#c99738]/20">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2]">
               {/* Variant */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   Surface Variant
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
@@ -440,10 +440,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                       key={cv}
                       type="button"
                       onClick={() => setCardVariant(cv)}
-                      className={`text-xs px-2.5 py-1.5 rounded-lg border capitalize transition-all ${
+                      className={`text-xs px-2.5 py-1.5 rounded-lg border capitalize transition-all cursor-pointer ${
                         cardVariant === cv
-                          ? 'border-[#c99738] bg-[#c99738]/20 text-[#e6be6c] font-semibold'
-                          : 'border-stone-800 bg-stone-900/60 text-stone-400 hover:text-stone-200'
+                          ? 'border-[#762D35] bg-[#762D35] text-white font-semibold'
+                          : 'border-[#D8C3A2] bg-white text-[#54351F] hover:bg-[#EFE3D0]'
                       }`}
                     >
                       {cv}
@@ -454,41 +454,41 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
 
               {/* Ornaments */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   Ornaments
                 </label>
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 text-xs text-stone-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-[#292521] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={cardOrnament}
                       onChange={e => setCardOrnament(e.target.checked)}
-                      className="rounded accent-[#c99738]"
+                      className="rounded accent-[#762D35]"
                     />
                     <span>Corner Brackets (ornament)</span>
                   </label>
-                  <label className="flex items-center gap-2 text-xs text-stone-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-[#292521] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={cardGoldText}
                       onChange={e => setCardGoldText(e.target.checked)}
-                      className="rounded accent-[#c99738]"
+                      className="rounded accent-[#762D35]"
                     />
-                    <span>Gold Gradient Title (goldText)</span>
+                    <span>Heading Accent Title (goldText)</span>
                   </label>
                 </div>
               </div>
 
               {/* Subcomponent list */}
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#c99738] mb-1.5">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-[#54351F] mb-1.5">
                   Subcomponents Included
                 </label>
-                <ul className="text-xs text-stone-400 space-y-1">
-                  <li>• <code className="text-[#c99738]">RoyalCardHeader</code> (with optional bottom border)</li>
-                  <li>• <code className="text-[#c99738]">RoyalCardTitle</code> (Cinzel font)</li>
-                  <li>• <code className="text-[#c99738]">RoyalCardDescription</code> (Cormorant / Sans)</li>
-                  <li>• <code className="text-[#c99738]">RoyalCardContent</code> &amp; <code className="text-[#c99738]">RoyalCardFooter</code></li>
+                <ul className="text-xs text-[#6B5948] space-y-1">
+                  <li>• <code className="text-[#762D35] font-semibold">RoyalCardHeader</code> (with optional bottom border)</li>
+                  <li>• <code className="text-[#762D35] font-semibold">RoyalCardTitle</code> (Cinzel font)</li>
+                  <li>• <code className="text-[#762D35] font-semibold">RoyalCardDescription</code> (Cormorant / Sans)</li>
+                  <li>• <code className="text-[#762D35] font-semibold">RoyalCardContent</code> &amp; <code className="text-[#762D35] font-semibold">RoyalCardFooter</code></li>
                 </ul>
               </div>
             </div>
@@ -499,7 +499,7 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                 <RoyalCardHeader border>
                   <div className="flex items-center justify-between">
                     <Badge variant="gold">Dynastic Folio</Badge>
-                    <span className="text-[11px] text-stone-400">Regnal Year 1435 CE</span>
+                    <span className="text-[11px] text-[#6B5948]">Regnal Year 1435 CE</span>
                   </div>
                   <RoyalCardTitle goldText={cardGoldText} className="mt-2">
                     Suryavamsha Archival Folio
@@ -508,13 +508,13 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                     Epigraphic copper plate documentation preserving royal grants and land endowments.
                   </RoyalCardDescription>
                 </RoyalCardHeader>
-                <RoyalCardContent className="space-y-3 pt-4 text-xs sm:text-sm text-stone-300">
+                <RoyalCardContent className="space-y-3 pt-4 text-xs sm:text-sm text-[#292521]">
                   <p>
                     Inscribed during the reign of Maharaja Sri Kapilendra Deva at Simhachalam temple,
                     recording the titles of Gajapathi, Gaudesvara, and Navakoti Karnata Kalavaragesvara.
                   </p>
-                  <div className="p-3 rounded-xl bg-[#070d18]/60 border border-[#c99738]/20 text-xs text-stone-300">
-                    <span className="text-[#c99738] font-semibold">Evidence Status:</span> Primary Epigraphic Inscription
+                  <div className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs text-[#292521]">
+                    <span className="text-[#54351F] font-semibold">Evidence Status:</span> Primary Epigraphic Inscription
                   </div>
                 </RoyalCardContent>
                 <RoyalCardFooter>
@@ -529,19 +529,19 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
             </div>
 
             {/* Code Output for RoyalCard */}
-            <div className="relative rounded-xl bg-[#070d18] border border-stone-800 p-4">
-              <div className="flex items-center justify-between text-xs text-stone-400 mb-2">
-                <span className="flex items-center gap-1.5 font-mono">
-                  <Code2 className="w-3.5 h-3.5 text-[#c99738]" /> JSX Code Snippet
+            <div className="relative rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] p-4">
+              <div className="flex items-center justify-between text-xs text-[#6B5948] mb-2">
+                <span className="flex items-center gap-1.5 font-mono text-[#54351F] font-semibold">
+                  <Code2 className="w-3.5 h-3.5 text-[#A87924]" /> JSX Code Snippet
                 </span>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(generatedCardCode, 'card')}
-                  className="flex items-center gap-1 text-xs text-[#c99738] hover:text-[#e6be6c] transition-colors"
+                  className="flex items-center gap-1 text-xs text-[#76501F] hover:text-[#A87924] transition-colors font-semibold cursor-pointer"
                 >
                   {copiedSnippet === 'card' ? (
                     <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied!
+                      <Check className="w-3.5 h-3.5 text-[#1E5631]" /> Copied!
                     </>
                   ) : (
                     <>
@@ -550,7 +550,7 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                   )}
                 </button>
               </div>
-              <pre className="text-xs font-mono text-[#fcedc7] overflow-x-auto whitespace-pre leading-relaxed">
+              <pre className="text-xs font-mono text-[#292521] overflow-x-auto whitespace-pre leading-relaxed">
                 {generatedCardCode}
               </pre>
             </div>
@@ -559,22 +559,22 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
 
         {/* 3 Real-World Matrix Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-          {/* Card 1: Default Navy */}
+          {/* Card 1: Default Ivory */}
           <RoyalCard variant="default" ornament>
             <RoyalCardHeader border>
-              <RoyalCardTitle goldText>Royal Navy Card</RoyalCardTitle>
+              <RoyalCardTitle goldText>Warm Ivory Card</RoyalCardTitle>
               <RoyalCardDescription>
-                Signature dark navy backdrop with fine 1px golden border.
+                Signature warm ivory backdrop (#FFFCF5) with fine 1px golden almond border.
               </RoyalCardDescription>
             </RoyalCardHeader>
-            <RoyalCardContent className="pt-4 text-xs sm:text-sm text-stone-300 space-y-2">
+            <RoyalCardContent className="pt-4 text-xs sm:text-sm text-[#292521] space-y-2">
               <p>
-                Features glassmorphic backdrop filtering and geometric gold corner brackets. Used for
+                Features warm paper elegance and geometric gold corner brackets. Used for
                 standard archival records, member listings, and references.
               </p>
             </RoyalCardContent>
             <RoyalCardFooter>
-              <span className="text-xs text-stone-400">Variant: default</span>
+              <span className="text-xs text-[#6B5948]">Variant: default</span>
               <RoyalButton size="sm" variant="outline">
                 View Archive
               </RoyalButton>
@@ -586,10 +586,10 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
             <RoyalCardHeader border>
               <RoyalCardTitle goldText>Glow Variant Card</RoyalCardTitle>
               <RoyalCardDescription>
-                Deep ambient gold aura for high-priority archival citations.
+                Warm gold border accent for high-priority archival citations.
               </RoyalCardDescription>
             </RoyalCardHeader>
-            <RoyalCardContent className="pt-4 text-xs sm:text-sm text-stone-300 space-y-2">
+            <RoyalCardContent className="pt-4 text-xs sm:text-sm text-[#292521] space-y-2">
               <p>
                 Engineered for authenticated copper plates, verified claims, and documentary highlights
                 requiring visual prominence.
@@ -603,15 +603,15 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
             </RoyalCardFooter>
           </RoyalCard>
 
-          {/* Card 3: Imperial Maroon */}
+          {/* Card 3: Heritage Almond */}
           <RoyalCard variant="maroon" ornament>
             <RoyalCardHeader border>
-              <RoyalCardTitle goldText={false}>Imperial Maroon Card</RoyalCardTitle>
+              <RoyalCardTitle goldText={false}>Heritage Almond Card</RoyalCardTitle>
               <RoyalCardDescription>
-                Rich imperial crimson gradient evoking sovereign royal seals.
+                Rich warm parchment gradient evoking sovereign royal seals.
               </RoyalCardDescription>
             </RoyalCardHeader>
-            <RoyalCardContent className="pt-4 text-xs sm:text-sm text-stone-300 space-y-2">
+            <RoyalCardContent className="pt-4 text-xs sm:text-sm text-[#292521] space-y-2">
               <p>
                 Harmonizes with historical documentary narratives, royal lineage branches, and dynastic
                 rulers biographies.
@@ -631,17 +631,17 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Award className="w-5 h-5 text-[#c99738]" />
-            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#faf7f0]">
+            <Award className="w-5 h-5 text-[#A87924]" />
+            <h2 className="text-xl sm:text-2xl font-royal-heading text-[#54351F] font-bold">
               4. Complete Portal Composition Exhibit
             </h2>
           </div>
           <Badge variant="verified">Design System Consistency</Badge>
         </div>
 
-        <p className="text-xs sm:text-sm text-stone-300 leading-relaxed max-w-3xl">
-          Demonstrating how <code className="text-[#c99738]">RoyalButton</code> and{' '}
-          <code className="text-[#c99738]">RoyalCard</code> combine seamlessly with form inputs,
+        <p className="text-xs sm:text-sm text-[#292521] leading-relaxed max-w-3xl">
+          Demonstrating how <code className="text-[#762D35] font-semibold">RoyalButton</code> and{' '}
+          <code className="text-[#762D35] font-semibold">RoyalCard</code> combine seamlessly with form inputs,
           badges, and interactive dropdowns to produce authentic royal heritage layouts.
         </p>
 
@@ -665,17 +665,17 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
               </RoyalCardDescription>
             </RoyalCardHeader>
             <RoyalCardContent className="pt-4 space-y-4">
-              <div className="p-4 rounded-xl bg-[#070d18] border border-[#c99738]/20 font-royal-serif text-sm text-[#fcedc7] leading-relaxed">
+              <div className="p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] font-royal-serif text-sm text-[#54351F] leading-relaxed italic">
                 "Sri Suryavamsha Prathama Pratishthapaka Sri Kapilendra Deva Gajapathi Mahārājulankāru..."
               </div>
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-[#0b1528] border border-stone-800">
-                  <span className="text-stone-400 block text-[11px]">Repository</span>
-                  <span className="text-[#faf7f0] font-medium">Archaeological Survey of India</span>
+                <div className="p-3 rounded-lg bg-[#FFF9EF] border border-[#D8C3A2]">
+                  <span className="text-[#6B5948] block text-[11px]">Repository</span>
+                  <span className="text-[#54351F] font-semibold">Archaeological Survey of India</span>
                 </div>
-                <div className="p-3 rounded-lg bg-[#0b1528] border border-stone-800">
-                  <span className="text-stone-400 block text-[11px]">Epigraphia Indica</span>
-                  <span className="text-[#faf7f0] font-medium">Vol. XXXVI, pp. 206–214</span>
+                <div className="p-3 rounded-lg bg-[#FFF9EF] border border-[#D8C3A2]">
+                  <span className="text-[#6B5948] block text-[11px]">Epigraphia Indica</span>
+                  <span className="text-[#54351F] font-semibold">Vol. XXXVI, pp. 206–214</span>
                 </div>
               </div>
             </RoyalCardContent>
@@ -701,7 +701,7 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
                 <Badge variant="maroon" icon={<Shield className="w-3 h-3" />}>
                   Community Contribution
                 </Badge>
-                <span className="text-[11px] text-stone-400">Editorial Review Required</span>
+                <span className="text-[11px] text-[#6B5948]">Editorial Review Required</span>
               </div>
               <RoyalCardTitle goldText className="mt-3">
                 Submit Inscription / Lineage Record
@@ -766,9 +766,9 @@ export const UiDesignSystemPage: React.FC<UiDesignSystemPageProps> = ({ onNaviga
 
       {/* Footer Navigation */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
-        <p className="text-xs text-stone-400">
+        <p className="text-xs text-[#6B5948]">
           Suryavamsha Odiyaraju Kshatriya Design Tokens &copy; {new Date().getFullYear()}. Production
-          components located under <code className="text-[#c99738]">src/components/ui/</code>.
+          components located under <code className="text-[#762D35] font-semibold">src/components/ui/</code>.
         </p>
         <div className="flex gap-3">
           {onNavigate && (

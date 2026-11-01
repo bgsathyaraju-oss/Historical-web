@@ -54,10 +54,10 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
     <>
       <div
         onClick={() => setModalOpen(true)}
-        className="rounded-2xl bg-[#131724] border border-[#c99738]/40 hover:border-[#c99738] overflow-hidden shadow-lg transition-all duration-200 cursor-pointer"
+        className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer text-[#292521]"
       >
         {/* Top Header */}
-        <div className="p-4 sm:p-5 bg-gradient-to-r from-[#171e2e] to-[#121622] border-b border-stone-800 flex flex-col sm:flex-row gap-4 items-start">
+        <div className="p-4 sm:p-5 bg-[#FFF9EF] border-b border-[#D8C3A2] flex flex-col sm:flex-row gap-4 items-start">
           <img
             src={claimThumb}
             alt={claim.topic}
@@ -69,22 +69,22 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
                 target.src = `${archiveBase}copper_plate_charter.jpg`;
               }
             }}
-            className="w-20 h-20 rounded-xl object-cover object-center shrink-0 border border-[#c99738]/40 bg-stone-950"
+            className="w-20 h-20 rounded-xl object-cover object-center shrink-0 border border-[#A87924]/50 bg-[#EFE3D0]"
           />
           <div className="flex-1 min-w-0 w-full">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] px-2.5 py-0.5 rounded bg-stone-900 border border-stone-800">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#54351F] px-2.5 py-0.5 rounded bg-[#EFE3D0] border border-[#D8C3A2]">
                   {claim.topic}
                 </span>
                 <EvidenceBadge status={claim.status} size="sm" />
               </div>
-              <span className="text-xs text-stone-400">
+              <span className="text-xs text-[#6B5948]">
                 {ui.claimReviewedLabel}: {claim.review_date}
               </span>
             </div>
 
-            <h3 className="font-royal-heading font-bold text-sm sm:text-base text-stone-100 leading-snug">
+            <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F] leading-snug">
               "{claim.claim_statement}"
             </h3>
           </div>
@@ -94,15 +94,15 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
         <div className="p-4 sm:p-5 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Supporting Evidence */}
-            <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-900/40 space-y-2">
-              <div className="flex items-center gap-2 text-emerald-400 font-semibold text-xs uppercase tracking-wider">
+            <div className="p-4 rounded-xl bg-[#EDF7F0] border border-[#2D7A4D]/40 space-y-2">
+              <div className="flex items-center gap-2 text-[#14532D] font-bold text-xs uppercase tracking-wider">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>{ui.supportingHeading}</span>
               </div>
-              <ul className="space-y-1.5 text-xs text-stone-300">
+              <ul className="space-y-1.5 text-xs text-[#292521]">
                 {claim.supporting_evidence.map((ev, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2D7A4D] mt-1.5 shrink-0" />
                     <span>{ev}</span>
                   </li>
                 ))}
@@ -110,15 +110,15 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
             </div>
 
             {/* Contradictory Evidence or Critical Nuance */}
-            <div className="p-4 rounded-xl bg-rose-950/20 border border-rose-900/40 space-y-2">
-              <div className="flex items-center gap-2 text-rose-400 font-semibold text-xs uppercase tracking-wider">
+            <div className="p-4 rounded-xl bg-[#FDECEC] border border-[#B9382C]/40 space-y-2">
+              <div className="flex items-center gap-2 text-[#7F1D1D] font-bold text-xs uppercase tracking-wider">
                 <XCircle className="w-4 h-4 shrink-0" />
                 <span>{ui.counterHeading}</span>
               </div>
-              <ul className="space-y-1.5 text-xs text-stone-300">
+              <ul className="space-y-1.5 text-xs text-[#292521]">
                 {claim.contradictory_evidence.map((ev, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#B9382C] mt-1.5 shrink-0" />
                     <span>{ev}</span>
                   </li>
                 ))}
@@ -133,31 +133,31 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim }) => {
                 e.stopPropagation();
                 setExpanded(!expanded);
               }}
-              className="text-xs font-semibold text-[#e8c872] hover:text-[#fcedc7] flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Scale className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+              <Scale className="w-3.5 h-3.5 text-[#A87924] shrink-0" />
               <span>{expanded ? ui.hideReliabilityBtn : ui.viewReliabilityBtn}</span>
               {expanded ? <ChevronUp className="w-3.5 h-3.5 shrink-0" /> : <ChevronDown className="w-3.5 h-3.5 shrink-0" />}
             </button>
 
-            <span className="text-xs font-semibold text-[#d4af37]">{ui.openDossierLabel}</span>
+            <span className="text-xs font-semibold text-[#762D35]">{ui.openDossierLabel}</span>
           </div>
 
           {expanded && (
-            <div className="p-4 rounded-xl bg-[#0c0f17] border border-stone-800 text-xs space-y-3 animate-in fade-in duration-150">
+            <div className="p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs space-y-3 animate-in fade-in duration-150">
               <div>
-                <span className="text-[#d4af37] font-semibold block mb-1">
+                <span className="text-[#54351F] font-bold block mb-1">
                   {ui.reliabilityNotesLabel}
                 </span>
-                <p className="text-stone-300 leading-relaxed">
+                <p className="text-[#292521] leading-relaxed">
                   {claim.source_reliability_notes}
                 </p>
               </div>
-              <div className="pt-2 border-t border-stone-800/80">
-                <span className="text-stone-400 font-semibold block mb-1">
+              <div className="pt-2 border-t border-[#D8C3A2]">
+                <span className="text-[#6B5948] font-semibold block mb-1">
                   {ui.editorialFindingLabel}
                 </span>
-                <p className="text-stone-300 italic leading-relaxed">
+                <p className="text-[#292521] italic leading-relaxed">
                   {claim.reviewer_comments}
                 </p>
               </div>

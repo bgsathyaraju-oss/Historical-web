@@ -126,10 +126,10 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
   if (!user) {
     return (
       <div className="max-w-md mx-auto py-20 text-center space-y-4">
-        <p className="text-stone-300">You must be logged in to view your member dashboard.</p>
+        <p className="text-[#292521]">You must be logged in to view your member dashboard.</p>
         <button
           onClick={() => onNavigate('/login')}
-          className="px-6 py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207]"
+          className="px-6 py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white"
         >
           Go to Sign In
         </button>
@@ -202,14 +202,14 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Email Verification Alert Banner */}
       {!user.email_verified && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-amber-600/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FDF6E7] border border-[#D8B467] flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+            <AlertCircle className="w-5 h-5 text-[#A87924] shrink-0" />
             <div>
-              <h4 className="text-xs sm:text-sm font-bold text-amber-200">
+              <h4 className="text-xs sm:text-sm font-bold text-[#54351F]">
                 Your email address is unverified
               </h4>
-              <p className="text-[11px] sm:text-xs text-amber-300/80">
+              <p className="text-[11px] sm:text-xs text-[#6B4A1B]">
                 Verify your email to confirm membership status and receive archival notifications.
               </p>
             </div>
@@ -217,7 +217,7 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
           <button
             onClick={handleVerifyEmail}
             disabled={verifyingEmail}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-stone-950 hover:bg-amber-400 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shrink-0"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shrink-0"
           >
             <CheckCircle className="w-3.5 h-3.5" />
             <span>{verifyingEmail ? 'Verifying...' : 'Verify Email Address Now'}</span>
@@ -226,52 +226,52 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
       )}
 
       {verifyMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs text-emerald-200 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-3.5 rounded-xl bg-[#edf7f0] border border-[#92c5a6] text-xs text-[#1c5236] flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 text-[#1c5236] shrink-0" />
           <span>{verifyMsg}</span>
         </div>
       )}
 
       {verifyErr && (
-        <div className="p-3.5 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-200 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-3.5 rounded-xl bg-[#fcedee] border border-[#dfa5ab] text-xs text-[#762D35] flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-[#762D35] shrink-0" />
           <span>{verifyErr}</span>
         </div>
       )}
 
       {/* Welcome Banner */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#1e0710] via-[#161c2b] to-[#0e121d] border border-[#c99738]/50 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-[0_8px_28px_rgba(75,51,31,0.12)] flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-5">
           {user.profile?.profile_photo_url ? (
             <img
               src={user.profile.profile_photo_url}
               alt={user.profile.full_name}
-              className="w-20 h-20 rounded-2xl object-cover border-2 border-[#d4af37] shadow-lg shrink-0"
+              className="w-20 h-20 rounded-2xl object-cover border-2 border-[#A87924] shadow-md shrink-0"
             />
           ) : (
-            <div className="w-20 h-20 rounded-2xl bg-[#580014] border-2 border-[#d4af37] flex items-center justify-center text-[#d4af37] text-2xl font-bold font-royal-heading shrink-0">
+            <div className="w-20 h-20 rounded-2xl bg-[#762D35] border-2 border-[#A87924] flex items-center justify-center text-white text-2xl font-bold font-royal-heading shrink-0">
               {user.profile?.full_name?.charAt(0) || 'M'}
             </div>
           )}
           <div className="space-y-1 text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-stone-900 border border-stone-800 text-[11px] font-semibold text-[#e8c872] uppercase tracking-wider">
-                <Shield className="w-3 h-3 text-[#d4af37]" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#FFF9EF] border border-[#D8C3A2] text-[11px] font-semibold text-[#54351F] uppercase tracking-wider">
+                <Shield className="w-3 h-3 text-[#A87924]" />
                 <span>Role: {user.role.replace('_', ' ')}</span>
               </div>
               <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                 user.email_verified
-                  ? 'bg-emerald-950/70 border border-emerald-700/60 text-emerald-300'
-                  : 'bg-amber-950/70 border border-amber-700/60 text-amber-300'
+                  ? 'bg-[#edf7f0] border border-[#92c5a6] text-[#1c5236]'
+                  : 'bg-[#FDF6E7] border border-[#D8B467] text-[#6B4A1B]'
               }`}>
                 {user.email_verified ? <CheckCircle className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
                 <span>{user.email_verified ? 'Verified Email' : 'Unverified Email'}</span>
               </div>
             </div>
-            <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
+            <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F]">
               Welcome, {user.profile?.full_name || user.email}
             </h1>
-            <p className="text-xs text-stone-400">
+            <p className="text-xs text-[#6B5948]">
               {user.profile?.district ? `${user.profile.district}, ${user.profile.state_or_province}, ${user.profile.country}` : user.email}
             </p>
           </div>
@@ -280,22 +280,22 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => setExportModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#2a0810] text-[#fcedc7] border border-[#d4af37]/50 hover:bg-[#400c19] transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] hover:bg-[#dec9a6] transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
             title="Download complete project ZIP"
           >
-            <Download className="w-3.5 h-3.5 text-[#d4af37]" />
+            <Download className="w-3.5 h-3.5 text-[#76501F]" />
             <span>Export ZIP</span>
           </button>
           <button
             onClick={() => onNavigate('/edit-profile')}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#182030] text-[#e8c872] border border-[#c99738]/50 hover:bg-[#202b40] transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] hover:bg-[#dec9a6] transition-all flex items-center gap-1.5 cursor-pointer"
           >
-            <Edit3 className="w-3.5 h-3.5" />
+            <Edit3 className="w-3.5 h-3.5 text-[#76501F]" />
             <span>Edit Profile</span>
           </button>
           <button
             onClick={() => onNavigate('/submit-research')}
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <BookOpen className="w-3.5 h-3.5" />
             <span>Submit Research</span>
@@ -304,7 +304,7 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-stone-800 pb-2 overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-2 border-b border-[#D8C3A2] pb-2 overflow-x-auto scrollbar-none">
         {[
           { id: 'overview', label: 'Dashboard Overview' },
           { id: 'submissions', label: `My Research Submissions (${submissions.length})` },
@@ -316,8 +316,8 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
             onClick={() => setActiveTab(tab.id as any)}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-[#c99738] text-[#300207] shadow-md'
-                : 'text-stone-400 hover:text-stone-200'
+                ? 'bg-[#762D35] text-white shadow-sm'
+                : 'bg-[#E9D9BE] text-[#54351F] hover:bg-[#dec9a6]'
             }`}
           >
             {tab.label}
@@ -328,32 +328,32 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
       {/* Tab: Overview */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] flex items-center gap-2">
-              <User className="w-4 h-4 text-[#d4af37]" /> Profile Visibility
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-3">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F] flex items-center gap-2">
+              <User className="w-4 h-4 text-[#A87924]" /> Profile Visibility
             </h3>
-            <p className="text-xs text-stone-400">
-              Current Setting: <strong className="text-stone-200 uppercase">{privacyVisibility}</strong>
+            <p className="text-xs text-[#6B5948]">
+              Current Setting: <strong className="text-[#54351F] uppercase">{privacyVisibility}</strong>
             </p>
-            <div className="pt-2 text-xs text-stone-500">
+            <div className="pt-2 text-xs text-[#6B5948]">
               Your exact date of birth and home address are never published in public views.
             </div>
           </div>
 
-          <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] flex items-center gap-2">
-              <Globe className="w-4 h-4 text-[#d4af37]" /> Active Language
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-3">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F] flex items-center gap-2">
+              <Globe className="w-4 h-4 text-[#A87924]" /> Active Language
             </h3>
-            <p className="text-xs text-stone-400">
-              Current preferred UI language: <strong className="text-stone-200">{language.toUpperCase()}</strong>
+            <p className="text-xs text-[#6B5948]">
+              Current preferred UI language: <strong className="text-[#54351F]">{language.toUpperCase()}</strong>
             </p>
             <div className="flex flex-wrap gap-1.5 pt-2">
               {SUPPORTED_LANGUAGES.map(l => (
                 <button
                   key={l.code}
                   onClick={() => setLanguage(l.code as LanguageCode)}
-                  className={`text-[11px] px-2 py-0.5 rounded ${
-                    language === l.code ? 'bg-[#c99738] text-black font-bold' : 'bg-stone-900 text-stone-400 hover:text-white'
+                  className={`text-[11px] px-2 py-0.5 rounded cursor-pointer ${
+                    language === l.code ? 'bg-[#762D35] text-white font-bold' : 'bg-[#FFF9EF] text-[#54351F] border border-[#D8C3A2] hover:bg-[#E9D9BE]'
                   }`}
                 >
                   {l.nativeName}
@@ -362,51 +362,51 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
             </div>
           </div>
 
-          <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#d4af37]" /> Archival Contributions
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-3">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F] flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#A87924]" /> Archival Contributions
             </h3>
-            <p className="text-xs text-stone-400">
-              You have submitted <strong>{submissions.length}</strong> items to the Editorial Board.
+            <p className="text-xs text-[#6B5948]">
+              You have submitted <strong className="text-[#54351F]">{submissions.length}</strong> items to the Editorial Board.
             </p>
             <button
               onClick={() => onNavigate('/submit-research')}
-              className="text-xs font-semibold text-[#e8c872] hover:underline block pt-2"
+              className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] hover:underline block pt-2 cursor-pointer"
             >
               Upload new manuscript or photo →
             </button>
           </div>
 
           {/* Registered Community Events */}
-          <div className="md:col-span-3 p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-4">
+          <div className="md:col-span-3 p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[#d4af37]" /> Registered Heritage Events & Gatherings
+              <h3 className="font-royal-heading font-bold text-base text-[#54351F] flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[#A87924]" /> Registered Heritage Events & Gatherings
               </h3>
               <button
                 onClick={() => onNavigate('/events')}
-                className="text-xs text-[#e8c872] hover:underline"
+                className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] hover:underline cursor-pointer"
               >
                 Browse All Events →
               </button>
             </div>
             {events.length === 0 ? (
-              <p className="text-xs text-stone-400">
+              <p className="text-xs text-[#6B5948]">
                 You have not registered for any upcoming events yet. Check out upcoming heritage seminars and symposia.
               </p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {events.map((ev: any) => (
-                  <div key={ev.id} className="p-4 rounded-2xl bg-[#182030] border border-stone-700/80 space-y-2">
-                    <div className="flex items-center justify-between text-[11px] text-[#e8c872]">
+                  <div key={ev.id} className="p-4 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-2">
+                    <div className="flex items-center justify-between text-[11px] text-[#76501F] font-semibold">
                       <span>{ev.date}</span>
-                      <span className="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-[#edf7f0] text-[#1c5236] border border-[#92c5a6] text-[10px]">
                         Registered
                       </span>
                     </div>
-                    <h4 className="font-royal-heading font-bold text-sm text-stone-100">{ev.title}</h4>
-                    <p className="text-xs text-stone-400 line-clamp-2">{ev.description}</p>
-                    <p className="text-[11px] text-stone-500">📍 {ev.location}</p>
+                    <h4 className="font-royal-heading font-bold text-sm text-[#54351F]">{ev.title}</h4>
+                    <p className="text-xs text-[#292521] line-clamp-2">{ev.description}</p>
+                    <p className="text-[11px] text-[#6B5948]">📍 {ev.location}</p>
                   </div>
                 ))}
               </div>
@@ -419,11 +419,11 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
       {activeTab === 'submissions' && (
         <div className="space-y-4">
           {submissions.length === 0 ? (
-            <div className="p-12 text-center text-stone-400 bg-[#121622] rounded-3xl border border-stone-800 space-y-3">
+            <div className="p-12 text-center text-[#6B5948] bg-[#FFFCF5] rounded-3xl border border-[#D8C3A2] space-y-3">
               <p>You have not submitted any historical research or manuscripts yet.</p>
               <button
                 onClick={() => onNavigate('/submit-research')}
-                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207]"
+                className="px-5 py-2.5 rounded-xl text-xs font-semibold bg-[#762D35] text-white cursor-pointer"
               >
                 Submit Historical Material
               </button>
@@ -432,31 +432,31 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
             submissions.map(sub => (
               <div
                 key={sub.id}
-                className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3"
+                className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#76501F]">
                     {sub.submission_type}
                   </span>
                   <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
-                    sub.status === 'approved' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
-                    sub.status === 'needs_correction' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-                    'bg-stone-900 text-stone-400 border border-stone-800'
+                    sub.status === 'approved' ? 'bg-[#edf7f0] text-[#1c5236] border border-[#92c5a6]' :
+                    sub.status === 'needs_correction' ? 'bg-[#FDF6E7] text-[#6B4A1B] border border-[#D8B467]' :
+                    'bg-[#FFF9EF] text-[#6B5948] border border-[#D8C3A2]'
                   }`}>
                     Status: {sub.status.replace('_', ' ')}
                   </span>
                 </div>
 
-                <h3 className="font-royal-heading font-bold text-base text-stone-100">
+                <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
                   {sub.title}
                 </h3>
-                <p className="text-xs text-stone-400 leading-relaxed">
+                <p className="text-xs text-[#292521] leading-relaxed">
                   {sub.description}
                 </p>
 
                 {sub.reviewer_notes && (
-                  <div className="p-3 rounded-xl bg-[#161c2a] border border-stone-800 text-xs text-stone-300">
-                    <strong className="text-[#e8c872]">Editorial Reviewer Notes:</strong> {sub.reviewer_notes}
+                  <div className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs text-[#292521]">
+                    <strong className="text-[#54351F]">Editorial Reviewer Notes:</strong> {sub.reviewer_notes}
                   </div>
                 )}
               </div>
@@ -468,27 +468,27 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
       {/* Tab: Bookmarks */}
       {activeTab === 'bookmarks' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-stone-800">
+          <div className="flex items-center justify-between pb-2 border-b border-[#D8C3A2]">
             <div>
-              <h3 className="font-royal-heading font-bold text-lg text-[#fcedc7]">
+              <h3 className="font-royal-heading font-bold text-lg text-[#54351F]">
                 Saved Archival Items & Bookmarks
               </h3>
-              <p className="text-xs text-stone-400">
+              <p className="text-xs text-[#6B5948]">
                 Quick access to articles, inscriptions, and documentary records you bookmarked.
               </p>
             </div>
-            <span className="text-xs text-[#c99738] font-semibold">
+            <span className="text-xs text-[#76501F] font-semibold">
               {bookmarks.length} bookmarked
             </span>
           </div>
 
           {bookmarks.length === 0 ? (
-            <div className="p-12 rounded-3xl bg-[#121622] border border-stone-800 text-center space-y-3">
-              <Bookmark className="w-10 h-10 text-stone-600 mx-auto" />
-              <p className="text-xs text-stone-400">You have not bookmarked any articles or inscriptions yet.</p>
+            <div className="p-12 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] text-center space-y-3">
+              <Bookmark className="w-10 h-10 text-[#A87924] mx-auto" />
+              <p className="text-xs text-[#6B5948]">You have not bookmarked any articles or inscriptions yet.</p>
               <button
                 onClick={() => onNavigate('/documentary')}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43]"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] cursor-pointer"
               >
                 Explore Documentary Archive
               </button>
@@ -498,23 +498,23 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
               {bookmarks.map((bm, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738]/60 space-y-3 flex flex-col justify-between"
+                  className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] shadow-sm space-y-3 flex flex-col justify-between"
                 >
                   <div className="space-y-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#76501F]">
                       {bm.item_type}
                     </span>
-                    <h4 className="font-royal-heading font-bold text-sm text-stone-100">
+                    <h4 className="font-royal-heading font-bold text-sm text-[#54351F]">
                       Item ID: {bm.item_id}
                     </h4>
-                    <p className="text-[11px] text-stone-500">
+                    <p className="text-[11px] text-[#6B5948]">
                       Saved: {new Date(bm.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="pt-2 border-t border-stone-800 flex items-center justify-between">
+                  <div className="pt-2 border-t border-[#D8C3A2] flex items-center justify-between">
                     <button
                       onClick={() => onNavigate(bm.item_type === 'article' ? `/documentary?article=${bm.item_id}` : '/documentary')}
-                      className="text-xs text-[#e8c872] hover:underline"
+                      className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] hover:underline cursor-pointer"
                     >
                       Open Record →
                     </button>
@@ -530,11 +530,11 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
       {activeTab === 'settings' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Privacy Visibility Controls */}
-          <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-4">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-4">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
               Member Profile Visibility Setting
             </h3>
-            <p className="text-xs text-stone-400 leading-relaxed">
+            <p className="text-xs text-[#6B5948] leading-relaxed">
               Control who can see your biographical details and profession in the Public Directory.
             </p>
 
@@ -544,68 +544,68 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
                 { val: 'members', label: 'Registered Members Only (Recommended)' },
                 { val: 'private', label: 'Private (Hidden from directory)' }
               ].map(opt => (
-                <label key={opt.val} className="flex items-center gap-3 p-3 rounded-xl bg-[#182030] border border-stone-800 cursor-pointer">
+                <label key={opt.val} className="flex items-center gap-3 p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] cursor-pointer">
                   <input
                     type="radio"
                     name="profile_visibility"
                     value={opt.val}
                     checked={privacyVisibility === opt.val}
                     onChange={() => handleUpdatePrivacy(opt.val)}
-                    className="text-[#c99738]"
+                    className="text-[#762D35]"
                   />
-                  <span className="text-xs text-stone-200 font-medium">{opt.label}</span>
+                  <span className="text-xs text-[#292521] font-medium">{opt.label}</span>
                 </label>
               ))}
             </div>
           </div>
 
           {/* Change Password */}
-          <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-4">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm space-y-4">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
               Change Account Password
             </h3>
 
-            {passwordMsg && <div className="text-xs text-emerald-400">{passwordMsg}</div>}
-            {passwordErr && <div className="text-xs text-rose-400">{passwordErr}</div>}
+            {passwordMsg && <div className="text-xs text-[#1c5236] font-semibold">{passwordMsg}</div>}
+            {passwordErr && <div className="text-xs text-[#762D35] font-semibold">{passwordErr}</div>}
 
             <form onSubmit={handlePasswordChange} className="space-y-3">
               <div>
-                <label className="block text-xs text-stone-400 mb-1">Current Password</label>
+                <label className="block text-xs text-[#54351F] font-semibold mb-1">Current Password</label>
                 <input
                   type="password"
                   value={currentPass}
                   onChange={e => setCurrentPass(e.target.value)}
                   required
-                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-[#182030] text-stone-100 border border-stone-700"
+                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-stone-400 mb-1">New Password</label>
+                <label className="block text-xs text-[#54351F] font-semibold mb-1">New Password</label>
                 <input
                   type="password"
                   value={newPass}
                   onChange={e => setNewPass(e.target.value)}
                   required
                   placeholder="Min 8 chars, uppercase, digit & symbol"
-                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-[#182030] text-stone-100 border border-stone-700"
+                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-stone-400 mb-1">Confirm New Password</label>
+                <label className="block text-xs text-[#54351F] font-semibold mb-1">Confirm New Password</label>
                 <input
                   type="password"
                   value={confirmPass}
                   onChange={e => setConfirmPass(e.target.value)}
                   required
-                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-[#182030] text-stone-100 border border-stone-700"
+                  className="w-full px-3 py-1.5 text-xs rounded-lg bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43]"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] cursor-pointer"
               >
                 Update Password
               </button>
@@ -613,16 +613,16 @@ export const MemberDashboardPage: React.FC<DashboardProps> = ({ onNavigate }) =>
           </div>
 
           {/* Account Deletion Request */}
-          <div className="md:col-span-2 p-6 rounded-3xl bg-rose-950/20 border border-rose-900/50 space-y-3">
-            <h3 className="font-royal-heading font-bold text-base text-rose-300">
+          <div className="md:col-span-2 p-6 rounded-3xl bg-[#fcedee] border border-[#dfa5ab] space-y-3">
+            <h3 className="font-royal-heading font-bold text-base text-[#762D35]">
               Account Deletion & Data Privacy Compliance
             </h3>
-            <p className="text-xs text-stone-400 leading-relaxed">
+            <p className="text-xs text-[#292521] leading-relaxed">
               In accordance with data protection regulations, you can permanently request the deletion of your account and anonymization of personal credentials.
             </p>
             <button
               onClick={handleDeleteAccount}
-              className="px-4 py-2 rounded-xl text-xs font-semibold bg-rose-900 text-rose-100 hover:bg-rose-800 flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] flex items-center gap-1.5 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete Account & Purge Profile</span>

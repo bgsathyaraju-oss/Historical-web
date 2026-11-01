@@ -100,14 +100,14 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
   if (!user || !['super_admin', 'admin', 'historical_editor', 'research_reviewer', 'translator', 'community_moderator'].includes(user.role)) {
     return (
       <div className="max-w-md mx-auto py-20 text-center space-y-4">
-        <Lock className="w-12 h-12 text-rose-400 mx-auto" />
-        <h2 className="font-royal-heading font-bold text-xl text-stone-100">Access Restricted</h2>
-        <p className="text-xs text-stone-400">
+        <Lock className="w-12 h-12 text-[#9B1C1C] mx-auto" />
+        <h2 className="font-royal-heading font-bold text-xl text-[#54351F]">Access Restricted</h2>
+        <p className="text-xs text-[#6B5948]">
           This area is restricted to authorized archival administrators, historians, and translation reviewers.
         </p>
         <button
           onClick={() => onNavigate('/')}
-          className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207]"
+          className="px-5 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5E2229] transition-colors cursor-pointer"
         >
           Return to Home
         </button>
@@ -242,13 +242,13 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Admin Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D8C3A2] pb-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/40">
-            <Shield className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFE3D0] text-[#762D35] text-xs font-semibold border border-[#A87924]/40">
+            <Shield className="w-3.5 h-3.5 text-[#A87924]" />
             <span>Role-Based Access Control • {user.role.toUpperCase()}</span>
           </div>
-          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7] mt-1">
+          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F] mt-1">
             Archival & Editorial Administration Panel
           </h1>
         </div>
@@ -256,14 +256,14 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
           <a
             href="/api/export/project-zip"
             download="suryavamsha-odiyaraju-kshatriya-portal.zip"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#c99738] hover:bg-[#dfab43] text-[#300207] text-xs font-bold transition-all shadow-md cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#762D35] hover:bg-[#5E2229] text-white text-xs font-bold transition-all shadow-sm cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export Portal (ZIP)</span>
           </a>
           <button
             onClick={() => onNavigate('/dashboard')}
-            className="text-xs text-stone-400 hover:text-white px-3 py-1.5 rounded-xl bg-stone-900 border border-stone-800"
+            className="text-xs text-[#54351F] hover:bg-[#E9D9BE] px-3 py-1.5 rounded-xl bg-[#EFE3D0] border border-[#D8C3A2] transition-colors cursor-pointer"
           >
             Go to Member Dashboard
           </button>
@@ -271,14 +271,14 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
       </div>
 
       {actionMsg && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs sm:text-sm text-emerald-200 flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-[#EEF7F0] border border-[#A3CFAF] text-xs sm:text-sm text-[#1E5631] flex items-center justify-between">
           <span>{actionMsg}</span>
-          <button onClick={() => setActionMsg(null)} className="text-stone-400 hover:text-white text-xs">Dismiss</button>
+          <button onClick={() => setActionMsg(null)} className="text-[#6B5948] hover:text-[#292521] text-xs font-semibold cursor-pointer">Dismiss</button>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-stone-800">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[#D8C3A2]">
         {[
           { id: 'overview', label: 'Overview Metrics' },
           { id: 'submissions', label: `Moderation Queue (${submissions.length})` },
@@ -292,8 +292,8 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
             onClick={() => setActiveTab(tab.id as any)}
             className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === tab.id
-                ? 'bg-[#c99738] text-[#300207] shadow-md'
-                : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900'
+                ? 'bg-[#762D35] text-white shadow-sm'
+                : 'text-[#54351F] hover:text-[#292521] hover:bg-[#EFE3D0]'
             }`}
           >
             {tab.label}
@@ -305,50 +305,50 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
       {activeTab === 'overview' && overviewData && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Published Articles</span>
-              <div className="text-2xl font-bold text-[#fcedc7] font-royal-heading mt-1">
+            <div className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B5948]">Published Articles</span>
+              <div className="text-2xl font-bold text-[#54351F] font-royal-heading mt-1">
                 {overviewData.statistics.published_articles}
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Pending Review</span>
-              <div className="text-2xl font-bold text-amber-400 font-royal-heading mt-1">
+            <div className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B5948]">Pending Review</span>
+              <div className="text-2xl font-bold text-[#8A5A12] font-royal-heading mt-1">
                 {overviewData.pending_submissions}
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Total Registered Members</span>
-              <div className="text-2xl font-bold text-[#e8c872] font-royal-heading mt-1">
+            <div className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B5948]">Total Registered Members</span>
+              <div className="text-2xl font-bold text-[#76501F] font-royal-heading mt-1">
                 {overviewData.total_users}
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#121622] border border-stone-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">Inscriptions Reviewed</span>
-              <div className="text-2xl font-bold text-emerald-400 font-royal-heading mt-1">
+            <div className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#6B5948]">Inscriptions Reviewed</span>
+              <div className="text-2xl font-bold text-[#1E5631] font-royal-heading mt-1">
                 {overviewData.statistics.reviewed_inscriptions}
               </div>
             </div>
           </div>
 
           {/* Recent Audit Logs Snapshot */}
-          <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-4">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-sm">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
               Recent Audit Log Activity
             </h3>
             <div className="space-y-2 text-xs">
               {overviewData.recent_logs?.map((log: any) => (
-                <div key={log.id} className="p-3 rounded-xl bg-[#161c2a] border border-stone-800/80 flex items-center justify-between text-stone-300">
+                <div key={log.id} className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2]/80 flex items-center justify-between text-[#292521]">
                   <div>
-                    <span className="font-semibold text-[#e8c872] uppercase tracking-wider text-[10px] mr-2">
+                    <span className="font-semibold text-[#76501F] uppercase tracking-wider text-[10px] mr-2">
                       [{log.action}]
                     </span>
                     <span>{log.details}</span>
                   </div>
-                  <span className="text-stone-500 text-[11px] shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                  <span className="text-[#6B5948] text-[11px] shrink-0">{new Date(log.timestamp).toLocaleTimeString()}</span>
                 </div>
               ))}
             </div>
@@ -360,68 +360,68 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
       {activeTab === 'submissions' && (
         <div className="space-y-4">
           {submissions.length === 0 ? (
-            <div className="p-12 text-center text-stone-400 bg-[#121622] rounded-3xl border border-stone-800">
+            <div className="p-12 text-center text-[#6B5948] bg-[#FFFCF5] rounded-3xl border border-[#D8C3A2]">
               No submissions currently in the moderation queue.
             </div>
           ) : (
             submissions.map(sub => (
               <div
                 key={sub.id}
-                className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-3"
+                className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-3 shadow-sm"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D8C3A2] pb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#76501F]">
                       {sub.submission_type}
                     </span>
                     <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
-                      sub.status === 'approved' ? 'bg-emerald-950 text-emerald-300' :
-                      sub.status === 'needs_correction' ? 'bg-amber-950 text-amber-300' :
-                      'bg-stone-900 text-stone-400'
+                      sub.status === 'approved' ? 'bg-[#EEF7F0] text-[#1E5631] border border-[#A3CFAF]' :
+                      sub.status === 'needs_correction' ? 'bg-[#FDF6E9] text-[#8A5A12] border border-[#E6C786]' :
+                      'bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2]'
                     }`}>
                       {sub.status}
                     </span>
                   </div>
-                  <span className="text-xs text-stone-400">By {sub.author_name}</span>
+                  <span className="text-xs text-[#6B5948]">By {sub.author_name}</span>
                 </div>
 
-                <h3 className="font-royal-heading font-bold text-base text-stone-100">
+                <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
                   {sub.title}
                 </h3>
-                <p className="text-xs text-stone-300 leading-relaxed">
+                <p className="text-xs text-[#292521] leading-relaxed">
                   {sub.description}
                 </p>
 
-                <div className="p-3 rounded-xl bg-[#0c0f17] border border-stone-800 text-xs font-mono text-stone-300 whitespace-pre-wrap">
+                <div className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs font-mono text-[#292521] whitespace-pre-wrap">
                   {sub.content_data}
                 </div>
 
-                <div className="text-xs text-[#d4af37]">
+                <div className="text-xs text-[#76501F]">
                   <strong>Provenance & Citations:</strong> {sub.source_citations}
                 </div>
 
                 {sub.reviewer_notes && (
-                  <div className="p-2.5 rounded-lg bg-[#182030] text-xs text-stone-300">
+                  <div className="p-2.5 rounded-lg bg-[#EFE3D0] text-xs text-[#54351F]">
                     <strong>Previous Notes:</strong> {sub.reviewer_notes}
                   </div>
                 )}
 
-                <div className="pt-3 border-t border-stone-800 flex items-center gap-3">
+                <div className="pt-3 border-t border-[#D8C3A2] flex items-center gap-3">
                   <button
                     onClick={() => handleReviewSubmission(sub.id, 'approved', 'Approved by Editorial Board after provenance check.')}
-                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-900 text-emerald-200 hover:bg-emerald-800 transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1E5631] text-white hover:bg-[#164225] transition-colors cursor-pointer"
                   >
                     Approve & Publish
                   </button>
                   <button
                     onClick={() => handleReviewSubmission(sub.id, 'needs_correction', 'Editorial review requested high-res scans or additional citations.')}
-                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-900 text-amber-200 hover:bg-amber-800 transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#A87924] text-white hover:bg-[#8E641B] transition-colors cursor-pointer"
                   >
                     Request Corrections
                   </button>
                   <button
                     onClick={() => handleReviewSubmission(sub.id, 'rejected', 'Declined due to unverified provenance or copyright ambiguity.')}
-                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-950 text-rose-300 hover:bg-rose-900 transition-colors cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5E2229] transition-colors cursor-pointer"
                   >
                     Reject
                   </button>
@@ -434,30 +434,30 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
 
       {/* Tab: Publish Historical Article */}
       {activeTab === 'articles' && (
-        <form onSubmit={handleCreateArticle} className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-4 shadow-xl">
-          <h3 className="font-royal-heading font-bold text-lg text-[#fcedc7] border-b border-stone-800 pb-2">
+        <form onSubmit={handleCreateArticle} className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-md">
+          <h3 className="font-royal-heading font-bold text-lg text-[#54351F] border-b border-[#D8C3A2] pb-2">
             Publish New Historical Research Article
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">Article Title</label>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">Article Title</label>
               <input
                 type="text"
                 required
                 value={newArt.title}
                 onChange={e => setNewArt({ ...newArt, title: e.target.value })}
                 placeholder="e.g. Copper Plate Paleography of Gajapathi Charters"
-                className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">Category</label>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">Category</label>
               <select
                 value={newArt.category}
                 onChange={e => setNewArt({ ...newArt, category: e.target.value })}
-                className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
               >
                 <option value="Odra Desha">Odra Desha</option>
                 <option value="Gajapathi Kings">Gajapathi Kings</option>
@@ -468,36 +468,36 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Article Summary</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Article Summary</label>
             <textarea
               required
               rows={2}
               value={newArt.summary}
               onChange={e => setNewArt({ ...newArt, summary: e.target.value })}
               placeholder="Concise overview of the research findings..."
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Full Article Content</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Full Article Content</label>
             <textarea
               required
               rows={6}
               value={newArt.content}
               onChange={e => setNewArt({ ...newArt, content: e.target.value })}
               placeholder="Full historiographical narrative..."
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700 font-royal-serif"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none font-royal-serif"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">Verification Status</label>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">Verification Status</label>
               <select
                 value={newArt.verification_status}
                 onChange={e => setNewArt({ ...newArt, verification_status: e.target.value })}
-                className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
               >
                 <option value="Draft">Draft</option>
                 <option value="Under Research">Under Research</option>
@@ -508,20 +508,20 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">Primary Citation / Epigraphic Source</label>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">Primary Citation / Epigraphic Source</label>
               <input
                 type="text"
                 value={newArt.source_citation}
                 onChange={e => setNewArt({ ...newArt, source_citation: e.target.value })}
                 placeholder="e.g. Epigraphia Indica Vol. XXXIII; Lingaraja Inscription"
-                className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white hover:bg-[#5E2229] transition-all cursor-pointer"
           >
             Publish Article to Repository
           </button>
@@ -532,17 +532,17 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
       {activeTab === 'translations' && (
         <div className="space-y-6">
           {/* 8-Language Translation Matrix */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-4 shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-3">
+          <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-md">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D8C3A2] pb-3">
               <div>
-                <h3 className="font-royal-heading font-bold text-lg text-[#fcedc7]">
+                <h3 className="font-royal-heading font-bold text-lg text-[#54351F]">
                   8-Language Translation Matrix & Archival Coverage
                 </h3>
-                <p className="text-xs text-stone-400">
+                <p className="text-xs text-[#6B5948]">
                   Real-time translation status across English, Hindi, Telugu, Kannada, Tamil, Marathi, Odia, and Bengali. Click any cell to translate or review.
                 </p>
               </div>
-              <span className="text-xs text-[#c99738] font-semibold">
+              <span className="text-xs text-[#76501F] font-semibold">
                 {articlesList.length} Historical Records Indexed
               </span>
             </div>
@@ -550,8 +550,8 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-stone-800 text-stone-400">
-                    <th className="py-2 pr-3 font-semibold">Article / Document</th>
+                  <tr className="border-b border-[#D8C3A2] text-[#54351F] bg-[#EFE3D0]/50">
+                    <th className="py-2 px-3 font-semibold">Article / Document</th>
                     {SUPPORTED_LANGUAGES.map(l => (
                       <th key={l.code} className="py-2 px-2 font-semibold text-center whitespace-nowrap">
                         {l.nativeName} ({l.code})
@@ -559,23 +559,22 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-stone-800/60">
+                <tbody className="divide-y divide-[#D8C3A2]/60">
                   {articlesList.map(art => (
-                    <tr key={art.id} className="hover:bg-stone-900/40">
-                      <td className="py-2.5 pr-3 font-medium text-stone-200">
+                    <tr key={art.id} className="hover:bg-[#FFF9EF]">
+                      <td className="py-2.5 px-3 font-medium text-[#292521]">
                         <div className="line-clamp-1">{art.original_title}</div>
-                        <span className="text-[10px] text-stone-500 font-mono">{art.id}</span>
+                        <span className="text-[10px] text-[#6B5948] font-mono">{art.id}</span>
                       </td>
                       {SUPPORTED_LANGUAGES.map(l => {
                         const isEn = l.code === 'en';
                         const tr = art.translations?.[l.code];
                         const isReviewed = tr?.status === 'reviewed';
-                        const isPending = tr?.status === 'pending';
 
                         return (
                           <td key={l.code} className="py-2.5 px-2 text-center whitespace-nowrap">
                             {isEn ? (
-                              <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-300 border border-blue-800">
+                              <span className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2]">
                                 Source (EN)
                               </span>
                             ) : tr ? (
@@ -591,8 +590,8 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
                                 }}
                                 className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer border ${
                                   isReviewed
-                                    ? 'bg-emerald-950 text-emerald-300 border-emerald-800 hover:bg-emerald-900'
-                                    : 'bg-amber-950 text-amber-300 border-amber-800 hover:bg-amber-900'
+                                    ? 'bg-[#EEF7F0] text-[#1E5631] border-[#A3CFAF] hover:bg-[#DDF0E2]'
+                                    : 'bg-[#FDF6E9] text-[#8A5A12] border-[#E6C786] hover:bg-[#F9EBCD]'
                                 }`}
                               >
                                 {isReviewed ? '✓ Reviewed' : '⏳ Pending'}
@@ -608,7 +607,7 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
                                   setTransSummary('');
                                   setTransStatus('reviewed');
                                 }}
-                                className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-stone-900 text-stone-500 border border-stone-800 hover:text-stone-300 hover:border-stone-700 cursor-pointer"
+                                className="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FFF9EF] text-[#6B5948] border border-[#D8C3A2] hover:text-[#292521] hover:border-[#A87924] cursor-pointer"
                               >
                                 + Add
                               </button>
@@ -624,30 +623,30 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
           </div>
 
           {/* Translation Form */}
-          <form onSubmit={handleSaveTranslation} className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-4 shadow-xl">
-            <h3 className="font-royal-heading font-bold text-lg text-[#fcedc7] border-b border-stone-800 pb-2">
+          <form onSubmit={handleSaveTranslation} className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-md">
+            <h3 className="font-royal-heading font-bold text-lg text-[#54351F] border-b border-[#D8C3A2] pb-2">
               Add or Review Article Translation (8 Languages)
             </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">Target Article ID / Slug</label>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">Target Article ID / Slug</label>
               <input
                 type="text"
                 required
                 value={transArticleId}
                 onChange={e => setTransArticleId(e.target.value)}
                 placeholder="e.g. art_odra_desha_history"
-                className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">Target Language</label>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">Target Language</label>
               <select
                 value={transLang}
                 onChange={e => setTransLang(e.target.value as LanguageCode)}
-                className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
               >
                 {SUPPORTED_LANGUAGES.map(l => (
                   <option key={l.code} value={l.code}>
@@ -659,35 +658,35 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Translated Title</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Translated Title</label>
             <input
               type="text"
               required
               value={transTitle}
               onChange={e => setTransTitle(e.target.value)}
               placeholder="Title in target language script..."
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Translated Content</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Translated Content</label>
             <textarea
               required
               rows={5}
               value={transContent}
               onChange={e => setTransContent(e.target.value)}
               placeholder="Content in target language script..."
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Review Status</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Review Status</label>
             <select
               value={transStatus}
               onChange={e => setTransStatus(e.target.value as any)}
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-white text-[#292521] border border-[#D8C3A2] focus:border-[#A87924] focus:outline-none"
             >
               <option value="reviewed">Reviewed (Certified by translator)</option>
               <option value="pending">Pending Review</option>
@@ -696,7 +695,7 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
 
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer"
+            className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white hover:bg-[#5E2229] transition-all cursor-pointer"
           >
             Save & Publish Translation
           </button>
@@ -706,14 +705,14 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
 
       {/* Tab: User Accounts Management */}
       {activeTab === 'users' && (
-        <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-4 shadow-xl">
-          <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+        <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-md">
+          <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
             Member Accounts & Role Governance
           </h3>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#182030] text-stone-300 uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#EFE3D0] text-[#54351F] uppercase tracking-wider text-[10px]">
                 <tr>
                   <th className="p-3">User / Full Name</th>
                   <th className="p-3">Email</th>
@@ -723,17 +722,17 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
                   <th className="p-3">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-800 text-stone-300">
+              <tbody className="divide-y divide-[#D8C3A2] text-[#292521]">
                 {usersList.map((u: any) => (
-                  <tr key={u.id} className="hover:bg-stone-900/40">
-                    <td className="p-3 font-semibold text-stone-100">{u.full_name}</td>
+                  <tr key={u.id} className="hover:bg-[#FFF9EF]">
+                    <td className="p-3 font-semibold text-[#54351F]">{u.full_name}</td>
                     <td className="p-3">{u.email}</td>
                     <td className="p-3">{u.district}, {u.state}</td>
                     <td className="p-3">
                       <select
                         value={u.role}
                         onChange={e => handleUpdateRole(u.id, e.target.value as UserRole)}
-                        className="px-2 py-1 rounded bg-stone-900 border border-stone-700 text-xs"
+                        className="px-2 py-1 rounded bg-white border border-[#D8C3A2] text-[#292521] text-xs"
                       >
                         <option value="member">member</option>
                         <option value="historical_editor">historical_editor</option>
@@ -745,7 +744,7 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
                     </td>
                     <td className="p-3">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        u.status === 'active' ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'
+                        u.status === 'active' ? 'bg-[#EEF7F0] text-[#1E5631] border border-[#A3CFAF]' : 'bg-[#FDF2F2] text-[#9B1C1C] border border-[#F5C2C7]'
                       }`}>
                         {u.status}
                       </span>
@@ -754,14 +753,14 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
                       {u.status === 'active' ? (
                         <button
                           onClick={() => handleUpdateStatus(u.id, 'suspended')}
-                          className="text-rose-400 hover:underline"
+                          className="text-[#9B1C1C] font-semibold hover:underline cursor-pointer"
                         >
                           Suspend
                         </button>
                       ) : (
                         <button
                           onClick={() => handleUpdateStatus(u.id, 'active')}
-                          className="text-emerald-400 hover:underline"
+                          className="text-[#1E5631] font-semibold hover:underline cursor-pointer"
                         >
                           Reactivate
                         </button>
@@ -777,21 +776,21 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
 
       {/* Tab: Audit Trail */}
       {activeTab === 'logs' && (
-        <div className="p-6 rounded-3xl bg-[#121622] border border-stone-800 space-y-4 shadow-xl">
-          <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+        <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-md">
+          <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
             Full System Audit Log
           </h3>
           <div className="space-y-2 text-xs">
             {auditLogs.map((log: any) => (
-              <div key={log.id} className="p-3 rounded-xl bg-[#161c2a] border border-stone-800 flex items-center justify-between text-stone-300">
+              <div key={log.id} className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] flex items-center justify-between text-[#292521]">
                 <div>
-                  <span className="font-semibold text-[#e8c872] uppercase tracking-wider text-[10px] mr-2">
+                  <span className="font-semibold text-[#76501F] uppercase tracking-wider text-[10px] mr-2">
                     [{log.action}]
                   </span>
                   <span>{log.details}</span>
-                  <div className="text-[10px] text-stone-500 mt-0.5">By: {log.user_email}</div>
+                  <div className="text-[10px] text-[#6B5948] mt-0.5">By: {log.user_email}</div>
                 </div>
-                <span className="text-stone-500 text-[11px] shrink-0">{new Date(log.timestamp).toLocaleString()}</span>
+                <span className="text-[#6B5948] text-[11px] shrink-0">{new Date(log.timestamp).toLocaleString()}</span>
               </div>
             ))}
           </div>

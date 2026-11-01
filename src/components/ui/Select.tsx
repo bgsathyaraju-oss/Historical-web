@@ -45,11 +45,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-stone-200"
+            className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#54351F]"
           >
             <span>
               {label}
-              {required && <span className="text-[#c99738] ml-1">*</span>}
+              {required && <span className="text-[#762D35] ml-1">*</span>}
             </span>
           </label>
         )}
@@ -60,10 +60,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             disabled={disabled}
             required={required}
-            className={`w-full appearance-none bg-[#070d18]/90 text-[#faf7f0] border transition-all duration-200 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] ${
+            className={`w-full appearance-none bg-[var(--input-bg)] text-[var(--primary-text)] border transition-all duration-200 outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ${
               error
-                ? 'border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-500/40'
-                : 'border-[#c99738]/30 hover:border-[#c99738]/60 focus:border-[#c99738] focus:ring-1 focus:ring-[#c99738]/40'
+                ? 'border-[#762D35] focus:border-[#762D35] focus:ring-1 focus:ring-[#762D35]/40'
+                : 'border-[var(--border-color)] hover:border-[var(--accent-gold)] focus:border-[var(--accent-gold)] focus:ring-1 focus:ring-[var(--accent-gold)]/40'
             } ${sizeClasses} ${className}`}
             {...props}
           >
@@ -73,7 +73,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                     key={opt.value}
                     value={opt.value}
                     disabled={opt.disabled}
-                    className="bg-[#0b1528] text-[#faf7f0] py-2"
+                    className="bg-[#FFFCF5] text-[#292521] py-2"
                   >
                     {opt.label}
                   </option>
@@ -81,18 +81,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               : children}
           </select>
 
-          <div className="absolute right-3.5 pointer-events-none text-[#c99738]">
+          <div className="absolute right-3.5 pointer-events-none text-[#76501F]">
             <ChevronDown className="w-4 h-4" />
           </div>
         </div>
 
         {error ? (
-          <p className="flex items-center gap-1.5 text-xs text-red-300 font-medium mt-1">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+          <p className="flex items-center gap-1.5 text-xs text-[#762D35] font-medium mt-1">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#762D35]" />
             <span>{error}</span>
           </p>
         ) : helperText ? (
-          <p className="text-xs text-stone-400 mt-1">{helperText}</p>
+          <p className="text-xs text-[#6B5948] mt-1">{helperText}</p>
         ) : null}
       </div>
     );

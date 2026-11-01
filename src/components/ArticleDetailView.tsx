@@ -35,7 +35,12 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
-  PDF_EXPORT_UI_LABELS
+  PDF_EXPORT_UI_LABELS,
+  hasAppInventorBridge,
+  isAndroidWebViewEnvironment,
+  sendUrlToAppInventorBridge,
+  handleWhatsAppLinkClick,
+  handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
 import { getAllDocumentedFigures } from '../data/documentedFiguresRepository';
 import {
@@ -613,7 +618,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const subjectCategories = getMonographCategories(article, localizedCat);
   const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
 
-  // Support automatic print when opened in external browser with ?autoprint=1
+  // Support automatic print or PDF download when opened in external browser with ?autoprint=1 or ?autodownloadpdf=1
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -621,6 +626,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         const timer = setTimeout(() => {
           window.print();
         }, 700);
+        return () => clearTimeout(timer);
+      }
+      if (params.get('autodownloadpdf') === '1') {
+        const timer = setTimeout(() => {
+          handleDownloadPdf();
+        }, 800);
         return () => clearTimeout(timer);
       }
     } catch {
@@ -753,6 +764,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const [pdfDownloadResult, setPdfDownloadResult] = useState<{
     filename: string;
     downloadUrl?: string;
+    externalArticleUrl?: string;
+    isAndroidWebView?: boolean;
   } | null>(null);
   const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
 
@@ -764,11 +777,14 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       const result = await downloadArticleAsPdf({
         articleTitle: displayTitle,
         language,
-        containerElement: articleRef.current
+        containerElement: articleRef.current,
+        articleUrl: getDirectMonographUrl(false)
       });
       setPdfDownloadResult({
         filename: result.filename,
-        downloadUrl: result.downloadUrl
+        downloadUrl: result.downloadUrl,
+        externalArticleUrl: result.externalArticleUrl,
+        isAndroidWebView: result.isAndroidWebView
       });
     } catch (err) {
       console.error('Monograph PDF export failed:', err);
@@ -778,10 +794,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   };
 
   const handlePrint = () => {
-    const ua = navigator.userAgent || '';
-    const isEmbeddedWebView = /wv|WebView|Android.*Version\/[0-9]/i.test(ua);
-    if (isEmbeddedWebView) {
-      const printUrl = getDirectMonographUrl(true);
+    const printUrl = getDirectMonographUrl(true);
+    if (hasAppInventorBridge()) {
+      sendUrlToAppInventorBridge(printUrl);
+      return;
+    }
+    if (isAndroidWebViewEnvironment()) {
       window.open(printUrl, '_system');
       return;
     }
@@ -818,16 +836,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   return (
     <article
       ref={articleRef}
-      className="print-article-container rounded-3xl bg-[#111520] border border-[#c99738]/40 overflow-hidden print:overflow-visible shadow-2xl print:shadow-none transition-all text-stone-200"
+      className="print-article-container rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] overflow-hidden print:overflow-visible shadow-lg print:shadow-none transition-all text-[#292521]"
     >
       {/* STICKY TOP NAVIGATION & ACTION TOOLBAR */}
-      <div className="no-print sticky top-0 z-30 bg-[#0d1019]/95 backdrop-blur-md border-b border-[#c99738]/30 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 print:hidden">
+      <div className="no-print sticky top-0 z-30 bg-[#FFF9EF]/95 backdrop-blur-md border-b border-[#A87924] px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-2 sm:gap-3">
           {onBack && (
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#580014] hover:bg-[#74001b] text-[#fae29c] border border-[#d4af37]/60 transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{ui.backToList}</span>
@@ -838,9 +856,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <button
               type="button"
               onClick={() => onNavigate('/')}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#FFFCF5] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all cursor-pointer"
             >
-              <Home className="w-4 h-4 text-[#d4af37]" />
+              <Home className="w-4 h-4 text-[#762D35]" />
               <span className="hidden sm:inline">{ui.returnHome}</span>
             </button>
           )}
@@ -849,7 +867,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* Right Action Controls: 8-Language Selector, Download PDF, Print, Share, Copy Link, Close */}
         <div className="flex items-center gap-2 flex-wrap ml-auto">
           {showLanguageSwitcher && (
-            <div className="hidden xl:flex items-center bg-black/40 border border-stone-800 rounded-xl p-1 gap-0.5">
+            <div className="hidden xl:flex items-center bg-[#F5EBD9] border border-[#A87924] rounded-xl p-1 gap-0.5">
               {SUPPORTED_LANGUAGES.map(l => (
                 <button
                   key={l.code}
@@ -857,8 +875,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   onClick={() => setLanguage(l.code)}
                   className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                     language === l.code
-                      ? 'bg-[#c99738] text-[#290106] shadow-sm'
-                      : 'text-stone-400 hover:text-white hover:bg-white/10'
+                      ? 'bg-[#762D35] text-white shadow-sm'
+                      : 'text-[#54351F] hover:bg-[#FFFCF5]'
                   }`}
                   title={l.label}
                 >
@@ -872,7 +890,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             type="button"
             onClick={handleDownloadPdf}
             disabled={isDownloadingPdf}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#c99738] hover:bg-[#dfb04c] text-[#290106] border border-[#f5d78e] transition-all cursor-pointer disabled:opacity-60 shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer disabled:opacity-60 shadow-sm"
             title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(displayTitle)})`}
           >
             <Download className="w-4 h-4 shrink-0" />
@@ -882,10 +900,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#161c2a] hover:bg-[#20293d] text-stone-200 border border-stone-700 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#FFFCF5] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all cursor-pointer"
             title={pdfUi.printBtn}
           >
-            <Printer className="w-4 h-4 text-[#d4af37]" />
+            <Printer className="w-4 h-4 text-[#762D35]" />
             <span className="hidden sm:inline">{pdfUi.printBtn}</span>
           </button>
 
@@ -893,24 +911,24 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#580014] hover:bg-[#78001b] text-[#fcedc7] border border-[#d4af37]/50 transition-all cursor-pointer shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm"
               title={ui.share}
             >
-              <Share2 className="w-4 h-4 text-[#d4af37]" />
+              <Share2 className="w-4 h-4 text-white" />
               <span className="hidden sm:inline">{ui.share}</span>
             </button>
 
             {shareMenuOpen && (
-              <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-[#151a28] border border-[#c99738]/50 shadow-2xl p-2 z-50 text-xs text-stone-200">
+              <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-[#FFFCF5] border border-[#A87924] shadow-xl p-2 z-50 text-xs text-[#292521]">
                 <button
                   type="button"
                   onClick={() => {
                     handleCopyLink(false);
                     setShareMenuOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold cursor-pointer"
+                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                 >
-                  <Copy className="w-4 h-4 text-[#d4af37]" />
+                  <Copy className="w-4 h-4 text-[#762D35]" />
                   <span>Copy Direct Monograph Link</span>
                 </button>
                 <button
@@ -919,9 +937,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     handleCopyLink(true);
                     setShareMenuOpen(false);
                   }}
-                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold cursor-pointer"
+                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                 >
-                  <FileText className="w-4 h-4 text-[#d4af37]" />
+                  <FileText className="w-4 h-4 text-[#762D35]" />
                   <span>Copy Title & Link</span>
                 </button>
                 <a
@@ -930,8 +948,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => setShareMenuOpen(false)}
-                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold text-emerald-300"
+                  onClick={e => {
+                    handleWhatsAppLinkClick(e);
+                    setShareMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold text-[#76501F]"
                 >
                   <ExternalLink className="w-4 h-4" />
                   <span>Share via WhatsApp</span>
@@ -943,10 +964,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           <button
             type="button"
             onClick={() => handleCopyLink(false)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#161c2a] hover:bg-[#20293d] text-stone-200 border border-stone-700 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#FFFCF5] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all cursor-pointer"
             title={ui.copyLink}
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-[#d4af37]" />}
+            {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4 text-[#762D35]" />}
             <span>{copied ? ui.linkCopied : ui.copyLink}</span>
           </button>
 
@@ -954,7 +975,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 border border-rose-500/40 text-rose-200 text-xs font-bold transition-all cursor-pointer"
+              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] border border-[#A87924] text-white text-xs font-bold transition-all cursor-pointer"
               title={ui.closeBtn}
             >
               <X className="w-4 h-4" />
@@ -964,46 +985,68 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       </div>
 
       {pdfDownloadResult && (
-        <div className="no-print mx-5 sm:mx-8 mt-4 p-3 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-xs text-emerald-200 flex flex-wrap items-center justify-between gap-2 print:hidden">
-          <span className="font-semibold flex items-center gap-1.5 break-all">
-            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="no-print mx-5 sm:mx-8 mt-4 p-3 rounded-xl bg-[#FFF9EF] border border-[#A87924] text-xs text-[#292521] flex flex-wrap items-center justify-between gap-2 print:hidden">
+          <span className="font-semibold flex items-center gap-1.5 break-all text-[#54351F]">
+            <Check className="w-4 h-4 text-emerald-700 shrink-0" />
             <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
           </span>
-          {pdfDownloadResult.downloadUrl && (
-            <a
-              href={pdfDownloadResult.downloadUrl}
-              download={pdfDownloadResult.filename}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#c99738] text-[#290106] font-bold text-xs"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>{pdfUi.directDownloadLinkLabel}</span>
-            </a>
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {pdfDownloadResult.downloadUrl && (
+              <a
+                href={pdfDownloadResult.downloadUrl}
+                download={pdfDownloadResult.filename}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e =>
+                  handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white font-bold text-xs"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>{pdfUi.directDownloadLinkLabel}</span>
+              </a>
+            )}
+            {pdfDownloadResult.externalArticleUrl && pdfDownloadResult.isAndroidWebView && (
+              <a
+                href={pdfDownloadResult.externalArticleUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-external-chrome="true"
+                onClick={e =>
+                  handleExternalBrowserUrlClick(e, pdfDownloadResult.externalArticleUrl || '')
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] font-bold text-xs"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-white" />
+                <span>{pdfUi.openInChromePdfBtn}</span>
+              </a>
+            )}
+          </div>
         </div>
       )}
 
       {/* MAIN MONOGRAPH CONTENT CONTAINER */}
       <div className="p-5 sm:p-8 md:p-10 space-y-10">
         {/* PRINT-ONLY ARCHIVAL MASTHEAD */}
-        <div className="hidden print:block border-b-2 border-stone-800 pb-3 mb-4 text-black">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-stone-800">
+        <div className="hidden print:block border-b-2 border-[#A87924] pb-3 mb-4 text-[#292521]">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
             Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal
           </p>
-          <p className="text-[11px] font-semibold text-stone-700 mt-0.5">
+          <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
             Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
           </p>
-          <p className="text-[10px] text-stone-600 break-all mt-0.5">
+          <p className="text-[10px] text-[#76501F] break-all mt-0.5">
             {getDirectMonographUrl(false)}
           </p>
         </div>
 
         {/* 1. MONOGRAPH HEADER, HISTORICAL PERIOD & SUBJECT CATEGORIES */}
-        <header className="print-article-header space-y-5 border-b border-stone-800 pb-6">
+        <header className="print-article-header space-y-5 border-b border-[#A87924]/50 pb-6">
           <div className="flex flex-wrap items-center gap-2">
             {subjectCategories.map((cat, idx) => (
               <span
                 key={idx}
-                className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] bg-[#1a1308] px-3 py-1 rounded-full border border-[#c99738]/40"
+                className="text-[11px] font-bold uppercase tracking-wider text-[#54351F] bg-[#FFF9EF] px-3 py-1 rounded-full border border-[#A87924]"
               >
                 {cat}
               </span>
@@ -1011,34 +1054,34 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <EvidenceBadge category={article.evidence_category} size="sm" />
           </div>
 
-          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl md:text-4xl text-[#fcedc7] leading-tight tracking-wide">
+          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl md:text-4xl text-[#54351F] leading-tight tracking-wide">
             {displayTitle}
           </h1>
 
           {/* Historical Period, Author & Verification Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1 text-xs">
-            <div className="p-3.5 rounded-xl bg-[#161c2a] border border-stone-800">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[#d4af37]" />
+            <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>{ui.periodLabel}</span>
               </div>
-              <div className="text-stone-100 font-bold mt-1">{historicalPeriod}</div>
+              <div className="text-[#292521] font-bold mt-1">{historicalPeriod}</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#161c2a] border border-stone-800">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#d4af37]" />
+            <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>{ui.authorLabel}</span>
               </div>
-              <div className="text-[#fae29c] font-bold mt-1">{article.author_name}</div>
+              <div className="text-[#54351F] font-bold mt-1">{article.author_name}</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#161c2a] border border-stone-800">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 <span>{ui.statusLabel}</span>
               </div>
-              <div className="text-emerald-400 font-bold mt-1">
+              <div className="text-emerald-800 font-bold mt-1">
                 {article.verification_status} ({article.publication_date})
               </div>
             </div>
@@ -1053,7 +1096,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
         {/* 2. FEATURED HISTORICAL IMAGE */}
         {article.featured_image && (
-          <figure className="print-lead-figure relative rounded-2xl overflow-hidden print:overflow-visible border border-[#c99738]/40 group shadow-xl bg-stone-950">
+          <figure className="print-lead-figure relative rounded-2xl overflow-hidden print:overflow-visible border border-[#A87924] group shadow-md bg-[#FFF9EF]">
             <div className="print-lead-figure-box">
               <img
                 src={article.featured_image}
@@ -1069,9 +1112,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 className="print-lead-image w-full h-64 sm:h-80 md:h-[420px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
               />
             </div>
-            <figcaption className="bg-gradient-to-t from-stone-950 via-stone-950/90 to-transparent p-4 text-xs text-stone-300 border-t border-stone-800">
-              <span className="text-[#d4af37] font-bold mr-1.5">{ui.artifactLabel}</span>
-              {displayTitle} — <span className="text-amber-200/90">{historicalPeriod}</span>
+            <figcaption className="bg-[#FFF9EF] p-4 text-xs text-[#292521] border-t border-[#A87924]">
+              <span className="text-[#54351F] font-bold mr-1.5">{ui.artifactLabel}</span>
+              {displayTitle} — <span className="text-[#76501F] font-semibold">{historicalPeriod}</span>
             </figcaption>
           </figure>
         )}
@@ -1079,22 +1122,22 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* 3. SHORT INTRODUCTION & EXECUTIVE HISTORICAL SCOPE */}
         <section
           aria-label="Monograph Introduction"
-          className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#20050c]/85 via-[#180309]/85 to-[#121622] border-l-4 border-[#d4af37] border-y border-r border-stone-800 text-stone-200 shadow-inner"
+          className="p-5 sm:p-6 rounded-2xl bg-[#FFF9EF] border-l-4 border-[#762D35] border-y border-r border-[#A87924] text-[#292521] shadow-sm"
         >
-          <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37] mb-2 flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4" />
+          <div className="text-[11px] font-bold uppercase tracking-widest text-[#76501F] mb-2 flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#A87924]" />
             <span>{ui.execIntroHeading}</span>
           </div>
-          <p className="font-royal-serif text-sm sm:text-base md:text-lg leading-relaxed text-[#fcedc7]/95">
+          <p className="font-royal-serif text-sm sm:text-base md:text-lg leading-relaxed text-[#292521]">
             {displaySummary}
           </p>
         </section>
 
         {/* 4. TABLE OF CONTENTS (COMPLETE MONOGRAPH CHAPTERS & SECTIONS) */}
         {tocList.length > 0 && (
-          <nav aria-label="Table of Contents" className="p-5 sm:p-6 rounded-2xl bg-[#0e121d] border border-stone-800">
-            <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#d4af37] mb-4 flex items-center gap-2">
-              <List className="w-4 h-4" />
+          <nav aria-label="Table of Contents" className="p-5 sm:p-6 rounded-2xl bg-[#FFF9EF] border border-[#A87924]">
+            <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#54351F] mb-4 flex items-center gap-2">
+              <List className="w-4 h-4 text-[#762D35]" />
               <span>{ui.tocHeading(tocList.length)}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
@@ -1105,11 +1148,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   onClick={() => scrollToSection(item.id)}
                   className={`text-left p-2.5 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer border ${
                     activeTocId === item.id
-                      ? 'bg-[#580014]/60 text-[#fae29c] border-[#d4af37]'
-                      : 'bg-[#141926] text-stone-300 border-stone-800 hover:border-[#c99738]/60 hover:text-white hover:bg-[#1a2133]'
+                      ? 'bg-[#762D35] text-white border-[#A87924]'
+                      : 'bg-[#FFFCF5] text-[#292521] border-[#A87924]/60 hover:border-[#A87924] hover:text-[#54351F] hover:bg-[#F5EBD9]'
                   }`}
                 >
-                  <span className="w-6 h-6 rounded-full bg-stone-900 text-[#d4af37] text-[11px] font-bold flex items-center justify-center shrink-0 border border-stone-700">
+                  <span className="w-6 h-6 rounded-full bg-[#F5EBD9] text-[#54351F] text-[11px] font-bold flex items-center justify-center shrink-0 border border-[#A87924]">
                     {idx + 1}
                   </span>
                   <span className="font-semibold line-clamp-1">{item.title}</span>
@@ -1121,9 +1164,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
         {/* 5. COMPLETE MONOGRAPH CHAPTERS & DETAILED HISTORICAL EXPLANATIONS */}
         <section aria-label="Complete Monograph Chapters" className="space-y-8">
-          <div className="border-b border-stone-800 pb-3 flex items-center gap-2.5">
-            <BookOpen className="w-5 h-5 text-[#d4af37]" />
-            <h2 className="font-royal-heading font-bold text-lg sm:text-2xl text-[#fcedc7]">
+          <div className="border-b border-[#A87924] pb-3 flex items-center gap-2.5">
+            <BookOpen className="w-5 h-5 text-[#762D35]" />
+            <h2 className="font-royal-heading font-bold text-lg sm:text-2xl text-[#54351F]">
               {ui.chaptersHeading}
             </h2>
           </div>
@@ -1132,18 +1175,18 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <div
               key={sec.id}
               id={sec.id}
-              className="scroll-mt-24 rounded-2xl bg-[#141926]/90 border border-stone-800/90 p-5 sm:p-7 space-y-4"
+              className="scroll-mt-24 rounded-2xl bg-[#FFFCF5] border border-[#A87924] p-5 sm:p-7 space-y-4 shadow-sm"
             >
-              <div className="flex items-center gap-3 border-b border-stone-800 pb-3">
-                <span className="px-2.5 py-1 rounded-lg bg-[#580014] text-[#fae29c] border border-[#d4af37]/50 text-xs font-bold">
+              <div className="flex items-center gap-3 border-b border-[#A87924]/50 pb-3">
+                <span className="px-2.5 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] text-xs font-bold">
                   Chapter {sIdx + 1}
                 </span>
-                <h3 className="font-royal-heading font-bold text-base sm:text-xl text-[#fae29c]">
+                <h3 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F]">
                   {sec.title}
                 </h3>
               </div>
 
-              <div className="space-y-3.5 font-royal-serif text-sm sm:text-base text-stone-200 leading-relaxed">
+              <div className="space-y-3.5 font-royal-serif text-sm sm:text-base text-[#292521] leading-relaxed">
                 {sec.lines.map((p, pIdx) => {
                   const trimmed = p.trim();
                   if (!trimmed) return null;
@@ -1151,14 +1194,14 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     return (
                       <li
                         key={pIdx}
-                        className="ml-5 list-disc text-stone-200 marker:text-[#d4af37] pl-1 leading-relaxed"
+                        className="ml-5 list-disc text-[#292521] marker:text-[#762D35] pl-1 leading-relaxed"
                       >
                         {trimmed.replace(/^[-•]\s*/, '')}
                       </li>
                     );
                   }
                   return (
-                    <p key={pIdx} className="leading-relaxed">
+                    <p key={pIdx} className="leading-relaxed text-[#292521]">
                       {trimmed}
                     </p>
                   );
@@ -1171,36 +1214,36 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* 6. THREE-PILLAR EPISTEMIC DISTINCTION */}
         <section
           aria-label="Epistemic Distinction"
-          className="p-5 sm:p-7 rounded-2xl bg-[#0e121d] border border-stone-800 space-y-5"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-5"
         >
-          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#fcedc7] flex items-center gap-2.5 border-b border-stone-800 pb-3">
-            <ShieldCheck className="w-5 h-5 text-[#d4af37]" />
+          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+            <ShieldCheck className="w-5 h-5 text-[#762D35]" />
             <span>{ui.epistemicHeading}</span>
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
-            <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-700/50 space-y-2">
-              <div className="font-bold text-emerald-300 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] space-y-2">
+              <div className="font-bold text-[#54351F] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
                 <span>{ui.epistemicVerifiedTitle}</span>
               </div>
-              <p className="text-stone-300 text-xs leading-relaxed">{ui.epistemicVerifiedDesc}</p>
+              <p className="text-[#292521] text-xs leading-relaxed">{ui.epistemicVerifiedDesc}</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-700/50 space-y-2">
-              <div className="font-bold text-amber-300 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+            <div className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] space-y-2">
+              <div className="font-bold text-[#54351F] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#A87924] shrink-0" />
                 <span>{ui.epistemicTradTitle}</span>
               </div>
-              <p className="text-stone-300 text-xs leading-relaxed">{ui.epistemicTradDesc}</p>
+              <p className="text-[#292521] text-xs leading-relaxed">{ui.epistemicTradDesc}</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-indigo-950/30 border border-indigo-700/50 space-y-2">
-              <div className="font-bold text-indigo-300 flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-indigo-400 shrink-0" />
+            <div className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] space-y-2">
+              <div className="font-bold text-[#54351F] flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-[#762D35] shrink-0" />
                 <span>{ui.epistemicScholarTitle}</span>
               </div>
-              <p className="text-stone-300 text-xs leading-relaxed">{ui.epistemicScholarDesc}</p>
+              <p className="text-[#292521] text-xs leading-relaxed">{ui.epistemicScholarDesc}</p>
             </div>
           </div>
         </section>
@@ -1209,34 +1252,34 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {involvedTimelineEvents.length > 0 && (
           <section
             aria-label="Chronological Events and Timelines"
-            className="p-5 sm:p-7 rounded-2xl bg-[#0e121d] border border-stone-800 space-y-5"
+            className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-5"
           >
-            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#fcedc7] flex items-center gap-2.5 border-b border-stone-800 pb-3">
-              <Clock className="w-5 h-5 text-[#d4af37]" />
+            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+              <Clock className="w-5 h-5 text-[#762D35]" />
               <span>{ui.chronologyHeading}</span>
             </h2>
 
-            <div className="relative pl-6 border-l-2 border-[#c99738]/50 space-y-4">
+            <div className="relative pl-6 border-l-2 border-[#A87924] space-y-4">
               {involvedTimelineEvents.map(ev => (
                 <div
                   key={ev.id}
                   onClick={() => onNavigate && onNavigate(`/timeline?id=${ev.id}`)}
-                  className="relative p-4 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group"
+                  className="relative p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group"
                 >
-                  <div className="absolute -left-[31px] top-5 w-3.5 h-3.5 rounded-full bg-[#d4af37] border-2 border-[#0e121d]" />
+                  <div className="absolute -left-[31px] top-5 w-3.5 h-3.5 rounded-full bg-[#762D35] border-2 border-[#FFF9EF]" />
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-                    <span className="px-2.5 py-0.5 rounded bg-[#580014]/70 text-[#fae29c] border border-[#d4af37]/40 text-[11px] font-bold">
+                    <span className="px-2.5 py-0.5 rounded bg-[#762D35] text-white border border-[#A87924] text-[11px] font-bold">
                       {ev.year_text} • {ev.period}
                     </span>
-                    <span className="text-[11px] text-[#d4af37] font-semibold inline-flex items-center gap-1">
+                    <span className="text-[11px] text-[#76501F] font-semibold inline-flex items-center gap-1">
                       <span>Inspect Chronology Record</span>
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </span>
                   </div>
-                  <h3 className="font-royal-heading font-bold text-sm sm:text-base text-stone-100 group-hover:text-[#fae29c]">
+                  <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F]">
                     {ev.title}
                   </h3>
-                  <p className="text-xs text-stone-300 mt-1 leading-relaxed">{ev.political_development}</p>
+                  <p className="text-xs text-[#292521] mt-1 leading-relaxed">{ev.political_development}</p>
                 </div>
               ))}
             </div>
@@ -1246,16 +1289,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* 8. KINGDOMS, DYNASTIES & HISTORICAL PERSONALITIES INVOLVED */}
         <section
           aria-label="Kingdoms, Dynasties and Personalities Involved"
-          className="p-5 sm:p-7 rounded-2xl bg-[#0e121d] border border-stone-800 space-y-6"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-6"
         >
-          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#fcedc7] flex items-center gap-2.5 border-b border-stone-800 pb-3">
-            <Crown className="w-5 h-5 text-[#d4af37]" />
+          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+            <Crown className="w-5 h-5 text-[#762D35]" />
             <span>{ui.kingdomsPersonalitiesHeading}</span>
           </h2>
 
           {/* Historical Personalities Cards */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
               Documented Monarchs, Emperors & Sacred Guardians Involved
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -1263,12 +1306,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <div
                   key={fig.id}
                   onClick={() => onNavigate && onNavigate(`/kings-queens?figure=${fig.id}`)}
-                  className="p-3 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-center gap-3"
+                  className="p-3 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
                 >
                   <img
                     src={fig.image_url}
                     alt={fig.name}
-                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#c99738]/40 shrink-0"
+                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#A87924] shrink-0"
                     onError={e => {
                       const target = e.currentTarget;
                       target.onerror = null;
@@ -1276,11 +1319,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     }}
                   />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold text-[#d4af37] truncate">{fig.reign_period}</div>
-                    <div className="text-xs font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c] truncate">
+                    <div className="text-[10px] font-bold text-[#76501F] truncate">{fig.reign_period}</div>
+                    <div className="text-xs font-royal-heading font-bold text-[#54351F] truncate">
                       {fig.name}
                     </div>
-                    <div className="text-[10px] text-stone-400 truncate">{fig.dynasty_name}</div>
+                    <div className="text-[10px] text-[#292521] truncate">{fig.dynasty_name}</div>
                   </div>
                 </div>
               ))}
@@ -1288,23 +1331,23 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           </div>
 
           {/* Kingdoms & Dynasties Cards */}
-          <div className="pt-3 border-t border-stone-800/80">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-3">
+          <div className="pt-3 border-t border-[#A87924]/40">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
               Associated Kingdoms, Dynasties & Territorial Realms
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               <div
                 onClick={() => onNavigate && onNavigate('/gajapathi-kings')}
-                className="p-3.5 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-center gap-3"
+                className="p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
                   alt="Suryavamsha Gajapathi Empire"
-                  className="w-14 h-14 rounded-lg object-cover border border-stone-700 shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#d4af37] uppercase">Imperial Dynasty</div>
-                  <div className="text-xs font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c]">
+                  <div className="text-[10px] font-bold text-[#76501F] uppercase">Imperial Dynasty</div>
+                  <div className="text-xs font-royal-heading font-bold text-[#54351F]">
                     Suryavamsha Gajapathi Kingdom & Empire
                   </div>
                 </div>
@@ -1312,16 +1355,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
               <div
                 onClick={() => onNavigate && onNavigate('/odra-desha')}
-                className="p-3.5 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-center gap-3"
+                className="p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`}
                   alt="Odra Desha & Kalinga"
-                  className="w-14 h-14 rounded-lg object-cover border border-stone-700 shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#d4af37] uppercase">Sovereign Territory</div>
-                  <div className="text-xs font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c]">
+                  <div className="text-[10px] font-bold text-[#76501F] uppercase">Sovereign Territory</div>
+                  <div className="text-xs font-royal-heading font-bold text-[#54351F]">
                     Ancient Odra Desha, Utkala & Kalinga
                   </div>
                 </div>
@@ -1329,16 +1372,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
               <div
                 onClick={() => onNavigate && onNavigate('/genealogy')}
-                className="p-3.5 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-center gap-3"
+                className="p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
                   alt="Royal Dynastic Genealogy"
-                  className="w-14 h-14 rounded-lg object-cover border border-stone-700 shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#d4af37] uppercase">Royal Succession</div>
-                  <div className="text-xs font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c]">
+                  <div className="text-[10px] font-bold text-[#76501F] uppercase">Royal Succession</div>
+                  <div className="text-xs font-royal-heading font-bold text-[#54351F]">
                     Suryavamsha & Odra Dynastic Genealogy
                   </div>
                 </div>
@@ -1350,17 +1393,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* 9. AVAILABLE INSCRIPTIONS, ARCHAEOLOGICAL RECORDS & DOCUMENTARY EVIDENCE */}
         <section
           aria-label="Inscriptions and Documentary Evidence"
-          className="p-5 sm:p-7 rounded-2xl bg-[#0e121d] border border-stone-800 space-y-6"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-6"
         >
-          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#fcedc7] flex items-center gap-2.5 border-b border-stone-800 pb-3">
-            <Scroll className="w-5 h-5 text-[#d4af37]" />
+          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+            <Scroll className="w-5 h-5 text-[#762D35]" />
             <span>{ui.inscriptionsEvidenceHeading}</span>
           </h2>
 
           {/* Inscriptions */}
           {involvedInscriptions.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
                 Corroborating Stone Inscriptions & Copper-Plate Charters ({involvedInscriptions.length})
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -1368,19 +1411,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   <div
                     key={insc.id}
                     onClick={() => onNavigate && onNavigate(`/inscriptions?id=${insc.id}`)}
-                    className="p-4 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-start gap-3.5"
+                    className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-start gap-3.5"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-[#580014]/60 border border-[#d4af37]/40 flex items-center justify-center shrink-0">
-                      <Scroll className="w-5 h-5 text-[#d4af37]" />
+                    <div className="w-10 h-10 rounded-lg bg-[#FFF9EF] border border-[#A87924] flex items-center justify-center shrink-0">
+                      <Scroll className="w-5 h-5 text-[#762D35]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="text-[11px] font-bold text-[#d4af37]">
+                      <div className="text-[11px] font-bold text-[#76501F]">
                         {insc.era_or_date} • {insc.language}
                       </div>
-                      <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c] mt-0.5">
+                      <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
                         {insc.name}
                       </h4>
-                      <p className="text-xs text-stone-400 mt-1 line-clamp-2">{insc.historical_context}</p>
+                      <p className="text-xs text-[#292521] mt-1 line-clamp-2">{insc.historical_context}</p>
                     </div>
                   </div>
                 ))}
@@ -1394,19 +1437,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div
                 key={doc.id}
                 onClick={() => onNavigate && onNavigate(`/documents?id=${doc.id}`)}
-                className="p-4 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-start gap-3.5"
+                className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-start gap-3.5"
               >
-                <div className="w-10 h-10 rounded-lg bg-stone-900 border border-stone-700 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5 text-[#d4af37]" />
+                <div className="w-10 h-10 rounded-lg bg-[#FFF9EF] border border-[#A87924] flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-[#762D35]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10px] font-bold uppercase text-[#d4af37]">
+                  <div className="text-[10px] font-bold uppercase text-[#76501F]">
                     Archival Manuscript • {doc.approximate_date}
                   </div>
-                  <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c] mt-0.5">
+                  <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
                     {doc.title}
                   </h4>
-                  <p className="text-xs text-stone-400 mt-1 line-clamp-2">{doc.translation_excerpt}</p>
+                  <p className="text-xs text-[#292521] mt-1 line-clamp-2">{doc.translation_excerpt}</p>
                 </div>
               </div>
             ))}
@@ -1415,23 +1458,23 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div
                 key={mon.id}
                 onClick={() => onNavigate && onNavigate('/temples-monuments')}
-                className="p-4 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] transition-all cursor-pointer group flex items-start gap-3.5"
+                className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-start gap-3.5"
               >
                 {mon.image_url && (
                   <img
                     src={mon.image_url}
                     alt={mon.name}
-                    className="w-14 h-14 rounded-lg object-cover border border-stone-700 shrink-0"
+                    className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
                 )}
                 <div className="min-w-0 flex-1">
-                  <div className="text-[10px] font-bold uppercase text-[#d4af37]">
+                  <div className="text-[10px] font-bold uppercase text-[#76501F]">
                     Archaeological Monument • {mon.century}
                   </div>
-                  <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-stone-100 group-hover:text-[#fae29c] mt-0.5">
+                  <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
                     {mon.name}
                   </h4>
-                  <p className="text-xs text-stone-400 mt-1 line-clamp-2">{mon.historical_significance}</p>
+                  <p className="text-xs text-[#292521] mt-1 line-clamp-2">{mon.historical_significance}</p>
                 </div>
               </div>
             ))}
@@ -1441,13 +1484,13 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* 10. HISTORICAL ANALYSIS & CONCLUSIONS */}
         <section
           aria-label="Conclusion and Summary"
-          className="p-5 sm:p-7 rounded-2xl bg-gradient-to-r from-[#121622] to-[#1c0810] border border-[#d4af37]/40 space-y-2.5"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border-2 border-[#A87924] space-y-2.5"
         >
-          <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-[#d4af37]" />
+          <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-[#762D35]" />
             <span>{ui.conclusionHeading}</span>
           </h2>
-          <p className="text-xs sm:text-sm text-stone-200 font-royal-serif leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#292521] font-royal-serif leading-relaxed">
             {ui.conclusionDesc}
           </p>
         </section>
@@ -1456,35 +1499,35 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {article.sources && article.sources.length > 0 && (
           <section
             aria-label="Sources and References"
-            className="p-5 sm:p-7 rounded-2xl bg-[#0e121d] border border-stone-800 space-y-4"
+            className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-4"
           >
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-3">
-              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#A87924]/60 pb-3">
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
                 {ui.sourcesHeading(article.sources.length)}
               </h2>
-              <span className="text-[11px] text-stone-400">{ui.sourcesNote}</span>
+              <span className="text-[11px] text-[#76501F] font-semibold">{ui.sourcesNote}</span>
             </div>
 
             <div className="space-y-3">
               {article.sources.map((src: SourceReference, i: number) => (
                 <div
                   key={src.id || i}
-                  className="p-4 rounded-xl bg-[#141926] border border-stone-800/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                  className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                 >
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-bold text-[#d4af37] uppercase bg-stone-900 px-2.5 py-0.5 rounded border border-stone-700">
+                      <span className="text-[10px] font-bold text-white uppercase bg-[#762D35] px-2.5 py-0.5 rounded border border-[#A87924]">
                         #{i + 1} • {src.source_type}
                       </span>
-                      <h4 className="font-bold text-stone-100 text-xs sm:text-sm">{src.title}</h4>
+                      <h4 className="font-bold text-[#54351F] text-xs sm:text-sm">{src.title}</h4>
                     </div>
-                    <p className="text-stone-400 text-xs">
+                    <p className="text-[#292521] text-xs">
                       {src.author_or_authority} • {src.publication_or_location} ({src.year_or_era}) —{' '}
-                      <span className="text-stone-300 italic">{src.citation_details}</span>
+                      <span className="text-[#76501F] italic">{src.citation_details}</span>
                     </p>
                   </div>
                   {src.verified && (
-                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-semibold bg-emerald-950/40 border border-emerald-800 px-2.5 py-1 rounded-full shrink-0">
+                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-800 font-bold bg-[#FFF9EF] border border-emerald-700/50 px-2.5 py-1 rounded-full shrink-0">
                       <Check className="w-3 h-3" /> {ui.verifiedSource}
                     </span>
                   )}
@@ -1495,12 +1538,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         )}
 
         {/* 12. RELATED MONOGRAPHS, KEYWORDS, HASHTAGS & FOOTER NAVIGATION */}
-        <footer className="print-article-footer space-y-8 pt-6 border-t border-stone-800">
+        <footer className="print-article-footer space-y-8 pt-6 border-t border-[#A87924]">
           {/* Related Historical Monographs with Small Thumbnails */}
           {relatedArticles.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-2">
-                <Landmark className="w-4 h-4" />
+              <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-2">
+                <Landmark className="w-4 h-4 text-[#762D35]" />
                 <span>{ui.relatedHeading}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1510,7 +1553,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     <div
                       key={rel.id}
                       onClick={() => onSelectArticle && onSelectArticle(rel)}
-                      className="p-3.5 rounded-2xl bg-[#141926] border border-stone-800 hover:border-[#c99738] hover:bg-[#1a2133] transition-all cursor-pointer group flex flex-col justify-between gap-3"
+                      className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] hover:bg-[#FFF9EF] transition-all cursor-pointer group flex flex-col justify-between gap-3"
                     >
                       <div className="flex items-start gap-3">
                         <img
@@ -1523,19 +1566,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                               target.src = fallbackBanner;
                             }
                           }}
-                          className="w-16 h-16 rounded-xl object-cover border border-[#c99738]/40 shrink-0"
+                          className="w-16 h-16 rounded-xl object-cover border border-[#A87924] shrink-0"
                         />
                         <div className="min-w-0">
-                          <span className="text-[10px] font-bold text-[#d4af37] uppercase block truncate">
+                          <span className="text-[10px] font-bold text-[#76501F] uppercase block truncate">
                             {getMetadataLabel('category', rel.category) || rel.category}
                           </span>
-                          <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-stone-100 group-hover:text-[#fae29c] line-clamp-2 mt-0.5">
+                          <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] line-clamp-2 mt-0.5">
                             {relTitle}
                           </h4>
                         </div>
                       </div>
-                      <p className="text-[11px] text-stone-400 line-clamp-2">{relSummary}</p>
-                      <div className="text-[11px] text-[#d4af37] font-bold flex items-center gap-1">
+                      <p className="text-[11px] text-[#292521] line-clamp-2">{relSummary}</p>
+                      <div className="text-[11px] text-[#76501F] font-bold flex items-center gap-1">
                         <span>{ui.readArticleBtn}</span>
                         <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>
@@ -1547,10 +1590,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           )}
 
           {/* Keywords & Hashtags */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-stone-800/80">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[#A87924]/50">
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-2.5 flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5" />
+              <div className="text-xs font-bold uppercase tracking-wider text-[#54351F] mb-2.5 flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>{ui.keywordsHeading}</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -1562,7 +1605,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                       if (onTagClick) onTagClick(kw);
                       else if (onBack) onBack();
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-[#161c2a] hover:bg-[#580014] text-stone-300 hover:text-[#fae29c] border border-stone-700 hover:border-[#d4af37]/50 text-xs font-medium transition-colors cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-[#FFF9EF] hover:bg-[#762D35] text-[#54351F] hover:text-white border border-[#A87924] text-xs font-medium transition-colors cursor-pointer"
                   >
                     {kw}
                   </button>
@@ -1571,15 +1614,15 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             </div>
 
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-2.5 flex items-center gap-1.5">
-                <Hash className="w-3.5 h-3.5" />
+              <div className="text-xs font-bold uppercase tracking-wider text-[#54351F] mb-2.5 flex items-center gap-1.5">
+                <Hash className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>{ui.hashtagsHeading}</span>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {monographHashtags.map((ht, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-lg bg-[#1a1308] text-[#fae29c] border border-[#c99738]/40 text-xs font-semibold"
+                    className="px-2.5 py-1 rounded-lg bg-[#FFF9EF] text-[#76501F] border border-[#A87924] text-xs font-semibold"
                   >
                     {ht}
                   </span>
@@ -1590,19 +1633,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
           {/* Sequential Previous / Next Monograph Navigation */}
           {(prevArticle || nextArticle) && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-stone-800/80 print:hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#A87924]/50 print:hidden">
               {prevArticle ? (
                 <button
                   type="button"
                   onClick={() => onSelectArticle && onSelectArticle(prevArticle)}
-                  className="flex items-center gap-3 p-3.5 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] text-left transition-all cursor-pointer"
+                  className="flex items-center gap-3 p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924] hover:bg-[#FFF9EF] text-left transition-all cursor-pointer"
                 >
-                  <ChevronLeft className="w-5 h-5 text-[#d4af37] shrink-0" />
+                  <ChevronLeft className="w-5 h-5 text-[#762D35] shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F]">
                       {ui.prevMonograph}
                     </div>
-                    <div className="text-xs sm:text-sm font-royal-heading font-bold text-stone-100 truncate">
+                    <div className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] truncate">
                       {getArticleContent(prevArticle).title}
                     </div>
                   </div>
@@ -1615,17 +1658,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectArticle && onSelectArticle(nextArticle)}
-                  className="flex items-center justify-end gap-3 p-3.5 rounded-xl bg-[#141926] border border-stone-800 hover:border-[#c99738] text-right transition-all cursor-pointer"
+                  className="flex items-center justify-end gap-3 p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924] hover:bg-[#FFF9EF] text-right transition-all cursor-pointer"
                 >
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F]">
                       {ui.nextMonograph}
                     </div>
-                    <div className="text-xs sm:text-sm font-royal-heading font-bold text-stone-100 truncate">
+                    <div className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] truncate">
                       {getArticleContent(nextArticle).title}
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-[#d4af37] shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-[#762D35] shrink-0" />
                 </button>
               ) : (
                 <div />
@@ -1634,13 +1677,13 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           )}
 
           {/* Bottom Action Bar: Back, Home, Print, Share, Copy Link & Return to Top */}
-          <div className="pt-4 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs print:hidden">
+          <div className="pt-4 border-t border-[#A87924] flex flex-wrap items-center justify-between gap-3 text-xs print:hidden">
             <div className="flex flex-wrap items-center gap-2">
               {onBack && (
                 <button
                   type="button"
                   onClick={onBack}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#580014] hover:bg-[#74001b] text-[#fae29c] border border-[#d4af37]/60 font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold transition-all cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>{ui.backToList}</span>
@@ -1650,9 +1693,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <button
                   type="button"
                   onClick={() => onNavigate('/')}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] font-bold transition-all cursor-pointer"
                 >
-                  <Home className="w-4 h-4 text-[#d4af37]" />
+                  <Home className="w-4 h-4 text-[#762D35]" />
                   <span>{ui.returnHome}</span>
                 </button>
               )}
@@ -1662,23 +1705,23 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <button
                 type="button"
                 onClick={handlePrint}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#161c2a] hover:bg-[#20293d] text-stone-200 border border-stone-700 font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] font-bold transition-all cursor-pointer"
               >
-                <Printer className="w-4 h-4 text-[#d4af37]" />
+                <Printer className="w-4 h-4 text-[#762D35]" />
                 <span>{ui.printBtn}</span>
               </button>
               <button
                 type="button"
                 onClick={handleShare}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#161c2a] hover:bg-[#20293d] text-stone-200 border border-stone-700 font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold transition-all cursor-pointer"
               >
-                <Share2 className="w-4 h-4 text-[#d4af37]" />
+                <Share2 className="w-4 h-4 text-white" />
                 <span>{ui.share}</span>
               </button>
               <button
                 type="button"
                 onClick={() => handleCopyLink(false)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#c99738] hover:bg-[#b88628] text-[#290106] font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white font-bold transition-all cursor-pointer"
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 <span>{copied ? ui.linkCopied : ui.copyLink}</span>
@@ -1686,7 +1729,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="px-3 py-2.5 text-[#d4af37] hover:underline font-bold cursor-pointer"
+                className="px-3 py-2.5 text-[#76501F] hover:text-[#54351F] hover:underline font-bold cursor-pointer"
               >
                 {ui.returnToTop}
               </button>
@@ -1694,7 +1737,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           </div>
 
           {/* Author Profile & Print/PDF Attribution */}
-          <div className="pt-6 border-t border-stone-800 print:border-stone-300">
+          <div className="pt-6 border-t border-[#A87924] print:border-stone-300">
             <PublisherCreditCard variant="article-profile" />
           </div>
         </footer>

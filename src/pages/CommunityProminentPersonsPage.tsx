@@ -36,7 +36,12 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
-  PDF_EXPORT_UI_LABELS
+  PDF_EXPORT_UI_LABELS,
+  hasAppInventorBridge,
+  isAndroidWebViewEnvironment,
+  sendUrlToAppInventorBridge,
+  handleWhatsAppLinkClick,
+  handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
 import {
   PROMINENT_PERSONS,
@@ -1067,33 +1072,18 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const [isPrintFallbackOpen, setIsPrintFallbackOpen] = useState(false);
   const [printUrlCopied, setPrintUrlCopied] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
-  const [pdfDownloadResult, setPdfDownloadResult] = useState<{ filename: string } | null>(null);
+  const [pdfDownloadResult, setPdfDownloadResult] = useState<{
+    filename: string;
+    downloadUrl?: string;
+    externalArticleUrl?: string;
+    isAndroidWebView?: boolean;
+  } | null>(null);
   const shareFeedbackTimerRef = useRef<number | null>(null);
   const printFallbackTimerRef = useRef<number | null>(null);
   const autoPrintTriggeredRef = useRef<string | null>(null);
   const appliedUrlLangRef = useRef<string | null>(null);
   const savedListingScrollYRef = useRef<number>(0);
   const shouldRestoreScrollRef = useRef<boolean>(false);
-
-  const hasAppInventorBridge = (): boolean => {
-    if (typeof window === 'undefined') return false;
-    const win = window as unknown as {
-      AppInventor?: {
-        getWebViewString?: () => string;
-        setWebViewString?: (val: string) => void;
-      };
-    };
-    return Boolean(win.AppInventor && typeof win.AppInventor.setWebViewString === 'function');
-  };
-
-  const isAndroidWebViewEnvironment = (): boolean => {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
-    if (hasAppInventorBridge()) return true;
-    const ua = navigator.userAgent || '';
-    const isAndroid = /Android/i.test(ua);
-    const isWebView = /\bwv\b/i.test(ua) || /Version\/\d+\.\d+/i.test(ua);
-    return isAndroid && isWebView;
-  };
 
   const readPersonIdFromLocation = (): string | null => {
     if (typeof window === 'undefined') return null;
@@ -1159,8 +1149,29 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         }
       }
 
+      const autoDownloadPdf = params.get('autodownloadpdf');
       const autoPrint = params.get('autoprint');
       const targetId = params.get('id') || activePersonId;
+
+      if (autoDownloadPdf === '1' && targetId && !isAndroidWebViewEnvironment()) {
+        if (autoPrintTriggeredRef.current !== `pdf-${targetId}-${langParam || language}`) {
+          autoPrintTriggeredRef.current = `pdf-${targetId}-${langParam || language}`;
+          const timer = window.setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autodownloadpdf');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            handleDownloadPersonPdf();
+          }, 600);
+          return () => window.clearTimeout(timer);
+        }
+      }
+
       if (autoPrint === '1' && targetId) {
         if (isAndroidWebViewEnvironment()) {
           // If WebViewer had UseExternalBrowser=false and loaded the &autoprint=1 URL inside itself,
@@ -1271,26 +1282,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   };
 
   const sendArticleUrlToAppInventor = (articleUrl: string): boolean => {
-    if (typeof window === 'undefined') return false;
     const trimmedUrl = (articleUrl || '').trim();
-    // Do not send empty values or unrelated URLs
-    if (!trimmedUrl || !/^https?:\/\/.+\/community-prominent-persons\?id=/i.test(trimmedUrl)) {
+    if (!trimmedUrl || !/^https?:\/\//i.test(trimmedUrl)) {
       return false;
     }
-    if (!hasAppInventorBridge()) {
-      return false;
-    }
-    try {
-      const win = window as unknown as {
-        AppInventor: {
-          setWebViewString: (val: string) => void;
-        };
-      };
-      win.AppInventor.setWebViewString(trimmedUrl);
-      return true;
-    } catch {
-      return false;
-    }
+    return sendUrlToAppInventorBridge(trimmedUrl);
   };
 
   const handleCopyPrintArticleUrl = async (personId: string) => {
@@ -1344,8 +1340,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     const canCallWindowPrint = typeof window !== 'undefined' && typeof window.print === 'function';
 
     // If inside MIT App Inventor WebViewer / Android WebView or if window.print is unavailable,
-    // display the multilingual external browser print fallback (URL is sent only when user clicks the button)
+    // send the external print URL via AppInventor bridge and display the multilingual external browser print fallback
     if (inAndroidWebView || !canCallWindowPrint) {
+      if (hasAppInventorBridge()) {
+        sendUrlToAppInventorBridge(getExternalPrintArticleUrl(activePerson.id, currentLang));
+      }
       setIsPrintFallbackOpen(true);
       return;
     }
@@ -1388,14 +1387,18 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     setIsDownloadingPdf(true);
     setPdfDownloadResult(null);
     try {
+      const canonicalUrl = `${getCanonicalArticleUrl(activePerson.id)}&lang=${encodeURIComponent(currentLang)}`;
       const result = await downloadArticleAsPdf({
         articleTitle: getPersonPdfTitle(activePerson),
-        language: currentLang
+        language: currentLang,
+        articleUrl: canonicalUrl
       });
-      setPdfDownloadResult({ filename: result.filename });
-      window.setTimeout(() => {
-        setPdfDownloadResult(null);
-      }, 6000);
+      setPdfDownloadResult({
+        filename: result.filename,
+        downloadUrl: result.downloadUrl,
+        externalArticleUrl: result.externalArticleUrl,
+        isAndroidWebView: result.isAndroidWebView
+      });
     } catch {
       handlePrintArticle();
     } finally {
@@ -3922,17 +3925,56 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             </div>
 
             {pdfDownloadResult && (
-              <div className="px-3.5 py-2 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex items-center justify-between gap-2">
-                <span>
+              <div className="px-3.5 py-2.5 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-xs font-semibold flex flex-wrap items-center justify-between gap-2">
+                <span className="break-all">
                   ✓ {(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).pdfSavedNotice(pdfDownloadResult.filename)}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setPdfDownloadResult(null)}
-                  className="text-emerald-300 hover:text-white shrink-0 cursor-pointer"
-                >
-                  ✕
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  {pdfDownloadResult.downloadUrl && (
+                    <a
+                      href={pdfDownloadResult.downloadUrl}
+                      download={pdfDownloadResult.filename}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e =>
+                        handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
+                      }
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#c99738] text-[#290106] font-bold text-[11px]"
+                    >
+                      <Download className="w-3 h-3" />
+                      <span>
+                        {(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).directDownloadLinkLabel}
+                      </span>
+                    </a>
+                  )}
+                  {pdfDownloadResult.externalArticleUrl && pdfDownloadResult.isAndroidWebView && (
+                    <a
+                      href={pdfDownloadResult.externalArticleUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-external-chrome="true"
+                      onClick={e =>
+                        handleExternalBrowserUrlClick(
+                          e,
+                          pdfDownloadResult.externalArticleUrl || ''
+                        )
+                      }
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#580014] text-[#fae29c] border border-[#d4af37] font-bold text-[11px]"
+                    >
+                      <ExternalLink className="w-3 h-3 text-[#d4af37]" />
+                      <span>
+                        {(PDF_EXPORT_UI_LABELS[currentLang] || PDF_EXPORT_UI_LABELS.en).openInChromePdfBtn}
+                      </span>
+                    </a>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setPdfDownloadResult(null)}
+                    className="text-emerald-300 hover:text-white shrink-0 cursor-pointer px-1"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             )}
 
@@ -5489,6 +5531,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={e => handleWhatsAppLinkClick(e)}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] transition-all cursor-pointer"
               >
                 <WhatsAppIcon className="w-4 h-4 fill-current" />
@@ -6473,6 +6516,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={e => handleWhatsAppLinkClick(e)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 text-emerald-300 border border-emerald-500/40 font-semibold transition-colors cursor-pointer"
                       >
                         <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />

@@ -88,19 +88,19 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     if (this.state.hasError) {
       return (
         <div
-          className="min-h-[60vh] w-full flex items-center justify-center p-4 sm:p-8 bg-[#0b0d14] text-[#f5f3ed]"
+          className="min-h-[60vh] w-full flex items-center justify-center p-4 sm:p-8 bg-[#F5EBD9] text-[#292521]"
           style={{
-            backgroundColor: '#0b0d14',
-            color: '#f5f3ed',
+            backgroundColor: '#F5EBD9',
+            color: '#292521',
             padding: '24px',
             fontFamily: 'system-ui, -apple-system, sans-serif'
           }}
         >
           <div
-            className="max-w-xl w-full rounded-2xl bg-[#141824] border border-[#c99738]/60 p-6 sm:p-8 shadow-2xl space-y-4"
+            className="max-w-xl w-full rounded-2xl bg-[#FFFCF5] border-2 border-[#A87924] p-6 sm:p-8 shadow-xl space-y-4"
             style={{
-              backgroundColor: '#141824',
-              border: '1px solid rgba(201, 151, 56, 0.6)',
+              backgroundColor: '#FFFCF5',
+              border: '2px solid #A87924',
               borderRadius: '16px',
               padding: '24px',
               maxWidth: '560px',
@@ -108,35 +108,35 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             }}
           >
             <div
-              className="text-xs font-bold uppercase tracking-widest text-[#d4af37]"
-              style={{ color: '#d4af37', fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em' }}
+              className="text-xs font-bold uppercase tracking-widest text-[#76501F]"
+              style={{ color: '#76501F', fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em' }}
             >
               Suryavamsha Odiyaraju Kshatriya Portal • Safe Recovery Mode
             </div>
 
             <h2
-              className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7]"
-              style={{ color: '#fcedc7', fontSize: '20px', fontWeight: 700, margin: '8px 0' }}
+              className="font-royal-heading font-bold text-xl sm:text-2xl text-[#54351F]"
+              style={{ color: '#54351F', fontSize: '20px', fontWeight: 700, margin: '8px 0' }}
             >
               {this.props.fallbackTitle || 'Unable to Render This Section in Current Browser View'}
             </h2>
 
             <p
-              className="text-xs sm:text-sm text-stone-300 leading-relaxed"
-              style={{ color: '#d6d3d1', fontSize: '14px', lineHeight: 1.6 }}
+              className="text-xs sm:text-sm text-[#292521] leading-relaxed"
+              style={{ color: '#292521', fontSize: '14px', lineHeight: 1.6 }}
             >
               A runtime or browser compatibility issue was detected in this WebView environment. Your historical archive data and navigation remain intact.
             </p>
 
             {this.state.errorMessage && (
               <div
-                className="p-3 rounded-xl bg-black/50 border border-stone-800 text-xs font-mono text-amber-200 break-words"
+                className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs font-mono text-[#54351F] break-words"
                 style={{
-                  backgroundColor: 'rgba(0,0,0,0.45)',
-                  border: '1px solid #292524',
+                  backgroundColor: '#FFF9EF',
+                  border: '1px solid #D8C3A2',
                   borderRadius: '10px',
                   padding: '12px',
-                  color: '#fde68a',
+                  color: '#54351F',
                   fontSize: '12px',
                   wordBreak: 'break-word'
                 }}
@@ -149,15 +149,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <button
                 type="button"
                 onClick={this.handleReset}
-                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#c99738] text-[#290106] hover:bg-[#dfab43] transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] transition-all cursor-pointer"
                 style={{
-                  backgroundColor: '#c99738',
-                  color: '#290106',
+                  backgroundColor: '#762D35',
+                  color: '#FFFFFF',
                   padding: '10px 16px',
                   borderRadius: '10px',
                   fontWeight: 700,
                   fontSize: '13px',
-                  border: 'none',
+                  border: '1px solid #A87924',
                   cursor: 'pointer'
                 }}
               >
@@ -167,15 +167,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#1c2333] text-stone-200 border border-[#c99738]/40 hover:border-[#c99738] transition-all cursor-pointer"
+                className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                 style={{
-                  backgroundColor: '#1c2333',
-                  color: '#e7e5e4',
+                  backgroundColor: '#E9D9BE',
+                  color: '#54351F',
                   padding: '10px 16px',
                   borderRadius: '10px',
                   fontWeight: 600,
                   fontSize: '13px',
-                  border: '1px solid rgba(201,151,56,0.4)',
+                  border: '1px solid #D8C3A2',
                   cursor: 'pointer'
                 }}
               >

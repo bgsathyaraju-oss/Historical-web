@@ -76,10 +76,10 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
   if (!user) {
     return (
       <div className="max-w-md mx-auto py-20 text-center space-y-4">
-        <p className="text-stone-300">You must be logged in as a registered member to submit archival materials or research.</p>
+        <p className="text-[#292521]">You must be logged in as a registered member to submit archival materials or research.</p>
         <button
           onClick={() => onNavigate('/login')}
-          className="px-6 py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207]"
+          className="px-6 py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white cursor-pointer"
         >
           Go to Sign In
         </button>
@@ -144,43 +144,43 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="border-b border-stone-800 pb-4 space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-          <Upload className="w-4 h-4" />
+      <div className="border-b border-[#D8C3A2] pb-4 space-y-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+          <Upload className="w-4 h-4 text-[#A87924]" />
           <span>Archival Contribution Workflow</span>
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           Submit Historical Research, Manuscripts & Photographs
         </h1>
-        <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6B5948] leading-relaxed">
           All submitted materials enter the Editorial Board's review queue. Material is vetted against known epigraphs before publication and is never automatically accepted as historical fact.
         </p>
       </div>
 
       {statusMsg && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs sm:text-sm text-emerald-200 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#edf7f0] border border-[#92c5a6] text-xs sm:text-sm text-[#1c5236] flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 text-[#1c5236] shrink-0" />
           <span>{statusMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-xs sm:text-sm text-rose-200 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#fcedee] border border-[#dfa5ab] text-xs sm:text-sm text-[#762D35] flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-[#762D35] shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-5 shadow-2xl">
+      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-5 shadow-[0_8px_28px_rgba(75,51,31,0.12)]">
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">
-            Category of Submitted Material <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">
+            Category of Submitted Material <span className="text-[#762D35]">*</span>
           </label>
           <select
             name="submission_type"
             value={formData.submission_type}
             onChange={handleChange}
-            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
           >
             <option value="article">Historical Research Article</option>
             <option value="genealogy">Family Genealogy / Vamsavali Record</option>
@@ -194,8 +194,8 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">
-            Title of the Material / Document <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">
+            Title of the Material / Document <span className="text-[#762D35]">*</span>
           </label>
           <input
             type="text"
@@ -204,13 +204,13 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
             onChange={handleChange}
             required
             placeholder="e.g. Copper Plate Grant Found at Draksharama Outpost"
-            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">
-            Summary & Context <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">
+            Summary & Context <span className="text-[#762D35]">*</span>
           </label>
           <textarea
             name="description"
@@ -219,13 +219,13 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
             required
             rows={3}
             placeholder="Describe the historical context, where it was discovered or preserved, and its significance..."
-            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2]"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">
-            Detailed Content / Transcription / Document Text <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">
+            Detailed Content / Transcription / Document Text <span className="text-[#762D35]">*</span>
           </label>
           <textarea
             name="content_data"
@@ -234,14 +234,14 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
             required
             rows={6}
             placeholder="Provide full text, transcription, lineage tree details, or image hosting links..."
-            className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2]"
           />
 
           {/* Secure Document & Photo Attachment Upload */}
-          <div className="mt-2 p-3.5 rounded-2xl bg-[#151c2a] border border-stone-700/80 space-y-3">
+          <div className="mt-2 p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <span className="text-xs font-semibold text-stone-300 flex items-center gap-1.5">
-                <FileText className="w-4 h-4 text-[#c99738]" />
+              <span className="text-xs font-semibold text-[#54351F] flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-[#A87924]" />
                 Attach Research Documents, Inscription Photos or Manuscript Scans
               </span>
               <div className="flex items-center gap-2">
@@ -256,7 +256,7 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingDoc}
-                  className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
                   {uploadingDoc ? (
                     <>
@@ -273,19 +273,19 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
               </div>
             </div>
 
-            <p className="text-[11px] text-stone-400">
+            <p className="text-[11px] text-[#6B5948]">
               Supports PDF, JPG, PNG, or WebP up to 15MB. Uploaded archival files are cryptographically stored on the server and appended to your research record.
             </p>
 
             {uploadError && (
-              <p className="text-xs text-rose-400 flex items-center gap-1">
+              <p className="text-xs text-[#762D35] flex items-center gap-1">
                 <AlertCircle className="w-3.5 h-3.5" /> {uploadError}
               </p>
             )}
 
             {uploadedFiles.length > 0 && (
               <div className="space-y-1.5 pt-1">
-                <span className="text-[11px] font-semibold text-[#c99738]">Attached Files:</span>
+                <span className="text-[11px] font-semibold text-[#54351F]">Attached Files:</span>
                 <div className="flex flex-wrap gap-2">
                   {uploadedFiles.map((f, i) => (
                     <a
@@ -293,11 +293,11 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
                       href={f.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#182030] text-stone-200 text-xs border border-stone-700 hover:border-[#c99738]"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FFFCF5] text-[#292521] text-xs border border-[#D8C3A2] hover:border-[#A87924]"
                     >
-                      <CheckCircle className="w-3 h-3 text-emerald-400" />
+                      <CheckCircle className="w-3 h-3 text-[#1c5236]" />
                       <span>{f.name}</span>
-                      <span className="text-[10px] text-stone-400">({Math.round(f.size / 1024)} KB)</span>
+                      <span className="text-[10px] text-[#6B5948]">({Math.round(f.size / 1024)} KB)</span>
                     </a>
                   ))}
                 </div>
@@ -307,8 +307,8 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">
-            Sources, Provenance & Custody <span className="text-rose-400">*</span>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">
+            Sources, Provenance & Custody <span className="text-[#762D35]">*</span>
           </label>
           <input
             type="text"
@@ -317,7 +317,7 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
             onChange={handleChange}
             required
             placeholder="e.g. Ancestral family trust custody in Ballari; references Mackenzie MSS Vol. 14"
-            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2]"
           />
         </div>
 
@@ -329,9 +329,9 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
               checked={formData.copyright_agreed}
               onChange={handleChange}
               required
-              className="mt-1 w-4 h-4 text-[#c99738] rounded border-stone-700"
+              className="mt-1 w-4 h-4 text-[#762D35] rounded border-[#D8C3A2]"
             />
-            <span className="text-xs text-stone-300 leading-relaxed">
+            <span className="text-xs text-[#292521] leading-relaxed">
               I affirm that I am the legal owner or authorized custodian of this material, or that it is in the public domain. I grant this project permission to index, review, and preserve this record for open educational and historical research.
             </span>
           </label>
@@ -340,7 +340,7 @@ export const SubmitResearchPage: React.FC<SubmitResearchProps> = ({ onNavigate }
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-3 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] shadow-lg transition-all cursor-pointer disabled:opacity-50"
+          className="w-full py-3 rounded-xl font-semibold text-xs sm:text-sm bg-[#762D35] text-white hover:bg-[#5e2229] border border-[#A87924] shadow-md transition-all cursor-pointer disabled:opacity-50"
         >
           {submitting ? 'Submitting to Review Queue...' : 'Submit Material for Peer Review'}
         </button>

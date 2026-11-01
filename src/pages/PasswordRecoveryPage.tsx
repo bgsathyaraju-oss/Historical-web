@@ -83,35 +83,35 @@ export const PasswordRecoveryPage: React.FC<PasswordRecoveryPageProps> = ({ onNa
   return (
     <div className="max-w-md mx-auto px-4 sm:px-6 py-12 space-y-6">
       <div className="text-center space-y-2">
-        <div className="w-12 h-12 rounded-full bg-[#580014] border border-[#d4af37] flex items-center justify-center mx-auto text-[#d4af37]">
+        <div className="w-12 h-12 rounded-full bg-[#762D35] border border-[#A87924] flex items-center justify-center mx-auto text-white shadow-sm">
           <KeyRound className="w-6 h-6" />
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F]">
           Password Recovery
         </h1>
-        <p className="text-xs text-stone-400">
+        <p className="text-xs text-[#6B5948]">
           Secure, tokenized account credential recovery.
         </p>
       </div>
 
       {message && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs text-emerald-200 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#edf7f0] border border-[#92c5a6] text-xs text-[#1c5236] flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 text-[#1c5236] shrink-0" />
           <span>{message}</span>
         </div>
       )}
 
       {error && (
-        <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-xs text-rose-200 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#fcedee] border border-[#dfa5ab] text-xs text-[#762D35] flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-[#762D35] shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {step === 'request' ? (
-        <form onSubmit={handleRequestToken} className="p-6 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-4 shadow-xl">
+        <form onSubmit={handleRequestToken} className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-[0_8px_28px_rgba(75,51,31,0.12)]">
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">
               Registered Email Address
             </label>
             <input
@@ -120,14 +120,14 @@ export const PasswordRecoveryPage: React.FC<PasswordRecoveryPageProps> = ({ onNa
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="member@example.org"
-              className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+              className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer"
+            className="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white hover:bg-[#5e2229] transition-all cursor-pointer"
           >
             {loading ? 'Generating Token...' : 'Generate Password Reset Token'}
           </button>
@@ -136,16 +136,16 @@ export const PasswordRecoveryPage: React.FC<PasswordRecoveryPageProps> = ({ onNa
             <button
               type="button"
               onClick={() => onNavigate('/login')}
-              className="text-xs text-stone-400 hover:text-[#e8c872] flex items-center justify-center gap-1 mx-auto"
+              className="text-xs text-[#76501F] hover:text-[#A87924] font-semibold flex items-center justify-center gap-1 mx-auto cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In
             </button>
           </div>
         </form>
       ) : (
-        <form onSubmit={handleResetPassword} className="p-6 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-4 shadow-xl">
+        <form onSubmit={handleResetPassword} className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-[0_8px_28px_rgba(75,51,31,0.12)]">
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">
               Reset Token
             </label>
             <input
@@ -153,12 +153,12 @@ export const PasswordRecoveryPage: React.FC<PasswordRecoveryPageProps> = ({ onNa
               value={resetToken}
               onChange={(e) => setResetToken(e.target.value)}
               required
-              className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+              className="w-full px-3.5 py-2 text-xs font-mono rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">
               New Password
             </label>
             <input
@@ -167,12 +167,12 @@ export const PasswordRecoveryPage: React.FC<PasswordRecoveryPageProps> = ({ onNa
               onChange={(e) => setNewPassword(e.target.value)}
               required
               placeholder="Min 8 chars, uppercase, digit & symbol"
-              className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+              className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">
               Confirm New Password
             </label>
             <input
@@ -181,14 +181,14 @@ export const PasswordRecoveryPage: React.FC<PasswordRecoveryPageProps> = ({ onNa
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               placeholder="Re-enter new password"
-              className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+              className="w-full px-3.5 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer"
+            className="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white hover:bg-[#5e2229] transition-all cursor-pointer"
           >
             {loading ? 'Updating Password...' : 'Save New Password & Log In'}
           </button>

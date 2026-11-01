@@ -15,15 +15,15 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'royal-gold-gradient text-[#070d18] font-semibold border border-[#91681c] shadow-[0_4px_16px_rgba(201,151,56,0.25)] hover:shadow-[0_4px_22px_rgba(201,151,56,0.4)] hover:brightness-110 active:scale-[0.98]',
+    'bg-[#762D35] hover:bg-[#5e2229] text-white font-semibold border border-[#A87924] shadow-sm hover:shadow-md active:scale-[0.98]',
   maroon:
-    'royal-maroon-gradient text-[#faf7f0] font-medium border border-[#c99738]/40 hover:border-[#c99738] shadow-[0_4px_16px_rgba(88,0,20,0.4)] hover:shadow-[0_4px_22px_rgba(88,0,20,0.6)] hover:brightness-110 active:scale-[0.98]',
+    'bg-[#762D35] hover:bg-[#5e2229] text-white font-medium border border-[#A87924] shadow-sm hover:shadow-md active:scale-[0.98]',
   secondary:
-    'bg-[#0b1528]/85 hover:bg-[#151922] text-[#fcedc7] hover:text-white border border-[#c99738]/40 hover:border-[#c99738] shadow-sm hover:shadow-[0_0_15px_rgba(201,151,56,0.18)] active:scale-[0.98]',
+    'bg-[#E9D9BE] hover:bg-[#dfc9a4] text-[#54351F] font-semibold border border-[#D8C3A2] hover:border-[#A87924] shadow-sm active:scale-[0.98]',
   ghost:
-    'bg-transparent hover:bg-[#c99738]/10 text-[#e6dcce] hover:text-[#fcedc7] border border-transparent hover:border-[#c99738]/30 active:scale-[0.98]',
+    'bg-transparent hover:bg-[#E9D9BE]/60 text-[#54351F] hover:text-[#292521] border border-transparent hover:border-[#D8C3A2] active:scale-[0.98]',
   danger:
-    'bg-gradient-to-r from-red-950/90 to-[#3a000d] text-red-200 hover:text-white border border-red-500/40 hover:border-red-500/70 shadow-[0_2px_10px_rgba(220,38,38,0.2)] hover:shadow-[0_2px_16px_rgba(220,38,38,0.4)] active:scale-[0.98]',
+    'bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] shadow-sm active:scale-[0.98]',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -50,7 +50,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseClasses =
-      'inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none font-medium tracking-wide disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:hover:brightness-100';
+      'inline-flex items-center justify-center transition-all duration-200 cursor-pointer select-none font-medium tracking-wide disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100';
 
     return (
       <button

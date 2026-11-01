@@ -1,5 +1,4 @@
 import { Router, type Request, type Response } from 'express';
-import { ZipArchive } from 'archiver';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -123,70 +122,79 @@ npm test
 `;
 
 // GET /api/export/project-zip - Streams complete project ZIP package
-export const exportZipHandler = (req: Request, res: Response) => {
-  const archive = new ZipArchive({
-    zlib: { level: 9 } // Maximum compression
-  });
+export const exportZipHandler = async (_req: Request, res: Response) => {
+  try {
+    const archiverMod: any = await import('archiver');
+    const ZipArchive = archiverMod.ZipArchive || archiverMod.default;
+    const archive = new ZipArchive({
+      zlib: { level: 9 } // Maximum compression
+    });
 
-  const zipFilename = `suryavamsha-odiyaraju-kshatriya-portal.zip`;
+    const zipFilename = `suryavamsha-odiyaraju-kshatriya-portal.zip`;
 
-  res.setHeader('Content-Type', 'application/zip');
-  res.setHeader('Content-Disposition', `attachment; filename="${zipFilename}"`);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${zipFilename}"`);
 
-  archive.on('error', (err: any) => {
-    console.error('Archiving error:', err);
+    archive.on('error', (err: any) => {
+      console.error('Archiving error:', err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Failed to generate ZIP archive.' });
+      }
+    });
+
+    archive.pipe(res);
+
+    // Append documentation files generated dynamically
+    archive.append(ANDROID_SETUP_GUIDE, { name: 'ANDROID_SETUP_GUIDE.md' });
+    archive.append(SETUP_INSTRUCTIONS, { name: 'SETUP_INSTRUCTIONS.md' });
+
+    // Files to include from root
+    const rootFiles = [
+      'package.json',
+      'tsconfig.json',
+      'vite.config.ts',
+      'index.html',
+      'metadata.json',
+      '.env.example',
+      'README.md',
+      'server.ts'
+    ];
+
+    for (const file of rootFiles) {
+      const fullPath = path.resolve(ROOT_DIR, file);
+      if (fs.existsSync(fullPath)) {
+        archive.file(fullPath, { name: file });
+      }
+    }
+
+    // Folders to include
+    const foldersToInclude = [
+      'src',
+      'server',
+      'tests',
+      'data'
+    ];
+
+    for (const folder of foldersToInclude) {
+      const fullFolderPath = path.resolve(ROOT_DIR, folder);
+      if (fs.existsSync(fullFolderPath)) {
+        archive.directory(fullFolderPath, folder, (entry: any) => {
+          // Skip node_modules or large temporary cache files if any
+          if (entry.name && (entry.name.includes('node_modules') || entry.name.endsWith('.log'))) {
+            return false;
+          }
+          return entry;
+        });
+      }
+    }
+
+    archive.finalize();
+  } catch (err) {
+    console.error('ZIP export initialization error:', err);
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Failed to generate ZIP archive.' });
-    }
-  });
-
-  archive.pipe(res);
-
-  // Append documentation files generated dynamically
-  archive.append(ANDROID_SETUP_GUIDE, { name: 'ANDROID_SETUP_GUIDE.md' });
-  archive.append(SETUP_INSTRUCTIONS, { name: 'SETUP_INSTRUCTIONS.md' });
-
-  // Files to include from root
-  const rootFiles = [
-    'package.json',
-    'tsconfig.json',
-    'vite.config.ts',
-    'index.html',
-    'metadata.json',
-    '.env.example',
-    'README.md',
-    'server.ts'
-  ];
-
-  for (const file of rootFiles) {
-    const fullPath = path.resolve(ROOT_DIR, file);
-    if (fs.existsSync(fullPath)) {
-      archive.file(fullPath, { name: file });
+      res.status(500).json({ error: 'ZIP export service unavailable.' });
     }
   }
-
-  // Folders to include
-  const foldersToInclude = [
-    'src',
-    'server',
-    'tests',
-    'data'
-  ];
-
-  for (const folder of foldersToInclude) {
-    const fullFolderPath = path.resolve(ROOT_DIR, folder);
-    if (fs.existsSync(fullFolderPath)) {
-      archive.directory(fullFolderPath, folder, (entry: any) => {
-        // Skip node_modules or large temporary cache files if any
-        if (entry.name && (entry.name.includes('node_modules') || entry.name.endsWith('.log'))) {
-          return false;
-        }
-        return entry;
-      });
-    }
-  }
-
-  archive.finalize();
 };
 
 exportRouter.get('/project-zip', exportZipHandler);
@@ -206,7 +214,7 @@ interface CachedPdfEntry {
 }
 
 const pdfDownloadCache = new Map<string, CachedPdfEntry>();
-const PDF_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const PDF_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes for reliable Android WebView -> Chrome handoff
 
 function cleanupPdfCache() {
   const now = Date.now();
@@ -215,8 +223,8 @@ function cleanupPdfCache() {
       pdfDownloadCache.delete(key);
     }
   }
-  // Cap maximum entries to 25
-  if (pdfDownloadCache.size > 25) {
+  // Cap maximum entries to 60
+  if (pdfDownloadCache.size > 60) {
     const oldestKey = pdfDownloadCache.keys().next().value;
     if (oldestKey) pdfDownloadCache.delete(oldestKey);
   }
@@ -250,7 +258,7 @@ exportRouter.post('/prepare-pdf', (req: Request, res: Response) => {
       return;
     }
 
-    const rawBase64 = pdfBase64.replace(/^data:application\/pdf;base64,/, '');
+    const rawBase64 = pdfBase64.replace(/^data:application\/pdf[^,]*,/, '');
     const buffer = Buffer.from(rawBase64, 'base64');
     if (buffer.length === 0) {
       res.status(400).json({ error: 'Empty PDF payload.' });
@@ -295,7 +303,8 @@ exportRouter.get('/download-pdf/:token/:filename?', (req: Request, res: Response
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Length', String(entry.buffer.length));
   res.setHeader('Content-Disposition', buildContentDispositionHeader(entry.filename));
-  res.setHeader('Cache-Control', 'private, max-age=300');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'private, max-age=1800');
   res.status(200).send(entry.buffer);
 });
 

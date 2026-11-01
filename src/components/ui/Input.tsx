@@ -46,18 +46,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-stone-200"
+            className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#54351F]"
           >
             <span>
               {label}
-              {required && <span className="text-[#c99738] ml-1">*</span>}
+              {required && <span className="text-[#762D35] ml-1">*</span>}
             </span>
           </label>
         )}
 
         <div className="relative flex items-center">
           {leftIcon && (
-            <div className="absolute left-3.5 flex items-center pointer-events-none text-[#c99738]/70">
+            <div className="absolute left-3.5 flex items-center pointer-events-none text-[#76501F]">
               {leftIcon}
             </div>
           )}
@@ -68,10 +68,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             type={computedType}
             disabled={disabled}
             required={required}
-            className={`w-full bg-[#070d18]/90 text-[#faf7f0] border transition-all duration-200 outline-none placeholder:text-stone-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] ${
+            className={`w-full bg-[var(--input-bg)] text-[var(--primary-text)] border transition-all duration-200 outline-none placeholder:text-[#6B5948] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ${
               error
-                ? 'border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-500/40'
-                : 'border-[#c99738]/30 hover:border-[#c99738]/60 focus:border-[#c99738] focus:ring-1 focus:ring-[#c99738]/40'
+                ? 'border-[#762D35] focus:border-[#762D35] focus:ring-1 focus:ring-[#762D35]/40'
+                : 'border-[var(--border-color)] hover:border-[var(--accent-gold)] focus:border-[var(--accent-gold)] focus:ring-1 focus:ring-[var(--accent-gold)]/40'
             } ${leftIcon ? 'pl-10' : ''} ${
               rightIcon || (isPassword && allowPasswordToggle) ? 'pr-11' : ''
             } ${sizeClasses} ${className}`}
@@ -83,25 +83,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               tabIndex={-1}
-              className="absolute right-3.5 text-stone-400 hover:text-[#c99738] transition-colors p-1"
+              className="absolute right-3.5 text-[#6B5948] hover:text-[#54351F] transition-colors p-1"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           ) : rightIcon ? (
-            <div className="absolute right-3.5 flex items-center pointer-events-none text-stone-400">
+            <div className="absolute right-3.5 flex items-center pointer-events-none text-[#6B5948]">
               {rightIcon}
             </div>
           ) : null}
         </div>
 
         {error ? (
-          <p className="flex items-center gap-1.5 text-xs text-red-300 font-medium mt-1">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+          <p className="flex items-center gap-1.5 text-xs text-[#762D35] font-medium mt-1">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#762D35]" />
             <span>{error}</span>
           </p>
         ) : helperText ? (
-          <p className="text-xs text-stone-400 mt-1">{helperText}</p>
+          <p className="text-xs text-[#6B5948] mt-1">{helperText}</p>
         ) : null}
       </div>
     );
@@ -143,14 +143,14 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {label && (
             <label
               htmlFor={textareaId}
-              className="text-xs font-semibold uppercase tracking-wider text-stone-200"
+              className="text-xs font-semibold uppercase tracking-wider text-[#54351F]"
             >
               {label}
-              {required && <span className="text-[#c99738] ml-1">*</span>}
+              {required && <span className="text-[#762D35] ml-1">*</span>}
             </label>
           )}
           {showCount && maxLength && (
-            <span className="text-[11px] text-stone-400">
+            <span className="text-[11px] text-[#6B5948]">
               {charCount} / {maxLength}
             </span>
           )}
@@ -163,21 +163,21 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           required={required}
           maxLength={maxLength}
           value={value}
-          className={`w-full bg-[#070d18]/90 text-[#faf7f0] border transition-all duration-200 outline-none placeholder:text-stone-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] p-3 text-sm rounded-xl ${
+          className={`w-full bg-[var(--input-bg)] text-[var(--primary-text)] border transition-all duration-200 outline-none placeholder:text-[#6B5948] disabled:opacity-50 disabled:cursor-not-allowed shadow-sm p-3 text-sm rounded-xl ${
             error
-              ? 'border-red-500/80 focus:border-red-400 focus:ring-1 focus:ring-red-500/40'
-              : 'border-[#c99738]/30 hover:border-[#c99738]/60 focus:border-[#c99738] focus:ring-1 focus:ring-[#c99738]/40'
+              ? 'border-[#762D35] focus:border-[#762D35] focus:ring-1 focus:ring-[#762D35]/40'
+              : 'border-[var(--border-color)] hover:border-[var(--accent-gold)] focus:border-[var(--accent-gold)] focus:ring-1 focus:ring-[var(--accent-gold)]/40'
           } ${className}`}
           {...props}
         />
 
         {error ? (
-          <p className="flex items-center gap-1.5 text-xs text-red-300 font-medium mt-1">
-            <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+          <p className="flex items-center gap-1.5 text-xs text-[#762D35] font-medium mt-1">
+            <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#762D35]" />
             <span>{error}</span>
           </p>
         ) : helperText ? (
-          <p className="text-xs text-stone-400 mt-1">{helperText}</p>
+          <p className="text-xs text-[#6B5948] mt-1">{helperText}</p>
         ) : null}
       </div>
     );

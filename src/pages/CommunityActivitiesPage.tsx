@@ -68,7 +68,7 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
     {
       id: 'act-manuscript-preservation',
       icon: BookOpen,
-      iconStyle: 'bg-[#580014] text-[#d4af37]',
+      iconStyle: 'bg-[#762D35] text-white',
       title: {
         en: 'Digital Manuscript Preservation Drive',
         hi: 'डिजिटल पांडुलिपि संरक्षण अभियान',
@@ -104,7 +104,7 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
     {
       id: 'act-research-fellowships',
       icon: Award,
-      iconStyle: 'bg-stone-800 text-[#d4af37]',
+      iconStyle: 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]',
       title: {
         en: 'Historical Research Fellowships',
         hi: 'ऐतिहासिक शोध फेलोशिप',
@@ -140,7 +140,7 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
     {
       id: 'act-heritage-tours',
       icon: Calendar,
-      iconStyle: 'bg-stone-800 text-[#d4af37]',
+      iconStyle: 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]',
       title: {
         en: 'Annual Heritage Exploration Tours',
         hi: 'वार्षिक विरासत अन्वेषण यात्राएँ',
@@ -176,7 +176,7 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
     {
       id: 'act-fraternal-forums',
       icon: Users,
-      iconStyle: 'bg-stone-800 text-[#d4af37]',
+      iconStyle: 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]',
       title: {
         en: 'Community Matrimonial & Fraternal Forums',
         hi: 'सामुदायिक भ्रातृ एवं पारिवारिक मंच',
@@ -235,15 +235,15 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       {/* Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-          <Award className="w-4 h-4" />
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+          <Award className="w-4 h-4 text-[#A87924]" />
           <span>{hdr.badge}</span>
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           {hdr.title}
         </h1>
-        <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6B5948] max-w-3xl leading-relaxed">
           {hdr.subtitle}
         </p>
       </div>
@@ -256,10 +256,10 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
             <div
               key={act.id}
               onClick={() => setSelectedId(act.id)}
-              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
+              className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] shadow-md overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
             >
               <div>
-                <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                <div className="h-44 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                   <img
                     src={thumbUrl}
                     alt={act.title}
@@ -273,21 +273,21 @@ export const CommunityActivitiesPage: React.FC<CommunityActivitiesPageProps> = (
                     }}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
-                  <div className={`absolute top-3 left-3 p-2.5 rounded-xl ${act.iconStyle}`}>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#292521]/40 via-transparent to-transparent" />
+                  <div className={`absolute top-3 left-3 p-2.5 rounded-xl shadow-sm ${act.iconStyle}`}>
                     <Icon className="w-5 h-5" />
                   </div>
                 </div>
                 <div className="p-6 pb-3 space-y-3">
-                  <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                  <h3 className="font-royal-heading font-bold text-lg text-[#54351F] group-hover:text-[#762D35] transition-colors">
                     {act.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                     {act.summary}
                   </p>
                 </div>
               </div>
-              <div className="px-6 pb-6 pt-2 text-xs font-semibold text-[#e8c872] flex items-center gap-1">
+              <div className="px-6 pb-6 pt-2 text-xs font-semibold text-[#76501F] group-hover:text-[#A87924] flex items-center gap-1">
                 <span>{hdr.viewDetails}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>

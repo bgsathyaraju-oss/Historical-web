@@ -269,7 +269,7 @@ const CULTURE_DATA: Record<string, {
 };
 
 const PILLAR_ICONS = [Sun, Shield, Award];
-const PILLAR_STYLES = ['bg-[#580014] text-[#d4af37]', 'bg-stone-800 text-stone-300', 'bg-stone-800 text-stone-300'];
+const PILLAR_STYLES = ['bg-[#762D35] text-white', 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]', 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]'];
 
 export const CultureTraditionsPage: React.FC = () => {
   const { language } = useLanguage();
@@ -300,16 +300,16 @@ export const CultureTraditionsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       {/* Header */}
-      <div className="rounded-3xl bg-gradient-to-r from-[#220710] via-[#1a1122] to-[#111728] border border-[#c99738]/50 p-8 sm:p-12 shadow-2xl">
+      <div className="rounded-3xl bg-gradient-to-r from-[#FFF9EF] via-[#FFFCF5] to-[#EFE3D0] border border-[#D8C3A2] p-8 sm:p-12 shadow-md">
         <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/40">
-            <HeartHandshake className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE3D0] text-[#762D35] text-xs font-semibold border border-[#A87924]/40">
+            <HeartHandshake className="w-3.5 h-3.5 text-[#A87924]" />
             <span>{loc.badge}</span>
           </div>
-          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#fcedc7] leading-tight">
+          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#54351F] leading-tight">
             {loc.title}
           </h1>
-          <p className="text-sm sm:text-base text-stone-300 font-royal-serif leading-relaxed">
+          <p className="text-sm sm:text-base text-[#292521] font-royal-serif leading-relaxed">
             {loc.subtitle}
           </p>
         </div>
@@ -325,10 +325,10 @@ export const CultureTraditionsPage: React.FC = () => {
             <div
               key={p.id}
               onClick={() => setSelectedId(p.id)}
-              className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden shadow-lg cursor-pointer transition-all group flex flex-col justify-between"
+              className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden shadow-md cursor-pointer transition-all group flex flex-col justify-between"
             >
               <div>
-                <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                <div className="h-44 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                   <img
                     src={thumbUrl}
                     alt={p.title}
@@ -342,21 +342,21 @@ export const CultureTraditionsPage: React.FC = () => {
                     }}
                     className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
-                  <div className={`absolute top-3 left-3 p-2.5 rounded-xl ${iconStyle}`}>
-                    <Icon className="w-5 h-5 text-[#d4af37]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#292521]/40 via-transparent to-transparent" />
+                  <div className={`absolute top-3 left-3 p-2.5 rounded-xl shadow-sm ${iconStyle}`}>
+                    <Icon className="w-5 h-5" />
                   </div>
                 </div>
                 <div className="p-6 pb-3 space-y-3">
-                  <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                  <h3 className="font-royal-heading font-bold text-lg text-[#54351F] group-hover:text-[#762D35] transition-colors">
                     {p.title}
                   </h3>
-                  <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                     {p.summary}
                   </p>
                 </div>
               </div>
-              <div className="px-6 pb-6 pt-2 text-xs text-[#e8c872] font-semibold flex items-center justify-between">
+              <div className="px-6 pb-6 pt-2 text-xs text-[#76501F] group-hover:text-[#A87924] font-semibold flex items-center justify-between">
                 <span>{p.badge}</span>
                 <span>{loc.readMore}</span>
               </div>

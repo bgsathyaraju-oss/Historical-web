@@ -46,7 +46,12 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
-  PDF_EXPORT_UI_LABELS
+  PDF_EXPORT_UI_LABELS,
+  hasAppInventorBridge,
+  isAndroidWebViewEnvironment,
+  sendUrlToAppInventorBridge,
+  handleWhatsAppLinkClick,
+  handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
 import {
   getCanonicalInscriptions,
@@ -681,19 +686,6 @@ const HISTORICAL_RECORDS_UI: Record<LanguageCode, HistoricalRecordsUiLabels> = {
     dateEraLabel: 'কালানুক্রমিক তারিখ / যুগ'
   }
 };
-
-function hasAppInventorBridge(): boolean {
-  if (typeof window === 'undefined') return false;
-  const w = window as unknown as { AppInventor?: { setWebViewString?: (val: string) => void } };
-  return Boolean(w.AppInventor && typeof w.AppInventor.setWebViewString === 'function');
-}
-
-function isAndroidWebViewEnvironment(): boolean {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
-  if (hasAppInventorBridge()) return true;
-  const ua = navigator.userAgent || '';
-  return /wv|Version\/\d+\.\d+.*Chrome\/\d+.*Mobile|AppInventor/i.test(ua);
-}
 
 function toHashtagToken(text: string): string {
   return text
@@ -3132,18 +3124,49 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
     await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())));
   };
 
-  // Auto-print if opened with ?autoprint=1
+  // Auto-print or Auto-download PDF if opened in Chrome with ?autoprint=1 or ?autodownloadpdf=1
   useEffect(() => {
     if (typeof window === 'undefined' || !activeRecord) return;
     try {
       const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang') as LanguageCode | null;
+      if (langParam && SUPPORTED_LANGUAGES.some(l => l.code === langParam) && langParam !== language) {
+        setLanguage(langParam);
+      }
+
+      if (params.get('autodownloadpdf') === '1' && !isAndroidWebViewEnvironment()) {
+        let cancelled = false;
+        const timer = setTimeout(() => {
+          try {
+            const cleanParams = new URLSearchParams(window.location.search);
+            cleanParams.delete('autodownloadpdf');
+            const newQuery = cleanParams.toString();
+            const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+            window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+          } catch {
+            // Ignore
+          }
+          if (!cancelled) {
+            handleDownloadPdfRecord(activeRecord);
+          }
+        }, 550);
+        return () => {
+          cancelled = true;
+          clearTimeout(timer);
+        };
+      }
+
       if (params.get('autoprint') === '1') {
+        if (isAndroidWebViewEnvironment()) {
+          setIsPrintFallbackOpen(true);
+          return;
+        }
         let cancelled = false;
         const timer = setTimeout(() => {
           waitForArticleImagesBeforePrint().then(() => {
             if (cancelled) return;
             try {
-              window.print();
+              triggerArticlePrintWithTitle(activeRecord.title);
             } catch {
               // Ignore
             }
@@ -3173,6 +3196,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
   const [pdfDownloadResult, setPdfDownloadResult] = useState<{
     filename: string;
     downloadUrl?: string;
+    externalArticleUrl?: string;
+    isAndroidWebView?: boolean;
   } | null>(null);
   const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
 
@@ -3185,11 +3210,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
       const result = await downloadArticleAsPdf({
         articleTitle: rec.title,
         language,
-        containerElement: articleContainerRef.current
+        containerElement: articleContainerRef.current,
+        articleUrl: getCanonicalRecordUrl(rec.id)
       });
       setPdfDownloadResult({
         filename: result.filename,
-        downloadUrl: result.downloadUrl
+        downloadUrl: result.downloadUrl,
+        externalArticleUrl: result.externalArticleUrl,
+        isAndroidWebView: result.isAndroidWebView
       });
     } catch (err) {
       console.error('PDF generation failed:', err);
@@ -3203,27 +3231,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
     const printUrl = getExternalPrintRecordUrl(rec.id);
 
     if (hasAppInventorBridge()) {
-      try {
-        const w = window as unknown as { AppInventor?: { setWebViewString?: (val: string) => void } };
-        w.AppInventor?.setWebViewString?.(
-          JSON.stringify({
-            action: 'PRINT_EXTERNAL',
-            url: printUrl,
-            recordId: rec.id,
-            title: rec.title,
-            filename: generateArticlePdfFilename(rec.title),
-            lang: language
-          })
-        );
-      } catch {
-        // Ignore bridge error
-      }
+      sendUrlToAppInventorBridge(printUrl);
       setIsPrintFallbackOpen(true);
       return;
     }
 
     if (isAndroidWebViewEnvironment()) {
       setIsPrintFallbackOpen(true);
+      return;
     }
 
     await waitForArticleImagesBeforePrint();
@@ -3311,33 +3326,33 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
         {/* ==================================================================== */}
         <article
           ref={articleContainerRef}
-          className="print-article-container bg-[#111522] border border-[#c99738]/40 rounded-2xl sm:rounded-3xl overflow-hidden print:overflow-visible shadow-2xl print:shadow-none space-y-6 sm:space-y-8 p-4 sm:p-8 lg:p-10 break-words"
+          className="print-article-container bg-[#FFFCF5] border border-[#D8C3A2] rounded-2xl sm:rounded-3xl overflow-hidden print:overflow-visible shadow-[0_8px_28px_rgba(75,51,31,0.12)] print:shadow-none space-y-6 sm:space-y-8 p-4 sm:p-8 lg:p-10 break-words"
         >
           {/* PRINT-ONLY ARCHIVAL MASTHEAD */}
-          <div className="print-only hidden print:block border-b-2 border-stone-800 pb-3 mb-4">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-stone-800">
+          <div className="print-only hidden print:block border-b-2 border-[#A87924] pb-3 mb-4">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
               Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal — {pageTitle}
             </p>
-            <p className="text-[11px] font-semibold text-stone-700 mt-0.5">
+            <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
               Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
             </p>
-            <p className="text-[10px] text-stone-600 break-all mt-0.5">
+            <p className="text-[10px] text-[#6B5948] break-all mt-0.5">
               {getCanonicalRecordUrl(activeRecord.id)}
             </p>
           </div>
 
           {/* SECTION 1: COMPACT NON-STICKY CONTROLS & FULL ARTICLE HEADER */}
-          <header className="print-article-header space-y-4 sm:space-y-6 border-b border-stone-800 pb-6 sm:pb-8">
+          <header className="print-article-header space-y-4 sm:space-y-6 border-b border-[#D8C3A2] pb-6 sm:pb-8">
             {/* Compact Top Action Row (Back, Home, Compact Language Selector, Collapsible Article Actions) */}
-            <div className="no-print flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-stone-800/80 print:hidden">
+            <div className="no-print flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#D8C3A2] print:hidden">
               {/* Left: Compact Back & Home */}
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   type="button"
                   onClick={handleBackNavigation}
-                  className="inline-flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#580014] hover:bg-[#78001c] text-[#fae29c] border border-[#d4af37]/50 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+                  <ArrowLeft className="w-3.5 h-3.5 text-white shrink-0" />
                   <span>{ui.backButton}</span>
                 </button>
 
@@ -3345,9 +3360,9 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   <button
                     type="button"
                     onClick={() => onNavigate('/')}
-                    className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                   >
-                    <Home className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+                    <Home className="w-3.5 h-3.5 text-[#76501F] shrink-0" />
                     <span>{ui.homeButton}</span>
                   </button>
                 )}
@@ -3362,10 +3377,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   id="record-detail-lang-select"
                   value={language}
                   onChange={e => setLanguage(e.target.value as LanguageCode)}
-                  className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-stone-900 text-[#fae29c] border border-[#c99738]/50 focus:outline-none focus:border-[#d4af37] cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-[#FFFFFF] text-[#54351F] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924] cursor-pointer"
                 >
                   {SUPPORTED_LANGUAGES.map(l => (
-                    <option key={l.code} value={l.code} className="bg-[#111522] text-stone-100">
+                    <option key={l.code} value={l.code} className="bg-[#FFFCF5] text-[#292521]">
                       {l.nativeName} ({l.code.toUpperCase()})
                     </option>
                   ))}
@@ -3376,7 +3391,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   onClick={() => handleDownloadPdfRecord(activeRecord)}
                   disabled={isDownloadingPdf}
                   title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(activeRecord.title)})`}
-                  className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-[#c99738] hover:bg-[#dfb04c] text-[#290106] border border-[#f5d78e] transition-all cursor-pointer disabled:opacity-60"
+                  className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer disabled:opacity-60"
                 >
                   <Download className="w-3.5 h-3.5 shrink-0" />
                   <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
@@ -3388,8 +3403,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   aria-expanded={isActionsMenuOpen}
                   className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
                     isActionsMenuOpen
-                      ? 'bg-[#c99738] text-[#290106] border-[#d4af37]'
-                      : 'bg-stone-900 hover:bg-stone-800 text-stone-200 border-stone-700 hover:border-[#c99738]'
+                      ? 'bg-[#762D35] text-white border-[#A87924]'
+                      : 'bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border-[#D8C3A2] hover:border-[#A87924]'
                   }`}
                 >
                   <Share2 className="w-3.5 h-3.5 shrink-0" />
@@ -3404,14 +3419,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               isPrintFallbackOpen ||
               shareFeedback ||
               pdfDownloadResult) && (
-              <div className="no-print p-3 sm:p-4 rounded-xl bg-[#161c2e] border border-[#c99738]/40 space-y-3 print:hidden">
+              <div className="no-print p-3 sm:p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-3 print:hidden">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
                       onClick={() => handleDownloadPdfRecord(activeRecord)}
                       disabled={isDownloadingPdf}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#c99738] hover:bg-[#dfb04c] text-[#290106] border border-[#f5d78e] cursor-pointer disabled:opacity-60"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] cursor-pointer disabled:opacity-60"
                     >
                       <Download className="w-3.5 h-3.5 shrink-0" />
                       <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
@@ -3420,36 +3435,36 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                     <button
                       type="button"
                       onClick={() => handlePrintRecord(activeRecord)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-100 border border-stone-700 hover:border-[#c99738] cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] cursor-pointer"
                     >
-                      <Printer className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <Printer className="w-3.5 h-3.5 text-[#76501F]" />
                       <span>{pdfUi.printBtn}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleShareRecord(activeRecord)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-100 border border-stone-700 hover:border-[#c99738] cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] cursor-pointer"
                     >
-                      <Share2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <Share2 className="w-3.5 h-3.5 text-[#76501F]" />
                       <span>{ui.shareButton}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleCopyLink(activeRecord, false)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] cursor-pointer"
                     >
-                      <Link2 className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <Link2 className="w-3.5 h-3.5 text-[#76501F]" />
                       <span>{ui.copyLinkButton}</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleCopyLink(activeRecord, true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] cursor-pointer"
                     >
-                      <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <Copy className="w-3.5 h-3.5 text-[#76501F]" />
                       <span>{ui.copyTitleAndLinkButton}</span>
                     </button>
 
@@ -3459,7 +3474,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] transition-all"
+                      onClick={e => handleWhatsAppLinkClick(e)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#1f7a44] hover:bg-[#196337] text-white transition-all"
                     >
                       <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
                       <span>{ui.whatsappShareButton}</span>
@@ -3473,7 +3489,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       setIsShareMenuOpen(false);
                       setPdfDownloadResult(null);
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs text-stone-300 hover:text-white bg-stone-900 border border-stone-700 cursor-pointer"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs text-[#54351F] hover:text-[#292521] bg-[#E9D9BE] border border-[#D8C3A2] cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                     <span>{ui.closeButton}</span>
@@ -3481,26 +3497,51 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                 </div>
 
                 {pdfDownloadResult && (
-                  <div className="p-2.5 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-xs text-emerald-200 flex flex-wrap items-center justify-between gap-2">
+                  <div className="p-2.5 rounded-lg bg-[#edf7f0] border border-[#92c5a6] text-xs text-[#1c5236] flex flex-wrap items-center justify-between gap-2">
                     <span className="font-semibold flex items-center gap-1.5 break-all">
-                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <Check className="w-3.5 h-3.5 text-[#1c5236] shrink-0" />
                       <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
                     </span>
-                    {pdfDownloadResult.downloadUrl && (
-                      <a
-                        href={pdfDownloadResult.downloadUrl}
-                        download={pdfDownloadResult.filename}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#c99738] text-[#290106] font-bold text-[11px]"
-                      >
-                        <Download className="w-3 h-3" />
-                        <span>{pdfUi.directDownloadLinkLabel}</span>
-                      </a>
-                    )}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {pdfDownloadResult.downloadUrl && (
+                        <a
+                          href={pdfDownloadResult.downloadUrl}
+                          download={pdfDownloadResult.filename}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e =>
+                            handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
+                          }
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#762D35] text-white font-bold text-[11px]"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>{pdfUi.directDownloadLinkLabel}</span>
+                        </a>
+                      )}
+                      {pdfDownloadResult.externalArticleUrl && pdfDownloadResult.isAndroidWebView && (
+                        <a
+                          href={pdfDownloadResult.externalArticleUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          data-external-chrome="true"
+                          onClick={e =>
+                            handleExternalBrowserUrlClick(
+                              e,
+                              pdfDownloadResult.externalArticleUrl || ''
+                            )
+                          }
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#E9D9BE] text-[#54351F] border border-[#A87924] font-bold text-[11px]"
+                        >
+                          <ExternalLink className="w-3 h-3 text-[#76501F]" />
+                          <span>{pdfUi.openInChromePdfBtn}</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 )}
 
                 {shareFeedback && (
-                  <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
+                  <div className="text-xs font-semibold text-[#1c5236] flex items-center gap-1">
                     <Check className="w-3.5 h-3.5" />
                     <span>{shareFeedback}</span>
                   </div>
@@ -3508,24 +3549,31 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
                 {/* Android WebViewer Print Fallback Panel */}
                 {isPrintFallbackOpen && (
-                  <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-500/40 text-xs text-amber-100 space-y-2">
-                    <div className="font-bold text-amber-300 flex items-center justify-between">
+                  <div className="p-3 rounded-xl bg-[#FDF6E7] border border-[#D8B467] text-xs text-[#6B4A1B] space-y-2">
+                    <div className="font-bold text-[#54351F] flex items-center justify-between">
                       <span>{ui.printFallbackTitle}</span>
                       <button
                         type="button"
                         onClick={() => setIsPrintFallbackOpen(false)}
-                        className="text-amber-300 hover:text-white cursor-pointer"
+                        className="text-[#54351F] hover:text-[#292521] cursor-pointer"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-amber-200/90 leading-relaxed">{ui.printFallbackDesc}</p>
+                    <p className="text-[#292521] leading-relaxed">{ui.printFallbackDesc}</p>
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <a
                         href={getExternalPrintRecordUrl(activeRecord.id)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#c99738] text-[#290106] font-bold text-xs"
+                        data-external-chrome="true"
+                        onClick={e =>
+                          handleExternalBrowserUrlClick(
+                            e,
+                            getExternalPrintRecordUrl(activeRecord.id)
+                          )
+                        }
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#762D35] text-white font-bold text-xs"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         <span>{ui.openExternalPrintButton}</span>
@@ -3541,9 +3589,9 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                             // Ignore
                           }
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900 text-amber-200 border border-amber-500/40 font-semibold text-xs cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] font-semibold text-xs cursor-pointer"
                       >
-                        {printUrlCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        {printUrlCopied ? <Check className="w-3.5 h-3.5 text-[#1c5236]" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{printUrlCopied ? ui.copiedFeedback : ui.copyPrintUrlButton}</span>
                       </button>
                     </div>
@@ -3554,42 +3602,42 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {/* Category, Epistemic Classification & Chronological Date Badges */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-              <span className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-[#580014] text-[#fae29c] border border-[#d4af37]/50">
+              <span className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-[#762D35] text-white border border-[#A87924]">
                 {activeRecord.categoryLabel}
               </span>
 
               <span
                 className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold border ${
                   isVerifiedTier
-                    ? 'bg-emerald-950/70 text-emerald-300 border-emerald-500/40'
+                    ? 'bg-[#edf7f0] text-[#1c5236] border-[#92c5a6]'
                     : isTraditionalTier
-                    ? 'bg-amber-950/70 text-amber-300 border-amber-500/40'
-                    : 'bg-purple-950/70 text-purple-300 border-purple-500/40'
+                    ? 'bg-[#FDF6E7] text-[#6B4A1B] border-[#D8B467]'
+                    : 'bg-[#f4effa] text-[#4c2878] border-[#c4aee0]'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                 <span>{activeRecord.epistemicBadge}</span>
               </span>
 
-              <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-stone-900 text-[#e8c872] border border-stone-700">
-                <Calendar className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-[#FFF9EF] text-[#54351F] border border-[#D8C3A2]">
+                <Calendar className="w-3.5 h-3.5 text-[#A87924] shrink-0" />
                 <span>{activeRecord.chronologicalDate}</span>
               </span>
             </div>
 
             {/* Article Title & Subtitle */}
             <div className="space-y-2">
-              <h1 className="font-royal-heading font-extrabold text-xl sm:text-3xl lg:text-4xl text-[#fcedc7] leading-snug break-words">
+              <h1 className="font-royal-heading font-extrabold text-xl sm:text-3xl lg:text-4xl text-[#54351F] leading-snug break-words">
                 {activeRecord.title}
               </h1>
-              <p className="text-xs sm:text-base text-[#d4af37] font-semibold leading-relaxed break-words">
+              <p className="text-xs sm:text-base text-[#76501F] font-semibold leading-relaxed break-words">
                 {activeRecord.subtitle}
               </p>
             </div>
 
             {/* Lead Visual Figure */}
-            <figure className="print-lead-figure print-avoid-break rounded-xl sm:rounded-2xl overflow-hidden print:overflow-visible border border-[#c99738]/40 bg-stone-950 shadow-xl">
-              <div className="print-lead-figure-box relative h-52 sm:h-80 lg:h-96 print:h-auto w-full overflow-hidden print:overflow-visible bg-stone-950">
+            <figure className="print-lead-figure print-avoid-break rounded-xl sm:rounded-2xl overflow-hidden print:overflow-visible border border-[#D8C3A2] bg-[#FFF9EF] shadow-md">
+              <div className="print-lead-figure-box relative h-52 sm:h-80 lg:h-96 print:h-auto w-full overflow-hidden print:overflow-visible bg-[#EFE3D0]">
                 <img
                   ref={leadImageRef}
                   src={activeRecord.imageUrl}
@@ -3599,26 +3647,25 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   onError={handleImgError}
                   className="print-lead-image w-full h-full object-cover object-center"
                 />
-                <div className="no-print print:hidden absolute inset-0 bg-gradient-to-t from-[#111522] via-transparent to-black/25" />
-                <span className="no-print print:hidden absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-black/80 text-[#fae29c] border border-[#d4af37]/40 text-[11px] font-semibold backdrop-blur-sm">
+                <span className="no-print print:hidden absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-[#FFFCF5]/95 text-[#54351F] border border-[#A87924] text-[11px] font-semibold shadow-sm">
                   {activeRecord.eraLabel}
                 </span>
               </div>
-              <figcaption className="p-3 sm:p-4 bg-stone-950/95 border-t border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
-                <span className="text-stone-200 font-medium break-words">{activeRecord.imageCaption}</span>
-                <span className="text-[#d4af37] font-semibold break-words">{activeRecord.sourceAttribution}</span>
+              <figcaption className="p-3 sm:p-4 bg-[#FFF9EF] border-t border-[#D8C3A2] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
+                <span className="text-[#292521] font-medium break-words">{activeRecord.imageCaption}</span>
+                <span className="text-[#76501F] font-semibold break-words">{activeRecord.sourceAttribution}</span>
               </figcaption>
             </figure>
           </header>
 
           {/* SECTION 2: EXECUTIVE SUMMARY & ARCHIVAL PROVENANCE METADATA */}
           <section className="space-y-4 sm:space-y-5">
-            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#fae29c] flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#d4af37] shrink-0" />
+            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#A87924] shrink-0" />
               <span>{ui.executiveSummaryHeading}</span>
             </h2>
 
-            <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#210710] via-[#151a2a] to-[#1a0b13] border border-[#d4af37]/40 text-[15px] sm:text-base text-stone-100 font-royal-serif leading-relaxed break-words">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] text-[15px] sm:text-base text-[#292521] font-royal-serif leading-relaxed break-words">
               {activeRecord.summary}
             </div>
 
@@ -3627,10 +3674,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                 {activeRecord.metadata.map((meta, idx) => (
                   <div
                     key={idx}
-                    className="print-avoid-break p-3 sm:p-3.5 rounded-xl bg-[#161c2c] border border-stone-800 space-y-1 break-words"
+                    className="print-avoid-break p-3 sm:p-3.5 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-1 break-words"
                   >
-                    <span className="text-stone-400 font-semibold block">{meta.label}:</span>
-                    <strong className="text-stone-100 text-xs sm:text-sm leading-snug block break-words">
+                    <span className="text-[#6B5948] font-semibold block">{meta.label}:</span>
+                    <strong className="text-[#292521] text-xs sm:text-sm leading-snug block break-words">
                       {meta.value}
                     </strong>
                   </div>
@@ -3640,26 +3687,26 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           </section>
 
           {/* SECTION 3: COMPLETE HISTORICAL DESCRIPTION & TRANSCRIPTION / TRANSLATION */}
-          <section className="space-y-5 sm:space-y-6 border-t border-stone-800 pt-6 sm:pt-8">
-            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#fae29c] flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-[#d4af37] shrink-0" />
+          <section className="space-y-5 sm:space-y-6 border-t border-[#D8C3A2] pt-6 sm:pt-8">
+            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-[#A87924] shrink-0" />
               <span>{ui.completeDescriptionHeading}</span>
             </h2>
 
-            <div className="text-[15px] sm:text-base text-stone-100 font-royal-serif leading-relaxed whitespace-pre-line bg-[#0d101b] p-4 sm:p-6 rounded-2xl border border-stone-800 break-words">
+            <div className="text-[15px] sm:text-base text-[#292521] font-royal-serif leading-relaxed whitespace-pre-line bg-[#FFF9EF] p-4 sm:p-6 rounded-2xl border border-[#D8C3A2] break-words">
               {activeRecord.fullDescription}
             </div>
 
             {activeRecord.transcriptionExcerpt && (
               <div className="space-y-2">
-                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-2">
-                  <Quote className="w-4 h-4 text-[#d4af37] shrink-0" />
+                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-2">
+                  <Quote className="w-4 h-4 text-[#A87924] shrink-0" />
                   <span>
                     {ui.transcriptionHeading}
                     {activeRecord.transcriptionLanguage ? ` (${activeRecord.transcriptionLanguage})` : ''}
                   </span>
                 </h3>
-                <div className="p-3.5 sm:p-5 rounded-2xl bg-[#171113] border border-[#c99738]/40 text-xs sm:text-sm font-mono text-[#fce8bb] leading-relaxed break-words overflow-x-auto">
+                <div className="p-3.5 sm:p-5 rounded-2xl bg-[#EFE3D0] border border-[#D8C3A2] text-xs sm:text-sm font-mono text-[#292521] leading-relaxed break-words overflow-x-auto">
                   {activeRecord.transcriptionExcerpt}
                 </div>
               </div>
@@ -3667,10 +3714,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {activeRecord.translationExcerpt && (
               <div className="space-y-2">
-                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
                   {ui.translationHeading}
                 </h3>
-                <div className="p-4 sm:p-5 rounded-2xl bg-[#141b2b] border border-stone-800 text-[15px] sm:text-base font-royal-serif text-stone-100 leading-relaxed italic break-words">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] text-[15px] sm:text-base font-royal-serif text-[#292521] leading-relaxed italic break-words">
                   "{activeRecord.translationExcerpt}"
                 </div>
               </div>
@@ -3678,45 +3725,45 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           </section>
 
           {/* SECTION 4: 5-TIER EPISTEMIC DISTINCTION & DETAILED HISTORICAL ANALYSIS */}
-          <section className="space-y-5 border-t border-stone-800 pt-8">
+          <section className="space-y-5 border-t border-[#D8C3A2] pt-8">
             <div className="space-y-1">
-              <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-[#d4af37]" />
+              <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-[#A87924]" />
                 <span>{ui.detailedAnalysisHeading}</span>
               </h2>
-              <p className="text-xs text-stone-400">{ui.epistemicBannerDesc}</p>
+              <p className="text-xs text-[#6B5948]">{ui.epistemicBannerDesc}</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Pillar 1: Verified Inscriptional & Archaeological Evidence */}
-              <div className="print-avoid-break p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/35 space-y-2.5">
-                <div className="flex items-center gap-2 text-emerald-300 font-bold text-xs uppercase tracking-wider">
+              <div className="print-avoid-break p-5 rounded-2xl bg-[#edf7f0] border border-[#92c5a6] space-y-2.5">
+                <div className="flex items-center gap-2 text-[#1c5236] font-bold text-xs uppercase tracking-wider">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>{ui.verifiedEvidenceTitle}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                   {activeRecord.detailedAnalysis.verifiedEvidence}
                 </p>
               </div>
 
               {/* Pillar 2: Traditional Accounts & Oral Histories */}
-              <div className="print-avoid-break p-5 rounded-2xl bg-amber-950/20 border border-amber-500/35 space-y-2.5">
-                <div className="flex items-center gap-2 text-amber-300 font-bold text-xs uppercase tracking-wider">
+              <div className="print-avoid-break p-5 rounded-2xl bg-[#FDF6E7] border border-[#D8B467] space-y-2.5">
+                <div className="flex items-center gap-2 text-[#6B4A1B] font-bold text-xs uppercase tracking-wider">
                   <Scroll className="w-4 h-4 shrink-0" />
                   <span>{ui.traditionalAccountsTitle}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                   {activeRecord.detailedAnalysis.traditionalAccounts}
                 </p>
               </div>
 
               {/* Pillar 3: Scholarly Interpretations */}
-              <div className="print-avoid-break p-5 rounded-2xl bg-purple-950/20 border border-purple-500/35 space-y-2.5">
-                <div className="flex items-center gap-2 text-purple-300 font-bold text-xs uppercase tracking-wider">
+              <div className="print-avoid-break p-5 rounded-2xl bg-[#f4effa] border border-[#c4aee0] space-y-2.5">
+                <div className="flex items-center gap-2 text-[#4c2878] font-bold text-xs uppercase tracking-wider">
                   <BookOpen className="w-4 h-4 shrink-0" />
                   <span>{ui.scholarlyInterpretationsTitle}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                   {activeRecord.detailedAnalysis.scholarlyInterpretations}
                 </p>
               </div>
@@ -3724,12 +3771,12 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {/* Additional Epistemic Tiers: Documentary & Literary Sources + Claims Requiring Further Research */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="print-avoid-break p-4 sm:p-5 rounded-2xl bg-sky-950/20 border border-sky-500/35 space-y-2">
-                <div className="flex items-center gap-2 text-sky-300 font-bold text-xs uppercase tracking-wider">
+              <div className="print-avoid-break p-4 sm:p-5 rounded-2xl bg-[#eef6fb] border border-[#9ac4e2] space-y-2">
+                <div className="flex items-center gap-2 text-[#1b4b6b] font-bold text-xs uppercase tracking-wider">
                   <FileText className="w-4 h-4 shrink-0" />
                   <span>{recLoc.docLiterarySourcesHeading}</span>
                 </div>
-                <p className="text-xs text-stone-200 leading-relaxed">
+                <p className="text-xs text-[#292521] leading-relaxed">
                   {recLoc.docLiterarySourcesDesc(
                     activeRecord.locationOrRepository,
                     activeRecord.sourceReferences.length
@@ -3737,12 +3784,12 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                 </p>
               </div>
 
-              <div className="print-avoid-break p-4 sm:p-5 rounded-2xl bg-rose-950/20 border border-rose-500/35 space-y-2">
-                <div className="flex items-center gap-2 text-rose-300 font-bold text-xs uppercase tracking-wider">
+              <div className="print-avoid-break p-4 sm:p-5 rounded-2xl bg-[#fcedee] border border-[#dfa5ab] space-y-2">
+                <div className="flex items-center gap-2 text-[#762D35] font-bold text-xs uppercase tracking-wider">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{recLoc.claimsFurtherResearchHeading}</span>
                 </div>
-                <p className="text-xs text-stone-200 leading-relaxed">
+                <p className="text-xs text-[#292521] leading-relaxed">
                   {recLoc.claimsFurtherResearchDesc(activeRecord.chronologicalDate)}
                 </p>
               </div>
@@ -3750,14 +3797,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           </section>
 
           {/* SECTION 4B: RELATED RULERS, DYNASTIES & KINGDOMS IN COMPLETE DETAIL VIEW */}
-          <section className="space-y-5 border-t border-stone-800 pt-8">
+          <section className="space-y-5 border-t border-[#D8C3A2] pt-8">
             <div className="space-y-1">
-              <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] flex items-center gap-2">
-                <Crown className="w-5 h-5 text-[#d4af37]" />
+              <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] flex items-center gap-2">
+                <Crown className="w-5 h-5 text-[#A87924]" />
                 <span>{recLoc.relatedRulersDynastiesHeading}</span>
               </h2>
-              <p className="text-xs text-stone-400">
-                {recLoc.primarySovereignAuthorityLabel}: <strong className="text-[#fae29c]">{activeRecord.rulerOrAuthority}</strong> • {recLoc.geographicalJurisdictionLabel}: <strong className="text-stone-200">{activeRecord.locationOrRepository}</strong>
+              <p className="text-xs text-[#6B5948]">
+                {recLoc.primarySovereignAuthorityLabel}: <strong className="text-[#54351F]">{activeRecord.rulerOrAuthority}</strong> • {recLoc.geographicalJurisdictionLabel}: <strong className="text-[#292521]">{activeRecord.locationOrRepository}</strong>
               </p>
             </div>
 
@@ -3770,23 +3817,23 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       onNavigate(`/kings-queens?figure=${encodeURIComponent(fig.id)}`);
                     }
                   }}
-                  className="print-avoid-break p-3 rounded-2xl bg-[#151a28] border border-stone-800 hover:border-[#d4af37] transition-all cursor-pointer flex items-center gap-3 group"
+                  className="print-avoid-break p-3 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-center gap-3 group"
                 >
                   <img
                     src={fig.image_url || '/assets/gallery/jagannath_puri.svg'}
                     alt={fig.name}
                     loading="lazy"
                     onError={handleImgError}
-                    className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#c99738]/40 bg-stone-950"
+                    className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0]"
                   />
                   <div className="min-w-0 flex-1">
-                    <span className="text-[10px] font-bold text-[#d4af37] uppercase tracking-wider block truncate">
+                    <span className="text-[10px] font-bold text-[#76501F] uppercase tracking-wider block truncate">
                       {fig.dynasty_name}
                     </span>
-                    <h4 className="font-royal-heading font-bold text-xs text-[#fcedc7] group-hover:text-white truncate">
+                    <h4 className="font-royal-heading font-bold text-xs text-[#54351F] group-hover:text-[#762D35] truncate">
                       {fig.name}
                     </h4>
-                    <span className="text-[10px] text-stone-400 block truncate">{fig.reign_period}</span>
+                    <span className="text-[10px] text-[#6B5948] block truncate">{fig.reign_period}</span>
                   </div>
                 </div>
               ))}
@@ -3795,16 +3842,16 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
           {/* SECTION 5: CHRONOLOGICAL TIMELINE OF HISTORICAL EVENTS */}
           {activeRecord.chronologicalEvents.length > 0 && (
-            <section className="space-y-5 border-t border-stone-800 pt-8">
+            <section className="space-y-5 border-t border-[#D8C3A2] pt-8">
               <div className="space-y-1">
-                <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-[#d4af37]" />
+                <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-[#A87924]" />
                   <span>{ui.chronologicalTimelineHeading}</span>
                 </h2>
-                <p className="text-xs text-stone-400">{ui.chronologicalTimelineSub}</p>
+                <p className="text-xs text-[#6B5948]">{ui.chronologicalTimelineSub}</p>
               </div>
 
-              <div className="relative border-l-2 border-[#c99738]/45 ml-3 sm:ml-5 pl-5 sm:pl-7 space-y-5">
+              <div className="relative border-l-2 border-[#A87924] ml-3 sm:ml-5 pl-5 sm:pl-7 space-y-5">
                 {activeRecord.chronologicalEvents.map((ev, idx) => (
                   <div
                     key={`${ev.id}_${idx}`}
@@ -3813,18 +3860,18 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         openRecordDetail(ev.id, true);
                       }
                     }}
-                    className="print-avoid-break relative p-4 sm:p-5 rounded-2xl bg-[#151a28] border border-stone-800 hover:border-[#c99738]/60 transition-all cursor-pointer group"
+                    className="print-avoid-break relative p-4 sm:p-5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer group"
                   >
-                    <div className="no-print print:hidden absolute -left-[29px] sm:-left-[37px] top-4 w-4 h-4 rounded-full bg-[#580014] border-2 border-[#d4af37]" />
+                    <div className="no-print print:hidden absolute -left-[29px] sm:-left-[37px] top-4 w-4 h-4 rounded-full bg-[#762D35] border-2 border-[#A87924]" />
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#762D35] text-white border border-[#A87924]">
                         {ev.yearText} • {ev.period}
                       </span>
                       <span
                         className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
                           ev.epistemicTier === 'verified_epigraphic'
-                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40'
-                            : 'bg-amber-950/60 text-amber-300 border-amber-500/40'
+                            ? 'bg-[#edf7f0] text-[#1c5236] border-[#92c5a6]'
+                            : 'bg-[#FDF6E7] text-[#6B4A1B] border-[#D8B467]'
                         }`}
                       >
                         {ev.epistemicTier === 'verified_epigraphic'
@@ -3833,17 +3880,17 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       </span>
                     </div>
 
-                    <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] group-hover:text-white">
+                    <h3 className="font-royal-heading font-bold text-base text-[#54351F] group-hover:text-[#762D35]">
                       {ev.title}
                     </h3>
-                    <p className="text-xs text-[#d4af37] font-semibold mt-0.5">
+                    <p className="text-xs text-[#76501F] font-semibold mt-0.5">
                       {ev.rulersInvolved}
                     </p>
-                    <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mt-2">
+                    <p className="text-xs sm:text-sm text-[#292521] leading-relaxed mt-2">
                       {ev.description}
                     </p>
-                    <div className="mt-2 pt-2 border-t border-stone-800/80 text-[11px] text-stone-400">
-                      <strong className="text-stone-300">{recLoc.epigraphicMonumentEvidenceLabel}</strong> {ev.monumentsInscriptions}
+                    <div className="mt-2 pt-2 border-t border-[#D8C3A2] text-[11px] text-[#6B5948]">
+                      <strong className="text-[#54351F]">{recLoc.epigraphicMonumentEvidenceLabel}</strong> {ev.monumentsInscriptions}
                     </div>
                   </div>
                 ))}
@@ -3853,31 +3900,31 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
           {/* SECTION 6: INSCRIPTIONS, COPPER PLATES, ARCHAEOLOGICAL RECORDS & DOCUMENTARY EVIDENCE */}
           {activeRecord.inscriptionsAndArchaeology.length > 0 && (
-            <section className="space-y-5 border-t border-stone-800 pt-8">
+            <section className="space-y-5 border-t border-[#D8C3A2] pt-8">
               <div className="space-y-1">
-                <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] flex items-center gap-2">
-                  <Landmark className="w-5 h-5 text-[#d4af37]" />
+                <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] flex items-center gap-2">
+                  <Landmark className="w-5 h-5 text-[#A87924]" />
                   <span>{ui.inscriptionsArchaeologyHeading}</span>
                 </h2>
-                <p className="text-xs text-stone-400">{ui.inscriptionsArchaeologySub}</p>
+                <p className="text-xs text-[#6B5948]">{ui.inscriptionsArchaeologySub}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {activeRecord.inscriptionsAndArchaeology.map((item, idx) => (
                   <div
                     key={idx}
-                    className="print-avoid-break p-4 sm:p-5 rounded-2xl bg-[#151a28] border border-[#c99738]/35 space-y-2"
+                    className="print-avoid-break p-4 sm:p-5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-2"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="px-2.5 py-0.5 rounded bg-[#580014] text-[#fae29c] text-[10px] font-bold border border-[#d4af37]/40">
+                      <span className="px-2.5 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-bold border border-[#A87924]">
                         {item.typeBadge}
                       </span>
-                      <span className="text-[11px] text-stone-400 font-medium">{item.locationOrDate}</span>
+                      <span className="text-[11px] text-[#6B5948] font-medium">{item.locationOrDate}</span>
                     </div>
-                    <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#fcedc7]">
+                    <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F]">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-stone-300 leading-relaxed">{item.details}</p>
+                    <p className="text-xs text-[#292521] leading-relaxed">{item.details}</p>
                   </div>
                 ))}
               </div>
@@ -3886,28 +3933,28 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
           {/* SECTION 7: PRIMARY SOURCE REFERENCES & CITATIONS */}
           {activeRecord.sourceReferences.length > 0 && (
-            <section className="space-y-4 border-t border-stone-800 pt-8">
+            <section className="space-y-4 border-t border-[#D8C3A2] pt-8">
               <div className="space-y-1">
-                <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fae29c] flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#d4af37]" />
+                <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-[#A87924]" />
                   <span>{ui.sourceReferencesHeading}</span>
                 </h2>
-                <p className="text-xs text-stone-400">{ui.sourceReferencesSub}</p>
+                <p className="text-xs text-[#6B5948]">{ui.sourceReferencesSub}</p>
               </div>
 
               <div className="space-y-2.5">
                 {activeRecord.sourceReferences.map((ref, idx) => (
                   <div
                     key={idx}
-                    className="print-avoid-break p-3.5 sm:p-4 rounded-xl bg-[#0d101b] border border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                    className="print-avoid-break p-3.5 sm:p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                   >
-                    <div className="flex items-start gap-3 text-xs sm:text-sm text-stone-200">
-                      <span className="px-2 py-0.5 rounded bg-[#580014] text-[#fae29c] font-bold text-xs shrink-0">
+                    <div className="flex items-start gap-3 text-xs sm:text-sm text-[#292521]">
+                      <span className="px-2 py-0.5 rounded bg-[#762D35] text-white font-bold text-xs shrink-0">
                         [{idx + 1}]
                       </span>
                       <span className="leading-relaxed">{ref.citation}</span>
                     </div>
-                    <span className="text-[10px] px-2.5 py-1 rounded-full bg-stone-900 text-[#d4af37] border border-stone-700 font-semibold self-start sm:self-center shrink-0">
+                    <span className="text-[10px] px-2.5 py-1 rounded-full bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2] font-semibold self-start sm:self-center shrink-0">
                       {ref.typeBadge}
                     </span>
                   </div>
@@ -3917,12 +3964,12 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           )}
 
           {/* SECTION 8: RELATED RECORDS, RELATED MONOGRAPHS, RELATED KINGDOMS & PERSONALITIES, KEYWORDS, HASHTAGS & NAVIGATION */}
-          <section className="space-y-8 border-t-2 border-[#c99738]/40 pt-8">
+          <section className="space-y-8 border-t-2 border-[#A87924] pt-8">
             {/* Related Historical Records with Small Thumbnails */}
             {relatedCards.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#fae29c] flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-[#d4af37]" />
+                <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-[#A87924]" />
                   <span>{ui.relatedRecordsHeading}</span>
                 </h3>
 
@@ -3931,23 +3978,23 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                     <div
                       key={rel.id}
                       onClick={() => openRecordDetail(rel.id, true)}
-                      className="print-avoid-break p-3.5 rounded-2xl bg-[#151a28] border border-stone-800 hover:border-[#d4af37] transition-all cursor-pointer flex items-start gap-3.5 group shadow-md"
+                      className="print-avoid-break p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                     >
                       <img
                         src={rel.imageUrl}
                         alt={rel.title}
                         loading="lazy"
                         onError={handleImgError}
-                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#c99738]/40 bg-stone-950 group-hover:scale-105 transition-transform"
+                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0] group-hover:scale-105 transition-transform"
                       />
                       <div className="min-w-0 flex-1 space-y-1">
-                        <span className="inline-block text-[10px] font-bold text-[#d4af37] uppercase tracking-wider">
+                        <span className="inline-block text-[10px] font-bold text-[#76501F] uppercase tracking-wider">
                           {rel.chronologicalDate}
                         </span>
-                        <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#fcedc7] group-hover:text-white line-clamp-2 leading-snug">
+                        <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35] line-clamp-2 leading-snug">
                           {rel.title}
                         </h4>
-                        <p className="text-[11px] text-stone-400 line-clamp-2 leading-snug">
+                        <p className="text-[11px] text-[#6B5948] line-clamp-2 leading-snug">
                           {rel.summary}
                         </p>
                       </div>
@@ -3960,8 +4007,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             {/* Related Historical Monographs with Small Thumbnails */}
             {relatedMonographs.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#fae29c] flex items-center gap-2">
-                  <Scroll className="w-4 h-4 text-[#d4af37]" />
+                <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] flex items-center gap-2">
+                  <Scroll className="w-4 h-4 text-[#A87924]" />
                   <span>{recLoc.relatedMonographsHeading}</span>
                 </h3>
 
@@ -3974,23 +4021,23 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                           onNavigate(`/documentary?article=${encodeURIComponent(mono.slug || mono.id)}`);
                         }
                       }}
-                      className="print-avoid-break p-3.5 rounded-2xl bg-[#151a28] border border-stone-800 hover:border-[#d4af37] transition-all cursor-pointer flex items-start gap-3.5 group shadow-md"
+                      className="print-avoid-break p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                     >
                       <img
                         src={mono.featured_image || '/assets/gallery/konark_wheel.svg'}
                         alt={mono.original_title}
                         loading="lazy"
                         onError={handleImgError}
-                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#c99738]/40 bg-stone-950 group-hover:scale-105 transition-transform"
+                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0] group-hover:scale-105 transition-transform"
                       />
                       <div className="min-w-0 flex-1 space-y-1">
-                        <span className="inline-block text-[10px] font-bold text-[#d4af37] uppercase tracking-wider line-clamp-1">
+                        <span className="inline-block text-[10px] font-bold text-[#76501F] uppercase tracking-wider line-clamp-1">
                           {localizeMonographCategory(mono.category || '') || recLoc.historicalMonographBadge}
                         </span>
-                        <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#fcedc7] group-hover:text-white line-clamp-2 leading-snug">
+                        <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35] line-clamp-2 leading-snug">
                           {mono.original_title}
                         </h4>
-                        <p className="text-[11px] text-stone-400 line-clamp-2 leading-snug">
+                        <p className="text-[11px] text-[#6B5948] line-clamp-2 leading-snug">
                           {mono.summary}
                         </p>
                       </div>
@@ -4002,19 +4049,19 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {/* 74-NAME COMMUNITY REFERENCE DATASET CROSS-REFERENCE SECTION */}
             {activeRecord.related74References.length > 0 && (
-              <div className="print-avoid-break space-y-4 p-4 sm:p-6 rounded-2xl bg-[#141929] border border-[#c99738]/40">
+              <div className="print-avoid-break space-y-4 p-4 sm:p-6 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2]">
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#fae29c] flex items-center gap-2">
-                      <Users className="w-4 h-4 text-[#d4af37] shrink-0" />
+                    <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] flex items-center gap-2">
+                      <Users className="w-4 h-4 text-[#A87924] shrink-0" />
                       <span>{ref74Ui.sectionTitle}</span>
                     </h3>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#762D35] text-white border border-[#A87924]">
                       {activeRecord.related74References.length} / {MASTER_70_REFERENCE_REGISTRY.length}
                     </span>
                   </div>
-                  <p className="text-xs text-stone-300 leading-relaxed">{ref74Ui.sectionSubtitle}</p>
-                  <p className="text-[11px] text-amber-200/90 bg-amber-950/30 border border-amber-500/30 rounded-xl px-3 py-2 leading-relaxed">
+                  <p className="text-xs text-[#292521] leading-relaxed">{ref74Ui.sectionSubtitle}</p>
+                  <p className="text-[11px] text-[#6B4A1B] bg-[#FDF6E7] border border-[#D8B467] rounded-xl px-3 py-2 leading-relaxed">
                     {ref74Ui.nonConflationDisclaimer}
                   </p>
                 </div>
@@ -4055,21 +4102,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                           setActiveCategory('all');
                           closeRecordDetail();
                         }}
-                        className="print-avoid-break p-3.5 rounded-xl bg-[#0e1320] border border-stone-800 hover:border-[#d4af37] transition-all cursor-pointer space-y-2 group"
+                        className="print-avoid-break p-3.5 rounded-xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer space-y-2 group"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-1.5">
-                          <span className="px-2 py-0.5 rounded bg-[#580014] text-[#fae29c] text-[10px] font-bold border border-[#d4af37]/40">
+                          <span className="px-2 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-bold border border-[#A87924]">
                             #{refEntry.order} / 74
                           </span>
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                               isVerifiedRef
-                                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40'
+                                ? 'bg-[#edf7f0] text-[#1c5236] border-[#92c5a6]'
                                 : isGazetteerRef
-                                ? 'bg-purple-950/60 text-purple-300 border-purple-500/40'
+                                ? 'bg-[#f4effa] text-[#4c2878] border-[#c4aee0]'
                                 : isLineageRef
-                                ? 'bg-amber-950/60 text-amber-300 border-amber-500/40'
-                                : 'bg-rose-950/60 text-rose-300 border-rose-500/40'
+                                ? 'bg-[#FDF6E7] text-[#6B4A1B] border-[#D8B467]'
+                                : 'bg-[#fcedee] text-[#762D35] border-[#dfa5ab]'
                             }`}
                           >
                             {verBadgeText}
@@ -4077,15 +4124,15 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         </div>
 
                         <div>
-                          <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#fcedc7] group-hover:text-white">
+                          <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35]">
                             {localizedTerm}
                           </h4>
-                          <span className="text-[10px] font-semibold text-[#d4af37] block mt-0.5">
+                          <span className="text-[10px] font-semibold text-[#76501F] block mt-0.5">
                             {classBadgeText} • {groupBadgeText}
                           </span>
                         </div>
 
-                        <p className="text-[11px] text-stone-300 leading-relaxed line-clamp-3">
+                        <p className="text-[11px] text-[#292521] leading-relaxed line-clamp-3">
                           {localizedContext}
                         </p>
                       </div>
@@ -4097,8 +4144,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {/* Related Kingdoms & Dynasties with Small Thumbnails */}
             <div className="space-y-4">
-              <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#fae29c] flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-[#d4af37]" />
+              <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] flex items-center gap-2">
+                <Landmark className="w-4 h-4 text-[#A87924]" />
                 <span>{recLoc.relatedKingdomsPersonalitiesHeading}</span>
               </h3>
 
@@ -4111,23 +4158,23 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         onNavigate(k.route);
                       }
                     }}
-                    className="print-avoid-break p-3.5 rounded-2xl bg-[#151a28] border border-stone-800 hover:border-[#d4af37] transition-all cursor-pointer flex items-start gap-3.5 group shadow-md"
+                    className="print-avoid-break p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                   >
                     <img
                       src={k.imageUrl}
                       alt={k.title}
                       loading="lazy"
                       onError={handleImgError}
-                      className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#c99738]/40 bg-stone-950 group-hover:scale-105 transition-transform"
+                      className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0] group-hover:scale-105 transition-transform"
                     />
                     <div className="min-w-0 flex-1 space-y-1">
-                      <span className="inline-block text-[10px] font-bold text-[#d4af37] uppercase tracking-wider">
+                      <span className="inline-block text-[10px] font-bold text-[#76501F] uppercase tracking-wider">
                         {k.badge}
                       </span>
-                      <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#fcedc7] group-hover:text-white line-clamp-2 leading-snug">
+                      <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35] line-clamp-2 leading-snug">
                         {k.title}
                       </h4>
-                      <p className="text-[11px] text-stone-400 line-clamp-1">
+                      <p className="text-[11px] text-[#6B5948] line-clamp-1">
                         {k.period}
                       </p>
                     </div>
@@ -4139,8 +4186,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             {/* Related Keywords */}
             {activeRecord.keywords.length > 0 && (
               <div className="print-avoid-break space-y-2.5">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[#A87924]" />
                   <span>{ui.relatedKeywordsHeading}</span>
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -4153,7 +4200,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         setActiveCategory('all');
                         closeRecordDetail();
                       }}
-                      className="px-3 py-1 rounded-xl bg-stone-900 hover:bg-[#580014] text-xs text-stone-200 hover:text-[#fae29c] border border-stone-700 hover:border-[#d4af37]/50 transition-colors cursor-pointer"
+                      className="px-3 py-1 rounded-xl bg-[#E9D9BE] hover:bg-[#762D35] text-xs text-[#54351F] hover:text-white border border-[#D8C3A2] hover:border-[#A87924] transition-colors cursor-pointer"
                     >
                       {kw}
                     </button>
@@ -4165,7 +4212,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             {/* Relevant Hashtags */}
             {activeRecord.hashtags.length > 0 && (
               <div className="print-avoid-break space-y-2.5">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F]">
                   {ui.relevantHashtagsHeading}
                 </h4>
                 <div className="flex flex-wrap gap-1.5">
@@ -4178,7 +4225,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         setActiveCategory('all');
                         closeRecordDetail();
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[#0d101b] hover:bg-stone-800 text-[11px] font-mono text-amber-200/90 border border-stone-800 cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-[#FFF9EF] hover:bg-[#E9D9BE] text-[11px] font-mono text-[#76501F] border border-[#D8C3A2] cursor-pointer"
                     >
                       #{tag}
                     </button>
@@ -4189,19 +4236,19 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {/* Previous / Next Sequential Record Navigation (Hidden in Print) */}
             {(prevRecord || nextRecord) && (
-              <div className="no-print print:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-stone-800">
+              <div className="no-print print:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#D8C3A2]">
                 {prevRecord ? (
                   <button
                     type="button"
                     onClick={() => openRecordDetail(prevRecord.id, true)}
-                    className="p-4 rounded-2xl bg-[#151a28] hover:bg-[#1c2235] border border-stone-800 hover:border-[#d4af37] text-left transition-all cursor-pointer flex items-center gap-3 group"
+                    className="p-4 rounded-2xl bg-[#FFF9EF] hover:bg-[#EFE3D0] border border-[#D8C3A2] hover:border-[#A87924] text-left transition-all cursor-pointer flex items-center gap-3 group"
                   >
-                    <ChevronLeft className="w-5 h-5 text-[#d4af37] shrink-0 group-hover:-translate-x-1 transition-transform" />
+                    <ChevronLeft className="w-5 h-5 text-[#A87924] shrink-0 group-hover:-translate-x-1 transition-transform" />
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B5948] block">
                         {ui.previousRecordLabel}
                       </span>
-                      <span className="font-royal-heading font-bold text-xs sm:text-sm text-[#fae29c] truncate block">
+                      <span className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] truncate block">
                         {prevRecord.title}
                       </span>
                     </div>
@@ -4214,17 +4261,17 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   <button
                     type="button"
                     onClick={() => openRecordDetail(nextRecord.id, true)}
-                    className="p-4 rounded-2xl bg-[#151a28] hover:bg-[#1c2235] border border-stone-800 hover:border-[#d4af37] text-right transition-all cursor-pointer flex items-center justify-end gap-3 group"
+                    className="p-4 rounded-2xl bg-[#FFF9EF] hover:bg-[#EFE3D0] border border-[#D8C3A2] hover:border-[#A87924] text-right transition-all cursor-pointer flex items-center justify-end gap-3 group"
                   >
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B5948] block">
                         {ui.nextRecordLabel}
                       </span>
-                      <span className="font-royal-heading font-bold text-xs sm:text-sm text-[#fae29c] truncate block">
+                      <span className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] truncate block">
                         {nextRecord.title}
                       </span>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-[#d4af37] shrink-0 group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-5 h-5 text-[#A87924] shrink-0 group-hover:translate-x-1 transition-transform" />
                   </button>
                 ) : (
                   <div />
@@ -4233,14 +4280,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             )}
 
             {/* Bottom Action Buttons (Back, Home, Print, Share, Copy Link, Close) — Hidden in Print */}
-            <div className="no-print print:hidden pt-4 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3">
+            <div className="no-print print:hidden pt-4 border-t border-[#D8C3A2] flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={handleBackNavigation}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#580014] hover:bg-[#78001c] text-[#fae29c] border border-[#d4af37]/50 transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer"
                 >
-                  <ArrowLeft className="w-4 h-4 text-[#d4af37]" />
+                  <ArrowLeft className="w-4 h-4 text-white" />
                   <span>{ui.backButton}</span>
                 </button>
 
@@ -4248,9 +4295,9 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   <button
                     type="button"
                     onClick={() => onNavigate('/')}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                   >
-                    <Home className="w-4 h-4 text-[#d4af37]" />
+                    <Home className="w-4 h-4 text-[#76501F]" />
                     <span>{ui.homeButton}</span>
                   </button>
                 )}
@@ -4260,34 +4307,34 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                 <button
                   type="button"
                   onClick={() => handlePrintRecord(activeRecord)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                 >
-                  <Printer className="w-4 h-4 text-[#d4af37]" />
+                  <Printer className="w-4 h-4 text-[#76501F]" />
                   <span>{ui.printButton}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleShareRecord(activeRecord)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                 >
-                  <Share2 className="w-4 h-4 text-[#d4af37]" />
+                  <Share2 className="w-4 h-4 text-[#76501F]" />
                   <span>{ui.shareButton}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleCopyLink(activeRecord, false)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-stone-200 border border-stone-700 hover:border-[#c99738] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                 >
-                  <Copy className="w-4 h-4 text-[#d4af37]" />
+                  <Copy className="w-4 h-4 text-[#76501F]" />
                   <span>{ui.copyLinkButton}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={closeRecordDetail}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#c99738] text-[#290106] hover:bg-[#dfab43] transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#762D35] text-white hover:bg-[#5e2229] transition-all cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                   <span>{ui.closeButton}</span>
@@ -4295,7 +4342,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-stone-800/80 print:border-stone-300">
+            <div className="pt-4 border-t border-[#D8C3A2] print:border-stone-300">
               <PublisherCreditCard variant="article-profile" />
             </div>
           </section>
@@ -4339,59 +4386,59 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Page Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-3">
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-            {headerIcon || <Scroll className="w-4 h-4" />}
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+            {headerIcon || <Scroll className="w-4 h-4 text-[#A87924]" />}
             <span>{pageBadge}</span>
           </div>
-          <span className="px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 text-xs font-semibold">
+          <span className="px-3 py-1 rounded-full bg-[#762D35] text-white border border-[#A87924] text-xs font-semibold">
             {ui.chronologicalOrderBadge}
           </span>
         </div>
 
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           {pageTitle}
         </h1>
-        <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#292521] max-w-3xl leading-relaxed">
           {pageSubtitle}
         </p>
       </div>
 
       {/* Epistemic Classification Protocol Banner */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#240610] via-[#141929] to-[#1a0912] border border-[#d4af37]/40 shadow-lg space-y-2">
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#fae29c]">
-          <ShieldCheck className="w-4 h-4 text-[#d4af37] shrink-0" />
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] shadow-sm space-y-2">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#54351F]">
+          <ShieldCheck className="w-4 h-4 text-[#A87924] shrink-0" />
           <span>{ui.epistemicBannerTitle}</span>
         </div>
-        <p className="text-xs text-stone-300 leading-relaxed">{ui.epistemicBannerDesc}</p>
+        <p className="text-xs text-[#292521] leading-relaxed">{ui.epistemicBannerDesc}</p>
       </div>
 
       {/* Search, Category Tabs & Epistemic Tier Filter Bar */}
-      <div className="p-4 sm:p-6 rounded-3xl bg-[#121624] border border-[#c99738]/35 space-y-4 shadow-xl">
+      <div className="p-4 sm:p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-4 shadow-[0_6px_20px_rgba(75,51,31,0.08)]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-xl">
-            <Search className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#76501F] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder={ui.searchPlaceholder}
-              className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl bg-[#182032] text-stone-100 placeholder-stone-400 border border-stone-700 focus:outline-none focus:border-[#d4af37]"
+              className="w-full pl-10 pr-9 py-2.5 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#292521] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
           </div>
 
-          <div className="text-xs text-stone-300 font-medium">
-            <strong className="text-[#fae29c]">{filteredRecords.length}</strong> {ui.showingCountLabel}
+          <div className="text-xs text-[#6B5948] font-medium">
+            <strong className="text-[#54351F]">{filteredRecords.length}</strong> {ui.showingCountLabel}
           </div>
         </div>
 
@@ -4404,14 +4451,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               onClick={() => setActiveCategory(tab.id)}
               className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeCategory === tab.id
-                  ? 'bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] shadow-md'
-                  : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                  ? 'bg-[#762D35] text-white shadow-sm border border-[#A87924]'
+                  : 'bg-[#E9D9BE] text-[#54351F] hover:bg-[#dec9a6] border border-[#D8C3A2]'
               }`}
             >
               <span>{tab.label}</span>
               <span
                 className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                  activeCategory === tab.id ? 'bg-[#290106]/20 text-[#290106]' : 'bg-stone-800 text-[#d4af37]'
+                  activeCategory === tab.id ? 'bg-white/20 text-white' : 'bg-[#FFFCF5] text-[#76501F]'
                 }`}
               >
                 {tab.count}
@@ -4421,14 +4468,14 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
         </div>
 
         {/* Epistemic Classification Filter Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-stone-800/80 text-xs">
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#D8C3A2] text-xs">
           <button
             type="button"
             onClick={() => setEpistemicFilter('all')}
             className={`px-3 py-1 rounded-lg font-semibold cursor-pointer transition-all ${
               epistemicFilter === 'all'
-                ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37]'
-                : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
+                ? 'bg-[#762D35] text-white border border-[#A87924]'
+                : 'bg-[#FFF9EF] text-[#54351F] hover:bg-[#E9D9BE] border border-[#D8C3A2]'
             }`}
           >
             {ui.allEpistemicFilter}
@@ -4441,8 +4488,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             }
             className={`px-3 py-1 rounded-lg font-semibold cursor-pointer transition-all ${
               epistemicFilter === 'verified_epigraphic'
-                ? 'bg-emerald-950 text-emerald-200 border border-emerald-400'
-                : 'bg-stone-900 text-emerald-300/80 hover:text-emerald-200 border border-stone-800'
+                ? 'bg-[#1c5236] text-white border border-[#1c5236]'
+                : 'bg-[#edf7f0] text-[#1c5236] hover:bg-[#dcefe2] border border-[#92c5a6]'
             }`}
           >
             ✓ {ui.verifiedEvidenceBadge}
@@ -4455,8 +4502,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             }
             className={`px-3 py-1 rounded-lg font-semibold cursor-pointer transition-all ${
               epistemicFilter === 'traditional_account'
-                ? 'bg-amber-950 text-amber-200 border border-amber-400'
-                : 'bg-stone-900 text-amber-300/80 hover:text-amber-200 border border-stone-800'
+                ? 'bg-[#6B4A1B] text-white border border-[#6B4A1B]'
+                : 'bg-[#FDF6E7] text-[#6B4A1B] hover:bg-[#f6ead0] border border-[#D8B467]'
             }`}
           >
             📜 {ui.traditionalAccountBadge}
@@ -4471,8 +4518,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             }
             className={`px-3 py-1 rounded-lg font-semibold cursor-pointer transition-all ${
               epistemicFilter === 'scholarly_interpretation'
-                ? 'bg-purple-950 text-purple-200 border border-purple-400'
-                : 'bg-stone-900 text-purple-300/80 hover:text-purple-200 border border-stone-800'
+                ? 'bg-[#4c2878] text-white border border-[#4c2878]'
+                : 'bg-[#f4effa] text-[#4c2878] hover:bg-[#e8def5] border border-[#c4aee0]'
             }`}
           >
             🔍 {ui.scholarlyInterpretationBadge}
@@ -4482,10 +4529,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
       {/* Article Cards Grid */}
       {filteredRecords.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-[#121624] border border-stone-800 space-y-3">
-          <Scroll className="w-10 h-10 text-[#d4af37] mx-auto" />
-          <h3 className="font-royal-heading font-bold text-lg text-[#fae29c]">{ui.emptyStateTitle}</h3>
-          <p className="text-xs text-stone-400">{ui.emptyStateDesc}</p>
+        <div className="p-12 text-center rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-3">
+          <Scroll className="w-10 h-10 text-[#A87924] mx-auto" />
+          <h3 className="font-royal-heading font-bold text-lg text-[#54351F]">{ui.emptyStateTitle}</h3>
+          <p className="text-xs text-[#6B5948]">{ui.emptyStateDesc}</p>
           <button
             type="button"
             onClick={() => {
@@ -4493,7 +4540,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               setActiveCategory('all');
               setEpistemicFilter('all');
             }}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-[#c99738] text-[#290106] cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-[#762D35] text-white cursor-pointer"
           >
             {ui.clearFiltersBtn}
           </button>
@@ -4516,28 +4563,27 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                     openRecordDetail(rec.id, false);
                   }
                 }}
-                className="bg-[#121624] border border-[#c99738]/35 hover:border-[#d4af37] rounded-3xl overflow-hidden shadow-lg hover:shadow-[0_0_25px_rgba(201,151,56,0.2)] transition-all flex flex-col justify-between group cursor-pointer hover:-translate-y-1"
+                className="bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] rounded-3xl overflow-hidden shadow-[0_6px_20px_rgba(75,51,31,0.08)] hover:shadow-[0_10px_28px_rgba(75,51,31,0.15)] transition-all flex flex-col justify-between group cursor-pointer hover:-translate-y-1"
               >
                 <div>
                   {/* Card Thumbnail */}
-                  <figure className="relative h-48 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                  <figure className="relative h-48 w-full overflow-hidden bg-[#EFE3D0] border-b border-[#D8C3A2]">
                     <img
                       src={rec.imageUrl}
                       alt={rec.title}
                       loading="lazy"
                       onError={handleImgError}
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121624] via-transparent to-black/30" />
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#580014]/90 text-[#fae29c] border border-[#d4af37]/40 backdrop-blur-sm">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#762D35] text-white border border-[#A87924] shadow-sm">
                         {rec.chronologicalDate}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-black/75 text-[#fae29c] border border-stone-700 backdrop-blur-sm">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFFCF5]/95 text-[#54351F] border border-[#D8C3A2] shadow-sm">
                         {rec.sourceReferences.length} {ui.sourcesCountSuffix}
                       </span>
                     </div>
-                    <figcaption className="absolute bottom-2 left-3.5 right-3.5 text-[10px] text-stone-200 font-medium line-clamp-1">
+                    <figcaption className="absolute bottom-2 left-3 right-3 px-2.5 py-1 rounded-lg bg-[#FFFCF5]/95 border border-[#D8C3A2] text-[10px] text-[#54351F] font-semibold line-clamp-1">
                       {rec.categoryLabel} • {rec.eraLabel}
                     </figcaption>
                   </figure>
@@ -4549,10 +4595,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       <span
                         className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                           isVerified
-                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-500/40'
+                            ? 'bg-[#edf7f0] text-[#1c5236] border-[#92c5a6]'
                             : isTraditional
-                            ? 'bg-amber-950/60 text-amber-300 border-amber-500/40'
-                            : 'bg-purple-950/60 text-purple-300 border-purple-500/40'
+                            ? 'bg-[#FDF6E7] text-[#6B4A1B] border-[#D8B467]'
+                            : 'bg-[#f4effa] text-[#4c2878] border-[#c4aee0]'
                         }`}
                       >
                         <CheckCircle2 className="w-3 h-3 shrink-0" />
@@ -4561,33 +4607,33 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                     </div>
 
                     <div>
-                      <h3 className="font-royal-heading font-bold text-lg text-[#fae29c] group-hover:text-white transition-colors leading-snug">
+                      <h3 className="font-royal-heading font-bold text-lg text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug">
                         {rec.title}
                       </h3>
-                      <p className="text-xs text-[#d4af37] font-semibold mt-1 line-clamp-1">
+                      <p className="text-xs text-[#76501F] font-semibold mt-1 line-clamp-1">
                         {rec.rulerOrAuthority}
                       </p>
                     </div>
 
-                    <div className="flex items-start gap-1.5 text-xs text-stone-300 bg-stone-900/60 p-2.5 rounded-xl border border-stone-800/80">
-                      <MapPin className="w-3.5 h-3.5 text-[#d4af37] shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-1.5 text-xs text-[#292521] bg-[#FFF9EF] p-2.5 rounded-xl border border-[#D8C3A2]">
+                      <MapPin className="w-3.5 h-3.5 text-[#A87924] shrink-0 mt-0.5" />
                       <span className="line-clamp-1">{rec.locationOrRepository}</span>
                     </div>
 
-                    <p className="text-xs text-stone-300 leading-relaxed line-clamp-3">
+                    <p className="text-xs text-[#292521] leading-relaxed line-clamp-3">
                       {rec.summary}
                     </p>
                   </div>
                 </div>
 
                 {/* Card Footer */}
-                <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-stone-800/80 space-y-2.5">
+                <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-[#D8C3A2] bg-[#FFF9EF]/60 space-y-2.5">
                   {rec.related74References.length > 0 && (
                     <div className="flex flex-wrap items-center gap-1">
                       {rec.related74References.slice(0, 3).map(refEntry => (
                         <span
                           key={refEntry.id}
-                          className="text-[10px] px-2 py-0.5 rounded bg-[#580014]/70 text-[#fae29c] border border-[#d4af37]/30 font-medium"
+                          className="text-[10px] px-2 py-0.5 rounded bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2] font-medium"
                         >
                           #{refEntry.order} {refEntry.localizedLabel[language] || refEntry.canonicalTerm}
                         </span>
@@ -4599,7 +4645,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                     {rec.hashtags.slice(0, 3).map(tag => (
                       <span
                         key={tag}
-                        className="text-[10px] px-2 py-0.5 rounded bg-stone-950 text-stone-400 border border-stone-800"
+                        className="text-[10px] px-2 py-0.5 rounded bg-[#FFFCF5] text-[#6B5948] border border-[#D8C3A2]"
                       >
                         #{tag}
                       </span>
@@ -4607,10 +4653,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1">
-                    <span className="text-[11px] text-stone-400">
+                    <span className="text-[11px] text-[#6B5948]">
                       ⏳ {rec.chronologicalEvents.length} {ui.eventsCountSuffix}
                     </span>
-                    <span className="text-[#d4af37] font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                    <span className="text-[#762D35] font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                       <span>{ui.readFullArticleBtn}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>

@@ -126,7 +126,7 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
     {
       id: 'region-odra',
       icon: Compass,
-      iconStyle: 'bg-[#580014] text-[#d4af37]',
+      iconStyle: 'bg-[#762D35] text-white',
       title: t.odraDesha.odraTitle,
       desc: t.odraDesha.odraDesc,
       core: t.odraDesha.coreRulers,
@@ -139,7 +139,7 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
     {
       id: 'region-utkala',
       icon: Landmark,
-      iconStyle: 'bg-stone-800 text-stone-300',
+      iconStyle: 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]',
       title: t.odraDesha.utkalaTitle,
       desc: t.odraDesha.utkalaDesc,
       core: loc.utkalaCore,
@@ -152,7 +152,7 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
     {
       id: 'region-kalinga',
       icon: ShieldCheck,
-      iconStyle: 'bg-stone-800 text-stone-300',
+      iconStyle: 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]',
       title: t.odraDesha.kalingaTitle,
       desc: t.odraDesha.kalingaDesc,
       core: loc.kalingaCore,
@@ -165,7 +165,7 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
     {
       id: 'region-trikalinga',
       icon: Scroll,
-      iconStyle: 'bg-stone-800 text-stone-300',
+      iconStyle: 'bg-[#EFE3D0] text-[#762D35] border border-[#D8C3A2]',
       title: t.odraDesha.trikalingaTitle,
       desc: t.odraDesha.trikalingaDesc,
       core: loc.trikalingaCore,
@@ -221,16 +221,16 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Hero Header */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#170910] via-[#240e18] to-[#111624] border border-[#c99738]/50 p-8 sm:p-12 shadow-2xl">
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#FFF9EF] via-[#FFFCF5] to-[#EFE3D0] border border-[#D8C3A2] p-8 sm:p-12 shadow-md">
         <div className="space-y-4 max-w-3xl relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/40">
-            <Compass className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE3D0] text-[#762D35] text-xs font-semibold border border-[#A87924]/40">
+            <Compass className="w-3.5 h-3.5 text-[#A87924]" />
             <span>{t.odraDesha.badge}</span>
           </div>
-          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#fcedc7] leading-tight">
+          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#54351F] leading-tight">
             {t.odraDesha.title}
           </h1>
-          <p className="text-sm sm:text-base text-stone-300 font-royal-serif leading-relaxed">
+          <p className="text-sm sm:text-base text-[#292521] font-royal-serif leading-relaxed">
             {t.odraDesha.subtitle}
           </p>
         </div>
@@ -239,10 +239,10 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
       {/* Nomenclature and Distinction of Historical Regions */}
       <div className="space-y-6">
         <div className="text-center space-y-2">
-          <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
+          <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#54351F]">
             {t.odraDesha.regionsTitle}
           </h2>
-          <p className="text-xs sm:text-sm text-stone-400 max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-[#6B5948] max-w-2xl mx-auto">
             {t.odraDesha.regionsSubtitle}
           </p>
         </div>
@@ -262,10 +262,10 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
               <div
                 key={reg.id}
                 onClick={() => setSelectedId(reg.id)}
-                className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
+                className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] shadow-sm overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
               >
                 <div>
-                  <div className="h-36 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                  <div className="h-36 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                     <img
                       src={thumbUrl}
                       alt={reg.title}
@@ -279,21 +279,21 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
                       }}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
-                    <div className={`absolute top-3 left-3 p-2 rounded-lg ${reg.iconStyle}`}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#292521]/40 via-transparent to-transparent" />
+                    <div className={`absolute top-3 left-3 p-2 rounded-lg shadow-sm ${reg.iconStyle}`}>
                       <Icon className="w-4 h-4" />
                     </div>
                   </div>
                   <div className="p-5 pb-3 space-y-2.5">
-                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                    <h3 className="font-royal-heading font-bold text-base text-[#54351F] group-hover:text-[#762D35] transition-colors">
                       {reg.title}
                     </h3>
-                    <p className="text-xs text-stone-400 leading-relaxed">
+                    <p className="text-xs text-[#292521] leading-relaxed">
                       {reg.desc}
                     </p>
                   </div>
                 </div>
-                <div className="px-5 pb-5 pt-2 text-[11px] text-[#e8c872] font-semibold">
+                <div className="px-5 pb-5 pt-2 text-[11px] text-[#76501F] font-semibold">
                   {reg.core}
                 </div>
               </div>
@@ -305,34 +305,34 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
       {/* Deep Dive Historical Narrative */}
       <div
         onClick={() => setSelectedId('odra-epigraphic-evolution')}
-        className="rounded-3xl bg-[#111520] border border-[#c99738]/40 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
+        className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] shadow-md overflow-hidden cursor-pointer transition-all group"
       >
-        <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+        <div className="h-52 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
           <img
             src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/hathigumpha_inscription.jpg`}
             alt={loc.evolutionTitle}
             loading="lazy"
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#111520] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#292521]/40 via-transparent to-transparent" />
         </div>
         <div className="p-6 sm:p-8 space-y-6">
-          <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+          <h3 className="font-royal-heading font-bold text-xl text-[#54351F] group-hover:text-[#762D35] transition-colors">
             {loc.evolutionTitle}
           </h3>
-          <div className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed space-y-4">
+          <div className="text-xs sm:text-sm text-[#292521] font-royal-serif leading-relaxed space-y-4">
             <p>{loc.p1}</p>
             <p>{loc.p2}</p>
             <p>{loc.p3}</p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-stone-800">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#D8C3A2]">
             <button
               onClick={e => {
                 e.stopPropagation();
                 onNavigate('/maps');
               }}
-              className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+              className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] flex items-center gap-1.5 cursor-pointer"
             >
               <span>{loc.mapsBtn}</span>
               <ArrowRight className="w-4 h-4" />
@@ -342,7 +342,7 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
                 e.stopPropagation();
                 onNavigate('/inscriptions');
               }}
-              className="text-xs font-semibold text-[#e8c872] hover:text-white flex items-center gap-1.5 cursor-pointer"
+              className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] flex items-center gap-1.5 cursor-pointer"
             >
               <span>{loc.inscriptionsBtn}</span>
               <ArrowRight className="w-4 h-4" />

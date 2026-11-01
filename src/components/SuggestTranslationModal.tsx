@@ -96,57 +96,57 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
   const selectedLangObj = SUPPORTED_LANGUAGES.find(l => l.code === targetLang);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl bg-[#111520] border border-[#c99738]/50 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292521]/65 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] shadow-[0_14px_45px_rgba(75,51,31,0.25)] overflow-hidden flex flex-col max-h-[92vh] text-[#292521]">
         {/* Header */}
-        <div className="p-5 sm:p-6 border-b border-stone-800 bg-[#161b2a] flex items-center justify-between">
+        <div className="p-5 sm:p-6 border-b border-[#D8C3A2] bg-[#F1E4D0] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-[#580014] border border-[#c99738]/40 text-[#fcedc7]">
-              <Globe className="w-5 h-5 text-[#d4af37]" />
+            <div className="p-2.5 rounded-2xl bg-[#762D35] border border-[#A87924] text-white">
+              <Globe className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="font-royal-heading font-extrabold text-lg sm:text-xl text-[#fcedc7]">
+              <h2 className="font-royal-heading font-extrabold text-lg sm:text-xl text-[#54351F]">
                 {t.translationModal?.title || 'Contribute Translation'}
               </h2>
-              <p className="text-xs text-stone-400">
+              <p className="text-xs text-[#6B5948]">
                 {t.translationModal?.subtitle || 'Help transcribe and translate verified royal records across all 8 Indian languages'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-stone-400 hover:text-stone-200 hover:bg-stone-800/60 rounded-xl transition-colors cursor-pointer"
+            className="p-2 text-[#54351F] hover:text-white hover:bg-[#762D35] border border-[#D8C3A2] rounded-xl transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Source Reference Banner */}
-        <div className="p-4 bg-stone-900/60 border-b border-stone-800 text-xs flex items-start gap-3">
-          <BookOpen className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+        <div className="p-4 bg-[#FFF9EF] border-b border-[#D8C3A2] text-xs flex items-start gap-3">
+          <BookOpen className="w-4 h-4 text-[#A87924] shrink-0 mt-0.5" />
           <div>
-            <span className="text-stone-400 font-semibold uppercase tracking-wider text-[10px]">
+            <span className="text-[#76501F] font-semibold uppercase tracking-wider text-[10px]">
               {t.translationModal?.sourceDoc || 'Source Document:'}
             </span>
-            <h4 className="text-stone-200 font-medium">{article.original_title}</h4>
-            <span className="text-[11px] text-stone-500">ID: {article.id} • Category: {article.category}</span>
+            <h4 className="text-[#54351F] font-bold">{article.original_title}</h4>
+            <span className="text-[11px] text-[#6B5948]">ID: {article.id} • Category: {article.category}</span>
           </div>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm bg-[#FFFCF5]">
           {statusMsg && (
             <div
               className={`p-3.5 rounded-2xl text-xs flex items-center gap-2 border ${
                 statusMsg.type === 'success'
-                  ? 'bg-emerald-950/60 border-emerald-800 text-emerald-200'
-                  : 'bg-red-950/60 border-red-800 text-red-200'
+                  ? 'bg-[#EDF7F0] border-[#2D7A4D] text-[#14532D]'
+                  : 'bg-[#FDECEC] border-[#B9382C] text-[#7F1D1D]'
               }`}
             >
               {statusMsg.type === 'success' ? (
-                <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle className="w-4 h-4 text-[#2D7A4D] shrink-0" />
               ) : (
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-[#B9382C] shrink-0" />
               )}
               <span>{statusMsg.text}</span>
             </div>
@@ -154,7 +154,7 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
 
           {/* Language Selection */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-stone-300">
+            <label className="block text-xs font-semibold text-[#54351F]">
               {t.translationModal?.targetLangLabel || 'Select Target Translation Language'}
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -165,12 +165,12 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
                   onClick={() => setTargetLang(l.code)}
                   className={`p-2 rounded-xl text-xs font-medium border text-center transition-all cursor-pointer ${
                     targetLang === l.code
-                      ? 'bg-[#580014] text-[#fcedc7] border-[#d4af37] shadow-md'
-                      : 'bg-stone-900/80 text-stone-400 border-stone-800 hover:text-stone-200 hover:border-stone-700'
+                      ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm'
+                      : 'bg-[#FFF9EF] text-[#292521] border-[#D8C3A2] hover:bg-[#E9D9BE] hover:border-[#A87924]'
                   }`}
                 >
                   <div className="font-bold">{l.nativeName}</div>
-                  <div className="text-[10px] text-stone-400 opacity-80">{l.label}</div>
+                  <div className="text-[10px] opacity-85">{l.label}</div>
                 </button>
               ))}
             </div>
@@ -178,8 +178,8 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
 
           {/* Translated Title */}
           <div className="space-y-1.5 pt-2">
-            <label className="block text-xs font-semibold text-stone-300">
-              {t.translationModal?.titleLabel || 'Translated Title'} ({selectedLangObj?.nativeName}) <span className="text-amber-400">*</span>
+            <label className="block text-xs font-semibold text-[#54351F]">
+              {t.translationModal?.titleLabel || 'Translated Title'} ({selectedLangObj?.nativeName}) <span className="text-[#762D35]">*</span>
             </label>
             <input
               type="text"
@@ -187,13 +187,13 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder={`Enter title in ${selectedLangObj?.nativeName}...`}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#141926] border border-stone-700 text-stone-100 placeholder-stone-600 focus:border-[#d4af37] focus:outline-none text-xs sm:text-sm"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8C3A2] text-[#292521] placeholder-[#6B5948]/60 focus:border-[#A87924] focus:outline-none text-xs sm:text-sm"
             />
           </div>
 
           {/* Translated Summary */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-stone-300">
+            <label className="block text-xs font-semibold text-[#54351F]">
               {t.translationModal?.summaryLabel || 'Executive Summary'}
             </label>
             <textarea
@@ -201,14 +201,14 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
               value={summary}
               onChange={e => setSummary(e.target.value)}
               placeholder="Brief summary in target language..."
-              className="w-full px-3.5 py-2 rounded-xl bg-[#141926] border border-stone-700 text-stone-100 placeholder-stone-600 focus:border-[#d4af37] focus:outline-none text-xs"
+              className="w-full px-3.5 py-2 rounded-xl bg-[#FFFFFF] border border-[#D8C3A2] text-[#292521] placeholder-[#6B5948]/60 focus:border-[#A87924] focus:outline-none text-xs"
             />
           </div>
 
           {/* Full Translated Content */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-stone-300">
-              {t.translationModal?.contentLabel || 'Full Translated Content'} <span className="text-amber-400">*</span>
+            <label className="block text-xs font-semibold text-[#54351F]">
+              {t.translationModal?.contentLabel || 'Full Translated Content'} <span className="text-[#762D35]">*</span>
             </label>
             <textarea
               rows={6}
@@ -216,13 +216,13 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
               value={content}
               onChange={e => setContent(e.target.value)}
               placeholder={`Complete scholarly transcription and translation in ${selectedLangObj?.nativeName}...`}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#141926] border border-stone-700 text-stone-100 placeholder-stone-600 focus:border-[#d4af37] focus:outline-none font-royal-serif text-xs sm:text-sm leading-relaxed"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#FFFFFF] border border-[#D8C3A2] text-[#292521] placeholder-[#6B5948]/60 focus:border-[#A87924] focus:outline-none font-royal-serif text-xs sm:text-sm leading-relaxed"
             />
           </div>
 
           {/* Translator Name */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-semibold text-stone-300">
+            <label className="block text-xs font-semibold text-[#54351F]">
               {t.translationModal?.authorLabel || 'Translator / Contributor Attribution'}
             </label>
             <input
@@ -230,27 +230,27 @@ export const SuggestTranslationModal: React.FC<SuggestTranslationModalProps> = (
               value={translatorName}
               onChange={e => setTranslatorName(e.target.value)}
               placeholder="Your name or research institution for credits..."
-              className="w-full px-3.5 py-2 rounded-xl bg-[#141926] border border-stone-700 text-stone-100 placeholder-stone-600 focus:border-[#d4af37] focus:outline-none text-xs"
+              className="w-full px-3.5 py-2 rounded-xl bg-[#FFFFFF] border border-[#D8C3A2] text-[#292521] placeholder-[#6B5948]/60 focus:border-[#A87924] focus:outline-none text-xs"
             />
           </div>
 
           {/* Actions */}
-          <div className="pt-3 border-t border-stone-800 flex items-center justify-between">
-            <div className="text-[11px] text-stone-500">
+          <div className="pt-3 border-t border-[#D8C3A2] flex items-center justify-between">
+            <div className="text-[11px] text-[#6B5948]">
               {t.translationModal?.disclaimer || 'All contributions are archived and reviewed for epigraphic accuracy.'}
             </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs font-medium cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#E9D9BE] hover:bg-[#D8C3A2] text-[#54351F] border border-[#A87924]/50 text-xs font-semibold cursor-pointer"
               >
                 {t.translationModal?.cancelBtn || t.common?.cancel || 'Cancel'}
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-5 py-2 rounded-xl bg-[#c99738] hover:bg-[#dfab43] text-[#300207] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{submitting ? (t.translationModal?.savingBtn || 'Saving...') : (t.translationModal?.submitBtn || t.common?.save || 'Save Translation')}</span>

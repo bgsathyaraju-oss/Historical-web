@@ -103,58 +103,58 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="flex items-center justify-between border-b border-stone-800 pb-4">
+      <div className="flex items-center justify-between border-b border-[#D8C3A2] pb-4">
         <div>
-          <h1 className="font-royal-heading font-extrabold text-2xl text-[#fcedc7]">
+          <h1 className="font-royal-heading font-extrabold text-2xl text-[#54351F]">
             Edit Member Profile
           </h1>
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-[#6B5948]">
             Update your biographical information and community directory visibility.
           </p>
         </div>
         <button
           onClick={() => onNavigate('/dashboard')}
-          className="text-xs text-stone-400 hover:text-white flex items-center gap-1"
+          className="text-xs font-semibold text-[#76501F] hover:text-[#A87924] flex items-center gap-1 cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back to Dashboard
         </button>
       </div>
 
       {statusMsg && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs sm:text-sm text-emerald-200 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#edf7f0] border border-[#92c5a6] text-xs sm:text-sm text-[#1c5236] flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 text-[#1c5236] shrink-0" />
           <span>{statusMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-xs sm:text-sm text-rose-200 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#fcedee] border border-[#dfa5ab] text-xs sm:text-sm text-[#762D35] flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-[#762D35] shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-5 shadow-xl">
+      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-5 shadow-[0_8px_28px_rgba(75,51,31,0.12)]">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Full Legal Name</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Full Legal Name</label>
             <input
               type="text"
               name="full_name"
               value={formData.full_name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Gender</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Gender</label>
             <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -166,79 +166,79 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">State / Province</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">State / Province</label>
             <input
               type="text"
               name="state_or_province"
               value={formData.state_or_province}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">District</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">District</label>
             <input
               type="text"
               name="district"
               value={formData.district}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">City / Village</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">City / Village</label>
             <input
               type="text"
               name="city_town_village"
               value={formData.city_town_village}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Education</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Education</label>
             <input
               type="text"
               name="education"
               value={formData.education}
               onChange={handleChange}
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-300 mb-1">Profession</label>
+            <label className="block text-xs font-semibold text-[#54351F] mb-1">Profession</label>
             <input
               type="text"
               name="profession"
               value={formData.profession}
               onChange={handleChange}
-              className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+              className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">Biography</label>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">Biography</label>
           <textarea
             name="biography"
             value={formData.biography}
             onChange={handleChange}
             rows={3}
-            className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
           />
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#182030] border border-stone-700/80 space-y-3">
-          <label className="block text-xs font-semibold text-stone-200">
+        <div className="p-4 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-3">
+          <label className="block text-xs font-semibold text-[#54351F]">
             Profile Photo
           </label>
           <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -246,10 +246,10 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
               <img
                 src={formData.profile_photo_url}
                 alt="Profile Preview"
-                className="w-16 h-16 rounded-2xl object-cover border-2 border-[#c99738] shrink-0"
+                className="w-16 h-16 rounded-2xl object-cover border-2 border-[#A87924] shrink-0"
               />
             ) : (
-              <div className="w-16 h-16 rounded-2xl bg-[#580014] border border-[#d4af37] flex items-center justify-center text-[#d4af37] shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-[#762D35] border border-[#A87924] flex items-center justify-center text-white shrink-0">
                 <ImageIcon className="w-6 h-6" />
               </div>
             )}
@@ -266,7 +266,7 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingPhoto}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#d8a846] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
                   {uploadingPhoto ? (
                     <>
@@ -284,7 +284,7 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
                   <button
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, profile_photo_url: '' }))}
-                    className="text-xs text-rose-400 hover:text-rose-300 px-2 py-1"
+                    className="text-xs text-[#762D35] hover:underline px-2 py-1 cursor-pointer"
                   >
                     Remove
                   </button>
@@ -296,13 +296,13 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
                 value={formData.profile_photo_url}
                 onChange={handleChange}
                 placeholder="Or paste an image URL (e.g. https://...)"
-                className="w-full px-3 py-1.5 text-xs rounded-xl bg-[#121622] text-stone-100 border border-stone-700"
+                className="w-full px-3 py-1.5 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2]"
               />
-              <p className="text-[11px] text-stone-400">
+              <p className="text-[11px] text-[#6B5948]">
                 Supports JPG, PNG, or WebP up to 5MB. Uploaded photos are stored securely in the archive server.
               </p>
               {uploadError && (
-                <p className="text-xs text-rose-400 flex items-center gap-1">
+                <p className="text-xs text-[#762D35] flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5" /> {uploadError}
                 </p>
               )}
@@ -311,12 +311,12 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-stone-300 mb-1">Profile Visibility</label>
+          <label className="block text-xs font-semibold text-[#54351F] mb-1">Profile Visibility</label>
           <select
             name="profile_visibility"
             value={formData.profile_visibility}
             onChange={handleChange}
-            className="w-full px-3 py-2 text-xs rounded-xl bg-[#182030] text-stone-100 border border-stone-700"
+            className="w-full px-3 py-2 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2]"
           >
             <option value="public">Public (Visible to everyone)</option>
             <option value="members">Members Only (Logged in community members)</option>
@@ -327,7 +327,7 @@ export const EditProfilePage: React.FC<EditProfileProps> = ({ onNavigate }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer"
+          className="w-full py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white hover:bg-[#5e2229] transition-all cursor-pointer"
         >
           {loading ? 'Saving Profile...' : 'Save Profile Changes'}
         </button>

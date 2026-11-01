@@ -43,7 +43,12 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
-  PDF_EXPORT_UI_LABELS
+  PDF_EXPORT_UI_LABELS,
+  hasAppInventorBridge,
+  isAndroidWebViewEnvironment,
+  sendUrlToAppInventorBridge,
+  handleWhatsAppLinkClick,
+  handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
 import {
   HISTORICAL_FIGURES,
@@ -83,23 +88,6 @@ import {
   matchReference70Terms,
   getRelated70TermsForHeritageItem
 } from '../data/communityReference70Registry';
-
-const hasAppInventorBridge = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  const win = window as unknown as {
-    AppInventor?: {
-      setWebViewString?: (val: string) => void;
-    };
-  };
-  return Boolean(win.AppInventor && typeof win.AppInventor.setWebViewString === 'function');
-};
-
-const isAndroidWebViewEnvironment = (): boolean => {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
-  if (hasAppInventorBridge()) return true;
-  const ua = navigator.userAgent || '';
-  return /;\s*wv\)|Version\/\d+\.\d+\s+Chrome\/\d+.*Mobile|AppInventor/i.test(ua);
-};
 
 interface CommunityHeritagePageProps {
   onNavigate: (path: string) => void;
@@ -881,8 +869,30 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       ) {
         setLanguage(langParam);
       }
+      const autoDownloadPdf = params.get('autodownloadpdf');
       const autoPrint = params.get('autoprint');
       const targetId = params.get('id') || params.get('figure') || params.get('article') || activeArticleId;
+
+      if (autoDownloadPdf === '1' && targetId && !isAndroidWebViewEnvironment()) {
+        if (autoPrintTriggeredRef.current !== `pdf-${targetId}-${langParam || language}`) {
+          autoPrintTriggeredRef.current = `pdf-${targetId}-${langParam || language}`;
+          const timer = window.setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autodownloadpdf');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            const h1Text = document.querySelector('.print-article-container h1')?.textContent;
+            handleDownloadHeritagePdf(h1Text || document.title || 'Community_Heritage_Article');
+          }, 600);
+          return () => window.clearTimeout(timer);
+        }
+      }
+
       if (autoPrint === '1' && targetId) {
         if (isAndroidWebViewEnvironment()) {
           setIsPrintFallbackOpen(true);
@@ -974,25 +984,11 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const sendArticleUrlToAppInventor = (articleUrl: string): boolean => {
-    if (typeof window === 'undefined') return false;
     const trimmedUrl = (articleUrl || '').trim();
-    if (!trimmedUrl || !/^https?:\/\/.+\/community-heritage\?/i.test(trimmedUrl)) {
+    if (!trimmedUrl || !/^https?:\/\//i.test(trimmedUrl)) {
       return false;
     }
-    if (!hasAppInventorBridge()) {
-      return false;
-    }
-    try {
-      const win = window as unknown as {
-        AppInventor: {
-          setWebViewString: (val: string) => void;
-        };
-      };
-      win.AppInventor.setWebViewString(trimmedUrl);
-      return true;
-    } catch {
-      return false;
-    }
+    return sendUrlToAppInventorBridge(trimmedUrl);
   };
 
   const handleCopyPrintHeritageUrl = async (itemId: string) => {
@@ -1023,6 +1019,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   const [pdfDownloadResult, setPdfDownloadResult] = useState<{
     filename: string;
     downloadUrl?: string;
+    externalArticleUrl?: string;
+    isAndroidWebView?: boolean;
   } | null>(null);
   const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
 
@@ -1031,13 +1029,19 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     setIsDownloadingPdf(true);
     setPdfDownloadResult(null);
     try {
+      const canonicalUrl = activeArticleId
+        ? `${getCanonicalHeritageUrl(activeArticleId)}&lang=${encodeURIComponent(language)}`
+        : window.location.href;
       const result = await downloadArticleAsPdf({
         articleTitle,
-        language
+        language,
+        articleUrl: canonicalUrl
       });
       setPdfDownloadResult({
         filename: result.filename,
-        downloadUrl: result.downloadUrl
+        downloadUrl: result.downloadUrl,
+        externalArticleUrl: result.externalArticleUrl,
+        isAndroidWebView: result.isAndroidWebView
       });
     } catch (err) {
       console.error('Heritage PDF export failed:', err);
@@ -1054,6 +1058,9 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     const canCallWindowPrint = typeof window !== 'undefined' && typeof window.print === 'function';
 
     if (inAndroidWebView || !canCallWindowPrint) {
+      if (hasAppInventorBridge()) {
+        sendUrlToAppInventorBridge(getExternalPrintHeritageUrl(activeArticleId, language));
+      }
       setIsPrintFallbackOpen(true);
       return;
     }
@@ -3634,6 +3641,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={e => handleWhatsAppLinkClick(e)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 text-emerald-300 border border-emerald-500/40 text-xs font-semibold transition-colors cursor-pointer"
                     >
                       <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
@@ -3662,16 +3670,41 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                         <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
                       </span>
-                      {pdfDownloadResult.downloadUrl && (
-                        <a
-                          href={pdfDownloadResult.downloadUrl}
-                          download={pdfDownloadResult.filename}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#c99738] text-[#290106] font-bold text-[11px]"
-                        >
-                          <Download className="w-3 h-3" />
-                          <span>{pdfUi.directDownloadLinkLabel}</span>
-                        </a>
-                      )}
+                      <div className="flex flex-wrap items-center gap-2">
+                        {pdfDownloadResult.downloadUrl && (
+                          <a
+                            href={pdfDownloadResult.downloadUrl}
+                            download={pdfDownloadResult.filename}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={e =>
+                              handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
+                            }
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#c99738] text-[#290106] font-bold text-[11px]"
+                          >
+                            <Download className="w-3 h-3" />
+                            <span>{pdfUi.directDownloadLinkLabel}</span>
+                          </a>
+                        )}
+                        {pdfDownloadResult.externalArticleUrl && pdfDownloadResult.isAndroidWebView && (
+                          <a
+                            href={pdfDownloadResult.externalArticleUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-external-chrome="true"
+                            onClick={e =>
+                              handleExternalBrowserUrlClick(
+                                e,
+                                pdfDownloadResult.externalArticleUrl || ''
+                              )
+                            }
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#580014] text-[#fae29c] border border-[#d4af37] font-bold text-[11px]"
+                          >
+                            <ExternalLink className="w-3 h-3 text-[#d4af37]" />
+                            <span>{pdfUi.openInChromePdfBtn}</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -4432,6 +4465,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={e => handleWhatsAppLinkClick(e)}
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] transition-all cursor-pointer"
               >
                 <WhatsAppIcon className="w-4 h-4 fill-current" />

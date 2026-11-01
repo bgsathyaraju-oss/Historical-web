@@ -57,21 +57,21 @@ export const PublicMemberDirectoryPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       {/* Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-          <Users className="w-4 h-4" />
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+          <Users className="w-4 h-4 text-[#A87924]" />
           <span>Global Community Network</span>
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           Public Member Directory
         </h1>
-        <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6B5948] max-w-3xl leading-relaxed">
           Connect with scholars, researchers, and families of the Suryavamsha Odiyaraju Kshatriya community. Private personal data, date of birth, and home contact details are strictly protected in accordance with privacy laws.
         </p>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#121622] border border-stone-800">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
           {states.map(st => (
             <button
@@ -79,8 +79,8 @@ export const PublicMemberDirectoryPage: React.FC = () => {
               onClick={() => handleStateChange(st)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 stateFilter === st
-                  ? 'bg-[#c99738] text-[#300207] shadow-md'
-                  : 'bg-stone-900 text-stone-400 hover:text-stone-200'
+                  ? 'bg-[#762D35] text-white shadow-sm'
+                  : 'bg-[#FFF9EF] text-[#54351F] border border-[#D8C3A2] hover:bg-[#E9D9BE]'
               }`}
             >
               {st}
@@ -89,23 +89,23 @@ export const PublicMemberDirectoryPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-72 relative">
-          <Search className="w-4 h-4 text-[#d4af37] absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#76501F] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search by name, district, profession..."
-            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+            className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
           />
         </div>
       </div>
 
       {/* Directory Grid & Empty State */}
       {filtered.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-          <Users className="w-10 h-10 text-stone-600 mx-auto" />
-          <h3 className="font-royal-heading font-bold text-base text-stone-200">No Members Found</h3>
-          <p className="text-xs text-stone-400">
+        <div className="p-12 text-center rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-3">
+          <Users className="w-10 h-10 text-[#A87924] mx-auto" />
+          <h3 className="font-royal-heading font-bold text-base text-[#54351F]">No Members Found</h3>
+          <p className="text-xs text-[#6B5948]">
             No member profiles match your current search and state filter criteria.
           </p>
           <button
@@ -114,7 +114,7 @@ export const PublicMemberDirectoryPage: React.FC = () => {
               setStateFilter('All');
               setCurrentPage(1);
             }}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207]"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white cursor-pointer"
           >
             Clear Filters
           </button>
@@ -125,7 +125,7 @@ export const PublicMemberDirectoryPage: React.FC = () => {
             <div
               key={member.user_id}
               onClick={() => setSelectedMember(member)}
-              className="p-6 rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738]/60 space-y-4 hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group"
+              className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] space-y-4 shadow-[0_6px_20px_rgba(75,51,31,0.08)] hover:shadow-[0_10px_28px_rgba(75,51,31,0.14)] transition-all cursor-pointer flex flex-col justify-between group"
             >
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
@@ -133,48 +133,48 @@ export const PublicMemberDirectoryPage: React.FC = () => {
                     <img
                       src={member.profile_photo_url}
                       alt={member.full_name}
-                      className="w-14 h-14 rounded-2xl object-cover border border-[#c99738]/40 shrink-0"
+                      className="w-14 h-14 rounded-2xl object-cover border border-[#D8C3A2] shrink-0"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-[#580014] border border-[#d4af37] flex items-center justify-center text-[#d4af37] text-lg font-bold font-royal-heading shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-[#762D35] border border-[#A87924] flex items-center justify-center text-white text-lg font-bold font-royal-heading shrink-0">
                       {member.full_name.charAt(0)}
                     </div>
                   )}
                   <div className="min-w-0">
-                    <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#e8c872] transition-colors truncate">
+                    <h3 className="font-royal-heading font-bold text-base text-[#54351F] group-hover:text-[#762D35] transition-colors truncate">
                       {member.full_name}
                     </h3>
-                    <div className="text-xs text-[#d4af37] flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3" />
+                    <div className="text-xs text-[#76501F] font-medium flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 text-[#A87924]" />
                       <span className="truncate">{member.district}, {member.state_or_province}</span>
                     </div>
                   </div>
                 </div>
 
                 {member.profession && (
-                  <div className="text-xs text-stone-300 flex items-center gap-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                  <div className="text-xs text-[#292521] flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5 text-[#A87924] shrink-0" />
                     <span className="truncate">{member.profession}</span>
                   </div>
                 )}
 
                 {member.education && (
-                  <div className="text-xs text-stone-400 flex items-center gap-1.5">
-                    <GraduationCap className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                  <div className="text-xs text-[#6B5948] flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5 text-[#76501F] shrink-0" />
                     <span className="truncate">{member.education}</span>
                   </div>
                 )}
 
                 {member.biography && (
-                  <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-[#292521] line-clamp-2 leading-relaxed">
                     {member.biography}
                   </p>
                 )}
               </div>
 
-              <div className="pt-3 border-t border-stone-800/80 flex items-center justify-between text-[11px] text-stone-500">
+              <div className="pt-3 border-t border-[#D8C3A2] flex items-center justify-between text-[11px] text-[#6B5948]">
                 <span>{member.country}</span>
-                <span className="text-[#e8c872] font-semibold">View Profile →</span>
+                <span className="text-[#762D35] font-semibold">View Profile →</span>
               </div>
             </div>
           ))}
@@ -183,15 +183,15 @@ export const PublicMemberDirectoryPage: React.FC = () => {
 
       {/* Pagination Bar */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#121622] border border-stone-800 text-xs">
-          <span className="text-stone-400">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] text-xs">
+          <span className="text-[#6B5948]">
             Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} members
           </span>
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 disabled:opacity-40 hover:bg-stone-800"
+              className="px-3 py-1.5 rounded-lg border border-[#D8C3A2] text-[#54351F] bg-[#FFF9EF] disabled:opacity-40 hover:bg-[#E9D9BE] cursor-pointer"
             >
               Previous
             </button>
@@ -199,10 +199,10 @@ export const PublicMemberDirectoryPage: React.FC = () => {
               <button
                 key={p}
                 onClick={() => setCurrentPage(p)}
-                className={`w-7 h-7 rounded-lg font-semibold flex items-center justify-center ${
+                className={`w-7 h-7 rounded-lg font-semibold flex items-center justify-center cursor-pointer ${
                   currentPage === p
-                    ? 'bg-[#c99738] text-[#300207]'
-                    : 'text-stone-400 hover:bg-stone-800'
+                    ? 'bg-[#762D35] text-white'
+                    : 'text-[#54351F] bg-[#FFF9EF] hover:bg-[#E9D9BE]'
                 }`}
               >
                 {p}
@@ -211,7 +211,7 @@ export const PublicMemberDirectoryPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 disabled:opacity-40 hover:bg-stone-800"
+              className="px-3 py-1.5 rounded-lg border border-[#D8C3A2] text-[#54351F] bg-[#FFF9EF] disabled:opacity-40 hover:bg-[#E9D9BE] cursor-pointer"
             >
               Next
             </button>
@@ -221,36 +221,36 @@ export const PublicMemberDirectoryPage: React.FC = () => {
 
       {/* Member Profile Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-2xl bg-[#111520] border border-[#c99738]/50 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292521]/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-2xl bg-[#FFFCF5] border border-[#A87924] rounded-3xl p-6 sm:p-8 space-y-6 shadow-[0_16px_48px_rgba(75,51,31,0.22)] relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setSelectedMember(null)}
-              className="absolute top-5 right-5 text-stone-400 hover:text-white text-xs px-2.5 py-1 rounded-lg border border-stone-700"
+              className="absolute top-5 right-5 text-[#54351F] bg-[#E9D9BE] hover:bg-[#dec9a6] text-xs font-semibold px-2.5 py-1 rounded-lg border border-[#D8C3A2] cursor-pointer"
             >
               Close
             </button>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 border-b border-stone-800 pb-5">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 border-b border-[#D8C3A2] pb-5">
               {selectedMember.profile_photo_url ? (
                 <img
                   src={selectedMember.profile_photo_url}
                   alt={selectedMember.full_name}
-                  className="w-20 h-20 rounded-2xl object-cover border-2 border-[#d4af37]"
+                  className="w-20 h-20 rounded-2xl object-cover border-2 border-[#A87924]"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-2xl bg-[#580014] border-2 border-[#d4af37] flex items-center justify-center text-[#d4af37] text-2xl font-bold font-royal-heading">
+                <div className="w-20 h-20 rounded-2xl bg-[#762D35] border-2 border-[#A87924] flex items-center justify-center text-white text-2xl font-bold font-royal-heading">
                   {selectedMember.full_name.charAt(0)}
                 </div>
               )}
               <div className="space-y-1">
-                <h3 className="font-royal-heading font-extrabold text-2xl text-[#fcedc7]">
+                <h3 className="font-royal-heading font-extrabold text-2xl text-[#54351F]">
                   {selectedMember.full_name}
                 </h3>
-                <p className="text-xs text-[#d4af37] flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" />
+                <p className="text-xs text-[#76501F] font-semibold flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#A87924]" />
                   <span>{selectedMember.city_town_village}, {selectedMember.district}, {selectedMember.state_or_province}, {selectedMember.country}</span>
                 </p>
-                <p className="text-xs text-stone-400">
+                <p className="text-xs text-[#6B5948]">
                   {selectedMember.profession} • {selectedMember.organization}
                 </p>
               </div>
@@ -258,10 +258,10 @@ export const PublicMemberDirectoryPage: React.FC = () => {
 
             {selectedMember.biography && (
               <div className="space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
                   Biography & Background
                 </h4>
-                <p className="text-xs sm:text-sm text-stone-300 leading-relaxed bg-[#0c0f17] p-4 rounded-xl border border-stone-800">
+                <p className="text-xs sm:text-sm text-[#292521] leading-relaxed bg-[#FFF9EF] p-4 rounded-xl border border-[#D8C3A2]">
                   {selectedMember.biography}
                 </p>
               </div>
@@ -269,12 +269,12 @@ export const PublicMemberDirectoryPage: React.FC = () => {
 
             {selectedMember.areas_of_historical_interest && selectedMember.areas_of_historical_interest.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
                   Historical Research Interests
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedMember.areas_of_historical_interest.map((int, i) => (
-                    <span key={i} className="text-xs px-3 py-1 rounded-full bg-stone-900 border border-stone-800 text-stone-300">
+                    <span key={i} className="text-xs px-3 py-1 rounded-full bg-[#EFE3D0] border border-[#D8C3A2] text-[#54351F] font-medium">
                       {int}
                     </span>
                   ))}
@@ -284,20 +284,20 @@ export const PublicMemberDirectoryPage: React.FC = () => {
 
             {selectedMember.research_contributions && (
               <div className="space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
                   Research & Archival Contributions
                 </h4>
-                <p className="text-xs text-stone-300 italic bg-[#161c2a] p-3 rounded-xl border border-stone-800">
+                <p className="text-xs text-[#292521] italic bg-[#FFF9EF] p-3 rounded-xl border border-[#D8C3A2]">
                   {selectedMember.research_contributions}
                 </p>
               </div>
             )}
 
-            <div className="pt-2 text-[11px] text-stone-500 border-t border-stone-800 flex items-center justify-between">
+            <div className="pt-2 text-[11px] text-[#6B5948] border-t border-[#D8C3A2] flex items-center justify-between">
               <span>Privacy protected: Exact address & date of birth are confidential.</span>
               <button
                 onClick={() => alert('Profile moderation report submitted to editorial team.')}
-                className="text-stone-400 hover:text-rose-400 transition-colors"
+                className="text-[#76501F] hover:text-[#762D35] transition-colors cursor-pointer"
               >
                 Report Profile
               </button>

@@ -141,12 +141,12 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
   return (
     <div className="w-full space-y-6">
       {/* Search & Filter Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#121622] border border-stone-800">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2]">
         <div>
-          <h3 className="font-royal-heading font-bold text-base text-[#fcedc7]">
+          <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
             {t.timeline.title}
           </h3>
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-[#6B5948]">
             {t.timeline.subtitle}
           </p>
         </div>
@@ -155,19 +155,19 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
           placeholder={t.timeline.filterPlaceholder}
-          className="w-full sm:w-72 px-3 py-1.5 text-xs rounded-lg bg-[#192030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+          className="w-full sm:w-72 px-3 py-1.5 text-xs rounded-lg bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
         />
       </div>
 
       {/* Interactive Timeline Stream */}
-      <div className="relative border-l-2 border-[#c99738]/40 ml-4 sm:ml-8 pl-6 sm:pl-8 space-y-8">
+      <div className="relative border-l-2 border-[#A87924]/50 ml-4 sm:ml-8 pl-6 sm:pl-8 space-y-8">
         {filteredEvents.map((item, idx) => {
           const thumbUrl = getEventImage(item);
           return (
           <div key={item.id || idx} className="relative group">
             {/* Timeline Dot Marker */}
-            <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-5 h-5 rounded-full bg-[#580014] border-2 border-[#d4af37] shadow-[0_0_10px_rgba(212,175,55,0.4)] flex items-center justify-center group-hover:scale-125 transition-transform">
-              <div className="w-1.5 h-1.5 rounded-full bg-[#d4af37]" />
+            <div className="absolute -left-[31px] sm:-left-[39px] top-1.5 w-5 h-5 rounded-full bg-[#762D35] border-2 border-[#A87924] shadow-sm flex items-center justify-center group-hover:scale-125 transition-transform">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#FFFCF5]" />
             </div>
 
             {/* Event Card */}
@@ -181,7 +181,7 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
                   setSelectedEventId(item.id);
                 }
               }}
-              className="p-5 rounded-2xl bg-[#131724] border border-stone-800/90 hover:border-[#c99738]/60 hover:bg-[#181e2e] transition-all cursor-pointer shadow-md"
+              className="p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] hover:bg-[#FFF9EF] transition-all cursor-pointer shadow-sm"
             >
               <div className="flex flex-col sm:flex-row gap-4 items-start mb-3">
                 <img
@@ -195,60 +195,60 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
                       target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
                     }
                   }}
-                  className="w-full sm:w-28 h-32 sm:h-24 rounded-xl object-cover object-center shrink-0 border border-[#c99738]/40 bg-stone-950"
+                  className="w-full sm:w-28 h-32 sm:h-24 rounded-xl object-cover object-center shrink-0 border border-[#A87924]/50 bg-[#EFE3D0]"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e8c872] bg-[#2a1b12] px-3 py-1 rounded-full border border-[#c99738]/40 w-fit">
-                      <Calendar className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#54351F] bg-[#EFE3D0] px-3 py-1 rounded-full border border-[#A87924]/50 w-fit">
+                      <Calendar className="w-3.5 h-3.5 text-[#A87924]" />
                       {item.year_text} ({item.period})
                     </span>
-                    <span className="text-xs text-stone-400 font-medium">
-                      {t.timeline.rulerLabel}: <strong className="text-stone-200">{item.rulers_involved}</strong>
+                    <span className="text-xs text-[#6B5948] font-medium">
+                      {t.timeline.rulerLabel}: <strong className="text-[#54351F]">{item.rulers_involved}</strong>
                     </span>
                   </div>
 
-                  <h4 className="text-base sm:text-lg font-bold text-stone-100 font-royal-heading mb-1.5 group-hover:text-[#fcedc7] transition-colors">
+                  <h4 className="text-base sm:text-lg font-bold text-[#54351F] font-royal-heading mb-1.5 group-hover:text-[#762D35] transition-colors">
                     {item.title}
                   </h4>
 
-                  <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                     {item.political_development}
                   </p>
                 </div>
               </div>
 
               {/* Inscriptions / Monuments Pill */}
-              <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400 mb-2">
-                <span className="text-stone-500 font-medium">{t.timeline.evidenceLabel}:</span>
-                <span className="px-2 py-0.5 rounded bg-stone-900 border border-stone-800 text-stone-300">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-[#6B5948] mb-2">
+                <span className="text-[#54351F] font-semibold">{t.timeline.evidenceLabel}:</span>
+                <span className="px-2 py-0.5 rounded bg-[#EFE3D0] border border-[#D8C3A2] text-[#292521]">
                   {item.monuments_inscriptions}
                 </span>
               </div>
 
               {/* Uncertainty Notes & Primary Sources */}
-              <div className="mt-3 pt-3 border-t border-stone-800/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                <div className="flex items-start gap-2 text-stone-400">
-                  <BookOpen className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+              <div className="mt-3 pt-3 border-t border-[#D8C3A2] grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="flex items-start gap-2 text-[#292521]">
+                  <BookOpen className="w-4 h-4 text-[#A87924] shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-stone-300 font-semibold">{t.timeline.citationsLabel}:</span>
-                    <p className="text-stone-400">{item.primary_sources}</p>
+                    <span className="text-[#54351F] font-semibold">{t.timeline.citationsLabel}:</span>
+                    <p className="text-[#6B5948]">{item.primary_sources}</p>
                   </div>
                 </div>
 
                 {item.uncertainty_notes && (
-                  <div className="flex items-start gap-2 text-stone-400 bg-amber-950/20 p-2 rounded-lg border border-amber-900/40">
-                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2 text-[#292521] bg-[#FDF6E7] p-2 rounded-lg border border-[#A87924]/50">
+                    <AlertCircle className="w-4 h-4 text-[#A87924] shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-amber-300 font-semibold">{t.timeline.methodologyLabel}:</span>
-                      <p className="text-amber-200/80 text-[11px] leading-snug">{item.uncertainty_notes}</p>
+                      <span className="text-[#54351F] font-semibold">{t.timeline.methodologyLabel}:</span>
+                      <p className="text-[#292521] text-[11px] leading-snug">{item.uncertainty_notes}</p>
                     </div>
                   </div>
                 )}
               </div>
 
               <div className="mt-3 pt-2 flex justify-end">
-                <span className="text-[11px] font-semibold text-[#e8c872] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <span className="text-[11px] font-bold text-[#762D35] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
                   <span>{ui.viewDossierBtn}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </span>

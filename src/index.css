@@ -1,30 +1,73 @@
 @import "tailwindcss";
+@import "./styles/lightAlmondTheme.css";
 
 @layer base {
   :root {
-    --royal-maroon: #580014;
-    --royal-maroon-dark: #3a000d;
-    --royal-gold: #c99738;
-    --royal-gold-light: #e6be6c;
-    --royal-gold-dark: #91681c;
-    --royal-navy: #0b1528;
-    --royal-navy-dark: #070d18;
-    --royal-ivory: #faf7f0;
-    --royal-cream: #f4eee1;
-    --royal-sand: #e6dcce;
-    --royal-slate: #151922;
+    --page-bg: #F5EBD9;
+    --section-bg: #EFE3D0;
+    --card-bg: #FFFCF5;
+    --surface-bg: #FFF9EF;
+    --menu-bg: #F1E4D0;
+    --input-bg: #FFFFFF;
+    --primary-text: #292521;
+    --heading-text: #54351F;
+    --secondary-text: #6B5948;
+    --link-color: #76501F;
+    --link-hover: #A87924;
+    --border-color: #D8C3A2;
+    --accent-gold: #A87924;
+    --primary-button: #762D35;
+    --primary-button-text: #FFFFFF;
+    --secondary-button: #E9D9BE;
+    --shadow-color: rgba(75, 51, 31, 0.12);
+
+    --website-bg-main: #F5EBD9;
+    --website-bg-secondary: #FFF9EF;
+    --website-bg-card: #FFFCF5;
+    --website-heading: #54351F;
+    --website-body: #292521;
+    --website-link: #76501F;
+    --website-accent: #A87924;
+    --website-btn-primary: #762D35;
+    --website-btn-text: #FFFFFF;
+
+    --royal-maroon: #762D35;
+    --royal-maroon-dark: #54351F;
+    --royal-gold: #A87924;
+    --royal-gold-light: #FFF9EF;
+    --royal-gold-dark: #76501F;
+    --royal-navy: #F5EBD9;
+    --royal-navy-dark: #FFF9EF;
+    --royal-ivory: #FFFCF5;
+    --royal-cream: #FFF9EF;
+    --royal-sand: #F5EBD9;
+    --royal-slate: #FFFCF5;
   }
 
+  html,
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    background-color: #0d0f17;
-    color: #f5f3ed;
+    background-color: var(--page-bg);
+    color: var(--primary-text);
     overflow-x: hidden;
   }
 
-  h1, h2, h3, .font-royal-heading {
+  h1, h2, h3, h4, h5, h6, .font-royal-heading {
     font-family: 'Cinzel', serif;
     letter-spacing: 0.02em;
+    color: var(--heading-text);
+  }
+
+  p, li, dd, td {
+    color: var(--primary-text);
+  }
+
+  a {
+    color: var(--link-color);
+  }
+
+  a:hover {
+    color: var(--link-hover);
   }
 
   .font-royal-serif {
@@ -32,61 +75,56 @@
   }
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Light Almond Theme */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d0f17;
+  background: var(--page-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #2f2214;
+  background: var(--accent-gold);
   border-radius: 4px;
-  border: 1px solid #c99738;
+  border: 1px solid var(--link-color);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c99738;
+  background: var(--link-color);
 }
 
-/* Royal Ornaments and Borders */
+/* Royal Ornaments, Cards, and Borders - Light Almond Theme */
 .royal-border {
-  border: 1px solid rgba(201, 151, 56, 0.35);
-  box-shadow: 0 0 15px rgba(201, 151, 56, 0.08), inset 0 0 15px rgba(201, 151, 56, 0.03);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 16px var(--shadow-color);
 }
 
 .royal-border-glow {
-  border: 1px solid rgba(201, 151, 56, 0.6);
-  box-shadow: 0 0 25px rgba(201, 151, 56, 0.2), inset 0 0 20px rgba(201, 151, 56, 0.06);
+  border: 1.5px solid var(--accent-gold);
+  box-shadow: 0 6px 24px var(--shadow-color);
 }
 
 .royal-gold-gradient {
-  background: linear-gradient(135deg, #e6be6c 0%, #c99738 50%, #8b6218 100%);
+  background: var(--primary-button);
+  color: var(--primary-button-text);
 }
 
 .royal-gold-text {
-  background: linear-gradient(135deg, #fcedc7 0%, #d4af37 50%, #aa7c11 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--heading-text) !important;
+  -webkit-text-fill-color: var(--heading-text) !important;
+  background: none !important;
 }
 
 .royal-maroon-gradient {
-  background: linear-gradient(135deg, #780016 0%, #4a000d 50%, #290007 100%);
+  background: linear-gradient(135deg, var(--surface-bg) 0%, var(--page-bg) 100%);
 }
 
 .bg-pattern-royal {
-  background-color: #0c0e16;
-  background-image: radial-gradient(rgba(201, 151, 56, 0.12) 1px, transparent 1px), radial-gradient(rgba(201, 151, 56, 0.06) 1px, #0c0e16 1px);
+  background-color: var(--page-bg);
+  background-image:
+    radial-gradient(rgba(168, 121, 36, 0.14) 1px, transparent 1px),
+    radial-gradient(rgba(168, 121, 36, 0.08) 1px, var(--page-bg) 1px);
   background-size: 40px 40px;
   background-position: 0 0, 20px 20px;
-}
-
-/* Android WebView safety fallback for gradient text */
-@supports not (color: oklab(0% 0 0)) {
-  .bg-clip-text.text-transparent {
-    color: #fae29c !important;
-    -webkit-text-fill-color: #fae29c !important;
-  }
 }
 
 .print-only {
@@ -107,6 +145,7 @@
     margin: 0;
     padding: 0;
     border: none;
+    background: transparent !important;
   }
 
   .print-document-tfoot,
@@ -115,7 +154,11 @@
   }
 }
 
-/* Professional Print & PDF Export Layout for Articles, Historical Records & Repeating Author Footer */
+/* ==========================================================================
+   PRINT & PDF DOCUMENT RULES
+   White (#FFFFFF) and Very Light Almond (#FFFCF5) backgrounds with
+   Dark, Readable Text (#292521 body, #54351F headings) for reliable printing
+   ========================================================================== */
 @media print {
   @page {
     size: A4 portrait;
@@ -125,7 +168,7 @@
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       font-size: 7.5pt;
       font-weight: 700;
-      color: #580014;
+      color: #54351F;
       vertical-align: top;
       padding-top: 1.5mm;
     }
@@ -134,7 +177,7 @@
       font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
       font-size: 7pt;
       font-weight: 600;
-      color: #4b5563;
+      color: #292521;
       vertical-align: top;
       padding-top: 1.5mm;
     }
@@ -144,9 +187,9 @@
   body,
   #root,
   main {
-    background: #ffffff !important;
-    background-color: #ffffff !important;
-    color: #111827 !important;
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: #292521 !important;
     font-size: 10.5pt !important;
     line-height: 1.55 !important;
     height: auto !important;
@@ -156,7 +199,6 @@
     print-color-adjust: exact !important;
   }
 
-  /* Repeating Table Frame & Footer Spacer: Reserves 21mm at the bottom of EVERY PDF page so content never overlaps the fixed Author Footer */
   .print-document-frame {
     display: table !important;
     width: 100% !important;
@@ -195,7 +237,6 @@
     min-height: 21mm !important;
   }
 
-  /* Hide global navigation, global footer, floating dock, and article action controls — NEVER hide <header> or <footer> inside an <article> or the repeating author footer */
   header:not(.print-article-header):not(article header),
   nav,
   footer:not(.print-article-footer):not(.print-repeating-author-footer):not(article footer),
@@ -212,9 +253,7 @@
     display: inline !important;
   }
 
-  /* ==========================================================================
-     REPEATING PDF PAGE AUTHOR FOOTER (FIXED AT BOTTOM OF EVERY PRINTED PAGE)
-     ========================================================================== */
+  /* Repeating PDF Page Author Footer */
   .print-repeating-author-footer {
     display: block !important;
     visibility: visible !important;
@@ -225,10 +264,10 @@
     width: 100% !important;
     height: 17.5mm !important;
     max-height: 17.5mm !important;
-    background: #faf7f0 !important;
-    background-color: #faf7f0 !important;
-    border-top: 1.5px solid #c99738 !important;
-    border-bottom: 2px solid #580014 !important;
+    background: #FFFCF5 !important;
+    background-color: #FFFCF5 !important;
+    border-top: 1.5px solid #A87924 !important;
+    border-bottom: 2px solid #762D35 !important;
     padding: 1.8mm 3mm !important;
     z-index: 99999 !important;
     box-sizing: border-box !important;
@@ -269,10 +308,10 @@
     max-height: 30px !important;
     border-radius: 9999px !important;
     overflow: hidden !important;
-    border: 1.5px solid #c99738 !important;
-    box-shadow: 0 0 0 1px #580014 !important;
+    border: 1.5px solid #A87924 !important;
+    box-shadow: 0 0 0 1px #762D35 !important;
     flex-shrink: 0 !important;
-    background: #ffffff !important;
+    background: #FFFFFF !important;
   }
 
   .print-repeating-author-footer img.print-author-avatar {
@@ -308,7 +347,7 @@
     gap: 4px !important;
     font-size: 7.8pt !important;
     line-height: 1.25 !important;
-    color: #111827 !important;
+    color: #292521 !important;
     background: transparent !important;
   }
 
@@ -316,16 +355,16 @@
     font-family: 'Cinzel', Georgia, serif !important;
     font-weight: 800 !important;
     font-size: 8.2pt !important;
-    color: #580014 !important;
-    -webkit-text-fill-color: #580014 !important;
+    color: #54351F !important;
+    -webkit-text-fill-color: #54351F !important;
     letter-spacing: 0.01em !important;
   }
 
   .print-author-role {
     font-weight: 700 !important;
     font-size: 7.2pt !important;
-    color: #1f2937 !important;
-    -webkit-text-fill-color: #1f2937 !important;
+    color: #292521 !important;
+    -webkit-text-fill-color: #292521 !important;
   }
 
   .print-author-line-secondary {
@@ -335,26 +374,26 @@
     gap: 4px !important;
     font-size: 6.8pt !important;
     line-height: 1.25 !important;
-    color: #374151 !important;
+    color: #292521 !important;
     background: transparent !important;
     margin-top: 1px !important;
   }
 
   .print-author-credit {
     font-weight: 700 !important;
-    color: #78350f !important;
-    -webkit-text-fill-color: #78350f !important;
+    color: #76501F !important;
+    -webkit-text-fill-color: #76501F !important;
   }
 
   .print-author-org {
     font-weight: 600 !important;
-    color: #111827 !important;
-    -webkit-text-fill-color: #111827 !important;
+    color: #292521 !important;
+    -webkit-text-fill-color: #292521 !important;
   }
 
   .print-author-sep {
-    color: #c99738 !important;
-    -webkit-text-fill-color: #c99738 !important;
+    color: #A87924 !important;
+    -webkit-text-fill-color: #A87924 !important;
     font-weight: 700 !important;
   }
 
@@ -362,7 +401,7 @@
     flex-shrink: 0 !important;
     text-align: right !important;
     padding-left: 6px !important;
-    border-left: 1px solid #d4af37 !important;
+    border-left: 1px solid #A87924 !important;
     background: transparent !important;
   }
 
@@ -371,11 +410,11 @@
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
     font-size: 7.5pt !important;
     font-weight: 800 !important;
-    color: #580014 !important;
-    -webkit-text-fill-color: #580014 !important;
+    color: #54351F !important;
+    -webkit-text-fill-color: #54351F !important;
     white-space: nowrap !important;
-    background: #fffbeb !important;
-    border: 1px solid #c99738 !important;
+    background: #FFF9EF !important;
+    border: 1px solid #A87924 !important;
     border-radius: 4px !important;
     padding: 2px 6px !important;
   }
@@ -384,12 +423,9 @@
     content: attr(data-page-word) " " counter(page) " " attr(data-of-word) " " attr(data-total-pages);
   }
 
-  /* ==========================================================================
-     ARTICLE CONTENT CONTAINERS & MULTI-PAGE PAGINATION RULES
-     ========================================================================== */
   .print-article-wrapper {
-    background: #ffffff !important;
-    color: #111827 !important;
+    background: #FFFFFF !important;
+    color: #292521 !important;
     min-height: auto !important;
     height: auto !important;
     max-height: none !important;
@@ -400,8 +436,8 @@
 
   .print-article-container,
   article.print-article-container {
-    background: #ffffff !important;
-    color: #111827 !important;
+    background: #FFFFFF !important;
+    color: #292521 !important;
     max-width: 100% !important;
     width: 100% !important;
     height: auto !important;
@@ -413,7 +449,6 @@
     box-shadow: none !important;
   }
 
-  /* Reset dark backgrounds and light text inside the printed article for crisp readability */
   .print-article-container header,
   .print-article-container section,
   .print-article-container footer,
@@ -429,9 +464,9 @@
   .print-article-container tr,
   .print-article-container th,
   .print-article-container td {
-    background: #ffffff !important;
+    background: #FFFFFF !important;
     background-image: none !important;
-    color: #111827 !important;
+    color: #292521 !important;
     box-shadow: none !important;
     overflow: visible !important;
   }
@@ -445,14 +480,15 @@
 
   .print-article-container th,
   .print-article-container td {
-    border: 1px solid #d1d5db !important;
+    border: 1px solid #A87924 !important;
     padding: 6px 8px !important;
     word-break: break-word !important;
   }
 
   .print-article-container header,
   .print-article-container section {
-    border: 1px solid #d1d5db !important;
+    background: #FFFCF5 !important;
+    border: 1px solid #A87924 !important;
     border-radius: 8px !important;
     padding: 12px 15px !important;
     margin-bottom: 12px !important;
@@ -461,7 +497,12 @@
   .print-article-container h1,
   .print-article-container h2,
   .print-article-container h3,
-  .print-article-container h4,
+  .print-article-container h4 {
+    color: #54351F !important;
+    -webkit-text-fill-color: #54351F !important;
+    background: none !important;
+  }
+
   .print-article-container dt,
   .print-article-container dd,
   .print-article-container p,
@@ -472,8 +513,8 @@
   .print-article-container th,
   .print-article-container td,
   .print-article-container a {
-    color: #111827 !important;
-    -webkit-text-fill-color: #111827 !important;
+    color: #292521 !important;
+    -webkit-text-fill-color: #292521 !important;
   }
 
   .print-article-container h1 {
@@ -487,7 +528,7 @@
   .print-article-container h2 {
     font-size: 13pt !important;
     line-height: 1.35 !important;
-    border-bottom: 1px solid #9ca3af !important;
+    border-bottom: 1px solid #A87924 !important;
     padding-bottom: 4px !important;
     margin-bottom: 8px !important;
     page-break-after: avoid !important;
@@ -502,14 +543,13 @@
     break-after: avoid !important;
   }
 
-  /* Lead Article Figure & Main Image Print Rules */
   .print-lead-figure {
     display: block !important;
     visibility: visible !important;
-    border: 1px solid #d1d5db !important;
+    border: 1px solid #A87924 !important;
     border-radius: 8px !important;
     overflow: visible !important;
-    background: #ffffff !important;
+    background: #FFFCF5 !important;
     margin: 10px 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -521,7 +561,7 @@
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
-    background: #ffffff !important;
+    background: #FFFFFF !important;
     padding: 8px !important;
     text-align: center !important;
   }
@@ -538,7 +578,6 @@
     margin: 0 auto !important;
   }
 
-  /* Prevent awkward page breaks across images, cards, chronology rows, and bibliographic entries */
   .print-article-header,
   .print-avoid-break,
   .print-article-container img,
@@ -554,7 +593,6 @@
     widows: 3;
   }
 
-  /* Constrain portrait image cleanly for print */
   .print-portrait-box {
     width: 165px !important;
     max-width: 165px !important;

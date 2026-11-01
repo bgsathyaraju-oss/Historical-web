@@ -55,7 +55,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
           aria-orientation="vertical"
           className={`absolute ${
             align === 'right' ? 'right-0' : 'left-0'
-          } mt-2 ${width} origin-top-${align} rounded-xl bg-[#0b1528] royal-border-glow shadow-2xl backdrop-blur-xl py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100`}
+          } mt-2 ${width} origin-top-${align} rounded-xl bg-[var(--menu-bg)] border-2 border-[var(--accent-gold)] shadow-[0_10px_30px_var(--shadow-color)] py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100`}
         >
           <div onClick={() => setIsOpen(false)}>{children}</div>
         </div>
@@ -77,10 +77,10 @@ export const DropdownButtonTrigger = forwardRef<HTMLButtonElement, DropdownButto
     const baseClasses =
       'inline-flex items-center justify-between gap-2 font-medium tracking-wide transition-all rounded-xl cursor-pointer select-none';
     const variantClasses = {
-      gold: 'royal-gold-gradient text-[#070d18] font-semibold border border-[#91681c] shadow-md shadow-[#c99738]/20',
+      gold: 'bg-[#762D35] text-white font-semibold border border-[#A87924] shadow-sm',
       outline:
-        'bg-[#0b1528]/85 hover:bg-[#151922] text-[#fcedc7] hover:text-white border border-[#c99738]/40 hover:border-[#c99738]',
-      ghost: 'bg-transparent hover:bg-[#c99738]/10 text-[#e6dcce] hover:text-[#fcedc7] border border-transparent',
+        'bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924]',
+      ghost: 'bg-transparent hover:bg-[#E9D9BE]/60 text-[#54351F] border border-transparent',
     }[variant];
     const sizeClasses = {
       sm: 'text-xs px-3 py-1.5',
@@ -129,13 +129,13 @@ export const DropdownItem: React.FC<DropdownItemProps> = ({
       onClick={onClick}
       className={`w-full text-left px-3.5 py-2 text-xs md:text-sm flex items-center justify-between gap-2.5 transition-colors duration-150 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
         danger
-          ? 'text-red-300 hover:bg-red-950/40 hover:text-red-100'
-          : 'text-stone-200 hover:bg-[#c99738]/15 hover:text-[#fcedc7]'
+          ? 'text-[#762D35] hover:bg-[#762D35]/10 font-semibold'
+          : 'text-[#292521] hover:bg-[#E9D9BE] hover:text-[#54351F]'
       } ${className}`}
       {...props}
     >
       <span className="flex items-center gap-2.5 truncate">
-        {icon && <span className="text-[#c99738] shrink-0">{icon}</span>}
+        {icon && <span className="text-[#A87924] shrink-0">{icon}</span>}
         <span className="truncate">{children}</span>
       </span>
       {badge && <span className="shrink-0">{badge}</span>}
@@ -149,7 +149,7 @@ export const DropdownHeader: React.FC<{ children: React.ReactNode; className?: s
 }) => {
   return (
     <div
-      className={`px-3.5 py-1.5 text-[10px] font-semibold tracking-wider text-[#c99738] uppercase ${className}`}
+      className={`px-3.5 py-1.5 text-[10px] font-bold tracking-wider text-[#54351F] uppercase ${className}`}
     >
       {children}
     </div>
@@ -157,5 +157,5 @@ export const DropdownHeader: React.FC<{ children: React.ReactNode; className?: s
 };
 
 export const DropdownDivider: React.FC<{ className?: string }> = ({ className = '' }) => {
-  return <div className={`h-px my-1.5 bg-[#c99738]/20 ${className}`} />;
+  return <div className={`h-px my-1.5 bg-[#D8C3A2] ${className}`} />;
 };

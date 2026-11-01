@@ -1040,25 +1040,25 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
   const cultureDossier = GAJAPATHI_DOSSIERS.find(d => d.id === 'culture-renaissance')!;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 text-[#292521]">
       {/* Page Hero */}
-      <div className="rounded-3xl bg-gradient-to-r from-[#20050d] via-[#151a28] to-[#0c0f17] border border-[#c99738]/50 p-6 sm:p-12 shadow-2xl">
+      <div className="rounded-3xl bg-gradient-to-r from-[#FFFCF5] via-[#FFF9EF] to-[#F5EBD9] border border-[#D8C3A2] p-6 sm:p-12 shadow-md">
         <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/40">
-            <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#762D35] text-[#FFFFFF] text-xs font-semibold border border-[#A87924]/40">
+            <Crown className="w-3.5 h-3.5 text-[#FFFFFF]" />
             <span>{t.gajapathi.badge}</span>
           </div>
-          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-5xl text-[#fcedc7] leading-tight">
+          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-5xl text-[#54351F] leading-tight">
             {t.gajapathi.title}
           </h1>
-          <p className="text-sm sm:text-base text-stone-300 font-royal-serif leading-relaxed">
+          <p className="text-sm sm:text-base text-[#6B5948] font-royal-serif leading-relaxed">
             {t.gajapathi.subtitle}
           </p>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-stone-800 pb-2 overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-2 border-b border-[#D8C3A2] pb-2 overflow-x-auto scrollbar-none">
         {[
           { id: 'chronology', label: t.gajapathi.tabChronology },
           { id: 'administration', label: t.gajapathi.tabAdministration },
@@ -1071,8 +1071,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
             onClick={() => setActiveTab(tab.id as any)}
             className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-[#c99738] text-[#300207] shadow-md'
-                : 'text-stone-400 hover:text-stone-200 hover:bg-stone-900'
+                ? 'bg-[#762D35] text-[#FFFFFF] shadow-sm'
+                : 'text-[#6B5948] hover:text-[#292521] hover:bg-[#FFF9EF] border border-transparent hover:border-[#D8C3A2]'
             }`}
           >
             {tab.label}
@@ -1086,11 +1086,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
           {/* 1A: All 7 Documented Gajapathi & Imperial Odishan Monarchs */}
           <div className="space-y-4">
             <div className="space-y-1">
-              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] flex items-center gap-2">
-                <Crown className="w-5 h-5 text-[#d4af37]" />
+              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#54351F] flex items-center gap-2">
+                <Crown className="w-5 h-5 text-[#A87924]" />
                 <span>{ui.monarchsHeading}</span>
               </h2>
-              <p className="text-xs sm:text-sm text-stone-400">{ui.monarchsSubheading}</p>
+              <p className="text-xs sm:text-sm text-[#6B5948]">{ui.monarchsSubheading}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1114,10 +1114,10 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         openMonarchModal(fig.id);
                       }
                     }}
-                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-lg hover:shadow-[0_4px_24px_rgba(201,151,56,0.15)]"
+                    className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm hover:shadow-md"
                   >
                     <div>
-                      <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                      <div className="h-44 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                         <img
                           src={fig.image_url || fallbackImg}
                           alt={name}
@@ -1131,30 +1131,30 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           }}
                           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                       </div>
 
                       <div className="p-6 pb-3 space-y-2.5">
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
+                          <span className="text-xs font-bold text-[#A87924] uppercase tracking-wider">
                             {reign}
                           </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#580014]/80 text-[#fae29c] border border-[#c99738]/40">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#762D35]/10 text-[#762D35] border border-[#762D35]/30 font-semibold">
                             {dynasty}
                           </span>
                         </div>
 
-                        <h3 className="font-royal-heading font-bold text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                        <h3 className="font-royal-heading font-bold text-lg text-[#54351F] group-hover:text-[#A87924] transition-colors">
                           {name}
                         </h3>
 
                         {titles && titles.length > 0 && (
-                          <p className="text-[11px] text-[#e8c872]/90 font-medium line-clamp-1">
+                          <p className="text-[11px] text-[#76501F] font-medium line-clamp-1">
                             {titles[0]}
                           </p>
                         )}
 
-                        <p className="text-xs text-stone-400 leading-relaxed line-clamp-4">
+                        <p className="text-xs text-[#292521] leading-relaxed line-clamp-4">
                           {bio}
                         </p>
                       </div>
@@ -1167,7 +1167,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           e.stopPropagation();
                           openMonarchModal(fig.id);
                         }}
-                        className="text-xs font-semibold text-[#e8c872] group-hover:text-[#fae29c] flex items-center gap-1.5 pt-3 border-t border-stone-800/80 cursor-pointer w-full justify-between"
+                        className="text-xs font-semibold text-[#76501F] group-hover:text-[#A87924] flex items-center gap-1.5 pt-3 border-t border-[#D8C3A2] cursor-pointer w-full justify-between"
                       >
                         <span>{ui.viewProfileBtn}</span>
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -1182,11 +1182,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
           {/* 1B: Imperial Dynastic Lineages */}
           <div className="space-y-4">
             <div className="space-y-1">
-              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] flex items-center gap-2">
-                <Landmark className="w-5 h-5 text-[#d4af37]" />
+              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#54351F] flex items-center gap-2">
+                <Landmark className="w-5 h-5 text-[#A87924]" />
                 <span>{ui.dynastiesHeading}</span>
               </h2>
-              <p className="text-xs sm:text-sm text-stone-400">{ui.dynastiesSubheading}</p>
+              <p className="text-xs sm:text-sm text-[#6B5948]">{ui.dynastiesSubheading}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1216,10 +1216,10 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         setSelectedTarget({ type: 'dynasty', id: dyn.id });
                       }
                     }}
-                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
+                    className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm"
                   >
                     <div>
-                      <div className="h-40 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                      <div className="h-40 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                         <img
                           src={dynThumb}
                           alt={name}
@@ -1233,21 +1233,21 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           }}
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                       </div>
                       <div className="p-5 space-y-2.5">
-                        <div className="flex items-center justify-between gap-2 text-xs text-[#d4af37] font-bold">
+                        <div className="flex items-center justify-between gap-2 text-xs text-[#A87924] font-bold">
                           <span>{period}</span>
-                          <span className="inline-flex items-center gap-1 text-stone-400 font-normal">
-                            <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+                          <span className="inline-flex items-center gap-1 text-[#6B5948] font-normal">
+                            <MapPin className="w-3.5 h-3.5 text-[#A87924]" />
                             {capital}
                           </span>
                         </div>
-                        <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#fae29c]">
+                        <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] group-hover:text-[#A87924]">
                           {name}
                         </h3>
-                        <p className="text-xs text-stone-400 leading-relaxed">{overview}</p>
-                        <div className="text-xs font-semibold text-[#e8c872] flex items-center gap-1 pt-1">
+                        <p className="text-xs text-[#292521] leading-relaxed">{overview}</p>
+                        <div className="text-xs font-semibold text-[#76501F] flex items-center gap-1 pt-1">
                           <span>{ui.viewRecordBtn}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </div>
@@ -1262,11 +1262,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
           {/* 1C: Gajapathi Historical Monographs & Articles */}
           <div className="space-y-4">
             <div className="space-y-1">
-              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-[#d4af37]" />
+              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#54351F] flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#A87924]" />
                 <span>{ui.articlesHeading}</span>
               </h2>
-              <p className="text-xs sm:text-sm text-stone-400">{ui.articlesSubheading}</p>
+              <p className="text-xs sm:text-sm text-[#6B5948]">{ui.articlesSubheading}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1285,10 +1285,10 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         setSelectedTarget({ type: 'article', id: art.id });
                       }
                     }}
-                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
+                    className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm"
                   >
                     <div>
-                      <div className="h-44 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                      <div className="h-44 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                         <img
                           src={art.featured_image || fallbackImg}
                           alt={title}
@@ -1302,17 +1302,17 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           }}
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                       </div>
                       <div className="p-6 pb-3 space-y-2">
-                        <div className="flex items-center justify-between gap-2 text-[11px] text-[#d4af37] font-semibold">
+                        <div className="flex items-center justify-between gap-2 text-[11px] text-[#A87924] font-semibold">
                           <span>{getMetadataLabel('category', art.category) || art.category}</span>
-                          <span className="text-stone-400">{art.publication_date}</span>
+                          <span className="text-[#6B5948]">{art.publication_date}</span>
                         </div>
-                        <h3 className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#fae29c] transition-colors">
+                        <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] group-hover:text-[#A87924] transition-colors">
                           {title}
                         </h3>
-                        <p className="text-xs text-stone-400 leading-relaxed line-clamp-3">
+                        <p className="text-xs text-[#292521] leading-relaxed line-clamp-3">
                           {summary}
                         </p>
                       </div>
@@ -1325,7 +1325,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           e.stopPropagation();
                           setSelectedTarget({ type: 'article', id: art.id });
                         }}
-                        className="text-xs font-semibold text-[#e8c872] flex items-center gap-1.5 pt-2 cursor-pointer"
+                        className="text-xs font-semibold text-[#76501F] flex items-center gap-1.5 pt-2 cursor-pointer"
                       >
                         <FileText className="w-3.5 h-3.5" />
                         <span>{ui.readArticleBtn}</span>
@@ -1341,11 +1341,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
           {/* 1D: Primary Royal Copper-Plate & Temple Inscriptions */}
           <div className="space-y-4">
             <div className="space-y-1">
-              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] flex items-center gap-2">
-                <Scroll className="w-5 h-5 text-[#d4af37]" />
+              <h2 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#54351F] flex items-center gap-2">
+                <Scroll className="w-5 h-5 text-[#A87924]" />
                 <span>{ui.inscriptionsHeading}</span>
               </h2>
-              <p className="text-xs sm:text-sm text-stone-400">{ui.inscriptionsSubheading}</p>
+              <p className="text-xs sm:text-sm text-[#6B5948]">{ui.inscriptionsSubheading}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1369,10 +1369,10 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         setSelectedTarget({ type: 'inscription', id: insc.id });
                       }
                     }}
-                    className="rounded-2xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between"
+                    className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm"
                   >
                     <div>
-                      <div className="h-36 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                      <div className="h-36 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                         <img
                           src={inscThumb}
                           alt={insc.name}
@@ -1386,21 +1386,21 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           }}
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                       </div>
                       <div className="p-5 pb-2 space-y-2">
-                        <span className="text-[11px] font-bold text-[#d4af37] uppercase tracking-wider block">
+                        <span className="text-[11px] font-bold text-[#A87924] uppercase tracking-wider block">
                           {insc.era_or_date} • {insc.ruler}
                         </span>
-                        <h3 className="font-royal-heading font-bold text-base text-stone-100 group-hover:text-[#fae29c]">
+                        <h3 className="font-royal-heading font-bold text-base text-[#54351F] group-hover:text-[#A87924]">
                           {insc.name}
                         </h3>
-                        <p className="text-xs text-stone-400 line-clamp-3 leading-relaxed">
+                        <p className="text-xs text-[#292521] line-clamp-3 leading-relaxed">
                           {insc.historical_context}
                         </p>
                       </div>
                     </div>
-                    <div className="px-5 pb-5 text-xs font-semibold text-[#e8c872] flex items-center gap-1 pt-2">
+                    <div className="px-5 pb-5 text-xs font-semibold text-[#76501F] flex items-center gap-1 pt-2">
                       <span>{ui.viewInscriptionBtn}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </div>
@@ -1414,11 +1414,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
 
       {/* TAB 2: Imperial Administration */}
       {activeTab === 'administration' && (
-        <div className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-stone-800 space-y-6">
-          <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+        <div className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-6 shadow-sm">
+          <h3 className="font-royal-heading font-bold text-xl text-[#54351F]">
             {ui.adminIntroTitle}
           </h3>
-          <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#292521] font-royal-serif leading-relaxed">
             {ui.adminIntroDesc}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
@@ -1440,28 +1440,28 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                       setSelectedTarget({ type: 'dossier', id: dossier.id });
                     }
                   }}
-                  className="rounded-xl bg-[#0c0f17] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
+                  className="rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group"
                 >
-                  <div className="h-40 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                  <div className="h-40 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                     <img
                       src={dossierThumb}
                       alt={dossier.title[language] || dossier.title.en}
                       loading="lazy"
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0c0f17] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                   </div>
                   <div className="p-5 space-y-2">
-                    <span className="text-[11px] text-[#d4af37] font-bold uppercase tracking-wider block">
+                    <span className="text-[11px] text-[#A87924] font-bold uppercase tracking-wider block">
                       {dossier.era[language] || dossier.era.en}
                     </span>
-                    <h4 className="font-bold text-base text-[#e8c872] group-hover:text-[#fae29c]">
+                    <h4 className="font-bold text-base text-[#54351F] group-hover:text-[#A87924]">
                       {dossier.title[language] || dossier.title.en}
                     </h4>
-                    <p className="text-stone-400 text-xs leading-relaxed">
+                    <p className="text-[#292521] text-xs leading-relaxed">
                       {dossier.summary[language] || dossier.summary.en}
                     </p>
-                    <span className="text-xs text-[#d4af37] font-semibold inline-flex items-center gap-1 pt-1">
+                    <span className="text-xs text-[#76501F] font-semibold inline-flex items-center gap-1 pt-1">
                       <span>{ui.viewRecordBtn}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
@@ -1485,36 +1485,36 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               setSelectedTarget({ type: 'dossier', id: militaryDossier.id });
             }
           }}
-          className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
+          className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group shadow-sm"
         >
-          <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+          <div className="h-52 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
             <img
               src={`${basePath ? basePath + '/' : '/'}assets/archive/kondavidu_fort_hills.jpg`}
               alt={ui.militaryIntroTitle}
               loading="lazy"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
           </div>
           <div className="p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#A87924] uppercase tracking-wider">
                 {militaryDossier.era[language] || militaryDossier.era.en}
               </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#580014] text-[#fae29c] border border-[#c99738]/40">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#762D35] text-[#FFFFFF] font-semibold">
                 {militaryDossier.badge[language] || militaryDossier.badge.en}
               </span>
             </div>
-            <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+            <h3 className="font-royal-heading font-bold text-xl text-[#54351F]">
               {ui.militaryIntroTitle}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#292521] font-royal-serif leading-relaxed">
               {ui.militaryIntroDesc}
             </p>
-            <div className="p-4 rounded-xl bg-amber-950/20 border border-amber-900/40 text-xs text-amber-200 leading-relaxed">
+            <div className="p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs text-[#54351F] leading-relaxed">
               <strong>{ui.militaryFindspotsLabel}</strong> {ui.militaryFindspotsText}
             </div>
-            <div className="text-xs font-semibold text-[#e8c872] inline-flex items-center gap-1.5">
+            <div className="text-xs font-semibold text-[#76501F] inline-flex items-center gap-1.5">
               <span>{ui.viewRecordBtn}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </div>
@@ -1534,36 +1534,36 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               setSelectedTarget({ type: 'dossier', id: cultureDossier.id });
             }
           }}
-          className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden cursor-pointer transition-all group"
+          className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group shadow-sm"
         >
-          <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+          <div className="h-52 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
             <img
               src={`${basePath ? basePath + '/' : '/'}assets/archive/puri_jagannatha_temple.jpg`}
               alt={ui.cultureIntroTitle}
               loading="lazy"
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
           </div>
           <div className="p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <span className="text-xs font-bold text-[#d4af37] uppercase tracking-wider">
+              <span className="text-xs font-bold text-[#A87924] uppercase tracking-wider">
                 {cultureDossier.era[language] || cultureDossier.era.en}
               </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#580014] text-[#fae29c] border border-[#c99738]/40">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#762D35] text-[#FFFFFF] font-semibold">
                 {cultureDossier.badge[language] || cultureDossier.badge.en}
               </span>
             </div>
-            <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+            <h3 className="font-royal-heading font-bold text-xl text-[#54351F]">
               {ui.cultureIntroTitle}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-300 font-royal-serif leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#292521] font-royal-serif leading-relaxed">
               {ui.cultureIntroDesc}
             </p>
-            <p className="text-xs text-stone-400 leading-relaxed">
+            <p className="text-xs text-[#6B5948] leading-relaxed">
               {cultureDossier.summary[language] || cultureDossier.summary.en}
             </p>
-            <div className="text-xs font-semibold text-[#e8c872] inline-flex items-center gap-1.5">
+            <div className="text-xs font-semibold text-[#76501F] inline-flex items-center gap-1.5">
               <span>{ui.viewRecordBtn}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </div>

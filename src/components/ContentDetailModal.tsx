@@ -305,20 +305,20 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
           onClose();
         }
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-[#292521]/65 backdrop-blur-sm animate-in fade-in duration-200"
     >
-      <div className="bg-[#0e121c] border-2 border-[#c99738] rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl relative text-stone-200 overflow-hidden">
+      <div className="bg-[#FFFCF5] border-2 border-[#A87924] rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-[0_14px_45px_rgba(75,51,31,0.25)] relative text-[#292521] overflow-hidden">
         {/* Pinned Modal Header Bar (Keeps Title & Close control accessible at all times) */}
-        <div className="p-4 sm:p-5 border-b border-stone-800 flex items-center justify-between gap-3 bg-[#121622] rounded-t-2xl sm:rounded-t-3xl shrink-0">
+        <div className="p-4 sm:p-5 border-b border-[#D8C3A2] flex items-center justify-between gap-3 bg-[#F1E4D0] rounded-t-2xl sm:rounded-t-3xl shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
-            <Crown className="w-5 h-5 text-[#d4af37] shrink-0" />
+            <Crown className="w-5 h-5 text-[#A87924] shrink-0" />
             <div className="min-w-0">
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#d4af37] block truncate">
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#76501F] block truncate">
                 {item.badge || item.category || ui.defaultBadge}
               </span>
               <h2
                 id="content-detail-modal-title"
-                className="text-sm sm:text-lg font-bold font-royal-heading text-[#fae29c] truncate"
+                className="text-sm sm:text-lg font-bold font-royal-heading text-[#54351F] truncate"
               >
                 {item.title}
               </h2>
@@ -329,20 +329,20 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
             <button
               type="button"
               onClick={handleCopyLink}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#161c2a] hover:bg-[#20293d] text-stone-300 hover:text-white border border-stone-700 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] transition-all cursor-pointer"
               title={ui.copyLinkTitle}
             >
               {copied ? (
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <Check className="w-3.5 h-3.5 text-emerald-700" />
               ) : (
-                <Copy className="w-3.5 h-3.5 text-[#d4af37]" />
+                <Copy className="w-3.5 h-3.5 text-[#A87924]" />
               )}
               <span className="hidden sm:inline">{copied ? ui.copied : ui.share}</span>
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 sm:p-2.5 rounded-xl bg-stone-900 hover:bg-[#580014] text-stone-300 hover:text-white border border-stone-700 hover:border-[#d4af37] transition-all cursor-pointer"
+              className="p-2 sm:p-2.5 rounded-xl bg-[#FFFCF5] hover:bg-[#762D35] text-[#54351F] hover:text-white border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
               aria-label={resolvedCloseLabel}
               title={resolvedCloseLabel}
             >
@@ -352,31 +352,31 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
         </div>
 
         {/* Scrollable Content Container */}
-        <div className="p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 scrollbar-thin">
+        <div className="p-4 sm:p-6 md:p-8 overflow-y-auto space-y-6 scrollbar-thin bg-[#FFFCF5]">
           {/* Top Profile / Header Section */}
           <div
             className={`flex flex-col ${
               item.imageUrl && displayImageStyle === 'portrait' ? 'sm:flex-row items-start gap-5 sm:gap-6' : 'space-y-4'
-            } border-b border-stone-800 pb-5`}
+            } border-b border-[#D8C3A2] pb-5`}
           >
             {item.imageUrl && displayImageStyle === 'portrait' && (
               <img
                 src={item.imageUrl}
                 alt={item.title}
-                className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover border-2 border-[#d4af37] shadow-xl shrink-0 bg-[#161a29]"
+                className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover border-2 border-[#A87924] shadow-md shrink-0 bg-[#EFE3D0]"
               />
             )}
 
             <div className="space-y-2.5 flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 {displayEra && (
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] px-3 py-0.5 rounded-full bg-stone-900 border border-stone-800 flex items-center gap-1.5">
-                    <Calendar className="w-3 h-3 text-[#d4af37]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#54351F] px-3 py-0.5 rounded-full bg-[#EFE3D0] border border-[#D8C3A2] flex items-center gap-1.5">
+                    <Calendar className="w-3 h-3 text-[#A87924]" />
                     <span>{displayEra}</span>
                   </span>
                 )}
                 {item.category && (
-                  <span className="text-xs font-semibold uppercase tracking-wider text-[#fae29c] px-2.5 py-0.5 rounded-full bg-[#580014]/70 border border-[#d4af37]/40">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-white px-2.5 py-0.5 rounded-full bg-[#762D35] border border-[#A87924]">
                     {item.category}
                   </span>
                 )}
@@ -388,27 +388,27 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                 )}
               </div>
 
-              <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7] leading-tight">
+              <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#54351F] leading-tight">
                 {item.title}
               </h3>
 
               {item.subtitle && (
-                <p className="text-xs sm:text-sm text-[#e8c872] font-semibold">
+                <p className="text-xs sm:text-sm text-[#76501F] font-semibold">
                   {item.subtitle}
                 </p>
               )}
 
               {(displayAuthor || item.location) && (
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-stone-400 pt-1">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-[#6B5948] pt-1">
                   {displayAuthor && (
-                    <span className="flex items-center gap-1.5 text-stone-300">
-                      <User className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span className="flex items-center gap-1.5 text-[#292521]">
+                      <User className="w-3.5 h-3.5 text-[#A87924]" />
                       <span>{displayAuthor}</span>
                     </span>
                   )}
                   {item.location && (
-                    <span className="flex items-center gap-1.5 text-stone-300">
-                      <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span className="flex items-center gap-1.5 text-[#292521]">
+                      <MapPin className="w-3.5 h-3.5 text-[#A87924]" />
                       <span>{item.location}</span>
                     </span>
                   )}
@@ -419,16 +419,16 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
           {/* Banner Image if present and not portrait */}
           {item.imageUrl && displayImageStyle !== 'portrait' && (
-            <figure className="relative rounded-2xl overflow-hidden border border-[#c99738]/40 shadow-xl bg-stone-950">
+            <figure className="relative rounded-2xl overflow-hidden border border-[#A87924]/50 shadow-md bg-[#EFE3D0]">
               <img
                 src={item.imageUrl}
                 alt={item.title}
                 className="w-full max-h-80 object-cover"
               />
               {item.imageCaption && (
-                <figcaption className="p-3 bg-stone-950/90 border-t border-stone-800/80 text-xs text-stone-300 flex items-center justify-between">
-                  <span className="text-[#d4af37] font-semibold">{ui.visualRecord}</span>
-                  <span className="text-stone-400 truncate max-w-md">{item.imageCaption}</span>
+                <figcaption className="p-3 bg-[#FFF9EF] border-t border-[#D8C3A2] text-xs text-[#292521] flex items-center justify-between">
+                  <span className="text-[#54351F] font-semibold">{ui.visualRecord}</span>
+                  <span className="text-[#6B5948] truncate max-w-md">{item.imageCaption}</span>
                 </figcaption>
               )}
             </figure>
@@ -436,11 +436,11 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
           {/* Metadata Key-Value Grid */}
           {item.metadata && item.metadata.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs bg-[#141926] p-4 rounded-2xl border border-stone-800">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs bg-[#FFF9EF] p-4 rounded-2xl border border-[#D8C3A2]">
               {item.metadata.map((m, idx) => (
                 <div key={idx} className="space-y-0.5">
-                  <span className="text-stone-400 block text-[11px]">{m.label}:</span>
-                  <strong className="text-stone-100 font-semibold block">{m.value}</strong>
+                  <span className="text-[#6B5948] block text-[11px] font-medium">{m.label}:</span>
+                  <strong className="text-[#292521] font-semibold block">{m.value}</strong>
                 </div>
               ))}
             </div>
@@ -448,12 +448,12 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
           {/* Executive Summary / Overview Callout */}
           {item.summary && (
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-[#20050c]/80 via-[#180309]/80 to-[#121622] border-l-4 border-[#d4af37] border-y border-r border-stone-800/80 text-stone-200 shadow-inner space-y-1.5">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+            <div className="p-5 rounded-2xl bg-[#FFF9EF] border-l-4 border-[#A87924] border-y border-r border-[#D8C3A2] text-[#292521] shadow-sm space-y-1.5">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-[#54351F] flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#A87924]" />
                 <span>{item.summaryLabel || ui.summaryLabel}</span>
               </div>
-              <p className="font-royal-serif text-xs sm:text-sm leading-relaxed text-[#fcedc7]/95 whitespace-pre-line">
+              <p className="font-royal-serif text-xs sm:text-sm leading-relaxed text-[#292521] whitespace-pre-line">
                 {item.summary}
               </p>
             </div>
@@ -462,11 +462,11 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
           {/* Main Full Text / Biography / Narrative */}
           {displayFullText && (
             <div className="space-y-2.5">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                <BookOpen className="w-4 h-4 text-[#d4af37]" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-1.5">
+                <BookOpen className="w-4 h-4 text-[#A87924]" />
                 <span>{item.fullTextLabel || ui.fullTextLabel}</span>
               </h4>
-              <div className="p-5 sm:p-6 rounded-2xl bg-[#0c0f17] border border-stone-800/90 font-royal-serif text-xs sm:text-sm text-stone-200 leading-relaxed whitespace-pre-line">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] font-royal-serif text-xs sm:text-sm text-[#292521] leading-relaxed whitespace-pre-line">
                 {displayFullText}
               </div>
             </div>
@@ -482,29 +482,29 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
               return (
                 <div key={sIdx} className="space-y-2.5">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-1.5">
                     {sec.type === 'code' ? (
-                      <Quote className="w-4 h-4 text-[#d4af37]" />
+                      <Quote className="w-4 h-4 text-[#A87924]" />
                     ) : (
-                      <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+                      <Scroll className="w-3.5 h-3.5 text-[#A87924]" />
                     )}
                     <span>{secHeading}</span>
                   </h4>
 
                   {sec.type === 'code' && sec.content && (
-                    <div className="p-4 rounded-xl bg-[#171113] border border-[#c99738]/30 text-xs sm:text-sm font-mono text-[#fce8bb] leading-relaxed whitespace-pre-line">
+                    <div className="p-4 rounded-xl bg-[#EFE3D0] border border-[#A87924]/50 text-xs sm:text-sm font-mono text-[#54351F] leading-relaxed whitespace-pre-line">
                       {sec.content}
                     </div>
                   )}
 
                   {sec.type === 'quote' && sec.content && (
-                    <div className="p-4 rounded-xl bg-[#141b2b] border border-stone-800 text-xs sm:text-sm font-royal-serif text-stone-200 leading-relaxed italic whitespace-pre-line">
+                    <div className="p-4 rounded-xl bg-[#FFF9EF] border-l-4 border-[#A87924] border border-[#D8C3A2] text-xs sm:text-sm font-royal-serif text-[#292521] leading-relaxed italic whitespace-pre-line">
                       "{sec.content}"
                     </div>
                   )}
 
                   {(!sec.type || sec.type === 'text') && sec.content && (
-                    <div className="p-4 sm:p-5 rounded-xl bg-[#121724] border border-stone-800 text-xs sm:text-sm text-stone-300 leading-relaxed whitespace-pre-line">
+                    <div className="p-4 sm:p-5 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs sm:text-sm text-[#292521] leading-relaxed whitespace-pre-line">
                       {sec.content}
                     </div>
                   )}
@@ -517,14 +517,14 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                             key={tIdx}
                             type="button"
                             onClick={() => onTagClick(tagItem, secHeading)}
-                            className="px-3 py-1 rounded-lg bg-[#182030] hover:bg-[#580014] border border-stone-700 hover:border-[#d4af37] text-xs text-[#fae29c] hover:text-white font-medium transition-colors cursor-pointer"
+                            className="px-3 py-1 rounded-lg bg-[#EFE3D0] hover:bg-[#762D35] border border-[#D8C3A2] hover:border-[#A87924] text-xs text-[#54351F] hover:text-white font-medium transition-colors cursor-pointer"
                           >
                             {tagItem}
                           </button>
                         ) : (
                           <span
                             key={tIdx}
-                            className="px-3 py-1 rounded-lg bg-[#182030] border border-stone-800 text-xs text-[#fae29c] font-medium"
+                            className="px-3 py-1 rounded-lg bg-[#EFE3D0] border border-[#D8C3A2] text-xs text-[#54351F] font-medium"
                           >
                             {tagItem}
                           </span>
@@ -538,9 +538,9 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                       {sec.items.map((listItem, lIdx) => (
                         <div
                           key={lIdx}
-                          className="p-3 rounded-xl bg-[#141926] border border-stone-800/80 text-xs sm:text-sm text-stone-300 flex items-start gap-2.5"
+                          className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] text-xs sm:text-sm text-[#292521] flex items-start gap-2.5"
                         >
-                          <span className="w-2 h-2 rounded-full bg-[#d4af37] mt-1.5 shrink-0" />
+                          <span className="w-2 h-2 rounded-full bg-[#A87924] mt-1.5 shrink-0" />
                           <span>{listItem}</span>
                         </div>
                       ))}
@@ -552,9 +552,9 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
           {/* Primary Sources & References */}
           {item.sources && item.sources.length > 0 && (
-            <div className="space-y-3 pt-2 border-t border-stone-800">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading flex items-center gap-1.5">
-                <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+            <div className="space-y-3 pt-2 border-t border-[#D8C3A2]">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-1.5">
+                <Scroll className="w-3.5 h-3.5 text-[#A87924]" />
                 <span>{item.sourcesLabel || ui.sourcesLabel(item.sources.length)}</span>
               </h4>
               <div className="space-y-2">
@@ -567,19 +567,19 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                   return (
                     <div
                       key={src.id || idx}
-                      className="p-3.5 rounded-xl bg-[#141926] border border-stone-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+                      className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
                     >
                       <div className="space-y-0.5">
                         <div className="flex flex-wrap items-center gap-2">
                           {srcType && (
-                            <span className="text-[10px] font-semibold text-[#d4af37] uppercase bg-stone-900 px-2 py-0.5 rounded border border-stone-800">
+                            <span className="text-[10px] font-semibold text-[#54351F] uppercase bg-[#EFE3D0] px-2 py-0.5 rounded border border-[#D8C3A2]">
                               {srcType}
                             </span>
                           )}
-                          <span className="font-bold text-stone-200">{src.title}</span>
+                          <span className="font-bold text-[#292521]">{src.title}</span>
                         </div>
                         {srcDetails && (
-                          <p className="text-stone-400 text-[11px]">{srcDetails}</p>
+                          <p className="text-[#6B5948] text-[11px]">{srcDetails}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
@@ -588,14 +588,14 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                             href={src.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] text-[#e8c872] hover:underline font-semibold"
+                            className="inline-flex items-center gap-1 text-[11px] text-[#76501F] hover:text-[#A87924] hover:underline font-semibold"
                           >
                             <span>{ui.referenceLink}</span>
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         )}
                         {src.verified && (
-                          <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-semibold bg-emerald-950/40 border border-emerald-800 px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[10px] text-[#14532D] font-semibold bg-[#EDF7F0] border border-[#2D7A4D] px-2 py-0.5 rounded-full">
                             <Check className="w-3 h-3" /> {ui.verified}
                           </span>
                         )}
@@ -609,15 +609,15 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
           {/* Tags */}
           {item.tags && item.tags.length > 0 && (
-            <div className="space-y-2 pt-2 border-t border-stone-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading block">
+            <div className="space-y-2 pt-2 border-t border-[#D8C3A2]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading block">
                 {ui.keywordsLabel}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {item.tags.map((tag, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#182030] text-[#fae29c] border border-[#c99738]/30"
+                    className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2]"
                   >
                     {tag}
                   </span>
@@ -628,7 +628,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
         </div>
 
         {/* Pinned Modal Footer */}
-        <div className="p-4 sm:p-5 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 bg-[#121622] rounded-b-2xl sm:rounded-b-3xl shrink-0">
+        <div className="p-4 sm:p-5 border-t border-[#D8C3A2] flex flex-wrap items-center justify-between gap-3 bg-[#F1E4D0] rounded-b-2xl sm:rounded-b-3xl shrink-0">
           {item.actionButton ? (
             <button
               type="button"
@@ -636,13 +636,13 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                 onClose();
                 item.actionButton?.onClick();
               }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#182030] hover:bg-[#20293d] text-[#fae29c] border border-[#c99738]/40 transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#A87924]/50 transition-all cursor-pointer"
             >
-              <Scroll className="w-3.5 h-3.5 text-[#d4af37]" />
+              <Scroll className="w-3.5 h-3.5 text-[#A87924]" />
               <span>{item.actionButton.label}</span>
             </button>
           ) : (
-            <span className="text-[11px] text-stone-500 font-mono">
+            <span className="text-[11px] text-[#6B5948] font-mono">
               {ui.recordIdLabel}: {item.id}
             </span>
           )}
@@ -650,7 +650,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl text-xs font-bold bg-[#580014] hover:bg-[#72001a] text-[#fae29c] border border-[#d4af37] transition-all cursor-pointer shadow-md active:scale-95 ml-auto"
+            className="px-5 py-2 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm active:scale-95 ml-auto"
           >
             {resolvedCloseLabel}
           </button>

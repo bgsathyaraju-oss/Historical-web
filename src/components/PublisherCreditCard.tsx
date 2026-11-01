@@ -2,6 +2,7 @@ import React from 'react';
 import { Crown, Sparkles, ExternalLink, Phone, Award } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageCode } from '../types';
+import { handleWhatsAppLinkClick } from '../utils/androidBridge';
 
 export const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
   <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
@@ -180,26 +181,26 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
   if (variant === 'compact') {
     return (
       <div
-        className={`inline-flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-[#141824]/95 border border-[#c99738]/60 text-xs print:bg-white print:text-black print:border-stone-400 ${className}`}
+        className={`inline-flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-[#FFFCF5] border border-[#A87924] text-xs print:bg-white print:text-black print:border-stone-400 ${className}`}
       >
         <img
           src={imageSrc}
           alt="Dr.G Sathyanarayana Raju"
           loading="eager"
-          className="w-11 h-11 rounded-full object-cover object-top border border-[#d4af37] shrink-0"
+          className="w-11 h-11 rounded-full object-cover object-top border border-[#A87924] shrink-0"
         />
         <div className="text-left leading-snug">
-          <div className="text-[10px] text-[#d4af37] print:text-stone-700 uppercase font-bold tracking-wider">
+          <div className="text-[10px] text-[#76501F] print:text-stone-700 uppercase font-bold tracking-wider">
             {designedByText}
           </div>
-          <div className="font-bold text-[#fcedc7] print:text-black">
+          <div className="font-bold text-[#54351F] print:text-black">
             {publisherName}
             {localizedName ? ` (${localizedName})` : ''}
           </div>
-          <div className="text-[10.5px] text-stone-200 print:text-stone-800 font-medium">
+          <div className="text-[10.5px] text-[#292521] print:text-stone-800 font-medium">
             {professionalTitles.join(' • ')}
           </div>
-          <div className="text-[10px] text-[#d4af37]/90 print:text-stone-700">
+          <div className="text-[10px] text-[#76501F] print:text-stone-700">
             {organizationName}
           </div>
         </div>
@@ -207,7 +208,8 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-1 p-1.5 rounded-lg bg-[#25D366] text-black hover:bg-[#20ba5a] transition-all print:hidden shrink-0"
+          onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+          className="ml-1 p-1.5 rounded-lg bg-[#762D35] text-white hover:bg-[#5e2229] transition-all print:hidden shrink-0"
           title={`${contactWhatsApp} (+91 9480112897)`}
         >
           <WhatsAppIcon className="w-3.5 h-3.5" />
@@ -220,11 +222,11 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
     return (
       <section
         aria-label="Author Profile — Dr.G Sathyanarayana Raju"
-        className={`rounded-2xl bg-gradient-to-r from-[#21020b] via-[#121626] to-[#21020b] border border-[#d4af37]/75 p-4 sm:p-6 shadow-lg print:bg-white print:text-black print:border-stone-400 print:shadow-none print:break-inside-avoid ${className}`}
+        className={`rounded-2xl bg-[#FFFCF5] border-2 border-[#A87924] p-4 sm:p-6 shadow-md print:bg-white print:text-black print:border-stone-400 print:shadow-none print:break-inside-avoid ${className}`}
       >
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
           <div className="relative shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#fae29c] shadow-md ring-2 ring-[#580014]/80 print:border-stone-500 print:ring-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
               <img
                 src={imageSrc}
                 alt="Dr.G Sathyanarayana Raju — Founder, Web Developer / Designer, Digital Creator, Historical Documentation Contributor"
@@ -233,25 +235,25 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               />
             </div>
             <div
-              className="absolute -bottom-1.5 -right-1.5 bg-[#580014] text-[#fcedc7] p-1.5 rounded-lg border border-[#d4af37] shadow print:hidden"
+              className="absolute -bottom-1.5 -right-1.5 bg-[#762D35] text-white p-1.5 rounded-lg border border-[#A87924] shadow print:hidden"
               title="Dr.G Sathyanarayana Raju — Author & Founder"
             >
-              <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+              <Crown className="w-3.5 h-3.5 text-white" />
             </div>
           </div>
 
           <div className="flex-1 space-y-2 min-w-0">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#580014]/90 border border-[#d4af37]/60 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#fae29c] print:bg-stone-100 print:text-black print:border-stone-400">
-              <Sparkles className="w-3 h-3 text-[#d4af37] print:hidden shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#FFF9EF] border border-[#A87924] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#54351F] print:bg-stone-100 print:text-black print:border-stone-400">
+              <Sparkles className="w-3 h-3 text-[#A87924] print:hidden shrink-0" />
               <span>{designedByText}</span>
             </div>
 
             <div>
-              <h3 className="font-royal-heading font-black text-lg sm:text-xl text-[#fcedc7] print:text-black leading-tight">
+              <h3 className="font-royal-heading font-black text-lg sm:text-xl text-[#54351F] print:text-black leading-tight">
                 {publisherName}
               </h3>
               {localizedName && (
-                <p className="text-xs font-semibold text-[#fae29c]/90 print:text-stone-800 mt-0.5">
+                <p className="text-xs font-semibold text-[#76501F] print:text-stone-800 mt-0.5">
                   {localizedName}
                 </p>
               )}
@@ -265,19 +267,19 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               {professionalTitles.map((titleItem, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#1a2236]/95 border border-[#d4af37]/50 text-[11px] sm:text-xs font-semibold text-[#f5ecd5] print:bg-stone-100 print:text-stone-900 print:border-stone-400"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#FFF9EF] border border-[#A87924]/70 text-[11px] sm:text-xs font-semibold text-[#292521] print:bg-stone-100 print:text-stone-900 print:border-stone-400"
                 >
-                  <Award className="w-3 h-3 text-[#d4af37] print:hidden shrink-0" />
+                  <Award className="w-3 h-3 text-[#762D35] print:hidden shrink-0" />
                   <span>{titleItem}</span>
                 </span>
               ))}
             </div>
 
-            <p className="text-xs sm:text-sm font-bold text-[#d4af37] print:text-stone-900 pt-0.5">
+            <p className="text-xs sm:text-sm font-bold text-[#76501F] print:text-stone-900 pt-0.5">
               {organizationName}
             </p>
 
-            <p className="text-[11px] sm:text-xs text-stone-300 print:text-stone-700 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-[#292521] print:text-stone-700 leading-relaxed">
               {leaderBio}
             </p>
 
@@ -286,18 +288,19 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] transition-all cursor-pointer"
+                onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white transition-all cursor-pointer"
               >
                 <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
                 <span>{contactWhatsApp}</span>
-                <ExternalLink className="w-3 h-3 opacity-75" />
+                <ExternalLink className="w-3 h-3 opacity-80" />
               </a>
 
               <a
                 href="tel:+919480112897"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#182032] hover:bg-[#212c44] text-stone-200 border border-stone-700/80 hover:border-[#c99738] transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#FFF9EF] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all"
               >
-                <Phone className="w-3 h-3 text-[#d4af37]" />
+                <Phone className="w-3 h-3 text-[#762D35]" />
                 <span>+91 9480112897</span>
               </a>
             </div>
@@ -309,15 +312,11 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
 
   return (
     <div className={`w-full max-w-5xl mx-auto px-4 ${className}`}>
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#21020b] via-[#121626] to-[#21020b] border-2 border-[#d4af37]/80 shadow-[0_0_35px_rgba(212,175,55,0.25)] hover:shadow-[0_0_45px_rgba(212,175,55,0.35)] transition-all p-5 sm:p-7 print:bg-white print:text-black print:border-stone-400 print:shadow-none">
-        {/* Subtle decorative radial glow */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#d4af37]/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20 print:hidden"></div>
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#580014]/25 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20 print:hidden"></div>
-
+      <div className="relative overflow-hidden rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] shadow-md transition-all p-5 sm:p-7 print:bg-white print:text-black print:border-stone-400 print:shadow-none">
         <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 text-center sm:text-left">
           {/* Dr.G Sathyanarayana Raju Portrait */}
           <div className="relative shrink-0 group">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-[#fae29c] shadow-[0_10px_30px_rgba(0,0,0,0.8)] ring-4 ring-[#580014]/90 print:border-stone-500 print:ring-0">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
               <img
                 src={imageSrc}
                 alt={`${publisherName} — ${CANONICAL_PROFESSIONAL_TITLES.join(', ')}`}
@@ -327,26 +326,26 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
             </div>
             {/* Crown Embellishment Badge */}
             <div
-              className="absolute -bottom-2 -right-2 bg-gradient-to-tr from-[#580014] to-[#80001c] text-[#fcedc7] p-2 rounded-xl border border-[#d4af37] shadow-xl print:hidden"
+              className="absolute -bottom-2 -right-2 bg-[#762D35] text-white p-2 rounded-xl border border-[#A87924] shadow-md print:hidden"
               title="Founder • Web Developer / Designer • Digital Creator • Historical Documentation Contributor"
             >
-              <Crown className="w-4 h-4 text-[#d4af37]" />
+              <Crown className="w-4 h-4 text-white" />
             </div>
           </div>
 
           {/* Publishing & Leadership Information */}
           <div className="flex-1 space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#580014]/80 border border-[#d4af37]/60 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#fae29c] shadow-sm print:bg-stone-100 print:text-black print:border-stone-400">
-              <Sparkles className="w-3.5 h-3.5 text-[#d4af37] print:hidden shrink-0" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF9EF] border border-[#A87924] text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#54351F] shadow-sm print:bg-stone-100 print:text-black print:border-stone-400">
+              <Sparkles className="w-3.5 h-3.5 text-[#A87924] print:hidden shrink-0" />
               <span>{designedByText}</span>
             </div>
 
             <div>
-              <h2 className="font-royal-heading font-black text-2xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-[#fff7e6] via-[#fae29c] to-[#d4af37] tracking-tight leading-tight print:text-black">
+              <h2 className="font-royal-heading font-black text-2xl sm:text-4xl text-[#54351F] tracking-tight leading-tight print:text-black">
                 {publisherName}
               </h2>
               {localizedName && (
-                <p className="text-sm sm:text-base font-bold text-[#fae29c]/90 print:text-stone-800 mt-0.5">
+                <p className="text-sm sm:text-base font-bold text-[#76501F] print:text-stone-800 mt-0.5">
                   {localizedName}
                 </p>
               )}
@@ -360,19 +359,19 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               {professionalTitles.map((titleItem, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#161d2f]/95 border border-[#d4af37]/55 text-xs sm:text-sm font-semibold text-[#f5ecd5] shadow-sm print:bg-stone-100 print:text-stone-900 print:border-stone-400"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FFF9EF] border border-[#A87924] text-xs sm:text-sm font-semibold text-[#292521] shadow-sm print:bg-stone-100 print:text-stone-900 print:border-stone-400"
                 >
-                  <Award className="w-3.5 h-3.5 text-[#d4af37] print:hidden shrink-0" />
+                  <Award className="w-3.5 h-3.5 text-[#762D35] print:hidden shrink-0" />
                   <span>{titleItem}</span>
                 </span>
               ))}
             </div>
 
-            <p className="text-xs sm:text-sm font-bold text-[#d4af37] print:text-stone-900 pt-0.5">
+            <p className="text-xs sm:text-sm font-bold text-[#76501F] print:text-stone-900 pt-0.5">
               {organizationName}
             </p>
 
-            <p className="text-xs text-stone-300 max-w-2xl leading-relaxed print:text-stone-700">
+            <p className="text-xs text-[#292521] max-w-2xl leading-relaxed print:text-stone-700">
               {leaderBio}
             </p>
 
@@ -382,18 +381,19 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#25D366] hover:bg-[#20ba5a] text-[#052e16] hover:text-black shadow-[0_4px_20px_rgba(37,211,102,0.35)] hover:shadow-[0_4px_25px_rgba(37,211,102,0.5)] transition-all cursor-pointer group"
+                onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#762D35] hover:bg-[#5e2229] text-white shadow-sm transition-all cursor-pointer group"
               >
                 <WhatsAppIcon className="w-4 h-4 fill-current" />
                 <span>{contactWhatsApp}</span>
-                <ExternalLink className="w-3.5 h-3.5 opacity-70 group-hover:translate-x-0.5 transition-transform" />
+                <ExternalLink className="w-3.5 h-3.5 opacity-80 group-hover:translate-x-0.5 transition-transform" />
               </a>
 
               <a
                 href="tel:+919480112897"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#182032] hover:bg-[#212c44] text-stone-200 border border-stone-700/80 hover:border-[#c99738] transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#FFF9EF] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all"
               >
-                <Phone className="w-3.5 h-3.5 text-[#d4af37]" />
+                <Phone className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>+91 9480112897</span>
               </a>
             </div>

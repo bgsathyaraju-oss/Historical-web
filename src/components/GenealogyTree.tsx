@@ -74,26 +74,26 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
     : null;
 
   return (
-    <div className="w-full bg-[#111520] border border-[#c99738]/40 rounded-2xl p-4 sm:p-6 shadow-xl">
+    <div className="w-full bg-[#FFFCF5] border border-[#D8C3A2] rounded-2xl p-4 sm:p-6 shadow-md text-[#292521]">
       {/* Legend & Epistemic Disclaimer */}
-      <div className="mb-6 p-4 rounded-xl bg-[#161c2a] border border-stone-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="mb-6 p-4 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Info className="w-4 h-4 text-[#d4af37] shrink-0" />
-            <h4 className="text-xs sm:text-sm font-semibold text-[#fcedc7] font-royal-heading">
+            <Info className="w-4 h-4 text-[#A87924] shrink-0" />
+            <h4 className="text-xs sm:text-sm font-bold text-[#54351F] font-royal-heading">
               {ui.legendTitle}
             </h4>
           </div>
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-[#6B5948]">
             {ui.legendDesc}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-xs">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-600/50">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span> {ui.documentedBadge}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDF7F0] text-[#14532D] border border-[#2D7A4D] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#2D7A4D] shrink-0"></span> {ui.documentedBadge}
           </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-950/80 text-indigo-300 border border-indigo-600/50">
-            <span className="w-2 h-2 rounded-full bg-indigo-400 shrink-0"></span> {ui.traditionalBadge}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#FDF6E7] text-[#54351F] border border-[#A87924] font-semibold">
+            <span className="w-2 h-2 rounded-full bg-[#A87924] shrink-0"></span> {ui.traditionalBadge}
           </span>
         </div>
       </div>
@@ -104,11 +104,11 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
           const genNodes = nodes.filter(n => n.generation === gen);
           return (
             <div key={gen} className="relative">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37] mb-3 flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-stone-900 border border-stone-800 shadow-sm break-words">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-[#54351F] mb-3 flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg bg-[#EFE3D0] border border-[#D8C3A2] shadow-sm break-words">
                   {getGenerationLabel(gen)}
                 </span>
-                <div className="flex-1 border-t border-stone-800"></div>
+                <div className="flex-1 border-t border-[#D8C3A2]"></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -126,10 +126,10 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
                       }}
                       className={`p-4 rounded-xl cursor-pointer transition-all duration-200 border relative ${
                         isSelected
-                          ? 'bg-[#580014]/40 border-[#d4af37] shadow-[0_0_20px_rgba(212,175,55,0.2)]'
+                          ? 'bg-[#EFE3D0] border-2 border-[#762D35] shadow-md'
                           : isDocumented
-                          ? 'bg-[#151a26] border-emerald-900/40 hover:border-emerald-600/60 hover:bg-[#1a2130]'
-                          : 'bg-[#151a26] border-indigo-900/40 hover:border-indigo-600/60 hover:bg-[#1a2130]'
+                          ? 'bg-[#FFF9EF] border-[#2D7A4D]/50 hover:border-[#2D7A4D] hover:bg-[#EFE3D0]'
+                          : 'bg-[#FFF9EF] border-[#A87924]/50 hover:border-[#A87924] hover:bg-[#EFE3D0]'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2.5 mb-2">
@@ -145,19 +145,19 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
                                 target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_portrait.jpg`;
                               }
                             }}
-                            className="w-12 h-12 rounded-xl object-cover object-top shrink-0 border border-[#c99738]/40 bg-stone-950"
+                            className="w-12 h-12 rounded-xl object-cover object-top shrink-0 border border-[#A87924]/50 bg-[#EFE3D0]"
                           />
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
-                              <span className={`p-1 rounded-md shrink-0 ${isDocumented ? 'bg-emerald-950 text-emerald-400' : 'bg-indigo-950 text-indigo-400'}`}>
+                              <span className={`p-1 rounded-md shrink-0 ${isDocumented ? 'bg-[#EDF7F0] text-[#14532D]' : 'bg-[#FDF6E7] text-[#54351F]'}`}>
                                 {isDocumented ? <ShieldCheck className="w-3 h-3" /> : <Scroll className="w-3 h-3" />}
                               </span>
-                              <h5 className="text-sm font-bold text-stone-100 font-royal-heading leading-tight break-words">
+                              <h5 className="text-sm font-bold text-[#54351F] font-royal-heading leading-tight break-words">
                                 {node.name}
                               </h5>
                             </div>
                             {node.reign && (
-                              <span className="text-[11px] text-[#d4af37] font-medium block mt-0.5">
+                              <span className="text-[11px] text-[#76501F] font-semibold block mt-0.5">
                                 {node.reign}
                               </span>
                             )}
@@ -166,14 +166,14 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
                       </div>
 
                       {node.titles && (
-                        <p className="text-xs text-stone-400 line-clamp-2 mb-2 italic">
+                        <p className="text-xs text-[#292521] line-clamp-2 mb-2 italic">
                           "{node.titles}"
                         </p>
                       )}
 
-                      <div className="flex items-center justify-between text-[11px] pt-2 border-t border-stone-800/80 text-stone-400">
+                      <div className="flex items-center justify-between text-[11px] pt-2 border-t border-[#D8C3A2] text-[#6B5948]">
                         <span>{ui.primarySourcesCount(node.sources?.length || 0)}</span>
-                        <span className={`font-semibold ${isDocumented ? 'text-emerald-400' : 'text-indigo-400'}`}>
+                        <span className={`font-semibold ${isDocumented ? 'text-[#14532D]' : 'text-[#76501F]'}`}>
                           {isDocumented ? ui.corroboratedArrow : ui.traditionalArrow}
                         </span>
                       </div>
@@ -190,12 +190,12 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
       {selectedNode && (
         <div
           onClick={() => setModalNodeId(selectedNode.id)}
-          className="mt-8 p-5 rounded-xl bg-[#161c2b] border border-[#c99738]/40 hover:border-[#c99738] cursor-pointer transition-all animate-in fade-in duration-200"
+          className="mt-8 p-5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50 hover:border-[#A87924] cursor-pointer transition-all animate-in fade-in duration-200"
         >
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-stone-800">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-[#D8C3A2]">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h4 className="text-lg font-bold text-[#fcedc7] font-royal-heading">
+                <h4 className="text-lg font-bold text-[#54351F] font-royal-heading">
                   {selectedNode.name}
                 </h4>
                 <EvidenceBadge
@@ -203,32 +203,32 @@ export const GenealogyTree: React.FC<GenealogyTreeProps> = ({ nodes }) => {
                   size="sm"
                 />
               </div>
-              <p className="text-xs text-[#d4af37] font-medium mt-0.5">
+              <p className="text-xs text-[#76501F] font-semibold mt-0.5">
                 {selectedNode.reign ? `${ui.reignEraLabel}: ${selectedNode.reign}` : ui.historicalPeriodRecord}
               </p>
             </div>
             {selectedNode.spouse && (
-              <div className="text-xs text-stone-400 bg-stone-900/80 px-3 py-1.5 rounded-lg border border-stone-800">
-                <span className="text-stone-300 font-medium">{ui.consortLabel}:</span> {selectedNode.spouse}
+              <div className="text-xs text-[#292521] bg-[#EFE3D0] px-3 py-1.5 rounded-lg border border-[#D8C3A2]">
+                <span className="text-[#54351F] font-semibold">{ui.consortLabel}:</span> {selectedNode.spouse}
               </div>
             )}
           </div>
 
           {selectedNode.notes && (
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed mb-4">
+            <p className="text-xs sm:text-sm text-[#292521] leading-relaxed mb-4">
               {selectedNode.notes}
             </p>
           )}
 
           {selectedNode.sources && selectedNode.sources.length > 0 && (
             <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] mb-2 font-royal-heading">
+              <h5 className="text-xs font-bold uppercase tracking-wider text-[#54351F] mb-2 font-royal-heading">
                 {ui.citationsHeading}
               </h5>
               <ul className="space-y-1.5">
                 {selectedNode.sources.map((src, i) => (
-                  <li key={i} className="text-xs text-stone-400 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] shrink-0"></span>
+                  <li key={i} className="text-xs text-[#292521] flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#A87924] shrink-0"></span>
                     <span>{src}</span>
                   </li>
                 ))}

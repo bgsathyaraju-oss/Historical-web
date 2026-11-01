@@ -92,30 +92,30 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose }) =
   if (!item) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl bg-[#111520] border border-[#c99738]/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292521]/70 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-4xl bg-[#FFFCF5] border-2 border-[#A87924] rounded-2xl shadow-[0_14px_45px_rgba(75,51,31,0.25)] overflow-hidden flex flex-col max-h-[90vh] text-[#292521]">
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-stone-800 bg-[#161c2a]">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-[#D8C3A2] bg-[#F1E4D0]">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] px-2.5 py-0.5 rounded bg-stone-900 border border-stone-800">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#54351F] px-2.5 py-0.5 rounded bg-[#FFFCF5] border border-[#D8C3A2]">
               {item.category}
             </span>
-            <h3 className="font-royal-heading font-bold text-sm sm:text-base text-stone-100 truncate max-w-md">
+            <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F] truncate max-w-md">
               {item.title}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-stone-400 hover:text-stone-100 hover:bg-stone-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#54351F] hover:text-white hover:bg-[#762D35] border border-[#D8C3A2] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="overflow-y-auto flex-1 p-5 space-y-4">
+        <div className="overflow-y-auto flex-1 p-5 space-y-4 bg-[#FFFCF5]">
           {/* Main Visual Image */}
-          <div className="relative w-full rounded-xl overflow-hidden bg-black/50 border border-stone-800 flex items-center justify-center max-h-[50vh]">
+          <div className="relative w-full rounded-xl overflow-hidden bg-[#EFE3D0] border border-[#D8C3A2] flex items-center justify-center max-h-[50vh]">
             <img
               src={item.image_url}
               alt={item.alt_text || item.title}
@@ -124,46 +124,46 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose }) =
           </div>
 
           {/* Metadata Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-[#161c2b] p-4 rounded-xl border border-stone-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-[#FFF9EF] p-4 rounded-xl border border-[#D8C3A2]">
             <div className="space-y-0.5">
-              <span className="text-stone-400 font-medium flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-[#d4af37]" /> {ui.periodLabel}
+              <span className="text-[#6B5948] font-medium flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-[#A87924]" /> {ui.periodLabel}
               </span>
-              <p className="font-semibold text-stone-200">{item.period}</p>
+              <p className="font-semibold text-[#292521]">{item.period}</p>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-stone-400 font-medium flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-[#d4af37]" /> {ui.locationLabel}
+              <span className="text-[#6B5948] font-medium flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-[#A87924]" /> {ui.locationLabel}
               </span>
-              <p className="font-semibold text-stone-200">{item.location}</p>
+              <p className="font-semibold text-[#292521]">{item.location}</p>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-stone-400 font-medium flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-[#d4af37]" /> {ui.creatorLabel}
+              <span className="text-[#6B5948] font-medium flex items-center gap-1">
+                <User className="w-3.5 h-3.5 text-[#A87924]" /> {ui.creatorLabel}
               </span>
-              <p className="font-semibold text-stone-200">{item.creator_photographer}</p>
+              <p className="font-semibold text-[#292521]">{item.creator_photographer}</p>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-stone-400 font-medium flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#d4af37]" /> {ui.licenseLabel}
+              <span className="text-[#6B5948] font-medium flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#A87924]" /> {ui.licenseLabel}
               </span>
-              <p className="font-semibold text-stone-200">{item.copyright_license}</p>
+              <p className="font-semibold text-[#292521]">{item.copyright_license}</p>
             </div>
           </div>
 
           {/* Description & Historical Provenance */}
           <div className="space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#d4af37] font-royal-heading">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
               {ui.descHeading}
             </h4>
-            <p className="text-xs sm:text-sm text-stone-300 leading-relaxed bg-[#0c0f17] p-3 rounded-xl border border-stone-800">
+            <p className="text-xs sm:text-sm text-[#292521] leading-relaxed bg-[#FFF9EF] p-3 rounded-xl border border-[#D8C3A2]">
               {item.description}
             </p>
-            <div className="text-[11px] text-stone-400 flex items-center gap-2 pt-1">
-              <span className="font-medium text-stone-300">{ui.sourceLabel}</span>
+            <div className="text-[11px] text-[#6B5948] flex items-center gap-2 pt-1">
+              <span className="font-semibold text-[#54351F]">{ui.sourceLabel}</span>
               <span>{item.source}</span>
             </div>
           </div>

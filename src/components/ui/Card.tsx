@@ -8,11 +8,11 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<CardVariant, string> = {
-  default: 'bg-[#0b1528]/90 royal-border backdrop-blur-md shadow-xl',
-  glow: 'bg-gradient-to-b from-[#0b1528] to-[#070d18] royal-border-glow shadow-2xl',
-  maroon: 'bg-gradient-to-b from-[#3a000d]/85 via-[#151922]/95 to-[#0b1528]/95 royal-border shadow-2xl',
-  pattern: 'bg-[#0b1528]/95 bg-pattern-royal royal-border shadow-xl backdrop-blur-md',
-  flat: 'bg-[#151922]/90 border border-stone-800 shadow-md',
+  default: 'bg-[var(--card-bg)] border border-[var(--border-color)] shadow-[0_6px_24px_var(--shadow-color)]',
+  glow: 'bg-gradient-to-b from-[var(--card-bg)] to-[var(--surface-bg)] border-2 border-[var(--accent-gold)] shadow-[0_8px_28px_var(--shadow-color)]',
+  maroon: 'bg-gradient-to-b from-[var(--surface-bg)] via-[var(--card-bg)] to-[var(--section-bg)] border-2 border-[var(--accent-gold)] shadow-[0_8px_28px_var(--shadow-color)]',
+  pattern: 'bg-[var(--card-bg)] bg-pattern-royal border border-[var(--border-color)] shadow-[0_6px_24px_var(--shadow-color)]',
+  flat: 'bg-[var(--surface-bg)] border border-[var(--border-color)] shadow-sm',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
@@ -20,23 +20,22 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     return (
       <div
         ref={ref}
-        className={`relative rounded-2xl overflow-hidden text-[#faf7f0] transition-all duration-200 ${variantStyles[variant]} ${className}`}
+        className={`relative rounded-2xl overflow-hidden text-[var(--primary-text)] transition-all duration-200 ${variantStyles[variant]} ${className}`}
         {...props}
       >
         {ornament && (
           <>
-            {/* Royal corner ornamental accents */}
             <div className="absolute top-0 left-0 w-8 h-8 pointer-events-none">
-              <div className="absolute top-1 left-1 w-2.5 h-2.5 border-t border-l border-[#c99738]/60" />
+              <div className="absolute top-1 left-1 w-2.5 h-2.5 border-t border-l border-[#A87924]/70" />
             </div>
             <div className="absolute top-0 right-0 w-8 h-8 pointer-events-none">
-              <div className="absolute top-1 right-1 w-2.5 h-2.5 border-t border-r border-[#c99738]/60" />
+              <div className="absolute top-1 right-1 w-2.5 h-2.5 border-t border-r border-[#A87924]/70" />
             </div>
             <div className="absolute bottom-0 left-0 w-8 h-8 pointer-events-none">
-              <div className="absolute bottom-1 left-1 w-2.5 h-2.5 border-b border-l border-[#c99738]/60" />
+              <div className="absolute bottom-1 left-1 w-2.5 h-2.5 border-b border-l border-[#A87924]/70" />
             </div>
             <div className="absolute bottom-0 right-0 w-8 h-8 pointer-events-none">
-              <div className="absolute bottom-1 right-1 w-2.5 h-2.5 border-b border-r border-[#c99738]/60" />
+              <div className="absolute bottom-1 right-1 w-2.5 h-2.5 border-b border-r border-[#A87924]/70" />
             </div>
           </>
         )}
@@ -56,7 +55,7 @@ export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
     return (
       <div
         ref={ref}
-        className={`p-6 ${border ? 'border-b border-[#c99738]/20' : ''} ${className}`}
+        className={`p-6 ${border ? 'border-b border-[var(--border-color)] bg-[var(--surface-bg)]' : ''} ${className}`}
         {...props}
       >
         {children}
@@ -77,7 +76,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
       <Component
         ref={ref}
         className={`font-royal-heading tracking-wide font-semibold text-lg md:text-xl ${
-          goldText ? 'royal-gold-text' : 'text-[#faf7f0]'
+          goldText ? 'text-[var(--heading-text)]' : 'text-[var(--heading-text)]'
         } ${className}`}
         {...props}
       >
@@ -91,7 +90,7 @@ CardTitle.displayName = 'CardTitle';
 export const CardDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ children, className = '', ...props }, ref) => {
     return (
-      <p ref={ref} className={`text-stone-300 text-xs md:text-sm mt-1.5 leading-relaxed ${className}`} {...props}>
+      <p ref={ref} className={`text-[var(--secondary-text)] text-xs md:text-sm mt-1.5 leading-relaxed ${className}`} {...props}>
         {children}
       </p>
     );
@@ -120,7 +119,7 @@ export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(
       <div
         ref={ref}
         className={`p-6 pt-4 flex items-center justify-between ${
-          border ? 'border-t border-[#c99738]/20 bg-[#070d18]/40' : ''
+          border ? 'border-t border-[var(--border-color)] bg-[var(--surface-bg)]' : ''
         } ${className}`}
         {...props}
       >

@@ -153,14 +153,14 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Title */}
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#580014] text-[#fcedc7] text-xs font-semibold border border-[#d4af37]/40">
-          <UserPlus className="w-3.5 h-3.5 text-[#d4af37]" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#762D35] text-white text-xs font-semibold border border-[#A87924]">
+          <UserPlus className="w-3.5 h-3.5 text-white" />
           <span>Community Membership Registration</span>
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           Create Your Member Account
         </h1>
-        <p className="text-xs sm:text-sm text-stone-400 max-w-xl mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6B5948] max-w-xl mx-auto leading-relaxed">
           Join researchers, historians, and community members in preserving the legacy of Suryavamsha Odiyaraju Kshatriya.
         </p>
       </div>
@@ -170,10 +170,10 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
         <button
           type="button"
           onClick={() => setActiveStep(1)}
-          className={`px-4 py-2 rounded-xl transition-all ${
+          className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
             activeStep === 1
-              ? 'bg-[#c99738] text-[#300207] shadow-md'
-              : 'bg-[#161c2a] text-stone-400 border border-stone-800'
+              ? 'bg-[#762D35] text-white shadow-sm border border-[#A87924]'
+              : 'bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2]'
           }`}
         >
           1. Mandatory Profile & Credentials (12 Fields)
@@ -188,10 +188,10 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
               setActiveStep(2);
             }
           }}
-          className={`px-4 py-2 rounded-xl transition-all ${
+          className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
             activeStep === 2
-              ? 'bg-[#c99738] text-[#300207] shadow-md'
-              : 'bg-[#161c2a] text-stone-400 border border-stone-800'
+              ? 'bg-[#762D35] text-white shadow-sm border border-[#A87924]'
+              : 'bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2]'
           }`}
         >
           2. Academic & Research Interests (Optional)
@@ -199,24 +199,24 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
       </div>
 
       {error && (
-        <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-800 text-xs sm:text-sm text-rose-200 flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="p-4 rounded-xl bg-[#fcedee] border border-[#dfa5ab] text-xs sm:text-sm text-[#762D35] flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-[#762D35] shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {/* Form Container */}
-      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-[#121622] border border-[#c99738]/40 space-y-6 shadow-2xl">
+      <form onSubmit={handleSubmit} className="p-6 sm:p-8 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-6 shadow-[0_8px_28px_rgba(75,51,31,0.12)]">
         {activeStep === 1 ? (
           <div className="space-y-4">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] border-b border-stone-800 pb-2">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F] border-b border-[#D8C3A2] pb-2">
               Mandatory Registration Information
             </h3>
 
             {/* 1. Full Name */}
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">
-                1. Full Legal Name <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                1. Full Legal Name <span className="text-[#762D35]">*</span>
               </label>
               <input
                 type="text"
@@ -225,21 +225,21 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                 onChange={handleInputChange}
                 required
                 placeholder="e.g. Sathyanarayana Raju"
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               />
             </div>
 
             {/* 2 & 3. Gender and Date of Birth */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  2. Gender <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  2. Gender <span className="text-[#762D35]">*</span>
                 </label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleInputChange}
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -249,8 +249,8 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  3. Date of Birth <span className="text-rose-400">*</span> (Private)
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  3. Date of Birth <span className="text-[#762D35]">*</span> (Private)
                 </label>
                 <input
                   type="date"
@@ -258,7 +258,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.date_of_birth}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
             </div>
@@ -266,8 +266,8 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
             {/* 4 & 5. Country and State/Province */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  4. Country <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  4. Country <span className="text-[#762D35]">*</span>
                 </label>
                 <input
                   type="text"
@@ -275,13 +275,13 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.country}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  5. State or Province <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  5. State or Province <span className="text-[#762D35]">*</span>
                 </label>
                 <input
                   type="text"
@@ -290,7 +290,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   onChange={handleInputChange}
                   required
                   placeholder="e.g. Odisha, Andhra Pradesh, Karnataka"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
             </div>
@@ -298,8 +298,8 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
             {/* 6 & 7. District and City/Town/Village */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  6. District <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  6. District <span className="text-[#762D35]">*</span>
                 </label>
                 <input
                   type="text"
@@ -308,13 +308,13 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   onChange={handleInputChange}
                   required
                   placeholder="e.g. Cuttack, Visakhapatnam, Ballari"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  7. City, Town or Village <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  7. City, Town or Village <span className="text-[#762D35]">*</span>
                 </label>
                 <input
                   type="text"
@@ -323,21 +323,21 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   onChange={handleInputChange}
                   required
                   placeholder="e.g. Puri, Kondavidu, Bengaluru"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
             </div>
 
             {/* 8. Preferred Website Language */}
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">
-                8. Preferred Website Language (8 Languages Supported) <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                8. Preferred Website Language (8 Languages Supported) <span className="text-[#762D35]">*</span>
               </label>
               <select
                 name="preferred_language"
                 value={formData.preferred_language}
                 onChange={handleInputChange}
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               >
                 {SUPPORTED_LANGUAGES.map(lang => (
                   <option key={lang.code} value={lang.code}>
@@ -349,8 +349,8 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
 
             {/* 9. Email Address */}
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">
-                9. Email Address <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                9. Email Address <span className="text-[#762D35]">*</span>
               </label>
               <input
                 type="email"
@@ -359,15 +359,15 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                 onChange={handleInputChange}
                 required
                 placeholder="name@example.com"
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               />
             </div>
 
             {/* 10 & 11. Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  10. Password <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  10. Password <span className="text-[#762D35]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -377,12 +377,12 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                     onChange={handleInputChange}
                     required
                     placeholder="Min 8 chars, uppercase, digit & symbol"
-                    className="w-full px-3.5 py-2 pr-10 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                    className="w-full px-3.5 py-2 pr-10 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-200"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#292521]"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -390,8 +390,8 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
-                  11. Confirm Password <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
+                  11. Confirm Password <span className="text-[#762D35]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -401,12 +401,12 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                     onChange={handleInputChange}
                     required
                     placeholder="Re-enter password"
-                    className="w-full px-3.5 py-2 pr-10 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                    className="w-full px-3.5 py-2 pr-10 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-200"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#292521]"
                   >
                     {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -423,10 +423,10 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   checked={formData.accept_terms_privacy}
                   onChange={handleInputChange}
                   required
-                  className="mt-1 w-4 h-4 text-[#c99738] rounded border-stone-700 focus:ring-[#c99738]"
+                  className="mt-1 w-4 h-4 text-[#762D35] rounded border-[#D8C3A2] focus:ring-[#A87924]"
                 />
-                <span className="text-xs text-stone-300 leading-relaxed">
-                  12. I hereby accept the <button type="button" onClick={() => onNavigate('/privacy')} className="text-[#e8c872] underline">Privacy Policy</button> and <button type="button" onClick={() => onNavigate('/terms')} className="text-[#e8c872] underline">Terms of Use</button>. I understand that sensitive personal data (date of birth, exact address) is strictly confidential and protected from public exposure.
+                <span className="text-xs text-[#292521] leading-relaxed">
+                  12. I hereby accept the <button type="button" onClick={() => onNavigate('/privacy')} className="text-[#76501F] font-semibold underline cursor-pointer">Privacy Policy</button> and <button type="button" onClick={() => onNavigate('/terms')} className="text-[#76501F] font-semibold underline cursor-pointer">Terms of Use</button>. I understand that sensitive personal data (date of birth, exact address) is strictly confidential and protected from public exposure.
                 </span>
               </label>
             </div>
@@ -435,7 +435,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
               <button
                 type="button"
                 onClick={() => onNavigate('/login')}
-                className="text-xs text-stone-400 hover:text-[#e8c872]"
+                className="text-xs text-[#76501F] hover:text-[#A87924] font-semibold cursor-pointer"
               >
                 Already have an account? Sign In
               </button>
@@ -450,7 +450,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                     setActiveStep(2);
                   }
                 }}
-                className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-[#c99738] text-[#300207] hover:bg-[#dfab43] transition-all cursor-pointer flex items-center gap-2"
+                className="px-5 py-2.5 rounded-xl font-semibold text-xs bg-[#762D35] text-white hover:bg-[#5e2229] transition-all cursor-pointer flex items-center gap-2"
               >
                 <span>Continue to Optional Profile Info</span>
                 <ArrowRight className="w-4 h-4" />
@@ -459,16 +459,16 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
           </div>
         ) : (
           <div className="space-y-4 animate-in fade-in duration-200">
-            <h3 className="font-royal-heading font-bold text-base text-[#fcedc7] border-b border-stone-800 pb-2">
+            <h3 className="font-royal-heading font-bold text-base text-[#54351F] border-b border-[#D8C3A2] pb-2">
               Optional Academic & Biographical Profile Fields
             </h3>
-            <p className="text-xs text-stone-400">
+            <p className="text-xs text-[#6B5948]">
               You can leave these blank or fill them to enhance your visibility among fellow researchers.
             </p>
 
             {/* 13. Profile Photo */}
-            <div className="p-4 rounded-2xl bg-[#182030] border border-stone-700/80 space-y-3">
-              <label className="block text-xs font-semibold text-stone-200">
+            <div className="p-4 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-3">
+              <label className="block text-xs font-semibold text-[#54351F]">
                 13. Profile Photo (Optional)
               </label>
               <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -476,10 +476,10 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   <img
                     src={formData.profile_photo_url}
                     alt="Preview"
-                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#c99738] shrink-0"
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-[#A87924] shrink-0"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-[#580014] border border-[#d4af37] flex items-center justify-center text-[#d4af37] shrink-0">
+                  <div className="w-16 h-16 rounded-2xl bg-[#762D35] border border-[#A87924] flex items-center justify-center text-white shrink-0">
                     <ImageIcon className="w-6 h-6" />
                   </div>
                 )}
@@ -496,7 +496,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploadingPhoto}
-                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] hover:bg-[#dfab43] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#762D35] text-white hover:bg-[#5e2229] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
                       {uploadingPhoto ? (
                         <>
@@ -514,7 +514,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                       <button
                         type="button"
                         onClick={() => setFormData(prev => ({ ...prev, profile_photo_url: '' }))}
-                        className="text-xs text-rose-400 hover:text-rose-300 px-2 py-1"
+                        className="text-xs text-[#762D35] hover:underline px-2 py-1 cursor-pointer"
                       >
                         Remove
                       </button>
@@ -526,13 +526,13 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                     value={formData.profile_photo_url}
                     onChange={handleInputChange}
                     placeholder="Or enter image URL (https://...)"
-                    className="w-full px-3 py-1.5 text-xs rounded-xl bg-[#121622] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                    className="w-full px-3 py-1.5 text-xs rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                   />
-                  <p className="text-[11px] text-stone-400">
+                  <p className="text-[11px] text-[#6B5948]">
                     Upload a portrait photo (JPG, PNG, WebP up to 5MB).
                   </p>
                   {uploadError && (
-                    <p className="text-xs text-rose-400 flex items-center gap-1">
+                    <p className="text-xs text-[#762D35] flex items-center gap-1">
                       <AlertCircle className="w-3.5 h-3.5" /> {uploadError}
                     </p>
                   )}
@@ -543,7 +543,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
             {/* 14 & 15. Education and Profession */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
                   14. Education & Degrees
                 </label>
                 <input
@@ -552,12 +552,12 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.education}
                   onChange={handleInputChange}
                   placeholder="e.g. M.A. History, B.Tech, Ph.D."
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
                   15. Profession
                 </label>
                 <input
@@ -566,7 +566,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.profession}
                   onChange={handleInputChange}
                   placeholder="e.g. Historian, Engineer, Teacher"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
             </div>
@@ -574,7 +574,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
             {/* 16 & 17. Current Work & Organization */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
                   16. Current Work / Occupation
                 </label>
                 <input
@@ -583,12 +583,12 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.current_work}
                   onChange={handleInputChange}
                   placeholder="e.g. Academic Research / Independent Study"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
                   17. Organization or Institution
                 </label>
                 <input
@@ -597,14 +597,14 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.organization}
                   onChange={handleInputChange}
                   placeholder="e.g. Utkal University / Heritage Trust"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
             </div>
 
             {/* 18. Biography */}
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">
                 18. Biography or About Me
               </label>
               <textarea
@@ -613,14 +613,14 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                 onChange={handleInputChange}
                 rows={3}
                 placeholder="Brief summary of your background, ancestry, or research focus..."
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               />
             </div>
 
             {/* 19 & 20. Historical Interests & Languages Known */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
                   19. Areas of Historical Interest (comma-separated)
                 </label>
                 <input
@@ -629,12 +629,12 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.areas_of_historical_interest}
                   onChange={handleInputChange}
                   placeholder="Gajapathi Inscriptions, Forts, Genealogy"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-300 mb-1">
+                <label className="block text-xs font-semibold text-[#54351F] mb-1">
                   20. Languages Known (comma-separated)
                 </label>
                 <input
@@ -643,14 +643,14 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                   value={formData.languages_known}
                   onChange={handleInputChange}
                   placeholder="Odia, Telugu, Kannada, English, Hindi"
-                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                  className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
                 />
               </div>
             </div>
 
             {/* 21. Website or Public Portfolio */}
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">
                 21. Website or Public Portfolio URL
               </label>
               <input
@@ -659,13 +659,13 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                 value={formData.website_url}
                 onChange={handleInputChange}
                 placeholder="https://mysite.org"
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               />
             </div>
 
             {/* 22. Historical Research Contributions */}
             <div>
-              <label className="block text-xs font-semibold text-stone-300 mb-1">
+              <label className="block text-xs font-semibold text-[#54351F] mb-1">
                 22. Historical Research Contributions / Publications
               </label>
               <textarea
@@ -674,7 +674,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                 onChange={handleInputChange}
                 rows={2}
                 placeholder="Mention any family manuscripts, papers, or local epigraph studies you have contributed..."
-                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-100 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+                className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               />
             </div>
 
@@ -682,7 +682,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
               <button
                 type="button"
                 onClick={() => setActiveStep(1)}
-                className="px-4 py-2 rounded-xl text-xs text-stone-400 hover:text-white border border-stone-700"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#E9D9BE] text-[#54351F] hover:bg-[#dec9a6] border border-[#D8C3A2] cursor-pointer"
               >
                 ← Back to Credentials
               </button>
@@ -690,7 +690,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] hover:from-[#b38328] hover:to-[#dfab43] shadow-lg transition-all cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-[#762D35] text-white hover:bg-[#5e2229] border border-[#A87924] shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
                 {submitting ? 'Registering Account...' : 'Complete Registration & Open Dashboard'}
               </button>

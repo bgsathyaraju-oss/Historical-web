@@ -1,0 +1,496 @@
+/* ==========================================================================
+   CENTRALIZED LIGHT ALMOND / WARM IVORY THEME STYLESHEET
+   Applies the global Light Almond color system consistently across all
+   website pages, article views, navigation bars, menus, dropdowns, cards,
+   tables, forms, and interactive controls without modifying protected page JSX.
+   ========================================================================== */
+
+:root {
+  --page-bg: #F5EBD9;
+  --section-bg: #EFE3D0;
+  --card-bg: #FFFCF5;
+  --surface-bg: #FFF9EF;
+  --menu-bg: #F1E4D0;
+  --input-bg: #FFFFFF;
+  --primary-text: #292521;
+  --heading-text: #54351F;
+  --secondary-text: #6B5948;
+  --link-color: #76501F;
+  --link-hover: #A87924;
+  --border-color: #D8C3A2;
+  --accent-gold: #A87924;
+  --primary-button: #762D35;
+  --primary-button-text: #FFFFFF;
+  --secondary-button: #E9D9BE;
+  --shadow-color: rgba(75, 51, 31, 0.12);
+}
+
+/* Reusable Theme Utility Classes */
+.theme-page-bg {
+  background-color: var(--page-bg);
+  color: var(--primary-text);
+}
+
+.theme-section-bg {
+  background-color: var(--section-bg);
+  color: var(--primary-text);
+}
+
+.theme-card {
+  background-color: var(--card-bg);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.theme-surface {
+  background-color: var(--surface-bg);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+}
+
+.theme-menu {
+  background-color: var(--menu-bg);
+  color: var(--primary-text);
+  border-color: var(--border-color);
+}
+
+.theme-btn-primary {
+  background-color: var(--primary-button);
+  color: var(--primary-button-text);
+  border: 1px solid var(--primary-button);
+}
+
+.theme-btn-primary:hover {
+  background-color: #5E2229;
+  color: var(--primary-button-text);
+}
+
+.theme-btn-secondary {
+  background-color: var(--secondary-button);
+  color: var(--heading-text);
+  border: 1px solid var(--border-color);
+}
+
+.theme-btn-secondary:hover {
+  background-color: #DFC9A6;
+  color: var(--heading-text);
+}
+
+@media screen {
+  /* ========================================================================
+     1. PAGE & ROOT CONTAINERS -> Light Almond (#F5EBD9)
+     ======================================================================== */
+  html,
+  body,
+  #root,
+  main,
+  .min-h-screen:not(.fixed) {
+    background-color: var(--page-bg) !important;
+    color: var(--primary-text) !important;
+  }
+
+  /* ========================================================================
+     2. NAVIGATION, STICKY BARS, MENUS & DROPDOWNS -> Warm Almond (#F1E4D0)
+     ======================================================================== */
+  header.sticky,
+  div.sticky.top-0,
+  nav[aria-label],
+  aside[aria-label*="Navigation"] {
+    background-color: var(--menu-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Dropdown and popover menus */
+  div.absolute[class*="z-50"]:not(.inset-0) {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: 0 10px 28px var(--shadow-color) !important;
+  }
+
+  /* ========================================================================
+     3. HERO HEADERS & SECTION BANNERS -> Warm Ivory / Almond Gradient
+     ======================================================================== */
+  header:not(.inset-0):not(.sticky),
+  section:not(.inset-0)[class*="bg-gradient-to-"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-gradient-to-"] {
+    background-image: linear-gradient(
+      135deg,
+      var(--card-bg) 0%,
+      var(--surface-bg) 55%,
+      var(--section-bg) 100%
+    ) !important;
+    background-color: var(--surface-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* ========================================================================
+     4. ARTICLES, CARDS & READING SURFACES -> Warm Ivory (#FFFCF5)
+     Scoped to structural containers (never touches .inset-0 image overlays)
+     ======================================================================== */
+  article,
+  .print-article-container,
+  section:not(.inset-0)[class*="bg-[#0"],
+  section:not(.inset-0)[class*="bg-[#1"],
+  section:not(.inset-0)[class*="bg-[#2"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#0"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#1"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#2"]:not([class*="bg-[#25D366]"]):not([class*="bg-[#20ba5a]"]),
+  div:not(.inset-0):not(.fixed):not(.absolute).bg-stone-950,
+  div:not(.inset-0):not(.fixed):not(.absolute).bg-stone-900,
+  div:not(.inset-0):not(.fixed):not(.absolute).bg-stone-800,
+  div:not(.inset-0):not(.fixed):not(.absolute).bg-slate-950,
+  div:not(.inset-0):not(.fixed):not(.absolute).bg-slate-900,
+  div:not(.inset-0):not(.fixed):not(.absolute).bg-slate-800,
+  footer:not(.inset-0)[class*="bg-[#0"],
+  footer:not(.inset-0)[class*="bg-[#1"],
+  footer:not(.inset-0)[class*="bg-[#2"] {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Nested blocks inside articles and sections -> Soft Surface Ivory (#FFF9EF) */
+  article div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#0"],
+  article div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#1"],
+  article div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#2"]:not([class*="bg-[#25D366]"]):not([class*="bg-[#20ba5a]"]),
+  article section:not(.inset-0)[class*="bg-[#0"],
+  article section:not(.inset-0)[class*="bg-[#1"],
+  section div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#0"],
+  section div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#1"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-white/5"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-white/10"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-black/20"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-black/30"],
+  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-black/40"],
+  .bg-\[\#FAF7F2\] {
+    background-color: var(--surface-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Preserve transparent image overlays so images are never obscured */
+  .absolute.inset-0[class*="to-transparent"],
+  .absolute.inset-0[class*="via-transparent"] {
+    background-color: transparent !important;
+    background-image: linear-gradient(
+      to top,
+      rgba(28, 22, 19, 0.72) 0%,
+      rgba(28, 22, 19, 0.18) 45%,
+      transparent 100%
+    ) !important;
+  }
+
+  /* Decorative dot/radial pattern overlays inside headers */
+  .pointer-events-none.inset-0,
+  .pointer-events-none.absolute.inset-0 {
+    background-color: transparent !important;
+  }
+
+  /* Modal backdrop overlays stay translucent */
+  .fixed.inset-0[class*="bg-black"] {
+    background-color: rgba(41, 37, 33, 0.5) !important;
+  }
+
+  /* ========================================================================
+     5. SEMANTIC CALLOUT BOXES & BADGES (Emerald, Sky, Amber, Rose, Indigo)
+     ======================================================================== */
+  [class*="bg-emerald-950"],
+  [class*="bg-emerald-900"] {
+    background-color: #ECFDF3 !important;
+    color: #14532D !important;
+    border-color: #86EFAC !important;
+  }
+
+  [class*="bg-sky-950"],
+  [class*="bg-sky-900"],
+  [class*="bg-indigo-950"],
+  [class*="bg-indigo-900"] {
+    background-color: #EFF6FF !important;
+    color: #1E3A8A !important;
+    border-color: #93C5FD !important;
+  }
+
+  [class*="bg-amber-950"],
+  [class*="bg-amber-900"] {
+    background-color: var(--surface-bg) !important;
+    color: var(--heading-text) !important;
+    border-color: var(--accent-gold) !important;
+  }
+
+  [class*="bg-rose-950"],
+  [class*="bg-rose-900"] {
+    background-color: #FEF2F2 !important;
+    color: #762D35 !important;
+    border-color: #FCA5A5 !important;
+  }
+
+  /* Badges and inline pills with dark backgrounds */
+  span[class*="bg-[#0"],
+  span[class*="bg-[#1"],
+  span[class*="bg-[#2"]:not([class*="bg-[#25D366]"]),
+  span[class*="bg-[#580014"],
+  span[class*="bg-[#780016"],
+  span.bg-stone-800,
+  span.bg-stone-900,
+  span[class*="bg-black/"] {
+    background-color: var(--secondary-button) !important;
+    color: var(--heading-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* ========================================================================
+     6. TYPOGRAPHY & READABLE DARK TEXT HIERARCHY
+     ======================================================================== */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .font-royal-heading,
+  [class*="bg-clip-text"] {
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    background-image: none !important;
+  }
+
+  /* Convert legacy light body text utilities to dark readable text */
+  .text-white:not(button *):not(a *),
+  header .text-white,
+  .text-stone-100,
+  .text-stone-200,
+  .text-stone-300,
+  .text-slate-100,
+  .text-slate-200,
+  .text-slate-300,
+  .text-gray-100,
+  .text-gray-200,
+  .text-gray-300,
+  [class*="text-[#f5f3ed]"],
+  [class*="text-[#f7f5f0]"],
+  [class*="text-[#faf7f0]"],
+  [class*="text-[#e5d5be]"] {
+    color: var(--primary-text) !important;
+  }
+
+  /* Convert light gold/cream heading utilities to --heading-text (#54351F) */
+  [class*="text-[#fcedc7]"],
+  [class*="text-[#fae29c]"],
+  [class*="text-[#fde68a]"],
+  [class*="text-[#e8c872]"],
+  [class*="text-[#e6be6c]"],
+  [class*="text-[#fff3d1]"],
+  .text-amber-100,
+  .text-amber-200,
+  .text-amber-300,
+  .text-cyan-100,
+  .text-cyan-200,
+  .text-cyan-300,
+  .text-sky-300,
+  .text-indigo-300 {
+    color: var(--heading-text) !important;
+  }
+
+  .text-emerald-200,
+  .text-emerald-300,
+  .text-emerald-400 {
+    color: #166534 !important;
+  }
+
+  .text-rose-200,
+  .text-rose-300,
+  .text-rose-400 {
+    color: #762D35 !important;
+  }
+
+  /* Convert muted text utilities to --secondary-text (#6B5948) */
+  .text-stone-400,
+  .text-stone-500,
+  .text-slate-400,
+  .text-gray-400 {
+    color: var(--secondary-text) !important;
+  }
+
+  /* Convert gold accent utilities to --link-color (#76501F) */
+  [class*="text-[#d4af37]"],
+  [class*="text-[#c99738]"],
+  .text-amber-400,
+  .text-amber-500 {
+    color: var(--link-color) !important;
+  }
+
+  /* Code blocks (such as print URLs) */
+  code {
+    color: var(--heading-text) !important;
+  }
+
+  /* ========================================================================
+     7. BUTTONS & INTERACTIVE FILTER CONTROLS
+     ======================================================================== */
+  /* Secondary / Neutral / Filter Buttons */
+  button[class*="bg-[#0"],
+  button[class*="bg-[#1"],
+  button[class*="bg-[#2"]:not([class*="bg-[#2A201B]"]):not([class*="bg-[#25D366]"]),
+  button.bg-stone-900,
+  button.bg-stone-800,
+  button[class*="bg-white/10"],
+  button[class*="bg-black/40"],
+  a[class*="bg-[#1"],
+  a[class*="bg-white/10"] {
+    background-color: var(--surface-bg) !important;
+    background-image: none !important;
+    color: var(--heading-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  button[class*="bg-[#0"]:hover,
+  button[class*="bg-[#1"]:hover,
+  button[class*="bg-[#2"]:not([class*="bg-[#2A201B]"]):not([class*="bg-[#25D366]"]):hover,
+  button.bg-stone-900:hover,
+  button.bg-stone-800:hover,
+  button[class*="bg-white/10"]:hover {
+    background-color: var(--secondary-button) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--accent-gold) !important;
+  }
+
+  /* Primary Action & Active State Buttons -> Royal Maroon (#762D35) with White Text */
+  .btn-primary-almond,
+  button[class*="bg-[#762D35]"],
+  a[class*="bg-[#762D35]"],
+  button[class*="bg-[#780016]"],
+  a[class*="bg-[#780016]"],
+  button[class*="bg-[#6e0018]"],
+  a[class*="bg-[#6e0018]"],
+  button[class*="bg-[#580014]"],
+  a[class*="bg-[#580014]"],
+  button[class*="bg-[#2A201B]"],
+  button[class*="bg-[#c99738]"],
+  a[class*="bg-[#c99738]"],
+  button[class*="bg-[#d4af37]"],
+  a[class*="bg-[#d4af37]"],
+  button.bg-amber-500,
+  a.bg-amber-500,
+  button.bg-amber-600,
+  a.bg-amber-600,
+  button[class*="from-[#580014]"],
+  button[class*="from-[#780016]"],
+  button[class*="from-[#c99738]"],
+  a[class*="from-[#c99738]"] {
+    background: var(--primary-button) !important;
+    background-color: var(--primary-button) !important;
+    background-image: none !important;
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+    border-color: var(--primary-button) !important;
+  }
+
+  .btn-primary-almond *,
+  button[class*="bg-[#762D35]"] *,
+  a[class*="bg-[#762D35]"] *,
+  button[class*="bg-[#780016]"] *,
+  a[class*="bg-[#780016]"] *,
+  button[class*="bg-[#6e0018]"] *,
+  a[class*="bg-[#6e0018]"] *,
+  button[class*="bg-[#580014]"] *,
+  a[class*="bg-[#580014]"] *,
+  button[class*="bg-[#2A201B]"] *,
+  button[class*="bg-[#c99738]"] *,
+  a[class*="bg-[#c99738]"] *,
+  button[class*="bg-[#d4af37]"] *,
+  a[class*="bg-[#d4af37]"] *,
+  button.bg-amber-500 *,
+  a.bg-amber-500 *,
+  button.bg-amber-600 *,
+  a.bg-amber-600 *,
+  button[class*="from-[#580014]"] *,
+  button[class*="from-[#780016]"] *,
+  button[class*="from-[#c99738]"] *,
+  a[class*="from-[#c99738]"] * {
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+  }
+
+  /* Preserve multi-line selection cards that use bg-[#580014] when they have children with descriptions */
+  button[class*="from-[#580014]"].flex-col,
+  button[class*="bg-[#580014]"].flex-col {
+    background: var(--secondary-button) !important;
+    background-color: var(--secondary-button) !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border: 2px solid var(--primary-button) !important;
+  }
+
+  button[class*="from-[#580014]"].flex-col *,
+  button[class*="bg-[#580014]"].flex-col * {
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+  }
+
+  /* ========================================================================
+     8. BORDERS, DIVIDERS, TABLES & FORM CONTROLS
+     ======================================================================== */
+  .border-stone-700,
+  .border-stone-800,
+  .border-stone-900,
+  .border-slate-700,
+  .border-slate-800,
+  [class*="border-stone-800/"],
+  [class*="border-stone-700/"],
+  [class*="border-white/"],
+  [class*="border-[#c99738]"],
+  [class*="border-[#d4af37]"] {
+    border-color: var(--border-color) !important;
+  }
+
+  /* Tables */
+  table:not(.print-document-frame) {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  table:not(.print-document-frame) thead,
+  table:not(.print-document-frame) th {
+    background-color: var(--section-bg) !important;
+    color: var(--heading-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  table:not(.print-document-frame) tbody tr:nth-child(even) {
+    background-color: var(--surface-bg) !important;
+  }
+
+  table:not(.print-document-frame) tbody tr:nth-child(odd) {
+    background-color: var(--card-bg) !important;
+  }
+
+  table:not(.print-document-frame) td {
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Inputs, Selects, Options & Textareas */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    background-color: var(--input-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  select option {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--secondary-text) !important;
+    opacity: 0.8;
+  }
+}

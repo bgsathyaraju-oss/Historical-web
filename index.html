@@ -49,15 +49,15 @@
 
             var safeReason = String(reason || 'The application script could not finish initializing in this WebView.').replace(/[<>]/g, '');
             root.innerHTML =
-              '<div style="padding:16px;background:#120910;color:#f7f5f0;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;">' +
-                '<div style="max-width:520px;margin:16px auto;background:#181c2a;border:2px solid #d4af37;border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,0.6);">' +
-                  '<div style="color:#d4af37;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Suryavamsha Odiyaraju Kshatriya Portal • WebView Diagnostic</div>' +
-                  '<h1 style="color:#fcedc7;font-size:18px;margin:10px 0;">Unable to Complete Page Load</h1>' +
-                  '<p style="color:#e7e5e4;font-size:13px;line-height:1.5;margin:0 0 12px;">A script, network cache, or WebView restriction prevented the portal from finishing initialization.</p>' +
-                  '<div style="background:#090b12;border:1px solid #c99738;color:#fde68a;padding:12px;border-radius:10px;font-size:12px;font-family:monospace;word-break:break-word;margin-bottom:16px;">Diagnostic: ' + safeReason + '</div>' +
+              '<div style="padding:16px;background:#F5EBD9;color:#292521;font-family:system-ui,-apple-system,sans-serif;min-height:100vh;">' +
+                '<div style="max-width:520px;margin:16px auto;background:#FFFCF5;border:2px solid #A87924;border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(84,53,31,0.12);">' +
+                  '<div style="color:#76501F;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Suryavamsha Odiyaraju Kshatriya Portal • WebView Diagnostic</div>' +
+                  '<h1 style="color:#54351F;font-size:18px;margin:10px 0;">Unable to Complete Page Load</h1>' +
+                  '<p style="color:#292521;font-size:13px;line-height:1.5;margin:0 0 12px;">A script, network cache, or WebView restriction prevented the portal from finishing initialization.</p>' +
+                  '<div style="background:#FFF9EF;border:1px solid #A87924;color:#54351F;padding:12px;border-radius:10px;font-size:12px;font-family:monospace;word-break:break-word;margin-bottom:16px;">Diagnostic: ' + safeReason + '</div>' +
                   '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
-                    '<button onclick="window.location.href=\'/?v=\'+Date.now()" style="background:#d4af37;color:#290106;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">Reload Fresh Copy</button>' +
-                    '<a href="/?v=fresh" style="background:#261019;color:#fcedc7;border:1px solid #d4af37;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;">Open Home Page</a>' +
+                    '<button onclick="window.location.href=\'/?v=\'+Date.now()" style="background:#762D35;color:#FFFFFF;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">Reload Fresh Copy</button>' +
+                    '<a href="/?v=fresh" style="background:#FFF9EF;color:#54351F;border:1px solid #A87924;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;">Open Home Page</a>' +
                   '</div>' +
                 '</div>' +
               '</div>';
@@ -105,6 +105,61 @@
             window.__SHOW_PORTAL_FALLBACK__(lastErr);
           }
         }, 8000);
+
+        // Early WhatsApp URL Normalization & AppInventor WebView Interceptor (prevents ERR_UNKNOWN_URL_SCHEME)
+        function isWhatsAppHref(u) {
+          if (!u || typeof u !== 'string') return false;
+          var t = u.trim();
+          return /^whatsapp:\/\//i.test(t) || /^https?:\/\/(www\.)?wa\.me(\/|\?|$)/i.test(t) || /^https?:\/\/(api|web)\.whatsapp\.com\/send(\/|\?|$)/i.test(t);
+        }
+
+        function toHttpsWaMeUrl(u) {
+          var t = String(u || '').trim();
+          if (/^https?:\/\/(www\.)?wa\.me(\/|\?|$)/i.test(t)) {
+            return t.replace(/^http:\/\//i, 'https://').replace(/^https:\/\/www\.wa\.me/i, 'https://wa.me');
+          }
+          var qIdx = t.indexOf('?');
+          if (qIdx === -1) return 'https://wa.me/';
+          var pairs = t.slice(qIdx + 1).split('&');
+          var phone = '';
+          var kept = [];
+          for (var i = 0; i < pairs.length; i++) {
+            var p = pairs[i];
+            if (!p) continue;
+            var eq = p.indexOf('=');
+            var k = (eq === -1 ? p : p.slice(0, eq)).toLowerCase();
+            var v = eq === -1 ? '' : p.slice(eq + 1);
+            if (k === 'phone') {
+              try { phone = decodeURIComponent(v).replace(/[^\d]/g, ''); } catch (e) { phone = v.replace(/[^\d]/g, ''); }
+            } else {
+              kept.push(p);
+            }
+          }
+          return 'https://wa.me/' + phone + (kept.length ? '?' + kept.join('&') : '');
+        }
+
+        document.addEventListener('click', function (ev) {
+          try {
+            if (window.__ANDROID_WEBVIEW_INTERCEPTOR_INSTALLED__) return;
+            var el = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+            if (!el) return;
+            var href = el.getAttribute('href') || el.href || '';
+            if (!isWhatsAppHref(href)) return;
+            var waUrl = toHttpsWaMeUrl(href);
+            var ua = (navigator && navigator.userAgent) || '';
+            var hasBridge = Boolean(window.AppInventor && typeof window.AppInventor.setWebViewString === 'function');
+            var isWebView = hasBridge || (/Android/i.test(ua) && /;\s*wv\)|\bwv\b|Version\/\d+\.\d+.*Chrome\/|AppInventor|WebView/i.test(ua));
+            if (isWebView) {
+              ev.preventDefault();
+              ev.stopPropagation();
+              if (hasBridge) {
+                window.AppInventor.setWebViewString(waUrl);
+              } else {
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
+              }
+            }
+          } catch (e) {}
+        }, true);
       })();
     </script>
     
@@ -125,7 +180,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans+Kannada:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Oriya:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     
     <!-- SVG Favicon with Royal Sun Emblem -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23780016' stroke='%23d4af37' stroke-width='4'/><circle cx='50' cy='50' r='24' fill='%23d4af37'/><path d='M50 8 L54 30 L50 25 L46 30 Z M50 92 L54 70 L50 75 L46 70 Z M8 50 L30 54 L25 50 L30 46 Z M92 50 L70 54 L75 50 L70 46 Z M20 20 L38 34 L33 32 L34 38 Z M80 80 L62 66 L67 68 L66 62 Z M80 20 L66 38 L68 33 L62 34 Z M20 80 L34 62 L32 67 L38 66 Z' fill='%23d4af37'/><circle cx='50' cy='50' r='10' fill='%2350000e'/></svg>" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23762D35' stroke='%23A87924' stroke-width='4'/><circle cx='50' cy='50' r='24' fill='%23A87924'/><path d='M50 8 L54 30 L50 25 L46 30 Z M50 92 L54 70 L50 75 L46 70 Z M8 50 L30 54 L25 50 L30 46 Z M92 50 L70 54 L75 50 L70 46 Z M20 20 L38 34 L33 32 L34 38 Z M80 80 L62 66 L67 68 L66 62 Z M80 20 L66 38 L68 33 L62 34 Z M20 80 L34 62 L32 67 L38 66 Z' fill='%23A87924'/><circle cx='50' cy='50' r='10' fill='%2354351F'/></svg>" />
 
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
@@ -140,33 +195,33 @@
     }
     </script>
   </head>
-  <body class="bg-[#0c0d12] text-[#f7f5f0] selection:bg-[#c99738] selection:text-[#380208] antialiased" style="background-color:#120910;color:#f7f5f0;margin:0;font-family:system-ui,-apple-system,sans-serif;">
+  <body class="bg-[#F5EBD9] text-[#292521] selection:bg-[#A87924] selection:text-[#FFFFFF] antialiased" style="background-color:#F5EBD9;color:#292521;margin:0;font-family:system-ui,-apple-system,sans-serif;">
     <noscript>
-      <div style="padding:20px;background:#120910;color:#f7f5f0;text-align:center;">
-        <div style="max-width:480px;margin:20px auto;background:#181c2a;border:2px solid #d4af37;border-radius:16px;padding:24px;">
-          <h1 style="color:#fcedc7;font-size:20px;margin:0 0 12px;">JavaScript Required</h1>
-          <p style="color:#e7e5e4;font-size:14px;line-height:1.5;margin:0;">Please enable JavaScript in your browser or WebViewer settings to view the Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal.</p>
+      <div style="padding:20px;background:#F5EBD9;color:#292521;text-align:center;">
+        <div style="max-width:480px;margin:20px auto;background:#FFFCF5;border:2px solid #A87924;border-radius:16px;padding:24px;">
+          <h1 style="color:#54351F;font-size:20px;margin:0 0 12px;">JavaScript Required</h1>
+          <p style="color:#292521;font-size:14px;line-height:1.5;margin:0;">Please enable JavaScript in your browser or WebViewer settings to view the Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal.</p>
         </div>
       </div>
     </noscript>
 
     <div id="root">
       <!-- Top-anchored visible royal loading banner & card (replaced automatically when React mounts) -->
-      <div id="portal-boot-loader" style="background:#120910;color:#f7f5f0;padding:0;margin:0;font-family:system-ui,-apple-system,sans-serif;">
-        <div style="background:#4a0010;border-bottom:2px solid #d4af37;padding:14px 16px;text-align:center;">
-          <div style="color:#fae29c;font-size:14px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">
+      <div id="portal-boot-loader" style="background:#F5EBD9;color:#292521;padding:0;margin:0;font-family:system-ui,-apple-system,sans-serif;">
+        <div style="background:#FFF9EF;border-bottom:2px solid #A87924;padding:14px 16px;text-align:center;">
+          <div style="color:#54351F;font-size:14px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">
             ☀ Suryavamsha Odiyaraju Kshatriya Portal
           </div>
-          <div style="color:#f5ecd5;font-size:11px;margin-top:4px;">
+          <div style="color:#76501F;font-size:11px;margin-top:4px;">
             Historical Documentary &amp; Royal Heritage Archive
           </div>
         </div>
         <div style="padding:20px 16px;">
-          <div style="max-width:480px;margin:0 auto;background:#181c2a;border:2px solid #d4af37;border-radius:16px;padding:20px;text-align:center;">
-            <div style="color:#fae29c;font-size:15px;font-weight:700;margin-bottom:8px;">
+          <div style="max-width:480px;margin:0 auto;background:#FFFCF5;border:2px solid #A87924;border-radius:16px;padding:20px;text-align:center;">
+            <div style="color:#54351F;font-size:15px;font-weight:700;margin-bottom:8px;">
               Loading Royal Heritage Archive…
             </div>
-            <div style="color:#d6d3d1;font-size:13px;line-height:1.5;">
+            <div style="color:#292521;font-size:13px;line-height:1.5;">
               Preparing multilingual historical records, dynasties, and community directory…
             </div>
           </div>
