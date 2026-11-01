@@ -466,36 +466,22 @@ function extractStructuredArticleContent(
     }
   }
 
-  const processSectionContainer = (sectionEl: Element) => {
-    if (isInsideSkippedElement(sectionEl, sourceEl)) return;
+  const handledElements = new Set<Element>();
+  if (headerEl) {
+    handledElements.add(headerEl);
+  } else {
+    const firstH1 = sourceEl.querySelector('h1');
+    if (firstH1) handledElements.add(firstH1);
+  }
+  for (const fig of directLeadFigures) {
+    handledElements.add(fig);
+  }
 
-    const sectionH2 = sectionEl.querySelector(':scope > h2, :scope > div > h2');
-    const sectionTitle = cleanText(sectionH2?.textContent);
-    const isSummarySection =
-      /summary|abstract|overview|introduction & historical scope/i.test(sectionTitle);
+  const processContainer = (containerEl: Element) => {
+    if (isInsideSkippedElement(containerEl, sourceEl)) return;
 
-    if (sectionTitle) {
-      blocks.push({ type: 'sectionHeading', text: sectionTitle });
-    }
-
-    if (isSummarySection) {
-      const paras = Array.from(sectionEl.querySelectorAll('p'))
-        .filter((p) => !isInsideSkippedElement(p, sourceEl))
-        .map((p) => cleanText(p.textContent))
-        .filter(Boolean);
-      if (paras.length > 0) {
-        blocks.push({
-          type: 'summaryBox',
-          paragraphs: paras,
-        });
-        return;
-      }
-    }
-
-    const walker = document.createTreeWalker(sectionEl, NodeFilter.SHOW_ELEMENT);
+    const walker = document.createTreeWalker(containerEl, NodeFilter.SHOW_ELEMENT);
     let node = walker.nextNode() as Element | null;
-    const handledElements = new Set<Element>();
-    if (sectionH2) handledElements.add(sectionH2);
 
     while (node) {
       const el = node;
@@ -507,7 +493,7 @@ function extractStructuredArticleContent(
 
       let ancestorHandled = false;
       let parent = el.parentElement;
-      while (parent && parent !== sectionEl) {
+      while (parent && parent !== containerEl && parent !== sourceEl) {
         if (handledElements.has(parent)) {
           ancestorHandled = true;
           break;
@@ -518,15 +504,46 @@ function extractStructuredArticleContent(
 
       const tag = el.tagName.toUpperCase();
 
+      // Handle keyword / hashtag pill containers
+      if (
+        (tag === 'DIV' || tag === 'SECTION') &&
+        el.querySelectorAll('.theme-hashtag').length > 0 &&
+        !el.querySelector('h2, h3, h4, section, table')
+      ) {
+        const pills = Array.from(el.querySelectorAll('.theme-hashtag'))
+          .map((pill) => cleanText(pill.textContent))
+          .filter(Boolean);
+        if (pills.length > 0) {
+          blocks.push({
+            type: 'paragraph',
+            text: pills.join('   •   '),
+          });
+        }
+        handledElements.add(el);
+        continue;
+      }
+
       if (tag === 'H2') {
         const txt = cleanText(el.textContent);
-        if (txt && txt !== sectionTitle) {
+        if (txt && txt !== title) {
           blocks.push({ type: 'sectionHeading', text: txt });
         }
         handledElements.add(el);
       } else if (tag === 'H3' || tag === 'H4') {
         if (el.closest('li')) continue;
-        const txt = cleanText(el.textContent);
+        let txt = cleanText(el.textContent);
+        // Check if parent flex container has a preceding year/badge span (e.g., timeline items)
+        const parentFlex = el.parentElement;
+        if (parentFlex && parentFlex.children.length === 2 && parentFlex.children[1] === el) {
+          const badgeEl = parentFlex.children[0];
+          if (badgeEl.tagName.toUpperCase() === 'SPAN') {
+            const badgeTxt = cleanText(badgeEl.textContent);
+            if (badgeTxt && badgeTxt.length < 40 && !txt.includes(badgeTxt)) {
+              txt = `${badgeTxt} — ${txt}`;
+              handledElements.add(badgeEl);
+            }
+          }
+        }
         if (txt) {
           blocks.push({ type: 'subHeading', text: txt });
         }
@@ -634,32 +651,49 @@ function extractStructuredArticleContent(
           }
         }
         handledElements.add(el);
-      } else if (tag === 'P' || tag === 'BLOCKQUOTE') {
+      } else if (tag === 'P' || tag === 'BLOCKQUOTE' || tag === 'PRE') {
         if (el.closest('li') || el.closest('figcaption') || el.closest('td') || el.closest('dd')) {
           continue;
         }
-        const txt = cleanText(el.textContent);
-        if (txt) {
-          blocks.push({ type: 'paragraph', text: txt });
+        const rawLines = (el.textContent || '')
+          .split('\n')
+          .map((line) => cleanText(line))
+          .filter(Boolean);
+        for (const line of rawLines) {
+          blocks.push({ type: 'paragraph', text: line });
         }
         handledElements.add(el);
+      } else if (tag === 'DIV') {
+        if (
+          el.closest('li') ||
+          el.closest('figcaption') ||
+          el.closest('td') ||
+          el.closest('th') ||
+          el.closest('dd') ||
+          el.closest('dt')
+        ) {
+          continue;
+        }
+        const hasBlockChildren = Boolean(
+          el.querySelector('div, p, h1, h2, h3, h4, ul, ol, li, table, dl, figure, section, blockquote, pre')
+        );
+        if (!hasBlockChildren) {
+          const rawLines = (el.textContent || '')
+            .split('\n')
+            .map((line) => cleanText(line))
+            .filter((line) => line.length > 1 && line !== title);
+          for (const line of rawLines) {
+            blocks.push({ type: 'paragraph', text: line });
+          }
+          if (rawLines.length > 0) {
+            handledElements.add(el);
+          }
+        }
       }
     }
   };
 
-  const sections = Array.from(
-    sourceEl.querySelectorAll(':scope > div > section, :scope > section, section')
-  );
-  if (sections.length > 0) {
-    const topSections = sections.filter(
-      (sec) => !sections.some((other) => other !== sec && other.contains(sec))
-    );
-    for (const sec of topSections) {
-      processSectionContainer(sec);
-    }
-  } else {
-    processSectionContainer(sourceEl);
-  }
+  processContainer(sourceEl);
 
   if (blocks.length === 0) {
     const rawLines = (sourceEl.innerText || '')

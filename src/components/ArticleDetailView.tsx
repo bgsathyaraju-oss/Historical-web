@@ -838,8 +838,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       ref={articleRef}
       className="print-article-container rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] overflow-hidden print:overflow-visible shadow-lg print:shadow-none transition-all text-[#292521]"
     >
-      {/* STICKY TOP NAVIGATION & ACTION TOOLBAR */}
-      <div className="no-print sticky top-0 z-30 bg-[#FFF9EF]/95 backdrop-blur-md border-b border-[#A87924] px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 print:hidden">
+      {/* TOP NAVIGATION & ACTION TOOLBAR (NON-STICKY TO PREVENT NAVBAR OVERLAP) */}
+      <div className="no-print relative z-20 bg-[#FFF9EF] border-b border-[#D8C3A2] px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div className="flex items-center gap-2 sm:gap-3">
           {onBack && (
             <button
@@ -1068,12 +1068,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div className="text-[#292521] font-bold mt-1">{historicalPeriod}</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#762D35]" />
+            <div className="royal-profile-title-box p-3.5 rounded-xl bg-[#F4C78A] border border-[#E4B879]">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#54351F]" />
                 <span>{ui.authorLabel}</span>
               </div>
-              <div className="text-[#54351F] font-bold mt-1">{article.author_name}</div>
+              <div className="text-[#54351F] font-semibold mt-1 break-words">{article.author_name}</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
@@ -1112,9 +1112,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 className="print-lead-image w-full h-64 sm:h-80 md:h-[420px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
               />
             </div>
-            <figcaption className="bg-[#FFF9EF] p-4 text-xs text-[#292521] border-t border-[#A87924]">
+            <figcaption className="royal-profile-title-box bg-[#F4C78A] p-4 text-xs text-[#54351F] border-t border-[#E4B879] break-words">
               <span className="text-[#54351F] font-bold mr-1.5">{ui.artifactLabel}</span>
-              {displayTitle} — <span className="text-[#76501F] font-semibold">{historicalPeriod}</span>
+              {displayTitle} — <span className="text-[#54351F] font-semibold">{historicalPeriod}</span>
             </figcaption>
           </figure>
         )}
@@ -1306,12 +1306,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <div
                   key={fig.id}
                   onClick={() => onNavigate && onNavigate(`/kings-queens?figure=${fig.id}`)}
-                  className="p-3 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
+                  className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
                 >
                   <img
                     src={fig.image_url}
                     alt={fig.name}
-                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#A87924] shrink-0"
+                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#E8BFC9] shrink-0"
                     onError={e => {
                       const target = e.currentTarget;
                       target.onerror = null;
@@ -1319,11 +1319,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     }}
                   />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold text-[#76501F] truncate">{fig.reign_period}</div>
+                    <div className="text-[10px] font-bold text-[#54351F] truncate">{fig.reign_period}</div>
                     <div className="text-xs font-royal-heading font-bold text-[#54351F] truncate">
                       {fig.name}
                     </div>
-                    <div className="text-[10px] text-[#292521] truncate">{fig.dynasty_name}</div>
+                    <div className="text-[10px] text-[#54351F] truncate">{fig.dynasty_name}</div>
                   </div>
                 </div>
               ))}
@@ -1338,15 +1338,15 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               <div
                 onClick={() => onNavigate && onNavigate('/gajapathi-kings')}
-                className="p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
                   alt="Suryavamsha Gajapathi Empire"
-                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#76501F] uppercase">Imperial Dynasty</div>
+                  <div className="text-[10px] font-bold text-[#54351F] uppercase">Imperial Dynasty</div>
                   <div className="text-xs font-royal-heading font-bold text-[#54351F]">
                     Suryavamsha Gajapathi Kingdom & Empire
                   </div>
@@ -1355,15 +1355,15 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
               <div
                 onClick={() => onNavigate && onNavigate('/odra-desha')}
-                className="p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`}
                   alt="Odra Desha & Kalinga"
-                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#76501F] uppercase">Sovereign Territory</div>
+                  <div className="text-[10px] font-bold text-[#54351F] uppercase">Sovereign Territory</div>
                   <div className="text-xs font-royal-heading font-bold text-[#54351F]">
                     Ancient Odra Desha, Utkala & Kalinga
                   </div>
@@ -1372,15 +1372,15 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
               <div
                 onClick={() => onNavigate && onNavigate('/genealogy')}
-                className="p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-center gap-3"
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
                   alt="Royal Dynastic Genealogy"
-                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                 />
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#76501F] uppercase">Royal Succession</div>
+                  <div className="text-[10px] font-bold text-[#54351F] uppercase">Royal Succession</div>
                   <div className="text-xs font-royal-heading font-bold text-[#54351F]">
                     Suryavamsha & Odra Dynastic Genealogy
                   </div>
@@ -1553,7 +1553,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     <div
                       key={rel.id}
                       onClick={() => onSelectArticle && onSelectArticle(rel)}
-                      className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] hover:bg-[#FFF9EF] transition-all cursor-pointer group flex flex-col justify-between gap-3"
+                      className="royal-related-link-btn rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex flex-col justify-between gap-3"
                     >
                       <div className="flex items-start gap-3">
                         <img
@@ -1566,10 +1566,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                               target.src = fallbackBanner;
                             }
                           }}
-                          className="w-16 h-16 rounded-xl object-cover border border-[#A87924] shrink-0"
+                          className="w-16 h-16 rounded-xl object-cover border border-[#E8BFC9] shrink-0"
                         />
                         <div className="min-w-0">
-                          <span className="text-[10px] font-bold text-[#76501F] uppercase block truncate">
+                          <span className="text-[10px] font-bold text-[#54351F] uppercase block truncate">
                             {getMetadataLabel('category', rel.category) || rel.category}
                           </span>
                           <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] line-clamp-2 mt-0.5">
@@ -1577,8 +1577,8 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                           </h4>
                         </div>
                       </div>
-                      <p className="text-[11px] text-[#292521] line-clamp-2">{relSummary}</p>
-                      <div className="text-[11px] text-[#76501F] font-bold flex items-center gap-1">
+                      <p className="text-[11px] text-[#54351F] line-clamp-2">{relSummary}</p>
+                      <div className="text-[11px] text-[#54351F] font-bold flex items-center gap-1">
                         <span>{ui.readArticleBtn}</span>
                         <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>
@@ -1605,7 +1605,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                       if (onTagClick) onTagClick(kw);
                       else if (onBack) onBack();
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-[#FFF9EF] hover:bg-[#762D35] text-[#54351F] hover:text-white border border-[#A87924] text-xs font-medium transition-colors cursor-pointer"
+                    className="royal-related-link-btn text-xs font-medium cursor-pointer"
                   >
                     {kw}
                   </button>
@@ -1622,7 +1622,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 {monographHashtags.map((ht, idx) => (
                   <span
                     key={idx}
-                    className="px-2.5 py-1 rounded-lg bg-[#FFF9EF] text-[#76501F] border border-[#A87924] text-xs font-semibold"
+                    className="theme-hashtag px-2.5 py-1 rounded-lg bg-[#FFFCF5] text-[#54351F] border border-[#D8C3A2] text-xs font-semibold"
                   >
                     {ht}
                   </span>

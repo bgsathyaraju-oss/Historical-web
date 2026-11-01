@@ -978,7 +978,7 @@ const PersonPortraitThumbnail: React.FC<{
 
   if (variant === 'related') {
     return (
-      <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg overflow-hidden border border-[#c99738]/50 bg-gradient-to-b from-[#21020b] via-[#141928] to-[#0a0d14] shrink-0 relative flex items-center justify-center group-hover:border-[#d4af37] transition-all">
+      <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-lg overflow-hidden border border-[var(--border-color)] bg-[var(--surface-bg)] shrink-0 relative flex items-center justify-center group-hover:border-[var(--accent-gold)] transition-all">
         {hasValidImg ? (
           <img
             src={imageUrl}
@@ -989,8 +989,8 @@ const PersonPortraitThumbnail: React.FC<{
           />
         ) : (
           <div className="p-1.5 text-center flex flex-col items-center justify-center">
-            <div className="w-7 h-7 rounded-full bg-[#580014]/80 border border-[#d4af37]/50 flex items-center justify-center">
-              <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+            <div className="w-7 h-7 rounded-full bg-[#762D35] border border-[var(--accent-gold)] flex items-center justify-center">
+              <Crown className="w-3.5 h-3.5 text-white" />
             </div>
           </div>
         )}
@@ -1000,7 +1000,7 @@ const PersonPortraitThumbnail: React.FC<{
 
   if (variant === 'detail') {
     return (
-      <div className="w-full sm:w-56 md:w-64 aspect-[4/5] rounded-2xl overflow-hidden border-2 border-[#d4af37]/70 bg-gradient-to-b from-[#21020b] via-[#131826] to-[#0a0d14] shadow-2xl shrink-0 relative flex flex-col items-center justify-center">
+      <div className="w-full sm:w-56 md:w-64 aspect-[4/5] rounded-2xl overflow-hidden border-2 border-[var(--accent-gold)] bg-[var(--surface-bg)] shadow-md shrink-0 relative flex flex-col items-center justify-center">
         {hasValidImg ? (
           <img
             src={imageUrl}
@@ -1010,13 +1010,13 @@ const PersonPortraitThumbnail: React.FC<{
           />
         ) : (
           <div className="p-6 text-center space-y-3 flex flex-col items-center justify-center h-full">
-            <div className="w-16 h-16 rounded-full bg-[#580014]/80 border border-[#d4af37]/60 flex items-center justify-center shadow-inner">
-              <Crown className="w-8 h-8 text-[#d4af37]" />
+            <div className="w-16 h-16 rounded-full bg-[#762D35] border border-[var(--accent-gold)] flex items-center justify-center shadow-inner">
+              <Crown className="w-8 h-8 text-white" />
             </div>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#fae29c] font-royal-heading block">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[var(--heading-text)] font-royal-heading block">
               {badgeText}
             </span>
-            <span className="text-[10px] text-stone-400 block">{eraText}</span>
+            <span className="text-[10px] text-[var(--secondary-text)] block">{eraText}</span>
           </div>
         )}
       </div>
@@ -1024,7 +1024,7 @@ const PersonPortraitThumbnail: React.FC<{
   }
 
   return (
-    <div className="w-full sm:w-44 md:w-48 h-48 sm:h-auto sm:min-h-[11.5rem] rounded-xl overflow-hidden border border-[#c99738]/50 bg-gradient-to-b from-[#21020b] via-[#141928] to-[#0a0d14] shrink-0 relative flex items-center justify-center group-hover:border-[#d4af37] transition-all">
+    <div className="w-full sm:w-44 md:w-48 h-48 sm:h-auto sm:min-h-[11.5rem] rounded-xl overflow-hidden border border-[var(--border-color)] bg-[var(--surface-bg)] shrink-0 relative flex items-center justify-center group-hover:border-[var(--accent-gold)] transition-all">
       {hasValidImg ? (
         <img
           src={imageUrl}
@@ -1035,10 +1035,10 @@ const PersonPortraitThumbnail: React.FC<{
         />
       ) : (
         <div className="p-4 text-center space-y-2 flex flex-col items-center justify-center">
-          <div className="w-12 h-12 rounded-full bg-[#580014]/80 border border-[#d4af37]/50 flex items-center justify-center">
-            <Crown className="w-6 h-6 text-[#d4af37]" />
+          <div className="w-12 h-12 rounded-full bg-[#762D35] border border-[var(--accent-gold)] flex items-center justify-center">
+            <Crown className="w-6 h-6 text-white" />
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading line-clamp-2">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--heading-text)] font-royal-heading line-clamp-2">
             {badgeText}
           </span>
         </div>
@@ -3806,9 +3806,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     const externalPrintArticleUrl = getExternalPrintArticleUrl(activePerson.id, currentLang);
 
     return (
-      <div className="min-h-screen bg-[#07090e] text-stone-200 print-article-wrapper">
+      <div className="min-h-screen bg-[var(--page-bg)] text-[var(--primary-text)] print-article-wrapper">
         {/* Top Article Navigation Bar (Back, Home, Print, Share, and ✕ Close Buttons) */}
-        <div className="no-print border-b border-[#c99738]/30 bg-gradient-to-b from-[#21020b] via-[#101420] to-[#07090e] py-4 px-4 sm:px-6 lg:px-8 sticky top-0 z-30 backdrop-blur-md shadow-xl">
+        <div className="no-print border-b border-[var(--border-color)] bg-[var(--section-bg)] py-4 px-4 sm:px-6 lg:px-8 relative z-20 shadow-sm">
           <div className="max-w-5xl mx-auto space-y-2.5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               {/* Breadcrumb Trail */}
@@ -3816,12 +3816,12 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 <button
                   type="button"
                   onClick={() => onNavigate('/')}
-                  className="text-stone-300 hover:text-[#d4af37] transition-colors cursor-pointer inline-flex items-center gap-1"
+                  className="text-[var(--secondary-text)] hover:text-[var(--heading-text)] transition-colors cursor-pointer inline-flex items-center gap-1"
                 >
-                  <Home className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <Home className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                   <span>{t.nav?.home || detailSectionHeadings.homeButton}</span>
                 </button>
-                <span className="text-stone-600">/</span>
+                <span className="text-[var(--border-color)]">/</span>
                 <button
                   type="button"
                   onClick={closePersonArticle}
@@ -4119,8 +4119,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   variant="detail"
                 />
                 {detail?.portraitCaption && (
-                  <p className="text-[11px] text-stone-400 leading-relaxed bg-[#121826] p-3 rounded-xl border border-stone-800/80">
-                    <span className="text-[#d4af37] font-semibold block mb-0.5">
+                  <p className="royal-profile-title-box text-[11px] text-[#54351F] leading-relaxed break-words">
+                    <span className="text-[#54351F] font-bold block mb-0.5">
                       {detailSectionHeadings.section2CaptionHeading}:
                     </span>
                     {selectLocalizedOrFallback(
@@ -4156,11 +4156,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 </div>
 
                 {/* Main Article Title & Royal/Historical Subtitle */}
-                <div className="space-y-2">
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#fae29c] leading-tight">
+                <div className="space-y-2.5">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#54351F] leading-tight break-words">
                     {localizedName}
                   </h1>
-                  <p className="text-sm sm:text-base text-[#e8c872] font-medium leading-relaxed">
+                  <p className="royal-profile-title-box text-sm sm:text-base text-[#54351F] font-semibold leading-relaxed break-words">
                     {localizedTitles}
                   </p>
                 </div>
@@ -4212,7 +4212,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                               setSelectedCommunityLabel(lblId);
                               closePersonArticle();
                             }}
-                            className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#141a28] hover:bg-[#580014] text-stone-200 hover:text-[#fae29c] border border-stone-800 hover:border-[#d4af37]/50 transition-colors cursor-pointer"
+                            className="royal-related-link-btn text-xs font-semibold cursor-pointer"
                           >
                             {lObj.label[currentLang] || lObj.label.en}
                           </button>
@@ -4475,7 +4475,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         setSelectedStateRegion(st);
                         closePersonArticle();
                       }}
-                      className="text-xs px-3 py-1 rounded-lg font-semibold bg-stone-900 text-[#fae29c] border border-[#c99738]/40 hover:border-[#d4af37] transition-colors cursor-pointer"
+                      className="theme-hashtag text-xs px-3 py-1 rounded-lg font-semibold bg-[var(--card-bg)] text-[var(--heading-text)] border border-[var(--border-color)] hover:border-[var(--accent-gold)] transition-colors cursor-pointer"
                     >
                       📍 {pageLabels.stateRegions[st]}
                     </button>
@@ -5123,7 +5123,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       onClick={() =>
                         navigateFromArticleToDirectoryFilter(() => setSelectedBranch(branchKey))
                       }
-                      className="px-3 py-1 rounded-lg text-xs font-semibold bg-[#182030] hover:bg-[#222c42] text-[#fae29c] border border-[#c99738]/40 transition-colors cursor-pointer"
+                      className="royal-related-link-btn text-xs font-semibold cursor-pointer"
                     >
                       {bObj?.label[currentLang] || branchKey}
                     </button>
@@ -5176,7 +5176,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                           openPersonArticle(relPerson);
                         }
                       }}
-                      className="group bg-[#121826] hover:bg-[#172033] border border-stone-800 hover:border-[#c99738]/60 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5 transition-all cursor-pointer shadow-md"
+                      className="royal-related-link-btn group flex items-start gap-3.5 transition-all cursor-pointer"
                     >
                       <PersonPortraitThumbnail
                         imageUrl={relPerson.imageUrl}
@@ -5188,26 +5188,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#1a2234] text-[#d4af37] border border-[#c99738]/30 truncate max-w-full">
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--surface-bg)] text-[var(--link-color)] border border-[var(--border-color)] truncate max-w-full">
                             {relPeriod}
                           </span>
                           {relPrimaryProf && (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#21020b]/80 text-[#fae29c] border border-[#c99738]/25 truncate max-w-full">
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[var(--card-bg)] text-[var(--heading-text)] border border-[var(--border-color)] truncate max-w-full">
                               {relPrimaryProf}
                             </span>
                           )}
                         </div>
 
-                        <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] group-hover:text-[#ffd966] transition-colors line-clamp-1 font-royal-heading">
+                        <h3 className="text-xs sm:text-sm font-bold text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors line-clamp-1 font-royal-heading">
                           {relName}
                         </h3>
 
-                        <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[var(--primary-text)] line-clamp-2 leading-relaxed">
                           {relSummary}
                         </p>
 
                         <div className="pt-1 flex items-center justify-end">
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#d4af37] group-hover:text-[#fae29c] transition-colors">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--link-color)] group-hover:text-[#762D35] transition-colors">
                             <span>{detailSectionHeadings.readMoreLabel}</span>
                             <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                           </span>
@@ -5224,14 +5224,14 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               TASK 2 — RELATED COMMUNITIES SECTION (From 45 Audited Communities)
               ==================================================================== */}
           {relatedCommunities.length > 0 && (
-            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-3">
+            <section className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-6 sm:p-8 space-y-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                 <div className="space-y-1">
-                  <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
-                    <Users className="w-4 h-4 text-[#d4af37]" />
+                  <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[var(--heading-text)] font-royal-heading flex items-center gap-2">
+                    <Users className="w-4 h-4 text-[var(--accent-gold)]" />
                     <span>{detailSectionHeadings.relatedCommunitiesHeading}</span>
                   </h2>
-                  <p className="text-xs text-stone-400">
+                  <p className="text-xs text-[var(--secondary-text)]">
                     {detailSectionHeadings.relatedCommunitiesSubtitle}
                   </p>
                 </div>
@@ -5239,7 +5239,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 <button
                   type="button"
                   onClick={() => navigateFromArticleToDirectoryFilter(() => {})}
-                  className="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-[#141b2d] hover:bg-[#1e2942] text-[#d4af37] border border-[#c99738]/40 transition-colors cursor-pointer"
+                  className="royal-related-link-btn text-[11px] font-bold cursor-pointer"
                 >
                   {directoryLabels.all13CommunityLabels} ({SEARCHABLE_COMMUNITY_LABELS.length})
                 </button>
@@ -5256,11 +5256,11 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         navigateFromArticleToDirectoryFilter(() => setSelectedCommunityLabel(lbl.id))
                       }
                       title={lbl.historicalNote[currentLang] || lbl.historicalNote.en}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#131926] hover:bg-[#1d263b] text-[#fae29c] border border-[#c99738]/40 hover:border-[#d4af37] transition-all cursor-pointer"
+                      className="royal-related-link-btn inline-flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
                     >
                       <span>{lbl.label[currentLang] || lbl.label.en}</span>
                       {needsOngoingResearch && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-700/50">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-400">
                           {directoryLabels.ongoingEpigraphicResearch}
                         </span>
                       )}
@@ -5283,9 +5283,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                 if (supplementaryAliases.length === 0) return null;
 
                 return (
-                  <div className="pt-3 border-t border-stone-800/80 space-y-2">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <div className="pt-3 border-t border-[var(--border-color)] space-y-2">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--link-color)] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                       <span>
                         {refUi.supplementary25Badge} — {refUi.relatedTopicsLabel} ({supplementaryAliases.length})
                       </span>
@@ -5306,14 +5306,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                               aliasEntry.historicalContextNote[currentLang] ||
                               aliasEntry.historicalContextNote.en
                             }
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
-                              aliasEntry.requiresVerification
-                                ? 'bg-[#1a1321] hover:bg-[#261b30] text-amber-200 border-amber-500/40'
-                                : 'bg-[#111927] hover:bg-[#19253a] text-cyan-200 border-cyan-500/30'
-                            }`}
+                            className="royal-related-link-btn inline-flex items-center gap-1.5 text-xs font-medium cursor-pointer"
                           >
                             <span>{locAlias}</span>
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/50 text-[#d4af37] border border-stone-700">
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--card-bg)] text-[#54351F] border border-[#E8BFC9]">
                               {classText}
                             </span>
                             <ExternalLink className="w-3 h-3 opacity-80" />
@@ -5332,13 +5328,13 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               ==================================================================== */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* TASK 3 — KEYWORDS */}
-            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
-              <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
-                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
-                  <Search className="w-3.5 h-3.5 text-[#d4af37]" />
+            <section className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-sm">
+              <div className="border-b border-[var(--border-color)] pb-2.5 space-y-0.5">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--heading-text)] font-royal-heading flex items-center gap-2">
+                  <Search className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                   <span>{detailSectionHeadings.keywordsHeading}</span>
                 </h2>
-                <p className="text-[11px] text-stone-400">
+                <p className="text-[11px] text-[var(--secondary-text)]">
                   {detailSectionHeadings.keywordsSubtitle}
                 </p>
               </div>
@@ -5349,7 +5345,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     key={kw.id}
                     type="button"
                     onClick={kw.onClick}
-                    className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#141a29] hover:bg-[#1f2940] text-stone-200 hover:text-[#fae29c] border border-stone-700/80 hover:border-[#c99738]/60 transition-colors cursor-pointer text-left"
+                    className="royal-related-link-btn text-[11px] font-medium cursor-pointer text-left"
                   >
                     {kw.label}
                   </button>
@@ -5358,13 +5354,13 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             </section>
 
             {/* TASK 4 — HASHTAGS */}
-            <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
-              <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
-                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
-                  <Layers className="w-3.5 h-3.5 text-[#d4af37]" />
+            <section className="bg-[#FFF9EF] border border-[#D8C3A2] rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-sm">
+              <div className="border-b border-[#D8C3A2] pb-2.5 space-y-0.5">
+                <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-2">
+                  <Layers className="w-3.5 h-3.5 text-[#A87924]" />
                   <span>{detailSectionHeadings.hashtagsHeading}</span>
                 </h2>
-                <p className="text-[11px] text-stone-400">
+                <p className="text-[11px] text-[#6B5948]">
                   {detailSectionHeadings.hashtagsSubtitle}
                 </p>
               </div>
@@ -5376,7 +5372,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     type="button"
                     onClick={ht.onClick}
                     title={ht.title}
-                    className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#21020b]/60 hover:bg-[#580014] text-[#d4af37] hover:text-[#fae29c] border border-[#c99738]/35 hover:border-[#d4af37] transition-colors cursor-pointer"
+                    className="theme-hashtag px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-colors cursor-pointer"
                   >
                     {ht.tag}
                   </button>
@@ -5627,22 +5623,20 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   // COMPREHENSIVE DIRECTORY & CHRONOLOGICAL ARTICLE LISTING INTERFACE
   // ============================================================================
   return (
-    <div className="min-h-screen bg-[#07090e] text-stone-200">
+    <div className="min-h-screen bg-[var(--page-bg)] text-[var(--primary-text)]">
       {/* Decorative Royal Banner Header */}
-      <div className="relative border-b border-[#c99738]/30 bg-gradient-to-b from-[#21020b] via-[#101420] to-[#07090e] py-10 sm:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-
+      <div className="relative border-b border-[var(--border-color)] bg-[var(--section-bg)] py-10 sm:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto space-y-6 relative z-10">
           {/* Top Breadcrumb & Status */}
           <div className="flex flex-wrap items-center justify-between gap-2">
             <button
               onClick={() => onNavigate('/')}
-              className="inline-flex items-center gap-1.5 text-xs text-stone-400 hover:text-[#d4af37] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs text-[var(--secondary-text)] hover:text-[var(--heading-text)] transition-colors cursor-pointer"
             >
               <span>←</span>
               <span>{t.nav?.home || 'Home'}</span>
               <span>/</span>
-              <span className="text-[#d4af37]">{t.nav?.communityProminentPersons || pageLabels.pageTitle}</span>
+              <span className="text-[var(--link-color)] font-semibold">{t.nav?.communityProminentPersons || pageLabels.pageTitle}</span>
             </button>
 
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#580014]/70 border border-[#c99738]/40 text-[#fcedc7] text-xs font-semibold">
@@ -5982,14 +5976,12 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         }`}
                         className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 border ${
                           isQueried
-                            ? 'bg-[#580014] text-[#fae29c] border-[#d4af37] shadow-md'
-                            : supp.requiresVerification
-                            ? 'bg-[#17121e] hover:bg-[#22192d] text-amber-200 border-amber-500/40'
-                            : 'bg-[#101826] hover:bg-[#182438] text-cyan-100 border-cyan-500/30'
+                            ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm'
+                            : 'bg-[var(--card-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border-[var(--border-color)]'
                         }`}
                       >
                         <span>{locLabel}</span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-black/50 text-[#d4af37]">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--surface-bg)] text-[var(--link-color)] border border-[var(--border-color)]">
                           {classShort}
                         </span>
                       </button>
@@ -5999,7 +5991,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                 {/* Contextual Alias Verification & Cross-Reference Banner when a 70-Name term is searched */}
                 {matched70EntriesForSearch.length > 0 && (
-                  <div className="p-3.5 rounded-xl bg-[#131929] border border-[#d4af37]/50 space-y-2">
+                  <div className="p-3.5 rounded-xl bg-[var(--surface-bg)] border border-[var(--accent-gold)] space-y-2">
                     {matched70EntriesForSearch.slice(0, 3).map(matchedRef => {
                       const locName =
                         matchedRef.localizedLabel[currentLang] || matchedRef.localizedLabel.en;
@@ -6013,28 +6005,28 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       return (
                         <div
                           key={matchedRef.id}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b last:border-b-0 border-stone-800 pb-2 last:pb-0"
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs border-b last:border-b-0 border-[var(--border-color)] pb-2 last:pb-0"
                         >
                           <div className="space-y-1">
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="font-bold text-[#fae29c]">
+                              <span className="font-bold text-[var(--heading-text)]">
                                 #{matchedRef.order}/70 {locName}
                               </span>
-                              <span className="px-2 py-0.5 rounded bg-[#580014] text-[#fae29c] text-[10px] font-semibold border border-[#d4af37]/40">
+                              <span className="px-2 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-semibold border border-[#A87924]">
                                 {classText}
                               </span>
                               {matchedRef.requiresVerification && (
-                                <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-200 text-[10px] font-semibold border border-amber-500/40">
+                                <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-900 text-[10px] font-semibold border border-amber-400">
                                   ⚠ {refUi.requiresVerificationBadge}
                                 </span>
                               )}
                             </div>
-                            <p className="text-stone-300 leading-relaxed">{locNote}</p>
+                            <p className="text-[var(--primary-text)] leading-relaxed">{locNote}</p>
                           </div>
                           <button
                             type="button"
                             onClick={() => onNavigate(matchedRef.primaryTargetLink)}
-                            className="shrink-0 self-start sm:self-center px-3 py-1.5 rounded-lg bg-[#580014] hover:bg-[#78001c] text-[#fae29c] border border-[#d4af37]/50 text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
+                            className="shrink-0 self-start sm:self-center px-3 py-1.5 rounded-lg bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs font-semibold inline-flex items-center gap-1 cursor-pointer"
                           >
                             <span>{refUi.openLinkedArticleLabel}</span>
                             <ExternalLink className="w-3 h-3" />
@@ -6050,14 +6042,14 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         </section>
 
         {/* SECTION 3 — PROFESSIONS AND ACHIEVEMENT CATEGORIES (19 CATEGORIES) */}
-        <section className="bg-[#0c101a] border border-stone-800/90 rounded-2xl p-5 sm:p-6 space-y-4 shadow-lg">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-3">
+        <section className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
             <div className="space-y-0.5">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-[#d4af37] flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-[#d4af37]" />
+              <div className="text-[11px] font-bold uppercase tracking-widest text-[var(--link-color)] flex items-center gap-1.5">
+                <Award className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                 <span>{directoryLabels.section3Badge}</span>
               </div>
-              <h2 className="text-base sm:text-lg font-bold font-royal-heading text-[#fae29c]">
+              <h2 className="text-base sm:text-lg font-bold font-royal-heading text-[var(--heading-text)]">
                 {directoryLabels.section3Heading}
               </h2>
             </div>
@@ -6066,7 +6058,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               <button
                 type="button"
                 onClick={() => setSelectedProfession('all')}
-                className="px-3 py-1 rounded-lg bg-[#580014] text-[#fae29c] border border-[#d4af37]/50 text-xs font-semibold cursor-pointer"
+                className="px-3 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] text-xs font-semibold cursor-pointer"
               >
                 {directoryLabels.showAll19Professions}
               </button>
@@ -6087,19 +6079,19 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   onClick={() => setSelectedProfession(isSelected ? 'all' : prof.id)}
                   className={`text-left px-3.5 py-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-2 ${
                     isSelected
-                      ? 'bg-[#580014] border-[#d4af37] text-[#fae29c] shadow-md'
-                      : 'bg-[#111624] hover:bg-[#171e30] border-stone-800/90 text-stone-200'
+                      ? 'bg-[#762D35] border-[#A87924] text-white shadow-sm'
+                      : 'bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] border-[var(--border-color)] text-[var(--heading-text)]'
                   }`}
                 >
                   <span className="text-xs font-semibold leading-snug">
                     {prof.label[currentLang] || prof.label.en}
                   </span>
                   {verifiedCount > 0 ? (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-600/40 shrink-0">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-400 shrink-0">
                       {directoryLabels.verifiedCountLabel(verifiedCount)}
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-950/70 text-amber-300 border border-amber-600/40 shrink-0">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-400 shrink-0">
                       {directoryLabels.awaitingResearchTag}
                     </span>
                   )}
@@ -6110,23 +6102,23 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         </section>
 
         {/* SECTION 5 — UNIFIED SEARCH & MULTI-FACETED FILTERING INTERFACE */}
-        <section className="bg-[#0e121c] p-4 sm:p-5 rounded-2xl border border-[#c99738]/40 space-y-4 shadow-lg">
+        <section className="bg-[var(--card-bg)] p-4 sm:p-5 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-sm">
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
             {/* Search by Personality Name, Alternative Names, Dynasty, or Region */}
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[var(--accent-gold)] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder={pageLabels.searchPlaceholder}
-                className="w-full bg-[#161c2b] border border-stone-700/80 rounded-xl pl-10 pr-9 py-2.5 text-xs sm:text-sm text-stone-100 placeholder-stone-400 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]"
+                className="w-full bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl pl-10 pr-9 py-2.5 text-xs sm:text-sm text-[var(--primary-text)] placeholder-[var(--secondary-text)] focus:outline-none focus:border-[var(--accent-gold)] focus:ring-1 focus:ring-[var(--accent-gold)]"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--secondary-text)] hover:text-[var(--heading-text)] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -6135,32 +6127,32 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
             {/* Historical Period Dropdown & Regional State Dropdown */}
             <div className="flex flex-wrap items-center gap-2.5">
-              <div className="flex items-center gap-1.5 bg-[#161c2b] border border-stone-700/80 rounded-xl px-3 py-2">
-                <Clock className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+              <div className="flex items-center gap-1.5 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2">
+                <Clock className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0" />
                 <select
                   aria-label="Filter by Historical Period"
                   value={selectedPeriodBucket}
                   onChange={e => setSelectedPeriodBucket(e.target.value as HistoricalPeriodFilterId | 'all')}
-                  className="bg-transparent text-xs text-stone-200 focus:outline-none cursor-pointer"
+                  className="bg-transparent text-xs text-[var(--primary-text)] focus:outline-none cursor-pointer"
                 >
-                  <option value="all" className="bg-[#0e121c] text-stone-200">
+                  <option value="all" className="bg-[var(--card-bg)] text-[var(--primary-text)]">
                     {directoryLabels.allHistoricalPeriods}
                   </option>
                   {HISTORICAL_PERIOD_BUCKETS.map(pb => (
-                    <option key={pb.id} value={pb.id} className="bg-[#0e121c] text-stone-200">
+                    <option key={pb.id} value={pb.id} className="bg-[var(--card-bg)] text-[var(--primary-text)]">
                       {pb.label[currentLang] || pb.label.en}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <div className="flex items-center gap-1.5 bg-[#161c2b] border border-stone-700/80 rounded-xl px-3 py-2">
-                <MapPin className="w-3.5 h-3.5 text-[#d4af37] shrink-0" />
+              <div className="flex items-center gap-1.5 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2">
+                <MapPin className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0" />
                 <select
                   aria-label="Filter by Regional State"
                   value={selectedStateRegion}
                   onChange={e => setSelectedStateRegion(e.target.value as ProminentStateRegion | 'all')}
-                  className="bg-transparent text-xs text-stone-200 focus:outline-none cursor-pointer"
+                  className="bg-transparent text-xs text-[var(--primary-text)] focus:outline-none cursor-pointer"
                 >
                   {(
                     [
@@ -6172,7 +6164,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       'Deccan, Maharashtra & North'
                     ] as const
                   ).map(st => (
-                    <option key={st} value={st} className="bg-[#0e121c] text-stone-200">
+                    <option key={st} value={st} className="bg-[var(--card-bg)] text-[var(--primary-text)]">
                       {pageLabels.stateRegions[st]}
                     </option>
                   ))}
@@ -6181,8 +6173,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-stone-800/80 text-xs">
-            <span className="font-semibold text-[#fae29c]">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--border-color)] text-xs">
+            <span className="font-semibold text-[var(--heading-text)]">
               {pageLabels.showingCount(filteredPersons.length, PROMINENT_PERSONS.length)}
             </span>
 
@@ -6190,7 +6182,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               <button
                 type="button"
                 onClick={resetAllDirectoryFilters}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#580014] text-[#fae29c] border border-[#d4af37]/50 text-xs font-bold hover:bg-[#78001c] cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] text-xs font-bold hover:bg-[#5e2229] cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>{pageLabels.clearFilters}</span>
@@ -6201,17 +6193,17 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
         {/* Empty state if neither verified persons nor archival research placeholders match */}
         {filteredPersons.length === 0 && filteredPlaceholders.length === 0 && (
-          <div className="bg-[#121622] rounded-2xl border border-stone-800 p-12 text-center space-y-4">
-            <Users className="w-12 h-12 text-stone-500 mx-auto" />
-            <h3 className="text-lg font-bold text-stone-200">{pageLabels.emptyStateTitle}</h3>
-            <p className="text-xs sm:text-sm font-semibold text-amber-300 max-w-lg mx-auto">
+          <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] p-12 text-center space-y-4">
+            <Users className="w-12 h-12 text-[var(--secondary-text)] mx-auto" />
+            <h3 className="text-lg font-bold text-[var(--heading-text)]">{pageLabels.emptyStateTitle}</h3>
+            <p className="text-xs sm:text-sm font-semibold text-[var(--link-color)] max-w-lg mx-auto">
               {directoryLabels.noVerifiedRecordsStatus}
             </p>
-            <p className="text-xs sm:text-sm text-stone-400 max-w-md mx-auto">{pageLabels.emptyStateDesc}</p>
+            <p className="text-xs sm:text-sm text-[var(--secondary-text)] max-w-md mx-auto">{pageLabels.emptyStateDesc}</p>
             <button
               type="button"
               onClick={resetAllDirectoryFilters}
-              className="px-4 py-2 rounded-lg bg-[#580014] text-[#fae29c] hover:bg-[#72001a] text-xs font-semibold cursor-pointer"
+              className="px-4 py-2 rounded-lg bg-[#762D35] text-white hover:bg-[#5e2229] text-xs font-semibold cursor-pointer"
             >
               {pageLabels.clearFilters}
             </button>
@@ -6256,27 +6248,27 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       openPersonArticle(person);
                     }
                   }}
-                  className="bg-[#0f1420] border border-stone-800/90 hover:border-[#c99738]/70 rounded-2xl p-5 sm:p-6 transition-all shadow-lg hover:shadow-2xl hover:shadow-[#580014]/20 flex flex-col justify-between gap-5 group cursor-pointer"
+                  className="bg-[var(--card-bg)] border border-[var(--border-color)] hover:border-[var(--accent-gold)] rounded-2xl p-5 sm:p-6 transition-all shadow-sm hover:shadow-md flex flex-col justify-between gap-5 group cursor-pointer"
                 >
                   <div className="space-y-4">
                     {/* Card Top Metadata Bar: Chronological Index, Role Badge, Epistemic Tier & Period */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800/80 pb-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                       <div className="flex flex-wrap items-center gap-1.5">
                         {chrono !== undefined && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[#182032] text-[#d4af37] border border-[#c99738]/40">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[var(--surface-bg)] text-[var(--heading-text)] border border-[var(--border-color)]">
                             #{chrono.order}
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#580014]/80 text-[#fae29c] border border-[#d4af37]/40">
-                          <Crown className="w-3 h-3 text-[#d4af37]" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#762D35] text-white border border-[#A87924]">
+                          <Crown className="w-3 h-3 text-white" />
                           <span>{PERSON_BADGE_TRANSLATIONS[person.id]?.[currentLang] || person.badge}</span>
                         </span>
                         {tierObj && (
                           <span
                             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
                               isDocumented
-                                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-600/40'
-                                : 'bg-amber-950/60 text-amber-300 border-amber-600/40'
+                                ? 'bg-emerald-100 text-emerald-900 border-emerald-400'
+                                : 'bg-amber-100 text-amber-900 border-amber-400'
                             }`}
                           >
                             <Check className="w-2.5 h-2.5 shrink-0" />
@@ -6284,15 +6276,15 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                           </span>
                         )}
                         {extMeta.awaitingFurtherResearch && (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-900/50 text-amber-200 border border-amber-500/40">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-900 border border-amber-400">
                             <AlertCircle className="w-2.5 h-2.5 shrink-0" />
                             <span>{directoryLabels.ongoingEpigraphicResearch}</span>
                           </span>
                         )}
                       </div>
 
-                      <span className="text-[11px] font-semibold text-[#fae29c] flex items-center gap-1 shrink-0 bg-[#151c2c] px-2.5 py-0.5 rounded-md border border-stone-800">
-                        <Clock className="w-3 h-3 text-[#d4af37]" />
+                      <span className="text-[11px] font-semibold text-[var(--heading-text)] flex items-center gap-1 shrink-0 bg-[var(--surface-bg)] px-2.5 py-0.5 rounded-md border border-[var(--border-color)]">
+                        <Clock className="w-3 h-3 text-[var(--accent-gold)]" />
                         <span>{periodText}</span>
                       </span>
                     </div>
@@ -6309,39 +6301,39 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                       <div className="flex-1 min-w-0 space-y-2.5">
                         <div>
-                          <h2 className="text-lg sm:text-xl font-bold font-royal-heading text-[#fae29c] leading-snug group-hover:text-[#fde68a] transition-colors">
+                          <h2 className="text-lg sm:text-xl font-bold font-royal-heading text-[var(--heading-text)] leading-snug group-hover:text-[#762D35] transition-colors">
                             {localizedName}
                           </h2>
                           {extMeta.alternativeNames.length > 0 && (
-                            <p className="text-[11px] text-stone-400 mt-0.5">
-                              <span className="text-[#d4af37] font-semibold">{detailSectionHeadings.alternativeNamesLabel}: </span>
+                            <p className="text-[11px] text-[var(--secondary-text)] mt-0.5">
+                              <span className="text-[var(--link-color)] font-semibold">{detailSectionHeadings.alternativeNamesLabel}: </span>
                               {extMeta.alternativeNames.join(' · ')}
                             </p>
                           )}
-                          <p className="text-xs text-[#e8c872]/90 font-medium line-clamp-2 mt-1">
+                          <p className="royal-profile-title-box text-xs text-[#54351F] font-semibold line-clamp-2 mt-1.5 break-words">
                             {localizedTitles}
                           </p>
                         </div>
 
-                        <div className="space-y-1.5 text-xs border-t border-stone-800/80 pt-2">
-                          <div className="flex items-start gap-1.5 text-stone-200">
-                            <Calendar className="w-3.5 h-3.5 text-[#d4af37] shrink-0 mt-0.5" />
+                        <div className="space-y-1.5 text-xs border-t border-[var(--border-color)] pt-2">
+                          <div className="flex items-start gap-1.5 text-[var(--primary-text)]">
+                            <Calendar className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0 mt-0.5" />
                             <div>
-                              <span className="text-stone-400 font-medium">{pageLabels.datesLabel}: </span>
-                              <span className="font-semibold text-[#fcedc7]">{knownDatesText}</span>
+                              <span className="text-[var(--secondary-text)] font-medium">{pageLabels.datesLabel}: </span>
+                              <span className="font-semibold text-[var(--heading-text)]">{knownDatesText}</span>
                             </div>
                           </div>
 
-                          <div className="flex items-start gap-1.5 text-stone-200">
-                            <Landmark className="w-3.5 h-3.5 text-[#d4af37] shrink-0 mt-0.5" />
+                          <div className="flex items-start gap-1.5 text-[var(--primary-text)]">
+                            <Landmark className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0 mt-0.5" />
                             <div>
-                              <span className="text-stone-400 font-medium">{pageLabels.kingdomDynastyLabel}: </span>
-                              <span className="font-medium text-stone-200">{dynastyText}</span>
+                              <span className="text-[var(--secondary-text)] font-medium">{pageLabels.kingdomDynastyLabel}: </span>
+                              <span className="font-medium text-[var(--primary-text)]">{dynastyText}</span>
                             </div>
                           </div>
 
-                          <div className="flex items-start gap-1.5 text-stone-300">
-                            <MapPin className="w-3.5 h-3.5 text-[#d4af37] shrink-0 mt-0.5" />
+                          <div className="flex items-start gap-1.5 text-[var(--secondary-text)]">
+                            <MapPin className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0 mt-0.5" />
                             <span className="line-clamp-1">{localizedRegion}</span>
                           </div>
                         </div>
@@ -6351,7 +6343,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     {/* Profession & Associated Community Labels */}
                     <div className="space-y-2 pt-1">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37]">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--link-color)]">
                           {directoryLabels.professionsCardLabel}:
                         </span>
                         {extMeta.professionCategories.map(profId => {
@@ -6360,7 +6352,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                           return (
                             <span
                               key={profId}
-                              className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#182236] text-[#fae29c] border border-stone-700"
+                              className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[var(--surface-bg)] text-[var(--heading-text)] border border-[var(--border-color)]"
                             >
                               {pObj.label[currentLang] || pObj.label.en}
                             </span>
@@ -6369,7 +6361,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       </div>
 
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--secondary-text)]">
                           {directoryLabels.communityLabelsCardLabel}:
                         </span>
                         {extMeta.communityLabels.map(lblId => {
@@ -6383,7 +6375,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                                 e.stopPropagation();
                                 setSelectedCommunityLabel(lblId);
                               }}
-                              className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#141a28] hover:bg-[#580014] text-stone-200 hover:text-[#fae29c] border border-stone-800 hover:border-[#d4af37]/50 transition-colors cursor-pointer"
+                              className="theme-hashtag px-2 py-0.5 rounded text-[10px] font-medium bg-[var(--card-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--border-color)] hover:border-[var(--accent-gold)] transition-colors cursor-pointer"
                             >
                               {lObj.label[currentLang] || lObj.label.en}
                             </button>
@@ -6393,18 +6385,18 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     </div>
 
                     {/* Concise Introductory Summary */}
-                    <div className="bg-[#141a27] rounded-xl p-4 border border-stone-800/80 space-y-1.5">
-                      <span className="text-[10px] uppercase font-bold text-[#d4af37] tracking-wider block">
+                    <div className="bg-[var(--surface-bg)] rounded-xl p-4 border border-[var(--border-color)] space-y-1.5">
+                      <span className="text-[10px] uppercase font-bold text-[var(--link-color)] tracking-wider block">
                         {pageLabels.introSummaryLabel}
                       </span>
-                      <p className="text-xs sm:text-sm text-stone-200 leading-relaxed line-clamp-3">
+                      <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed line-clamp-3">
                         {localizedSummary}
                       </p>
                     </div>
                   </div>
 
                   {/* Card Footer: Read Full Article CTA & Quick Regional Tags */}
-                  <div className="pt-3 border-t border-stone-800/80 flex flex-wrap items-center justify-between gap-3">
+                  <div className="pt-3 border-t border-[var(--border-color)] flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-1.5">
                       {meta.regionalStates.slice(0, 3).map(st => (
                         <button
@@ -6416,8 +6408,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                           }}
                           className={`text-[10px] px-2 py-0.5 rounded font-semibold border cursor-pointer transition-colors ${
                             selectedStateRegion === st
-                              ? 'bg-[#d4af37] text-black border-[#d4af37]'
-                              : 'bg-stone-900/90 text-[#fae29c] border-[#c99738]/30 hover:border-[#d4af37]'
+                              ? 'bg-[#762D35] text-white border-[#A87924]'
+                              : 'theme-hashtag bg-[var(--card-bg)] text-[var(--heading-text)] border-[var(--border-color)] hover:border-[var(--accent-gold)]'
                           }`}
                         >
                           📍 {pageLabels.stateRegions[st]}

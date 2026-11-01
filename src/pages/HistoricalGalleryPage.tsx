@@ -407,34 +407,34 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 text-[#292521]">
       {/* Page Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-2">
-        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading">
-          <Landmark className="w-4 h-4" />
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading">
+          <Landmark className="w-4 h-4 text-[#A87924]" />
           <span>{hdr.badge}</span>
         </div>
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           {hdr.title}
         </h1>
-        <p className="text-xs sm:text-sm text-stone-400 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#6B5948] max-w-3xl leading-relaxed">
           {hdr.subtitle}
         </p>
       </div>
 
       {/* Category Filter Tabs & Keyword Search Bar */}
       <div className="space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-800 pb-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#D8C3A2] pb-4">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {categories.map(cat => (
               <button
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap border ${
                   activeCategory === cat.id
-                    ? 'bg-[#c99738] text-[#300207] shadow-md'
-                    : 'bg-[#121622] text-stone-400 hover:text-stone-200 hover:bg-stone-800'
+                    ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm'
+                    : 'bg-[#FFFCF5] text-[#54351F] border-[#D8C3A2] hover:bg-[#E9D9BE]'
                 }`}
               >
                 {cat.label}
@@ -444,21 +444,21 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
 
           {/* Keyword Search / Filter Input */}
           <div className="relative w-full md:w-72 shrink-0">
-            <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-[#76501F] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={activeKeywordQuery}
               onChange={e => setActiveKeywordQuery(e.target.value)}
               placeholder={ui.filterByKeywordPlaceholder}
               aria-label={ui.filterByKeywordPlaceholder}
-              className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#121622] border border-stone-800 focus:border-[#c99738] text-xs sm:text-sm text-stone-200 placeholder-stone-500 focus:outline-none transition-colors"
+              className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#FFFFFF] border border-[#D8C3A2] focus:border-[#A87924] text-xs sm:text-sm text-[#292521] placeholder-[#6B5948] focus:outline-none transition-colors"
             />
             {activeKeywordQuery && (
               <button
                 type="button"
                 onClick={() => setActiveKeywordQuery('')}
                 aria-label={ui.clearKeywordFilter}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-[#fcedc7] cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#54351F] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -467,17 +467,17 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
         </div>
 
         {/* Popular Clickable Keywords Bar */}
-        <div className="p-4 rounded-2xl bg-[#121622]/90 border border-stone-800/90 space-y-2.5">
+        <div className="p-4 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-2.5 shadow-xs">
           <div className="flex items-center justify-between gap-2 flex-wrap">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#d4af37] flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#54351F] flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-[#A87924]" />
               {ui.popularKeywordsLabel}
             </span>
             {activeKeywordQuery && (
               <button
                 type="button"
                 onClick={() => setActiveKeywordQuery('')}
-                className="text-xs font-bold text-[#e8c872] hover:underline cursor-pointer flex items-center gap-1"
+                className="text-xs font-bold text-[#76501F] hover:underline cursor-pointer flex items-center gap-1"
               >
                 <X className="w-3.5 h-3.5" />
                 {ui.clearKeywordFilter}
@@ -500,8 +500,8 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                   }
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer border ${
                     isSelected
-                      ? 'bg-[#c99738] text-[#2b0308] border-[#fcedc7] shadow-md'
-                      : 'bg-stone-900/80 text-stone-300 border-stone-800 hover:border-[#c99738]/60 hover:text-[#fcedc7]'
+                      ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm'
+                      : 'bg-[#FFF9EF] text-[#54351F] border-[#D8C3A2] hover:bg-[#E9D9BE] hover:border-[#A87924]'
                   }`}
                 >
                   <Tag className="w-3 h-3" />
@@ -514,23 +514,23 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
 
         {/* Active Keyword Filter Status Banner */}
         {activeKeywordQuery.trim() && (
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-[#2b0308]/90 via-[#1b0b12] to-[#121622] border border-[#c99738]/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-2xl bg-[#FFF9EF] border border-[#A87924] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <Tag className="w-4 h-4 text-[#d4af37] shrink-0" />
-              <div className="text-xs sm:text-sm text-stone-200">
-                <span className="font-bold text-[#e8c872]">
+              <Tag className="w-4 h-4 text-[#A87924] shrink-0" />
+              <div className="text-xs sm:text-sm text-[#292521]">
+                <span className="font-bold text-[#54351F]">
                   {ui.keywordFilterActiveBanner}:
                 </span>{' '}
-                <span className="px-2.5 py-0.5 rounded-full bg-[#c99738]/20 text-[#fcedc7] border border-[#c99738]/40 font-semibold">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#762D35] text-white border border-[#A87924] font-semibold">
                   {activeKeywordDisplayLabel}
                 </span>{' '}
-                <span className="text-stone-400">({displayedArticles.length})</span>
+                <span className="text-[#6B5948]">({displayedArticles.length})</span>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setActiveKeywordQuery('')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-stone-900 hover:bg-[#c99738] text-[#fcedc7] hover:text-[#2b0308] border border-[#c99738]/40 text-xs font-bold transition-all cursor-pointer self-start sm:self-center"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FFFCF5] hover:bg-[#762D35] text-[#54351F] hover:text-white border border-[#D8C3A2] text-xs font-bold transition-all cursor-pointer self-start sm:self-center"
             >
               <X className="w-3.5 h-3.5" />
               <span>{ui.clearKeywordFilter}</span>
@@ -548,7 +548,7 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
               <article
                 key={item.id}
                 onClick={() => handleOpenArticle(item.id)}
-                className="group rounded-2xl overflow-hidden bg-[#121622] border border-stone-800 hover:border-[#c99738] shadow-lg hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between"
+                className="group rounded-2xl overflow-hidden bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between"
               >
                 {/* Clickable Image Container */}
                 <div>
@@ -557,7 +557,7 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                       e.stopPropagation();
                       handleOpenArticle(item.id);
                     }}
-                    className="h-56 overflow-hidden relative bg-stone-950"
+                    className="h-56 overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]"
                   >
                     <img
                       src={item.image_url}
@@ -565,12 +565,12 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#fcedc7] bg-[#580014]/90 px-2.5 py-1 rounded-full border border-[#d4af37]/40">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-[#762D35] px-2.5 py-1 rounded-full border border-[#A87924]">
                         {enriched.categoryLabel}
                       </span>
                     </div>
                     <div className="absolute top-3 right-3">
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300 bg-black/75 backdrop-blur-sm px-2.5 py-1 rounded-full border border-emerald-700/50">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#1c5236] bg-[#edf7f0] px-2.5 py-1 rounded-full border border-[#92c5a6]">
                         <ShieldCheck className="w-3 h-3" />
                         {item.verification_status}
                       </span>
@@ -579,13 +579,13 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
 
                   {/* Card Body: Period, Location, Clickable Title & Summary */}
                   <div className="p-5 space-y-3">
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#d4af37] font-semibold">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#76501F] font-semibold">
                       <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
+                        <Calendar className="w-3 h-3 text-[#A87924]" />
                         {item.period}
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <MapPin className="w-3 h-3" />
+                        <MapPin className="w-3 h-3 text-[#A87924]" />
                         {item.location}
                       </span>
                     </div>
@@ -595,12 +595,12 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                         e.stopPropagation();
                         handleOpenArticle(item.id);
                       }}
-                      className="font-royal-heading font-bold text-base sm:text-lg text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug"
+                      className="font-royal-heading font-bold text-base sm:text-lg text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug"
                     >
                       {item.title}
                     </h2>
 
-                    <p className="text-xs text-stone-300 line-clamp-3 leading-relaxed">
+                    <p className="text-xs text-[#292521] line-clamp-3 leading-relaxed">
                       {enriched.fullDescription}
                     </p>
 
@@ -618,9 +618,9 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                             handleOpenKeywordInModal(kw.id, kw.label);
                           }}
                           title={ui.exploreKeywordTooltip}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-stone-900/90 hover:bg-[#c99738] text-stone-300 hover:text-[#2b0308] border border-stone-700/80 hover:border-[#fcedc7] transition-all cursor-pointer"
+                          className="theme-hashtag inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                         >
-                          <Tag className="w-2.5 h-2.5 text-[#d4af37] group-hover:text-current" />
+                          <Tag className="w-2.5 h-2.5 text-[#A87924]" />
                           <span>{kw.label}</span>
                         </button>
                       ))}
@@ -629,7 +629,7 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                 </div>
 
                 {/* Card Footer with Explicit View Details Button */}
-                <div className="px-5 py-3.5 bg-[#0e121b] border-t border-stone-800/80 text-[11px] text-stone-400 flex items-center justify-between gap-2">
+                <div className="px-5 py-3.5 bg-[#FFF9EF] border-t border-[#D8C3A2] text-[11px] text-[#6B5948] flex items-center justify-between gap-2">
                   <span className="truncate">{item.source}</span>
                   <button
                     type="button"
@@ -637,7 +637,7 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                       e.stopPropagation();
                       handleOpenArticle(item.id);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#c99738]/20 group-hover:bg-[#c99738] text-[#e8c872] group-hover:text-[#2b0308] border border-[#c99738]/40 font-bold text-xs transition-all cursor-pointer shrink-0"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#762D35] text-white border border-[#A87924] font-bold text-xs transition-all cursor-pointer shrink-0"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     <span>{ui.viewDetails}</span>
@@ -649,12 +649,12 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
         </div>
       ) : (
         /* Empty State when No Articles Match Keyword / Category */
-        <div className="p-10 rounded-2xl bg-[#121622] border border-stone-800 text-center space-y-4 max-w-2xl mx-auto">
-          <Tag className="w-10 h-10 text-[#d4af37] mx-auto opacity-80" />
-          <h3 className="font-royal-heading font-bold text-xl text-[#fcedc7]">
+        <div className="p-10 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] text-center space-y-4 max-w-2xl mx-auto">
+          <Tag className="w-10 h-10 text-[#A87924] mx-auto opacity-80" />
+          <h3 className="font-royal-heading font-bold text-xl text-[#54351F]">
             {ui.noRelatedArticlesFound}
           </h3>
-          <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#6B5948] leading-relaxed">
             {ui.noKeywordArticlesFoundDesc}
           </p>
           <div className="pt-2 flex items-center justify-center gap-3 flex-wrap">
@@ -664,7 +664,7 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                 setActiveKeywordQuery('');
                 setActiveCategory('all');
               }}
-              className="px-5 py-2.5 rounded-xl bg-[#c99738] hover:bg-[#ddb04f] text-[#2b0308] font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-md"
+              className="px-5 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-sm"
             >
               {ui.showAllArticles}
             </button>

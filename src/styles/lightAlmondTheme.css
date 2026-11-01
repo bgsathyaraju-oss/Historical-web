@@ -1,481 +1,335 @@
 /* ==========================================================================
-   CENTRALIZED LIGHT ALMOND / WARM IVORY THEME STYLESHEET
-   Applies the global Light Almond color system consistently across all
-   website pages, article views, navigation bars, menus, dropdowns, cards,
-   tables, forms, and interactive controls without modifying protected page JSX.
+   ROYAL LIGHT ALMOND / WARM IVORY GLOBAL DESIGN SYSTEM
+   Centralized Theme Stylesheet for the Suryavamsha Odiyaraju Kshatriya
+   Historical Documentary & Royal Heritage Portal
    ========================================================================== */
 
-:root {
-  --page-bg: #F5EBD9;
-  --section-bg: #EFE3D0;
-  --card-bg: #FFFCF5;
-  --surface-bg: #FFF9EF;
-  --menu-bg: #F1E4D0;
-  --input-bg: #FFFFFF;
-  --primary-text: #292521;
-  --heading-text: #54351F;
-  --secondary-text: #6B5948;
-  --link-color: #76501F;
-  --link-hover: #A87924;
-  --border-color: #D8C3A2;
-  --accent-gold: #A87924;
-  --primary-button: #762D35;
-  --primary-button-text: #FFFFFF;
-  --secondary-button: #E9D9BE;
-  --shadow-color: rgba(75, 51, 31, 0.12);
-}
-
-/* Reusable Theme Utility Classes */
-.theme-page-bg {
-  background-color: var(--page-bg);
-  color: var(--primary-text);
-}
-
-.theme-section-bg {
-  background-color: var(--section-bg);
-  color: var(--primary-text);
-}
-
-.theme-card {
-  background-color: var(--card-bg);
-  color: var(--primary-text);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 16px var(--shadow-color);
-}
-
-.theme-surface {
-  background-color: var(--surface-bg);
-  color: var(--primary-text);
-  border: 1px solid var(--border-color);
-}
-
-.theme-menu {
-  background-color: var(--menu-bg);
-  color: var(--primary-text);
-  border-color: var(--border-color);
-}
-
-.theme-btn-primary {
-  background-color: var(--primary-button);
-  color: var(--primary-button-text);
-  border: 1px solid var(--primary-button);
-}
-
-.theme-btn-primary:hover {
-  background-color: #5E2229;
-  color: var(--primary-button-text);
-}
-
-.theme-btn-secondary {
-  background-color: var(--secondary-button);
-  color: var(--heading-text);
-  border: 1px solid var(--border-color);
-}
-
-.theme-btn-secondary:hover {
-  background-color: #DFC9A6;
-  color: var(--heading-text);
-}
+/* Uses the single-source-of-truth :root CSS variables defined in src/index.css */
 
 @media screen {
   /* ========================================================================
-     1. PAGE & ROOT CONTAINERS -> Light Almond (#F5EBD9)
+     1. GLOBAL PAGE, ROOT & RESPONSIVE VIEWPORT FOUNDATION
      ======================================================================== */
   html,
   body,
   #root,
-  main,
-  .min-h-screen:not(.fixed) {
+  main {
+    background-color: var(--page-bg) !important;
+    color: var(--primary-text) !important;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Prevent horizontal overflow and ensure clean spacing below sticky Navbar */
+  section[id],
+  article[id],
+  h1[id],
+  h2[id],
+  h3[id],
+  div[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  /* Eliminate competing sticky top bars inside main/article that overlap Navbar on mobile & desktop */
+  main div.sticky.top-0,
+  article div.sticky.top-0,
+  .print-article-container div.sticky.top-0 {
+    position: relative !important;
+    top: auto !important;
+    z-index: 20 !important;
+  }
+
+  /* ========================================================================
+     2. REUSABLE SEMANTIC THEME CLASSES
+     ======================================================================== */
+  .theme-page {
     background-color: var(--page-bg) !important;
     color: var(--primary-text) !important;
   }
 
-  /* ========================================================================
-     2. NAVIGATION, STICKY BARS, MENUS & DROPDOWNS -> Warm Almond (#F1E4D0)
-     ======================================================================== */
-  header.sticky,
-  div.sticky.top-0,
-  nav[aria-label],
-  aside[aria-label*="Navigation"] {
+  .theme-section {
+    background-color: var(--section-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .theme-surface {
+    background-color: var(--surface-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .theme-card {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 16px var(--shadow-color) !important;
+  }
+
+  .theme-menu {
     background-color: var(--menu-bg) !important;
     color: var(--primary-text) !important;
     border-color: var(--border-color) !important;
   }
 
-  /* Dropdown and popover menus */
-  div.absolute[class*="z-50"]:not(.inset-0) {
-    background-color: var(--card-bg) !important;
+  .theme-input {
+    background-color: var(--input-bg) !important;
     color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-    box-shadow: 0 10px 28px var(--shadow-color) !important;
+    border: 1px solid var(--border-color) !important;
   }
 
-  /* ========================================================================
-     3. HERO HEADERS & SECTION BANNERS -> Warm Ivory / Almond Gradient
-     ======================================================================== */
-  header:not(.inset-0):not(.sticky),
-  section:not(.inset-0)[class*="bg-gradient-to-"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-gradient-to-"] {
-    background-image: linear-gradient(
-      135deg,
-      var(--card-bg) 0%,
-      var(--surface-bg) 55%,
-      var(--section-bg) 100%
-    ) !important;
-    background-color: var(--surface-bg) !important;
-    color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  /* ========================================================================
-     4. ARTICLES, CARDS & READING SURFACES -> Warm Ivory (#FFFCF5)
-     Scoped to structural containers (never touches .inset-0 image overlays)
-     ======================================================================== */
-  article,
-  .print-article-container,
-  section:not(.inset-0)[class*="bg-[#0"],
-  section:not(.inset-0)[class*="bg-[#1"],
-  section:not(.inset-0)[class*="bg-[#2"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#0"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#1"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#2"]:not([class*="bg-[#25D366]"]):not([class*="bg-[#20ba5a]"]),
-  div:not(.inset-0):not(.fixed):not(.absolute).bg-stone-950,
-  div:not(.inset-0):not(.fixed):not(.absolute).bg-stone-900,
-  div:not(.inset-0):not(.fixed):not(.absolute).bg-stone-800,
-  div:not(.inset-0):not(.fixed):not(.absolute).bg-slate-950,
-  div:not(.inset-0):not(.fixed):not(.absolute).bg-slate-900,
-  div:not(.inset-0):not(.fixed):not(.absolute).bg-slate-800,
-  footer:not(.inset-0)[class*="bg-[#0"],
-  footer:not(.inset-0)[class*="bg-[#1"],
-  footer:not(.inset-0)[class*="bg-[#2"] {
-    background-color: var(--card-bg) !important;
-    color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  /* Nested blocks inside articles and sections -> Soft Surface Ivory (#FFF9EF) */
-  article div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#0"],
-  article div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#1"],
-  article div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#2"]:not([class*="bg-[#25D366]"]):not([class*="bg-[#20ba5a]"]),
-  article section:not(.inset-0)[class*="bg-[#0"],
-  article section:not(.inset-0)[class*="bg-[#1"],
-  section div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#0"],
-  section div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-[#1"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-white/5"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-white/10"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-black/20"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-black/30"],
-  div:not(.inset-0):not(.fixed):not(.absolute)[class*="bg-black/40"],
-  .bg-\[\#FAF7F2\] {
-    background-color: var(--surface-bg) !important;
-    color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  /* Preserve transparent image overlays so images are never obscured */
-  .absolute.inset-0[class*="to-transparent"],
-  .absolute.inset-0[class*="via-transparent"] {
-    background-color: transparent !important;
-    background-image: linear-gradient(
-      to top,
-      rgba(28, 22, 19, 0.72) 0%,
-      rgba(28, 22, 19, 0.18) 45%,
-      transparent 100%
-    ) !important;
-  }
-
-  /* Decorative dot/radial pattern overlays inside headers */
-  .pointer-events-none.inset-0,
-  .pointer-events-none.absolute.inset-0 {
-    background-color: transparent !important;
-  }
-
-  /* Modal backdrop overlays stay translucent */
-  .fixed.inset-0[class*="bg-black"] {
-    background-color: rgba(41, 37, 33, 0.5) !important;
-  }
-
-  /* ========================================================================
-     5. SEMANTIC CALLOUT BOXES & BADGES (Emerald, Sky, Amber, Rose, Indigo)
-     ======================================================================== */
-  [class*="bg-emerald-950"],
-  [class*="bg-emerald-900"] {
-    background-color: #ECFDF3 !important;
-    color: #14532D !important;
-    border-color: #86EFAC !important;
-  }
-
-  [class*="bg-sky-950"],
-  [class*="bg-sky-900"],
-  [class*="bg-indigo-950"],
-  [class*="bg-indigo-900"] {
-    background-color: #EFF6FF !important;
-    color: #1E3A8A !important;
-    border-color: #93C5FD !important;
-  }
-
-  [class*="bg-amber-950"],
-  [class*="bg-amber-900"] {
-    background-color: var(--surface-bg) !important;
-    color: var(--heading-text) !important;
-    border-color: var(--accent-gold) !important;
-  }
-
-  [class*="bg-rose-950"],
-  [class*="bg-rose-900"] {
-    background-color: #FEF2F2 !important;
-    color: #762D35 !important;
-    border-color: #FCA5A5 !important;
-  }
-
-  /* Badges and inline pills with dark backgrounds */
-  span[class*="bg-[#0"],
-  span[class*="bg-[#1"],
-  span[class*="bg-[#2"]:not([class*="bg-[#25D366]"]),
-  span[class*="bg-[#580014"],
-  span[class*="bg-[#780016"],
-  span.bg-stone-800,
-  span.bg-stone-900,
-  span[class*="bg-black/"] {
-    background-color: var(--secondary-button) !important;
-    color: var(--heading-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  /* ========================================================================
-     6. TYPOGRAPHY & READABLE DARK TEXT HIERARCHY
-     ======================================================================== */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .font-royal-heading,
-  [class*="bg-clip-text"] {
-    color: var(--heading-text) !important;
-    -webkit-text-fill-color: var(--heading-text) !important;
-    background-image: none !important;
-  }
-
-  /* Convert legacy light body text utilities to dark readable text */
-  .text-white:not(button *):not(a *),
-  header .text-white,
-  .text-stone-100,
-  .text-stone-200,
-  .text-stone-300,
-  .text-slate-100,
-  .text-slate-200,
-  .text-slate-300,
-  .text-gray-100,
-  .text-gray-200,
-  .text-gray-300,
-  [class*="text-[#f5f3ed]"],
-  [class*="text-[#f7f5f0]"],
-  [class*="text-[#faf7f0]"],
-  [class*="text-[#e5d5be]"] {
-    color: var(--primary-text) !important;
-  }
-
-  /* Convert light gold/cream heading utilities to --heading-text (#54351F) */
-  [class*="text-[#fcedc7]"],
-  [class*="text-[#fae29c]"],
-  [class*="text-[#fde68a]"],
-  [class*="text-[#e8c872]"],
-  [class*="text-[#e6be6c]"],
-  [class*="text-[#fff3d1]"],
-  .text-amber-100,
-  .text-amber-200,
-  .text-amber-300,
-  .text-cyan-100,
-  .text-cyan-200,
-  .text-cyan-300,
-  .text-sky-300,
-  .text-indigo-300 {
-    color: var(--heading-text) !important;
-  }
-
-  .text-emerald-200,
-  .text-emerald-300,
-  .text-emerald-400 {
-    color: #166534 !important;
-  }
-
-  .text-rose-200,
-  .text-rose-300,
-  .text-rose-400 {
-    color: #762D35 !important;
-  }
-
-  /* Convert muted text utilities to --secondary-text (#6B5948) */
-  .text-stone-400,
-  .text-stone-500,
-  .text-slate-400,
-  .text-gray-400 {
-    color: var(--secondary-text) !important;
-  }
-
-  /* Convert gold accent utilities to --link-color (#76501F) */
-  [class*="text-[#d4af37]"],
-  [class*="text-[#c99738]"],
-  .text-amber-400,
-  .text-amber-500 {
-    color: var(--link-color) !important;
-  }
-
-  /* Code blocks (such as print URLs) */
-  code {
-    color: var(--heading-text) !important;
-  }
-
-  /* ========================================================================
-     7. BUTTONS & INTERACTIVE FILTER CONTROLS
-     ======================================================================== */
-  /* Secondary / Neutral / Filter Buttons */
-  button[class*="bg-[#0"],
-  button[class*="bg-[#1"],
-  button[class*="bg-[#2"]:not([class*="bg-[#2A201B]"]):not([class*="bg-[#25D366]"]),
-  button.bg-stone-900,
-  button.bg-stone-800,
-  button[class*="bg-white/10"],
-  button[class*="bg-black/40"],
-  a[class*="bg-[#1"],
-  a[class*="bg-white/10"] {
-    background-color: var(--surface-bg) !important;
-    background-image: none !important;
-    color: var(--heading-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  button[class*="bg-[#0"]:hover,
-  button[class*="bg-[#1"]:hover,
-  button[class*="bg-[#2"]:not([class*="bg-[#2A201B]"]):not([class*="bg-[#25D366]"]):hover,
-  button.bg-stone-900:hover,
-  button.bg-stone-800:hover,
-  button[class*="bg-white/10"]:hover {
-    background-color: var(--secondary-button) !important;
-    color: var(--primary-text) !important;
-    border-color: var(--accent-gold) !important;
-  }
-
-  /* Primary Action & Active State Buttons -> Royal Maroon (#762D35) with White Text */
-  .btn-primary-almond,
-  button[class*="bg-[#762D35]"],
-  a[class*="bg-[#762D35]"],
-  button[class*="bg-[#780016]"],
-  a[class*="bg-[#780016]"],
-  button[class*="bg-[#6e0018]"],
-  a[class*="bg-[#6e0018]"],
-  button[class*="bg-[#580014]"],
-  a[class*="bg-[#580014]"],
-  button[class*="bg-[#2A201B]"],
-  button[class*="bg-[#c99738]"],
-  a[class*="bg-[#c99738]"],
-  button[class*="bg-[#d4af37]"],
-  a[class*="bg-[#d4af37]"],
-  button.bg-amber-500,
-  a.bg-amber-500,
-  button.bg-amber-600,
-  a.bg-amber-600,
-  button[class*="from-[#580014]"],
-  button[class*="from-[#780016]"],
-  button[class*="from-[#c99738]"],
-  a[class*="from-[#c99738]"] {
-    background: var(--primary-button) !important;
+  .theme-btn-primary,
+  .btn-primary-almond {
     background-color: var(--primary-button) !important;
     background-image: none !important;
     color: var(--primary-button-text) !important;
     -webkit-text-fill-color: var(--primary-button-text) !important;
-    border-color: var(--primary-button) !important;
+    border: 1px solid var(--accent-gold) !important;
   }
 
-  .btn-primary-almond *,
-  button[class*="bg-[#762D35]"] *,
-  a[class*="bg-[#762D35]"] *,
-  button[class*="bg-[#780016]"] *,
-  a[class*="bg-[#780016]"] *,
-  button[class*="bg-[#6e0018]"] *,
-  a[class*="bg-[#6e0018]"] *,
-  button[class*="bg-[#580014]"] *,
-  a[class*="bg-[#580014]"] *,
-  button[class*="bg-[#2A201B]"] *,
-  button[class*="bg-[#c99738]"] *,
-  a[class*="bg-[#c99738]"] *,
-  button[class*="bg-[#d4af37]"] *,
-  a[class*="bg-[#d4af37]"] *,
-  button.bg-amber-500 *,
-  a.bg-amber-500 *,
-  button.bg-amber-600 *,
-  a.bg-amber-600 *,
-  button[class*="from-[#580014]"] *,
-  button[class*="from-[#780016]"] *,
-  button[class*="from-[#c99738]"] *,
-  a[class*="from-[#c99738]"] * {
-    color: var(--primary-button-text) !important;
-    -webkit-text-fill-color: var(--primary-button-text) !important;
+  .theme-btn-secondary,
+  .btn-secondary-almond {
+    background-color: var(--secondary-button) !important;
+    background-image: none !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border: 1px solid var(--border-color) !important;
   }
 
-  /* Preserve multi-line selection cards that use bg-[#580014] when they have children with descriptions */
-  button[class*="from-[#580014]"].flex-col,
-  button[class*="bg-[#580014]"].flex-col {
-    background: var(--secondary-button) !important;
+  /* Dedicated Hashtag & Keyword Pill Styling */
+  .theme-hashtag {
+    background-color: var(--card-bg) !important;
+    background-image: none !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .theme-hashtag:hover {
     background-color: var(--secondary-button) !important;
     color: var(--heading-text) !important;
     -webkit-text-fill-color: var(--heading-text) !important;
-    border: 2px solid var(--primary-button) !important;
-  }
-
-  button[class*="from-[#580014]"].flex-col *,
-  button[class*="bg-[#580014]"].flex-col * {
-    color: var(--heading-text) !important;
-    -webkit-text-fill-color: var(--heading-text) !important;
+    border-color: var(--accent-gold) !important;
   }
 
   /* ========================================================================
-     8. BORDERS, DIVIDERS, TABLES & FORM CONTROLS
+     3. ARTICLE & READING CONTAINERS
      ======================================================================== */
-  .border-stone-700,
-  .border-stone-800,
-  .border-stone-900,
-  .border-slate-700,
-  .border-slate-800,
-  [class*="border-stone-800/"],
-  [class*="border-stone-700/"],
-  [class*="border-white/"],
-  [class*="border-[#c99738]"],
-  [class*="border-[#d4af37]"] {
+  article,
+  .print-article-container,
+  article.print-article-container {
+    background-color: var(--card-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: 0 8px 28px var(--shadow-color) !important;
+  }
+
+  article header,
+  article section,
+  article footer,
+  article aside,
+  article figure,
+  article figcaption,
+  article blockquote {
+    background-color: var(--surface-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
     border-color: var(--border-color) !important;
   }
 
-  /* Tables */
-  table:not(.print-document-frame) {
+  /* ========================================================================
+     4. COMPLETE DARK / NAVY / MAROON SURFACE CONVERSION TO LIGHT ALMOND
+     Covers all sections, cards, figures, lists, definition lists, modals,
+     and badges across all 38 pages and detail views.
+     ======================================================================== */
+  main > div[class*="bg-[#0"],
+  main > div[class*="bg-[#1"],
+  main > div[class*="bg-stone-9"],
+  main > div[class*="bg-slate-9"] {
+    background-color: var(--page-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
+  }
+
+  section[class*="bg-[#0"],
+  section[class*="bg-[#1"],
+  section[class*="bg-[#21020b]"],
+  section[class*="bg-[#2a030d]"],
+  section[class*="bg-[#38000c]"],
+  section[class*="bg-[#420813]"],
+  section[class*="bg-stone-9"],
+  section[class*="bg-slate-9"],
+  section[class*="from-[#0"],
+  section[class*="from-[#1"],
+  section[class*="from-[#2"],
+  section[class*="from-[#3"],
+  section[class*="from-[#4"],
+  section[class*="from-[#580014]"],
+  div:not(.inset-0)[class*="bg-[#0"],
+  div:not(.inset-0)[class*="bg-[#1"],
+  div:not(.inset-0)[class*="bg-[#21020b]"],
+  div:not(.inset-0)[class*="bg-[#2a030d]"],
+  div:not(.inset-0)[class*="bg-[#38000c]"],
+  div:not(.inset-0)[class*="bg-[#420813]"],
+  div:not(.inset-0)[class*="bg-stone-9"],
+  div:not(.inset-0)[class*="bg-slate-9"],
+  div:not(.inset-0)[class*="bg-black/"],
+  div:not(.inset-0)[class*="from-[#0"],
+  div:not(.inset-0)[class*="from-[#1"],
+  div:not(.inset-0)[class*="from-[#2"],
+  div:not(.inset-0)[class*="from-[#3"],
+  div:not(.inset-0)[class*="from-[#4"],
+  div:not(.inset-0)[class*="from-[#580014]"],
+  figure[class*="bg-[#0"],
+  figure[class*="bg-[#1"],
+  figure[class*="bg-stone-9"],
+  figure[class*="bg-slate-9"],
+  figure[class*="bg-black"],
+  figcaption[class*="bg-[#0"],
+  figcaption[class*="bg-[#1"],
+  figcaption[class*="bg-stone-9"],
+  figcaption[class*="bg-slate-9"],
+  figcaption[class*="bg-black"],
+  dl[class*="bg-[#0"],
+  dl[class*="bg-[#1"],
+  dl[class*="bg-stone-9"],
+  li[class*="bg-[#0"],
+  li[class*="bg-[#1"],
+  li[class*="bg-[#2"],
+  li[class*="bg-stone-9"],
+  aside[class*="bg-[#0"],
+  aside[class*="bg-[#1"],
+  aside[class*="bg-stone-9"],
+  blockquote[class*="bg-[#0"],
+  blockquote[class*="bg-[#1"],
+  blockquote[class*="bg-stone-9"],
+  pre[class*="bg-[#0"],
+  pre[class*="bg-[#1"],
+  pre[class*="bg-stone-9"],
+  footer[class*="bg-[#0"],
+  footer[class*="bg-[#1"],
+  footer[class*="bg-stone-9"] {
+    background-color: var(--card-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Nested cards inside cards use warm ivory surface (#FFF9EF) for visual depth */
+  section[class*="bg-[#0"] div:not(.inset-0)[class*="bg-[#0"],
+  section[class*="bg-[#0"] div:not(.inset-0)[class*="bg-[#1"],
+  section[class*="bg-[#1"] div:not(.inset-0)[class*="bg-[#0"],
+  section[class*="bg-[#1"] div:not(.inset-0)[class*="bg-[#1"],
+  article div:not(.inset-0)[class*="bg-[#0"],
+  article div:not(.inset-0)[class*="bg-[#1"],
+  article div:not(.inset-0)[class*="bg-[#21020b]"],
+  article div:not(.inset-0)[class*="bg-[#2a030d]"],
+  article div:not(.inset-0)[class*="bg-stone-9"] {
+    background-color: var(--surface-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* Decorative full-bleed background overlays (.inset-0) inside cards/headers become transparent */
+  div.inset-0[class*="from-[#0"],
+  div.inset-0[class*="from-[#1"],
+  div.inset-0[class*="from-[#2"],
+  div.inset-0[class*="from-[#580014]"],
+  div.inset-0[class*="via-[#0"],
+  div.inset-0[class*="via-[#1"],
+  div.inset-0[class*="to-[#0"],
+  div.inset-0[class*="to-[#1"],
+  div.inset-0[class*="bg-black/"],
+  div.inset-0[class*="bg-[#0"],
+  div.inset-0[class*="bg-[#1"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    pointer-events: none;
+  }
+
+  /* Modal backdrop overlays (.fixed.inset-0) keep subtle warm translucent backdrop */
+  div.fixed.inset-0[class*="bg-black"],
+  div.fixed.inset-0[class*="bg-[#0"] {
+    background-color: rgba(41, 37, 33, 0.55) !important;
+    pointer-events: auto;
+  }
+
+  /* Corner badges and pills with dark backgrounds (e.g. bg-black/75, bg-[#0b0f19]/90, bg-[#21020b]) */
+  span[class*="bg-black/"],
+  span[class*="bg-[#0"],
+  span[class*="bg-[#1"],
+  span[class*="bg-[#21020b]"],
+  span[class*="bg-[#2a030d]"],
+  span[class*="bg-stone-9"],
+  span[class*="bg-stone-8"] {
+    background-color: var(--surface-bg) !important;
+    background-image: none !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  /* ========================================================================
+     5. NAVIGATION, MENUS, DROPDOWNS & FLOATING DOCK
+     ======================================================================== */
+  header.sticky,
+  nav[aria-label*="Main"],
+  aside[aria-label*="Navigation"] {
+    background-color: var(--menu-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  /* ========================================================================
+     6. TABLES, DATA GRIDS & CHRONOLOGIES
+     ======================================================================== */
+  table {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  thead,
+  thead tr,
+  thead th {
+    background-color: var(--section-bg) !important;
+    background-image: none !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  tbody tr {
     background-color: var(--card-bg) !important;
     color: var(--primary-text) !important;
     border-color: var(--border-color) !important;
   }
 
-  table:not(.print-document-frame) thead,
-  table:not(.print-document-frame) th {
-    background-color: var(--section-bg) !important;
-    color: var(--heading-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  table:not(.print-document-frame) tbody tr:nth-child(even) {
+  tbody tr:nth-child(even) {
     background-color: var(--surface-bg) !important;
   }
 
-  table:not(.print-document-frame) tbody tr:nth-child(odd) {
-    background-color: var(--card-bg) !important;
+  tbody tr:hover {
+    background-color: var(--menu-bg) !important;
   }
 
-  table:not(.print-document-frame) td {
+  tbody td,
+  tbody th {
     color: var(--primary-text) !important;
     border-color: var(--border-color) !important;
+    word-break: break-word;
   }
 
-  /* Inputs, Selects, Options & Textareas */
-  input:not([type="checkbox"]):not([type="radio"]),
+  /* ========================================================================
+     7. INPUTS, SEARCH BARS, SELECTORS & TEXTAREAS
+     ======================================================================== */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   select,
   textarea {
     background-color: var(--input-bg) !important;
@@ -483,14 +337,440 @@
     border-color: var(--border-color) !important;
   }
 
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--secondary-text) !important;
+    opacity: 0.85 !important;
+  }
+
   select option {
     background-color: var(--card-bg) !important;
     color: var(--primary-text) !important;
   }
 
-  input::placeholder,
-  textarea::placeholder {
+  /* ========================================================================
+     8. GLOBAL TEXT VISIBILITY & HIGH-CONTRAST READABILITY REPAIR
+     Eliminates all white/cream/pale text on light almond/ivory surfaces.
+     ======================================================================== */
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--heading-text) !important;
+  }
+
+  p, li, dd, dt, td, th, figcaption, blockquote {
+    color: var(--primary-text) !important;
+  }
+
+  /* Override all light/cream/white text classes on non-primary-button elements */
+  .text-white,
+  [class*="text-white/"],
+  .text-\[\#fcedc7\],
+  [class*="text-[#fcedc7]"],
+  .text-\[\#fae29c\],
+  [class*="text-[#fae29c]"],
+  .text-\[\#f5e6c8\],
+  [class*="text-[#f5e6c8]"],
+  .text-\[\#f5f3ed\],
+  [class*="text-[#f5f3ed]"],
+  .text-\[\#fdf6e7\],
+  [class*="text-[#fdf6e7]"],
+  .text-amber-50,
+  .text-amber-100,
+  [class*="text-amber-100/"],
+  .text-amber-200,
+  [class*="text-amber-200/"],
+  .text-amber-300,
+  [class*="text-amber-300/"],
+  .text-stone-50,
+  .text-stone-100,
+  .text-stone-200,
+  [class*="text-stone-200/"],
+  .text-stone-300,
+  [class*="text-stone-300/"],
+  .text-slate-100,
+  .text-slate-200,
+  .text-slate-300 {
+    color: var(--primary-text) !important;
+    -webkit-text-fill-color: var(--primary-text) !important;
+  }
+
+  /* Headings with legacy light text or transparent gradient clip classes must use Heading Brown (#54351F) */
+  h1.text-white, h2.text-white, h3.text-white, h4.text-white, h5.text-white, h6.text-white,
+  h1.text-transparent, h2.text-transparent, h3.text-transparent,
+  .bg-clip-text.text-transparent,
+  h1[class*="text-[#fcedc7]"], h2[class*="text-[#fcedc7]"], h3[class*="text-[#fcedc7]"], h4[class*="text-[#fcedc7]"],
+  h1[class*="text-[#fae29c]"], h2[class*="text-[#fae29c]"], h3[class*="text-[#fae29c]"], h4[class*="text-[#fae29c]"],
+  h1[class*="text-[#e8c872]"], h2[class*="text-[#e8c872]"], h3[class*="text-[#e8c872]"], h4[class*="text-[#e8c872]"],
+  h1[class*="text-[#d4af37]"], h2[class*="text-[#d4af37]"], h3[class*="text-[#d4af37]"], h4[class*="text-[#d4af37]"],
+  h1[class*="text-amber-"], h2[class*="text-amber-"], h3[class*="text-amber-"], h4[class*="text-amber-"] {
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    background-image: none !important;
+  }
+
+  /* Prevent group-hover:text-white or hover:text-white from turning card headings invisible on hover */
+  .group:hover .group-hover\:text-white,
+  .group:hover [class*="group-hover:text-[#fcedc7]"],
+  .group:hover [class*="group-hover:text-[#fae29c]"],
+  .group:hover [class*="group-hover:text-[#e8c872]"],
+  .group:hover [class*="group-hover:text-[#d4af37]"],
+  .group:hover [class*="group-hover:text-amber-"] {
+    color: var(--primary-button) !important;
+    -webkit-text-fill-color: var(--primary-button) !important;
+  }
+
+  /* Secondary / muted text classes mapped to warm readable brown (#6B5948) */
+  .text-stone-400,
+  [class*="text-stone-400/"],
+  .text-stone-500,
+  .text-slate-400,
+  .text-slate-500 {
     color: var(--secondary-text) !important;
-    opacity: 0.8;
+  }
+
+  /* Legacy bright gold text (#d4af37, #e8c872) mapped to high-contrast bronze/brown (#76501F) on light backgrounds */
+  .text-\[\#d4af37\],
+  [class*="text-[#d4af37]"],
+  .text-\[\#e8c872\],
+  [class*="text-[#e8c872]"],
+  .text-amber-400,
+  .text-amber-500 {
+    color: var(--link-color) !important;
+    -webkit-text-fill-color: var(--link-color) !important;
+  }
+
+  /* Semantic Emerald / Amber / Rose status badges mapped to high-contrast dark text on soft tint backgrounds */
+  .text-emerald-200,
+  .text-emerald-300,
+  .text-emerald-400,
+  .text-green-300,
+  .text-green-400 {
+    color: #1c5236 !important;
+    -webkit-text-fill-color: #1c5236 !important;
+  }
+
+  .text-purple-200,
+  .text-purple-300,
+  .text-purple-400 {
+    color: #4c2878 !important;
+    -webkit-text-fill-color: #4c2878 !important;
+  }
+
+  .text-rose-200,
+  .text-rose-300,
+  .text-rose-400,
+  .text-red-300,
+  .text-red-400 {
+    color: #762D35 !important;
+    -webkit-text-fill-color: #762D35 !important;
+  }
+
+  .text-sky-200,
+  .text-sky-300,
+  .text-sky-400,
+  .text-blue-300,
+  .text-blue-400 {
+    color: #1e4268 !important;
+    -webkit-text-fill-color: #1e4268 !important;
+  }
+
+  [class*="bg-emerald-9"],
+  [class*="bg-green-9"] {
+    background-color: #edf7f0 !important;
+    border-color: #92c5a6 !important;
+    color: #1c5236 !important;
+  }
+
+  [class*="bg-purple-9"] {
+    background-color: #f4effa !important;
+    border-color: #c4aee0 !important;
+    color: #4c2878 !important;
+  }
+
+  [class*="bg-amber-9"] {
+    background-color: #fdf6e7 !important;
+    border-color: #d8b467 !important;
+    color: #6b4a1b !important;
+  }
+
+  [class*="bg-rose-9"],
+  [class*="bg-red-9"] {
+    background-color: #fcedee !important;
+    border-color: #dfa5ab !important;
+    color: #762D35 !important;
+  }
+
+  [class*="bg-sky-9"],
+  [class*="bg-blue-9"] {
+    background-color: #eef5fc !important;
+    border-color: #9ec0e6 !important;
+    color: #1e4268 !important;
+  }
+
+  /* ========================================================================
+     9. BUTTONS, TAGS, KEYWORDS & HASHTAGS (EXACT TOKEN MATCHING)
+     CRITICAL FIX: Uses [class~="..."] exact class token matching so buttons
+     with `hover:bg-[#580014]` (like hashtags & keywords) NEVER get forced
+     white text in their default state!
+     ======================================================================== */
+
+  /* 9A. Hashtag, Keyword & Secondary Dark-Surface Buttons / Spans (Default Light Ivory var(--card-bg), Text var(--heading-text), Border var(--border-color)) */
+  button[class*="bg-[#21020b]"],
+  span[class*="bg-[#21020b]"],
+  button[class*="bg-[#0"],
+  button[class*="bg-[#1"],
+  button[class*="bg-stone-9"],
+  button[class*="bg-stone-8"],
+  button[class*="bg-slate-9"],
+  button[class*="bg-slate-8"],
+  a[class*="bg-[#0"],
+  a[class*="bg-[#1"],
+  a[class*="bg-stone-9"],
+  a[class*="bg-stone-8"] {
+    background-color: var(--card-bg) !important;
+    background-image: none !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  button[class*="bg-[#21020b]"] *,
+  span[class*="bg-[#21020b]"] *,
+  button[class*="bg-[#0"] *,
+  button[class*="bg-[#1"] *,
+  button[class*="bg-stone-9"] *,
+  button[class*="bg-stone-8"] *,
+  button[class*="bg-slate-9"] *,
+  button[class*="bg-slate-8"] *,
+  a[class*="bg-[#0"] *,
+  a[class*="bg-[#1"] *,
+  a[class*="bg-stone-9"] *,
+  a[class*="bg-stone-8"] * {
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+  }
+
+  button[class*="bg-[#21020b]"]:hover,
+  button[class*="bg-[#0"]:hover,
+  button[class*="bg-[#1"]:hover,
+  button[class*="bg-stone-9"]:hover,
+  button[class*="bg-stone-8"]:hover,
+  button[class*="bg-slate-9"]:hover,
+  button[class*="bg-slate-8"]:hover,
+  a[class*="bg-[#0"]:hover,
+  a[class*="bg-[#1"]:hover,
+  a[class*="bg-stone-9"]:hover,
+  a[class*="bg-stone-8"]:hover {
+    background-color: var(--secondary-button) !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border-color: var(--accent-gold) !important;
+  }
+
+  button[class*="bg-[#21020b]"]:hover *,
+  button[class*="bg-[#0"]:hover *,
+  button[class*="bg-[#1"]:hover *,
+  button[class*="bg-stone-9"]:hover *,
+  button[class*="bg-stone-8"]:hover *,
+  button[class*="bg-slate-9"]:hover *,
+  button[class*="bg-slate-8"]:hover *,
+  a[class*="bg-[#0"]:hover *,
+  a[class*="bg-[#1"]:hover *,
+  a[class*="bg-stone-9"]:hover *,
+  a[class*="bg-stone-8"]:hover * {
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+  }
+
+  /* 9B. Primary Action Buttons & Active Pills (#762D35 with #FFFFFF text)
+     Uses [class~="..."] exact token matching so `hover:bg-[#580014]` is NOT matched! */
+  button[class~="bg-[#762D35]"],
+  button[class~="bg-[#580014]"],
+  button[class~="bg-[#780016]"],
+  button[class~="bg-[#6e0018]"],
+  button[class~="bg-[#8b001d]"],
+  button[class~="bg-[#c99738]"],
+  button[class~="bg-[#d4af37]"],
+  button[class~="from-[#c99738]"],
+  button[class~="from-[#d4af37]"],
+  button[class~="from-[#580014]"],
+  button[class~="from-[#780016]"],
+  a[class~="bg-[#762D35]"],
+  a[class~="bg-[#580014]"],
+  a[class~="bg-[#780016]"],
+  a[class~="bg-[#6e0018]"],
+  a[class~="bg-[#c99738]"],
+  a[class~="bg-[#d4af37]"],
+  a[class~="from-[#c99738]"],
+  a[class~="from-[#d4af37]"],
+  a[class~="from-[#580014]"],
+  span[class~="bg-[#762D35]"],
+  span[class~="bg-[#580014]"],
+  span[class~="bg-[#780016]"],
+  .theme-btn-primary,
+  .btn-primary-almond,
+  .royal-gold-gradient {
+    background-color: var(--primary-button) !important;
+    background-image: none !important;
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+    border-color: var(--accent-gold) !important;
+  }
+
+  button[class~="bg-[#762D35]"] *,
+  button[class~="bg-[#580014]"] *,
+  button[class~="bg-[#780016]"] *,
+  button[class~="bg-[#6e0018]"] *,
+  button[class~="bg-[#8b001d]"] *,
+  button[class~="bg-[#c99738]"] *,
+  button[class~="bg-[#d4af37]"] *,
+  button[class~="from-[#c99738]"] *,
+  button[class~="from-[#d4af37]"] *,
+  button[class~="from-[#580014]"] *,
+  button[class~="from-[#780016]"] *,
+  a[class~="bg-[#762D35]"] *,
+  a[class~="bg-[#580014]"] *,
+  a[class~="bg-[#780016]"] *,
+  a[class~="bg-[#6e0018]"] *,
+  a[class~="bg-[#c99738]"] *,
+  a[class~="bg-[#d4af37]"] *,
+  a[class~="from-[#c99738]"] *,
+  a[class~="from-[#d4af37]"] *,
+  a[class~="from-[#580014]"] *,
+  span[class~="bg-[#762D35]"] *,
+  span[class~="bg-[#580014]"] *,
+  span[class~="bg-[#780016]"] *,
+  .theme-btn-primary *,
+  .btn-primary-almond *,
+  .royal-gold-gradient * {
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+  }
+
+  /* Hover state for buttons that explicitly transition to #762D35 on hover */
+  button[class~="hover:bg-[#762D35]"]:hover,
+  a[class~="hover:bg-[#762D35]"]:hover {
+    background-color: var(--primary-button) !important;
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+  }
+
+  button[class~="hover:bg-[#762D35]"]:hover *,
+  a[class~="hover:bg-[#762D35]"]:hover * {
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+  }
+
+  /* 9C. WhatsApp Action Buttons keep high-contrast white text on green */
+  a[class~="bg-[#25D366]"],
+  a[class~="bg-[#1f7a44]"],
+  a[class~="bg-[#15803d]"],
+  button[class~="bg-[#25D366]"],
+  button[class~="bg-[#1f7a44]"],
+  button[class~="bg-[#15803d]"],
+  a[class~="bg-[#25D366]"] *,
+  a[class~="bg-[#1f7a44]"] *,
+  a[class~="bg-[#15803d]"] *,
+  button[class~="bg-[#25D366]"] *,
+  button[class~="bg-[#1f7a44]"] *,
+  button[class~="bg-[#15803d]"] * {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+  }
+
+  /* ========================================================================
+     10. ROYAL UI SPECIFIC ELEMENTS: RELATED LINKS BUTTONS & ARTICLE PROFILE TITLE BOXES
+     ======================================================================== */
+
+  /* 10A. Related Links Buttons (Light Pink #F8DDE3, Text #54351F, Border 1px solid #E8BFC9, Radius 18px, Padding 10px 16px, Hover #F1C8D2) */
+  .royal-related-link-btn,
+  button.royal-related-link-btn,
+  a.royal-related-link-btn,
+  div[role="button"].royal-related-link-btn,
+  div.royal-related-link-btn,
+  section div.royal-related-link-btn,
+  article div.royal-related-link-btn {
+    background-color: var(--related-link-bg, #F8DDE3) !important;
+    background-image: none !important;
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+    border: 1px solid var(--related-link-border, #E8BFC9) !important;
+    border-radius: 18px !important;
+    padding: 10px 16px !important;
+    box-shadow: 0 2px 6px rgba(84, 53, 31, 0.08) !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+  }
+
+  .royal-related-link-btn *,
+  button.royal-related-link-btn *,
+  a.royal-related-link-btn *,
+  div[role="button"].royal-related-link-btn *,
+  div.royal-related-link-btn *,
+  section div.royal-related-link-btn *,
+  article div.royal-related-link-btn * {
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+  }
+
+  .royal-related-link-btn:hover,
+  button.royal-related-link-btn:hover,
+  a.royal-related-link-btn:hover,
+  div[role="button"].royal-related-link-btn:hover,
+  div.royal-related-link-btn:hover,
+  section div.royal-related-link-btn:hover,
+  article div.royal-related-link-btn:hover {
+    background-color: var(--related-link-hover-bg, #F1C8D2) !important;
+    background-image: none !important;
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+    border-color: var(--related-link-border, #E8BFC9) !important;
+    box-shadow: 0 4px 10px rgba(84, 53, 31, 0.14) !important;
+  }
+
+  .royal-related-link-btn:hover *,
+  button.royal-related-link-btn:hover *,
+  a.royal-related-link-btn:hover *,
+  div[role="button"].royal-related-link-btn:hover *,
+  div.royal-related-link-btn:hover *,
+  section div.royal-related-link-btn:hover *,
+  article div.royal-related-link-btn:hover * {
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+  }
+
+  /* 10B. Article Profile Title Boxes (Light Orange #F4C78A, Text #54351F, Border 1px solid #E4B879, Radius 14px, Padding 10px 16px, Font Weight 600) */
+  .royal-profile-title-box,
+  div.royal-profile-title-box,
+  p.royal-profile-title-box,
+  figcaption.royal-profile-title-box,
+  section .royal-profile-title-box,
+  header .royal-profile-title-box,
+  article .royal-profile-title-box {
+    background-color: var(--profile-title-box-bg, #F4C78A) !important;
+    background-image: none !important;
+    color: var(--profile-title-box-text, #54351F) !important;
+    -webkit-text-fill-color: var(--profile-title-box-text, #54351F) !important;
+    border: 1px solid var(--profile-title-box-border, #E4B879) !important;
+    border-radius: 14px !important;
+    padding: 10px 16px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(84, 53, 31, 0.10) !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    line-height: 1.5 !important;
+  }
+
+  .royal-profile-title-box *,
+  div.royal-profile-title-box *,
+  p.royal-profile-title-box *,
+  figcaption.royal-profile-title-box *,
+  section .royal-profile-title-box *,
+  header .royal-profile-title-box *,
+  article .royal-profile-title-box * {
+    color: var(--profile-title-box-text, #54351F) !important;
+    -webkit-text-fill-color: var(--profile-title-box-text, #54351F) !important;
+    font-weight: 600 !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
   }
 }

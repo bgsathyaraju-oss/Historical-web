@@ -21,6 +21,15 @@
     --secondary-button: #E9D9BE;
     --shadow-color: rgba(75, 51, 31, 0.12);
 
+    --related-link-bg: #F8DDE3;
+    --related-link-hover-bg: #F1C8D2;
+    --related-link-text: #54351F;
+    --related-link-border: #E8BFC9;
+
+    --profile-title-box-bg: #F4C78A;
+    --profile-title-box-text: #54351F;
+    --profile-title-box-border: #E4B879;
+
     --website-bg-main: #F5EBD9;
     --website-bg-secondary: #FFF9EF;
     --website-bg-card: #FFFCF5;

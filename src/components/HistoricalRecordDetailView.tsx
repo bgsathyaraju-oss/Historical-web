@@ -4200,7 +4200,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         setActiveCategory('all');
                         closeRecordDetail();
                       }}
-                      className="px-3 py-1 rounded-xl bg-[#E9D9BE] hover:bg-[#762D35] text-xs text-[#54351F] hover:text-white border border-[#D8C3A2] hover:border-[#A87924] transition-colors cursor-pointer"
+                      className="theme-hashtag px-3 py-1 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] text-xs text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-colors cursor-pointer"
                     >
                       {kw}
                     </button>
@@ -4225,7 +4225,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         setActiveCategory('all');
                         closeRecordDetail();
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[#FFF9EF] hover:bg-[#E9D9BE] text-[11px] font-mono text-[#76501F] border border-[#D8C3A2] cursor-pointer"
+                      className="theme-hashtag px-2.5 py-1 rounded-lg bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[11px] font-mono text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] cursor-pointer"
                     >
                       #{tag}
                     </button>

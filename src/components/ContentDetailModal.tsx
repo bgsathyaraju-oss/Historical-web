@@ -393,7 +393,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
               </h3>
 
               {item.subtitle && (
-                <p className="text-xs sm:text-sm text-[#76501F] font-semibold">
+                <p className="royal-profile-title-box text-xs sm:text-sm text-[#54351F] font-semibold break-words">
                   {item.subtitle}
                 </p>
               )}
@@ -426,7 +426,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                 className="w-full max-h-80 object-cover"
               />
               {item.imageCaption && (
-                <figcaption className="p-3 bg-[#FFF9EF] border-t border-[#D8C3A2] text-xs text-[#292521] flex items-center justify-between">
+                <figcaption className="royal-profile-title-box p-3 bg-[#F4C78A] border-t border-[#E4B879] text-xs text-[#54351F] flex flex-wrap items-center justify-between gap-2 break-words">
                   <span className="text-[#54351F] font-semibold">{ui.visualRecord}</span>
                   <span className="text-[#6B5948] truncate max-w-md">{item.imageCaption}</span>
                 </figcaption>
@@ -517,7 +517,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                             key={tIdx}
                             type="button"
                             onClick={() => onTagClick(tagItem, secHeading)}
-                            className="px-3 py-1 rounded-lg bg-[#EFE3D0] hover:bg-[#762D35] border border-[#D8C3A2] hover:border-[#A87924] text-xs text-[#54351F] hover:text-white font-medium transition-colors cursor-pointer"
+                            className="royal-related-link-btn text-xs text-[#54351F] font-medium cursor-pointer"
                           >
                             {tagItem}
                           </button>

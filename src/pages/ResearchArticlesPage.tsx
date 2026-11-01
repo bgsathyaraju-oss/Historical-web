@@ -346,60 +346,60 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
   const fallbackThumb = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 text-[#292521]">
       {/* Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-3">
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => onNavigate('/')}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-200 text-xs font-semibold transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] hover:border-[#A87924] text-[#54351F] text-xs font-semibold transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37]" />
+            <ArrowLeft className="w-3.5 h-3.5 text-[#762D35]" />
             <span>{ui.returnHome}</span>
           </button>
 
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading bg-[#1a1308] px-3.5 py-1.5 rounded-full border border-[#c99738]/40">
-            <BookOpen className="w-4 h-4" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading bg-[#FFF9EF] px-3.5 py-1.5 rounded-full border border-[#D8C3A2]">
+            <BookOpen className="w-4 h-4 text-[#A87924]" />
             <span>{t.home?.researchBadge || 'Peer-Reviewed Academic Historiography'}</span>
           </div>
         </div>
 
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           {t.home?.researchTitle || 'Research Articles & Historical Monographs'}
         </h1>
-        <p className="text-xs sm:text-sm text-stone-300 max-w-4xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#292521] max-w-4xl leading-relaxed">
           {t.home?.researchSubtitle ||
             'Critical monographs examining the Suryavamsha Gajapathi era, epigraphic paleography, territorial borders of Odra Desha, and traditional genealogy methods.'}
         </p>
 
         {/* 3-Pillar Epistemic Distinction Banner */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-          <div className="p-3.5 rounded-2xl bg-[#121622] border border-emerald-800/50 flex items-start gap-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] flex items-start gap-3">
+            <CheckCircle2 className="w-4 h-4 text-[#1c5236] shrink-0 mt-0.5" />
             <div>
-              <div className="text-xs font-bold text-emerald-300">Verified Epigraphic Evidence</div>
-              <p className="text-[11px] text-stone-400 mt-0.5">
+              <div className="text-xs font-bold text-[#1c5236]">Verified Epigraphic Evidence</div>
+              <p className="text-[11px] text-[#292521] mt-0.5">
                 Primary copper plates, temple lithic edicts, and ASI archaeological surveys.
               </p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#121622] border border-amber-800/50 flex items-start gap-3">
-            <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] flex items-start gap-3">
+            <Sparkles className="w-4 h-4 text-[#76501F] shrink-0 mt-0.5" />
             <div>
-              <div className="text-xs font-bold text-amber-300">Traditional Accounts & Vamsavalis</div>
-              <p className="text-[11px] text-stone-400 mt-0.5">
+              <div className="text-xs font-bold text-[#54351F]">Traditional Accounts & Vamsavalis</div>
+              <p className="text-[11px] text-[#292521] mt-0.5">
                 Puranic genealogies, Madala Panji temple annals, and community chronicles.
               </p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#121622] border border-indigo-800/50 flex items-start gap-3">
-            <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] flex items-start gap-3">
+            <ShieldCheck className="w-4 h-4 text-[#762D35] shrink-0 mt-0.5" />
             <div>
-              <div className="text-xs font-bold text-indigo-300">Scholarly Interpretations</div>
-              <p className="text-[11px] text-stone-400 mt-0.5">
+              <div className="text-xs font-bold text-[#54351F]">Scholarly Interpretations</div>
+              <p className="text-[11px] text-[#292521] mt-0.5">
                 Peer-reviewed historiography distinguishing epigraphy from devotional allegory.
               </p>
             </div>
@@ -408,29 +408,29 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
       </div>
 
       {/* Search and Category Filter Bar */}
-      <div className="space-y-4 p-4 sm:p-5 rounded-3xl bg-[#121622] border border-stone-800">
+      <div className="space-y-4 p-4 sm:p-5 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="w-full sm:w-96 relative">
-            <Search className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-[#76501F] absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={search}
               onChange={e => handleSearchChange(e.target.value)}
               placeholder={t.common?.searchPlaceholder || 'Search monographs in any language or script...'}
-              className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+              className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => handleSearchChange('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#54351F] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             )}
           </div>
-          <div className="text-xs text-stone-300 flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="text-xs text-[#6B5948] flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#A87924]" />
             <span>{ui.clickHint}</span>
           </div>
         </div>
@@ -442,10 +442,10 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
               key={cat.id}
               type="button"
               onClick={() => handleCategoryChange(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
                 activeCategory === cat.id
-                  ? 'bg-gradient-to-r from-[#997022] to-[#c99738] text-[#290106] shadow-md font-bold'
-                  : 'bg-stone-900/90 text-stone-400 hover:text-stone-200 hover:bg-stone-800 border border-stone-800'
+                  ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm font-bold'
+                  : 'bg-[#FFF9EF] text-[#54351F] hover:bg-[#E9D9BE] border-[#D8C3A2]'
               }`}
             >
               {cat.label}
@@ -456,10 +456,10 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
 
       {/* Monograph Cards Grid & Empty State */}
       {filtered.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-[#121622] border border-stone-800 space-y-3">
-          <BookOpen className="w-10 h-10 text-stone-600 mx-auto" />
-          <h3 className="font-royal-heading font-bold text-base text-stone-200">{ui.noArticlesTitle}</h3>
-          <p className="text-xs text-stone-400">
+        <div className="p-12 text-center rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-3">
+          <BookOpen className="w-10 h-10 text-[#A87924] mx-auto" />
+          <h3 className="font-royal-heading font-bold text-base text-[#54351F]">{ui.noArticlesTitle}</h3>
+          <p className="text-xs text-[#6B5948]">
             {ui.noArticlesDesc} "{search}".
           </p>
           <button
@@ -468,7 +468,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
               handleSearchChange('');
               setActiveCategory('all');
             }}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#c99738] text-[#300207] cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#762D35] text-white border border-[#A87924] cursor-pointer"
           >
             {ui.clearFilters}
           </button>
@@ -485,12 +485,12 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
               <article
                 key={art.id}
                 onClick={() => openMonographDetail(art)}
-                className="rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden hover:shadow-2xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
+                className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden shadow-md hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group hover:-translate-y-1"
                 title="Click to read Complete Monograph"
               >
                 <div>
                   {/* Thumbnail + Historical Period Badge */}
-                  <div className="h-52 w-full overflow-hidden relative bg-stone-950 border-b border-stone-800/80">
+                  <div className="h-52 w-full overflow-hidden relative bg-[#EFE3D0] border-b border-[#D8C3A2]">
                     <img
                       src={art.featured_image || fallbackThumb}
                       alt={cardTitle}
@@ -504,11 +504,10 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
                       }}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-black/25 to-transparent" />
 
                     <div className="absolute top-3.5 left-3.5 right-3.5 flex flex-wrap items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-xs border border-[#d4af37]/50 text-[#fae29c] text-[11px] font-bold">
-                        <Clock className="w-3 h-3 text-[#d4af37] shrink-0" />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFCF5]/95 border border-[#D8C3A2] text-[#54351F] text-[11px] font-bold shadow-xs">
+                        <Clock className="w-3 h-3 text-[#762D35] shrink-0" />
                         <span className="truncate max-w-[260px]">{periodText}</span>
                       </span>
                       <EvidenceBadge category={art.evidence_category} size="sm" />
@@ -521,37 +520,37 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
                       {subjectCats.map((sc, idx) => (
                         <span
                           key={idx}
-                          className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37] bg-[#1a1308] px-2.5 py-0.5 rounded-md border border-[#c99738]/30"
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] bg-[#FFF9EF] px-2.5 py-0.5 rounded-md border border-[#D8C3A2]"
                         >
                           {sc}
                         </span>
                       ))}
                     </div>
 
-                    <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#e8c872] transition-colors leading-snug">
+                    <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug">
                       {cardTitle}
                     </h2>
 
-                    <p className="text-xs sm:text-sm text-stone-300 line-clamp-3 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[#292521] line-clamp-3 leading-relaxed">
                       {cardSummary}
                     </p>
                   </div>
                 </div>
 
                 {/* Card Footer */}
-                <div className="px-6 pb-6 pt-4 border-t border-stone-800/80 space-y-3 bg-[#0f131d]">
-                  <div className="flex items-center justify-between text-[11px] text-stone-400">
-                    <span className="flex items-center gap-1.5 text-stone-300 font-medium">
-                      <User className="w-3.5 h-3.5 text-[#d4af37]" />
+                <div className="px-6 pb-6 pt-4 border-t border-[#D8C3A2] space-y-3 bg-[#FFF9EF]">
+                  <div className="flex items-center justify-between text-[11px] text-[#6B5948]">
+                    <span className="flex items-center gap-1.5 text-[#54351F] font-medium">
+                      <User className="w-3.5 h-3.5 text-[#A87924]" />
                       {art.author_name}
                     </span>
-                    <span className="flex items-center gap-1 font-semibold text-amber-200/90">
-                      <FileText className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span className="flex items-center gap-1 font-semibold text-[#76501F]">
+                      <FileText className="w-3.5 h-3.5 text-[#A87924]" />
                       {ui.sourcesCount((art.sources || []).length)}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-stone-800/60">
+                  <div className="flex items-center justify-between pt-2 border-t border-[#D8C3A2]">
                     <button
                       type="button"
                       onClick={e => {
@@ -559,9 +558,9 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
                         setSelectedBriefArticle(art);
                         setIsBriefModalOpen(true);
                       }}
-                      className="text-[11px] text-[#fae29c] hover:underline font-medium flex items-center gap-1 cursor-pointer"
+                      className="text-[11px] text-[#76501F] hover:text-[#54351F] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                     >
-                      <Sparkles className="w-3 h-3 text-[#d4af37]" />
+                      <Sparkles className="w-3 h-3 text-[#A87924]" />
                       <span>{ui.viewBrief}</span>
                     </button>
                     <button
@@ -570,7 +569,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
                         e.stopPropagation();
                         openMonographDetail(art);
                       }}
-                      className="text-xs font-bold text-[#e8c872] hover:underline flex items-center gap-1.5 group-hover:translate-x-1 transition-transform cursor-pointer"
+                      className="text-xs font-bold text-[#76501F] hover:text-[#762D35] hover:underline flex items-center gap-1.5 group-hover:translate-x-1 transition-transform cursor-pointer"
                     >
                       <span>{ui.fullArticle}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -596,8 +595,8 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
 
       {/* Pagination Bar */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#121622] border border-stone-800 text-xs">
-          <span className="text-stone-400">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] text-xs">
+          <span className="text-[#6B5948]">
             Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
             {Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} monographs
           </span>
@@ -606,7 +605,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
               type="button"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 disabled:opacity-40 hover:bg-stone-800"
+              className="px-3 py-1.5 rounded-lg border border-[#D8C3A2] text-[#54351F] disabled:opacity-40 hover:bg-[#EFE3D0]"
             >
               {ui.prevPage}
             </button>
@@ -617,8 +616,8 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
                 onClick={() => setCurrentPage(p)}
                 className={`w-7 h-7 rounded-lg font-semibold flex items-center justify-center ${
                   currentPage === p
-                    ? 'bg-[#c99738] text-[#300207]'
-                    : 'text-stone-400 hover:bg-stone-800'
+                    ? 'bg-[#762D35] text-white'
+                    : 'text-[#54351F] hover:bg-[#EFE3D0]'
                 }`}
               >
                 {p}
@@ -628,7 +627,7 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
               type="button"
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1.5 rounded-lg border border-stone-700 text-stone-300 disabled:opacity-40 hover:bg-stone-800"
+              className="px-3 py-1.5 rounded-lg border border-[#D8C3A2] text-[#54351F] disabled:opacity-40 hover:bg-[#EFE3D0]"
             >
               {ui.nextPage}
             </button>

@@ -971,14 +971,14 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     const figureHashtags = getFigureHashtags(activeFigure);
 
     return (
-      <div className="min-h-screen bg-[#FAF7F2] text-stone-900 pb-20 print-article-wrapper">
-        {/* STICKY TOP NAVIGATION & MULTILINGUAL ACTION BAR */}
-        <div className="no-print sticky top-0 z-30 bg-[#1C1613]/95 backdrop-blur-md border-b border-amber-500/30 px-4 sm:px-8 py-3.5 shadow-lg print:hidden">
+      <div className="min-h-screen bg-[#F5EBD9] text-[#292521] pb-20 print-article-wrapper">
+        {/* TOP NAVIGATION & MULTILINGUAL ACTION BAR (NON-STICKY TO PREVENT NAVBAR OVERLAP) */}
+        <div className="no-print relative z-20 bg-[#FFF9EF] border-b border-[#D8C3A2] px-4 sm:px-8 py-3.5 shadow-xs print:hidden">
           <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={closeFigureDetail}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] border border-[#A87924] text-white text-xs sm:text-sm font-bold transition-all cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>{ui.backToList}</span>
@@ -986,9 +986,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
               <button
                 onClick={() => onNavigate('/')}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] text-[#54351F] text-xs sm:text-sm font-semibold transition-all cursor-pointer"
               >
-                <Home className="w-4 h-4 text-amber-400" />
+                <Home className="w-4 h-4 text-[#762D35]" />
                 <span className="hidden sm:inline">{ui.returnHome}</span>
               </button>
             </div>
@@ -996,15 +996,15 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             {/* Right Action Controls: Language Switcher, Print, Share, Copy, Close */}
             <div className="flex items-center gap-2 flex-wrap">
               {/* 8-Language Selector */}
-              <div className="hidden md:flex items-center bg-black/40 border border-white/15 rounded-xl p-1 gap-0.5">
+              <div className="hidden md:flex items-center bg-[#F5EBD9] border border-[#D8C3A2] rounded-xl p-1 gap-0.5">
                 {SUPPORTED_LANGUAGES.map(l => (
                   <button
                     key={l.code}
                     onClick={() => setLanguage(l.code)}
                     className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                       language === l.code
-                        ? 'bg-amber-500 text-stone-950 shadow-sm'
-                        : 'text-stone-300 hover:text-white hover:bg-white/10'
+                        ? 'bg-[#762D35] text-white shadow-sm'
+                        : 'text-[#54351F] hover:bg-[#FFFCF5]'
                     }`}
                     title={l.label}
                   >
@@ -1016,7 +1016,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <button
                 onClick={() => handleDownloadFigurePdf(activeFigure)}
                 disabled={isDownloadingPdf}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs font-bold transition-all cursor-pointer disabled:opacity-60 shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs font-bold transition-all cursor-pointer disabled:opacity-60 shadow-sm"
                 title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(getFigureBiographyArticleTitle(activeFigure))})`}
               >
                 <Download className="w-4 h-4 shrink-0" />
@@ -1025,32 +1025,32 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
               <button
                 onClick={() => handlePrint(activeFigure)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 text-xs font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] text-[#54351F] text-xs font-bold transition-all cursor-pointer"
                 title={pdfUi.printBtn}
               >
-                <Printer className="w-4 h-4 text-amber-400" />
+                <Printer className="w-4 h-4 text-[#762D35]" />
                 <span className="hidden sm:inline">{pdfUi.printBtn}</span>
               </button>
 
               <div className="relative">
                 <button
                   onClick={() => handleNativeShare(activeFigure)}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 text-xs font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] text-[#54351F] text-xs font-bold transition-all cursor-pointer"
                 >
-                  <Share2 className="w-4 h-4 text-amber-400" />
+                  <Share2 className="w-4 h-4 text-[#762D35]" />
                   <span className="hidden sm:inline">{ui.shareBtn}</span>
                 </button>
 
                 {shareMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-[#231C18] border border-amber-500/40 shadow-2xl p-2 z-50 text-xs text-stone-200">
+                  <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-[#FFFCF5] border border-[#A87924] shadow-xl p-2 z-50 text-xs text-[#292521]">
                     <button
                       onClick={() => {
                         handleCopyLink(activeFigure, false);
                         setShareMenuOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold cursor-pointer"
+                      className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                     >
-                      <Copy className="w-4 h-4 text-amber-400" />
+                      <Copy className="w-4 h-4 text-[#762D35]" />
                       <span>Copy Direct Biography Link</span>
                     </button>
                     <button
@@ -1058,9 +1058,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         handleCopyLink(activeFigure, true);
                         setShareMenuOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold cursor-pointer"
+                      className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                     >
-                      <FileText className="w-4 h-4 text-amber-400" />
+                      <FileText className="w-4 h-4 text-[#762D35]" />
                       <span>Copy Name, Reign & Link</span>
                     </button>
                     <a
@@ -1073,7 +1073,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         handleWhatsAppLinkClick(e);
                         setShareMenuOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-white/10 flex items-center gap-2.5 font-semibold text-emerald-300"
+                      className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold text-[#1c5236]"
                     >
                       <ExternalLink className="w-4 h-4" />
                       <span>Share via WhatsApp</span>
@@ -1084,15 +1084,15 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
               <button
                 onClick={() => handleCopyLink(activeFigure, false)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-200 text-xs font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] text-[#54351F] text-xs font-bold transition-all cursor-pointer"
               >
-                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="w-4 h-4 text-[#1c5236]" /> : <Copy className="w-4 h-4 text-[#762D35]" />}
                 <span>{copied ? ui.linkCopied : ui.copyLink}</span>
               </button>
 
               <button
                 onClick={closeFigureDetail}
-                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/70 border border-rose-500/30 text-rose-200 text-xs font-bold transition-all cursor-pointer"
+                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] border border-[#A87924] text-white text-xs font-bold transition-all cursor-pointer"
                 title={ui.closeProfile}
               >
                 <X className="w-4 h-4" />
@@ -1101,9 +1101,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </div>
 
           {pdfDownloadResult && (
-            <div className="max-w-6xl mx-auto mt-2.5 p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-200 flex flex-wrap items-center justify-between gap-2">
+            <div className="max-w-6xl mx-auto mt-2.5 p-2.5 rounded-xl bg-[#edf7f0] border border-[#92c5a6] text-xs text-[#1c5236] flex flex-wrap items-center justify-between gap-2">
               <span className="font-semibold flex items-center gap-1.5 break-all">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                <Check className="w-4 h-4 text-[#1c5236] shrink-0" />
                 <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
               </span>
               <div className="flex flex-wrap items-center gap-2">
@@ -1116,7 +1116,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     onClick={e =>
                       handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
                     }
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-500 text-stone-950 font-bold text-xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white font-bold text-xs"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>{pdfUi.directDownloadLinkLabel}</span>
@@ -1134,9 +1134,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         pdfDownloadResult.externalArticleUrl || ''
                       )
                     }
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#580014] text-[#fae29c] border border-[#d4af37] font-bold text-xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] font-bold text-xs"
                   >
-                    <ExternalLink className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <ExternalLink className="w-3.5 h-3.5 text-white" />
                     <span>{pdfUi.openInChromePdfBtn}</span>
                   </a>
                 )}
@@ -1147,27 +1147,27 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
         {/* HERO BIOGRAPHICAL PORTRAIT & SOVEREIGN HEADER */}
         <div className="print-article-container">
-          <div className="print-only hidden print:block border-b-2 border-stone-800 pb-3 mb-4 text-black">
-            <p className="text-[11px] font-bold uppercase tracking-widest text-stone-800">
+          <div className="print-only hidden print:block border-b-2 border-[#A87924] pb-3 mb-4 text-[#292521]">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
               Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal — {ui.pageTitle}
             </p>
-            <p className="text-[11px] font-semibold text-stone-700 mt-0.5">
+            <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
               Research, Documentation &amp; Compilation by Dr.G Sathyanarayana Raju • Founder &amp; Historical Documentation Contributor
             </p>
-            <p className="text-[10px] text-stone-600 break-all mt-0.5">
+            <p className="text-[10px] text-[#6B5948] break-all mt-0.5">
               {getDirectFigureUrl(activeFigure.id, false)}
             </p>
           </div>
-        <header className="print-article-header bg-gradient-to-b from-[#1F1814] via-[#281F1A] to-[#1A1411] text-white border-b-4 border-amber-600/50">
+        <header className="print-article-header bg-[#EFE3D0] text-[#292521] border-b-2 border-[#A87924]">
           <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 sm:py-14">
             {/* Breadcrumb & Classification Row */}
             <div className="flex flex-wrap items-center gap-2.5 mb-6 text-xs">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-bold uppercase tracking-wider">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#762D35] border border-[#A87924] text-white font-bold uppercase tracking-wider">
                 <Crown className="w-3.5 h-3.5" />
                 {categoryLabel}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-stone-200 font-semibold">
-                <Calendar className="w-3.5 h-3.5 text-amber-400" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFCF5] border border-[#D8C3A2] text-[#54351F] font-semibold">
+                <Calendar className="w-3.5 h-3.5 text-[#A87924]" />
                 {activeFigure.reign_period}
               </span>
               <EvidenceBadge status={activeFigure.evidence_status} />
@@ -1175,8 +1175,8 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-start">
               {/* Portrait Frame */}
-              <div className="lg:col-span-4">
-                <div className="relative rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-2xl bg-stone-900 aspect-[4/5] max-w-sm mx-auto lg:max-w-none">
+              <div className="lg:col-span-4 space-y-2.5 max-w-sm mx-auto lg:max-w-none w-full">
+                <div className="relative rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-lg bg-[#FFFCF5] aspect-[4/5]">
                   <img
                     src={activeFigure.image_url}
                     alt={activeFigure.name}
@@ -1187,25 +1187,24 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_coronation.jpg`;
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
-                  <div className="absolute bottom-0 inset-x-0 p-4 text-left">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-amber-300">
-                      {activeFigure.dynasty_name}
-                    </p>
-                    <p className="text-xs text-stone-300 mt-0.5">{activeFigure.approx_dates}</p>
-                  </div>
+                </div>
+                <div className="royal-profile-title-box text-left break-words">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
+                    {activeFigure.dynasty_name}
+                  </p>
+                  <p className="text-xs text-[#54351F] font-semibold mt-0.5">{activeFigure.approx_dates}</p>
                 </div>
               </div>
 
               {/* Sovereign Title, Epithets & Summary Dossier */}
               <div className="lg:col-span-8 space-y-5">
                 <div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-tight leading-tight">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-[#54351F] tracking-tight leading-tight">
                     {activeFigure.name}
                   </h1>
                   {activeFigure.alternate_names && activeFigure.alternate_names.length > 0 && (
-                    <p className="text-sm sm:text-base text-amber-200/90 mt-2 font-medium">
-                      <span className="text-stone-400 uppercase text-xs font-bold tracking-wider mr-2">
+                    <p className="text-sm sm:text-base text-[#76501F] mt-2 font-medium">
+                      <span className="text-[#6B5948] uppercase text-xs font-bold tracking-wider mr-2">
                         {ui.lblAlternateNames}:
                       </span>
                       {activeFigure.alternate_names.join(' • ')}
@@ -1215,16 +1214,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
                 {/* Royal & Spiritual Titles (Birudas) */}
                 {activeFigure.known_titles && activeFigure.known_titles.length > 0 && (
-                  <div className="bg-white/5 border border-amber-500/25 rounded-2xl p-4">
-                    <div className="text-[11px] font-bold uppercase tracking-widest text-amber-400 mb-2 flex items-center gap-1.5">
-                      <Award className="w-4 h-4" />
+                  <div className="royal-profile-title-box break-words">
+                    <div className="text-[11px] font-bold uppercase tracking-widest text-[#54351F] mb-2 flex items-center gap-1.5">
+                      <Award className="w-4 h-4 text-[#54351F]" />
                       <span>{ui.lblKnownTitles}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {activeFigure.known_titles.map((title, idx) => (
                         <span
                           key={idx}
-                          className="px-3 py-1 rounded-lg bg-amber-500/15 border border-amber-400/30 text-amber-100 text-xs sm:text-sm font-serif italic"
+                          className="px-3 py-1 rounded-lg bg-[#FFF9EF] border border-[#E4B879] text-[#54351F] text-xs sm:text-sm font-serif italic font-semibold break-words"
                         >
                           “{title}”
                         </span>
@@ -1234,35 +1233,35 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 )}
 
                 {/* Core Historical Significance Box */}
-                <div className="bg-amber-950/40 border-l-4 border-amber-400 rounded-r-2xl p-4 sm:p-5">
-                  <div className="text-[11px] font-bold uppercase tracking-widest text-amber-300 mb-1.5 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" />
+                <div className="bg-[#FFFCF5] border-l-4 border-[#762D35] border-y border-r border-[#D8C3A2] rounded-r-2xl p-4 sm:p-5">
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-[#76501F] mb-1.5 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#A87924]" />
                     <span>{ui.lblHistoricalSignificance}</span>
                   </div>
-                  <p className="text-stone-100 text-sm sm:text-base leading-relaxed font-medium">
+                  <p className="text-[#292521] text-sm sm:text-base leading-relaxed font-medium">
                     {activeFigure.historical_significance}
                   </p>
                 </div>
 
                 {/* Key Metadata Quick Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="bg-[#FFFCF5] border border-[#D8C3A2] rounded-xl p-3.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#6B5948]">
                       {ui.lblReignPeriod}
                     </div>
-                    <div className="text-sm font-bold text-amber-300 mt-1">{activeFigure.reign_period}</div>
+                    <div className="text-sm font-bold text-[#76501F] mt-1">{activeFigure.reign_period}</div>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="bg-[#FFFCF5] border border-[#D8C3A2] rounded-xl p-3.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#6B5948]">
                       {ui.lblLifeDates}
                     </div>
-                    <div className="text-sm font-bold text-stone-100 mt-1">{activeFigure.approx_dates}</div>
+                    <div className="text-sm font-bold text-[#292521] mt-1">{activeFigure.approx_dates}</div>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-3.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="bg-[#FFFCF5] border border-[#D8C3A2] rounded-xl p-3.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#6B5948]">
                       {ui.lblDynastyLineage}
                     </div>
-                    <div className="text-sm font-bold text-stone-100 mt-1">{activeFigure.dynasty_name}</div>
+                    <div className="text-sm font-bold text-[#54351F] mt-1">{activeFigure.dynasty_name}</div>
                   </div>
                 </div>
               </div>
@@ -1273,57 +1272,57 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
         {/* MAIN BIOGRAPHICAL ARTICLE BODY */}
         <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-10 space-y-10">
           {/* SECTION 1: BIRTH, FAMILY BACKGROUND, DYNASTIC LINEAGE & ASSOCIATED PLACES */}
-          <section className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 flex items-center gap-2.5 border-b border-stone-200 pb-4">
-              <Users className="w-6 h-6 text-amber-700 shrink-0" />
+          <section className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[var(--heading-text)] mb-6 flex items-center gap-2.5 border-b border-[var(--border-color)] pb-4">
+              <Users className="w-6 h-6 text-[var(--accent-gold)] shrink-0" />
               <span>{ui.secFamilyPeriod}</span>
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Left Column: Birth, Dynasty & Documented Family Lineage */}
               <div className="space-y-4">
-                <div className="bg-[#FAF7F2] rounded-xl p-4 border border-stone-200">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-900 mb-3">
+                <div className="bg-[var(--surface-bg)] rounded-xl p-4 border border-[var(--border-color)]">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] mb-3">
                     {ui.lblFamilyBackground}
                   </h3>
                   <dl className="space-y-2.5 text-sm">
-                    <div className="flex flex-col sm:flex-row sm:justify-between border-b border-stone-200/70 pb-2">
-                      <dt className="text-stone-500 font-medium">{ui.lblDynastyLineage}:</dt>
-                      <dd className="font-bold text-stone-900 sm:text-right">{activeFigure.dynasty_name}</dd>
+                    <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
+                      <dt className="text-[var(--secondary-text)] font-medium">{ui.lblDynastyLineage}:</dt>
+                      <dd className="font-bold text-[var(--heading-text)] sm:text-right">{activeFigure.dynasty_name}</dd>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between border-b border-stone-200/70 pb-2">
-                      <dt className="text-stone-500 font-medium">{ui.lblLifeDates}:</dt>
-                      <dd className="font-bold text-stone-900 sm:text-right">{activeFigure.approx_dates}</dd>
+                    <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
+                      <dt className="text-[var(--secondary-text)] font-medium">{ui.lblLifeDates}:</dt>
+                      <dd className="font-bold text-[var(--heading-text)] sm:text-right">{activeFigure.approx_dates}</dd>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:justify-between border-b border-stone-200/70 pb-2">
-                      <dt className="text-stone-500 font-medium">{ui.lblReignPeriod}:</dt>
-                      <dd className="font-bold text-amber-800 sm:text-right">{activeFigure.reign_period}</dd>
+                    <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
+                      <dt className="text-[var(--secondary-text)] font-medium">{ui.lblReignPeriod}:</dt>
+                      <dd className="font-bold text-[var(--link-color)] sm:text-right">{activeFigure.reign_period}</dd>
                     </div>
                     {parentNode && (
-                      <div className="flex flex-col sm:flex-row sm:justify-between border-b border-stone-200/70 pb-2">
-                        <dt className="text-stone-500 font-medium">Predecessor / Royal Parent:</dt>
-                        <dd className="font-bold text-stone-900 sm:text-right">{parentNode.name}</dd>
+                      <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
+                        <dt className="text-[var(--secondary-text)] font-medium">Predecessor / Royal Parent:</dt>
+                        <dd className="font-bold text-[var(--heading-text)] sm:text-right">{parentNode.name}</dd>
                       </div>
                     )}
                     {(genealogyNode?.spouse || activeFigure.spouse_name) && (
-                      <div className="flex flex-col sm:flex-row sm:justify-between border-b border-stone-200/70 pb-2">
-                        <dt className="text-stone-500 font-medium">Royal Consort / Spouse:</dt>
-                        <dd className="font-bold text-stone-900 sm:text-right">
+                      <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
+                        <dt className="text-[var(--secondary-text)] font-medium">Royal Consort / Spouse:</dt>
+                        <dd className="font-bold text-[var(--heading-text)] sm:text-right">
                           {genealogyNode?.spouse || activeFigure.spouse_name}
                         </dd>
                       </div>
                     )}
                     {childNodes.length > 0 && (
                       <div className="flex flex-col sm:flex-row sm:justify-between pb-1">
-                        <dt className="text-stone-500 font-medium">Documented Successors / Descendants:</dt>
-                        <dd className="font-bold text-stone-900 sm:text-right">
+                        <dt className="text-[var(--secondary-text)] font-medium">Documented Successors / Descendants:</dt>
+                        <dd className="font-bold text-[var(--heading-text)] sm:text-right">
                           {childNodes.map(c => c.name).join(', ')}
                         </dd>
                       </div>
                     )}
                   </dl>
                   {genealogyNode?.notes && (
-                    <p className="mt-3 pt-3 border-t border-stone-200 text-xs text-stone-700 leading-relaxed italic">
+                    <p className="mt-3 pt-3 border-t border-[var(--border-color)] text-xs text-[var(--primary-text)] leading-relaxed italic">
                       {genealogyNode.notes}
                     </p>
                   )}
@@ -1332,43 +1331,43 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
               {/* Right Column: Capitals, Fortresses & Associated Centres */}
               <div className="space-y-4">
-                <div className="bg-[#FAF7F2] rounded-xl p-4 border border-stone-200 h-full">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-900 mb-3 flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-amber-700" />
+                <div className="bg-[var(--surface-bg)] rounded-xl p-4 border border-[var(--border-color)] h-full">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] mb-3 flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-[var(--accent-gold)]" />
                     <span>{ui.lblAssociatedPlaces}</span>
                   </h3>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {(activeFigure.associated_places || []).map((place, idx) => (
                       <span
                         key={idx}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-stone-300 text-stone-800 text-xs font-semibold shadow-2xs"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--card-bg)] border border-[var(--border-color)] text-[var(--heading-text)] text-xs font-semibold shadow-2xs"
                       >
-                        <MapPin className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0" />
                         {place}
                       </span>
                     ))}
                   </div>
 
                   {matchedLocations.length > 0 && (
-                    <div className="space-y-2.5 pt-2 border-t border-stone-200">
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+                    <div className="space-y-2.5 pt-2 border-t border-[var(--border-color)]">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--secondary-text)]">
                         Corroborated Archaeological Centres:
                       </div>
                       {matchedLocations.map(loc => (
                         <div
                           key={loc.id}
                           onClick={() => onNavigate('/odra-desha')}
-                          className="p-2.5 rounded-lg bg-white border border-stone-200 hover:border-amber-400 transition-all cursor-pointer"
+                          className="p-2.5 rounded-lg bg-[var(--card-bg)] border border-[var(--border-color)] hover:border-[var(--accent-gold)] transition-all cursor-pointer"
                         >
-                          <div className="text-xs font-bold text-stone-900 flex items-center justify-between">
+                          <div className="text-xs font-bold text-[var(--heading-text)] flex items-center justify-between">
                             <span>
                               {loc.name} ({loc.ancient_name})
                             </span>
-                            <span className="text-[11px] text-amber-700 font-semibold">
+                            <span className="text-[11px] text-[var(--link-color)] font-semibold">
                               {loc.modern_district}, {loc.modern_state}
                             </span>
                           </div>
-                          <p className="text-xs text-stone-600 mt-1 line-clamp-2">{loc.summary}</p>
+                          <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{loc.summary}</p>
                         </div>
                       ))}
                     </div>
@@ -1379,16 +1378,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </section>
 
           {/* SECTION 2: COMPLETE HISTORICAL BIOGRAPHY, ACHIEVEMENTS & LEGACY */}
-          <section className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-6">
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 flex items-center gap-2.5 border-b border-stone-200 pb-4">
-              <BookOpen className="w-6 h-6 text-amber-700 shrink-0" />
+          <section className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8 space-y-6">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[var(--heading-text)] flex items-center gap-2.5 border-b border-[var(--border-color)] pb-4">
+              <BookOpen className="w-6 h-6 text-[var(--accent-gold)] shrink-0" />
               <span>{ui.secBiographyLegacy}</span>
             </h2>
 
             {/* Primary Archival Biography */}
             <div className="prose prose-stone max-w-none space-y-4">
               {activeFigure.biography.split('\n\n').map((para, idx) => (
-                <p key={idx} className="text-stone-800 text-base sm:text-[17px] leading-relaxed font-normal">
+                <p key={idx} className="text-[var(--primary-text)] text-base sm:text-[17px] leading-relaxed font-normal">
                   {para}
                 </p>
               ))}
@@ -1396,13 +1395,13 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
             {/* Extended Detailed Narrative (if available in historyContent.ts) */}
             {extendedNarrative && extendedNarrative.detailed_narrative && (
-              <div className="mt-6 pt-6 border-t border-stone-200 space-y-4">
-                <h3 className="text-lg font-serif font-bold text-stone-900 flex items-center gap-2">
-                  <Compass className="w-5 h-5 text-amber-700" />
+              <div className="mt-6 pt-6 border-t border-[var(--border-color)] space-y-4">
+                <h3 className="text-lg font-serif font-bold text-[var(--heading-text)] flex items-center gap-2">
+                  <Compass className="w-5 h-5 text-[var(--accent-gold)]" />
                   <span>Extended Historiographical & Cultural Analysis</span>
                 </h3>
                 {extendedNarrative.detailed_narrative.split('\n\n').map((para, idx) => (
-                  <p key={idx} className="text-stone-700 text-sm sm:text-base leading-relaxed">
+                  <p key={idx} className="text-[var(--primary-text)] text-sm sm:text-base leading-relaxed">
                     {para}
                   </p>
                 ))}
@@ -1411,12 +1410,12 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
             {/* Engineering, Architectural & Civic Legacy (if available in historyContent.ts) */}
             {extendedNarrative && extendedNarrative.engineering_and_civic_legacy && (
-              <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-5 sm:p-6 mt-6">
-                <h3 className="text-base sm:text-lg font-serif font-bold text-amber-950 mb-2.5 flex items-center gap-2">
-                  <Landmark className="w-5 h-5 text-amber-700 shrink-0" />
+              <div className="bg-[var(--surface-bg)] border border-[var(--accent-gold)] rounded-2xl p-5 sm:p-6 mt-6">
+                <h3 className="text-base sm:text-lg font-serif font-bold text-[var(--heading-text)] mb-2.5 flex items-center gap-2">
+                  <Landmark className="w-5 h-5 text-[var(--accent-gold)] shrink-0" />
                   <span>{ui.secEngineeringCivic}</span>
                 </h3>
-                <p className="text-stone-800 text-sm sm:text-base leading-relaxed">
+                <p className="text-[var(--primary-text)] text-sm sm:text-base leading-relaxed">
                   {extendedNarrative.engineering_and_civic_legacy}
                 </p>
               </div>
@@ -1424,9 +1423,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </section>
 
           {/* SECTION 3: THREE-PILLAR EPISTEMIC CLASSIFICATION (VERIFIED FACTS vs TRADITIONAL ACCOUNTS vs SCHOLARLY INTERPRETATION) */}
-          <section className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 flex items-center gap-2.5 border-b border-stone-200 pb-4">
-              <ShieldCheck className="w-6 h-6 text-amber-700 shrink-0" />
+          <section className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[var(--heading-text)] mb-6 flex items-center gap-2.5 border-b border-[var(--border-color)] pb-4">
+              <ShieldCheck className="w-6 h-6 text-[var(--accent-gold)] shrink-0" />
               <span>{ui.secEpistemicAnalysis}</span>
             </h2>
 
@@ -1437,7 +1436,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0" />
                   <span>1. {ui.epistemicVerifiedTitle}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed">
                   {activeFigure.evidence_status === 'Documented Primary Evidence'
                     ? `Directly attested in primary epigraphic charters, temple lithic records, or archaeological monuments dated to ${activeFigure.reign_period}. Primary records confirm sovereign titulature, territorial administration across ${(activeFigure.associated_places || []).slice(0, 3).join(', ')}, and documented regnal events.`
                     : `While the persona belongs to ancient sacred or traditional lineage (${activeFigure.reign_period}), later medieval epigraphs—such as the Veligalani Copper Plates (1458 CE), Korni Grants, and temple architectures—formally invoke this lineage as the foundational heritage of Odra-Kalinga sovereigns and community guilds.`}
@@ -1445,12 +1444,12 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               </div>
 
               {/* Pillar 2: Traditional & Sacred Lineage Accounts */}
-              <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5">
-                <div className="flex items-center gap-2 text-amber-950 font-bold text-sm mb-2.5">
-                  <Sparkles className="w-5 h-5 text-amber-700 shrink-0" />
+              <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--surface-bg)] p-5">
+                <div className="flex items-center gap-2 text-[var(--heading-text)] font-bold text-sm mb-2.5">
+                  <Sparkles className="w-5 h-5 text-[var(--accent-gold)] shrink-0" />
                   <span>2. {ui.epistemicTradTitle}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed">
                   Preserved across the <em>Madala Panji</em> temple chronicles of Puri, royal <em>Vamsavalis</em>, Puranic chapters, and regional ballads across Odisha, Andhra Pradesh, Karnataka, Maharashtra, and Gujarat. These accounts celebrate {activeFigure.name} within the sacred ethos of the {activeFigure.dynasty_name}.
                 </p>
               </div>
@@ -1461,7 +1460,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <BookOpen className="w-5 h-5 text-indigo-700 shrink-0" />
                   <span>3. {ui.epistemicScholarTitle}</span>
                 </div>
-                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed">
                   Evaluated in critical academic monographs ({(activeFigure.citations || []).slice(0, 2).join('; ') || 'Epigraphia Indica & ASI Surveys'}). Historians carefully distinguish verifiable political, military, and hydraulic achievements from poetic royal panegyrics (<em>Prashasti</em>).
                 </p>
               </div>
@@ -1469,28 +1468,28 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </section>
 
           {/* SECTION 4: CHRONOLOGICAL BIOGRAPHICAL & REGNAL TIMELINE */}
-          <section className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-6 flex items-center gap-2.5 border-b border-stone-200 pb-4">
-              <Clock className="w-6 h-6 text-amber-700 shrink-0" />
+          <section className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[var(--heading-text)] mb-6 flex items-center gap-2.5 border-b border-[var(--border-color)] pb-4">
+              <Clock className="w-6 h-6 text-[var(--accent-gold)] shrink-0" />
               <span>{ui.secChronology}</span>
             </h2>
 
-            <div className="relative pl-6 sm:pl-8 border-l-2 border-amber-500/50 space-y-6">
+            <div className="relative pl-6 sm:pl-8 border-l-2 border-[var(--accent-gold)] space-y-6">
               {(activeFigure.major_events || []).map((rawEv, idx) => {
                 const parsed = parseMajorEventString(rawEv, activeFigure.reign_period, idx);
                 return (
-                  <div key={idx} className="relative bg-[#FAF7F2] rounded-xl p-4 sm:p-5 border border-stone-200">
-                    <div className="absolute -left-[31px] sm:-left-[39px] top-5 w-4 h-4 rounded-full bg-amber-600 border-4 border-white shadow-sm" />
+                  <div key={idx} className="relative bg-[var(--surface-bg)] rounded-xl p-4 sm:p-5 border border-[var(--border-color)]">
+                    <div className="absolute -left-[31px] sm:-left-[39px] top-5 w-4 h-4 rounded-full bg-[#762D35] border-4 border-[var(--card-bg)] shadow-sm" />
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-xs font-bold">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[var(--secondary-button)] text-[var(--heading-text)] text-xs font-bold">
                         <Calendar className="w-3.5 h-3.5" />
                         {parsed.eraLabel}
                       </span>
-                      <span className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+                      <span className="text-[11px] font-semibold text-[var(--secondary-text)] uppercase tracking-wider">
                         {parsed.title}
                       </span>
                     </div>
-                    <p className="text-sm sm:text-base text-stone-800 mt-1 leading-relaxed font-medium">
+                    <p className="text-sm sm:text-base text-[var(--primary-text)] mt-1 leading-relaxed font-medium">
                       {parsed.description}
                     </p>
                   </div>
@@ -1502,36 +1501,36 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <div
                   key={tev.id}
                   onClick={() => onNavigate(`/timeline?id=${tev.id}`)}
-                  className="relative bg-amber-50/50 hover:bg-amber-50 rounded-xl p-4 sm:p-5 border border-amber-300/80 transition-all cursor-pointer"
+                  className="relative bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)]/60 rounded-xl p-4 sm:p-5 border border-[var(--accent-gold)] transition-all cursor-pointer"
                 >
-                  <div className="absolute -left-[31px] sm:-left-[39px] top-5 w-4 h-4 rounded-full bg-emerald-600 border-4 border-white shadow-sm" />
+                  <div className="absolute -left-[31px] sm:-left-[39px] top-5 w-4 h-4 rounded-full bg-emerald-600 border-4 border-[var(--card-bg)] shadow-sm" />
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 text-xs font-bold">
                       {tev.year_text} ({tev.period})
                     </span>
-                    <span className="text-xs font-bold text-amber-800 inline-flex items-center gap-1">
+                    <span className="text-xs font-bold text-[var(--link-color)] inline-flex items-center gap-1">
                       Open Archival Chronology Record <ChevronRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
-                  <h3 className="text-base font-serif font-bold text-stone-900">{tev.title}</h3>
-                  <p className="text-xs sm:text-sm text-stone-700 mt-1">{tev.political_development}</p>
+                  <h3 className="text-base font-serif font-bold text-[var(--heading-text)]">{tev.title}</h3>
+                  <p className="text-xs sm:text-sm text-[var(--primary-text)] mt-1">{tev.political_development}</p>
                 </div>
               ))}
             </div>
           </section>
 
           {/* SECTION 5: AVAILABLE INSCRIPTIONS, HISTORICAL DOCUMENTS & ARCHAEOLOGICAL MONUMENTS */}
-          <section className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-6">
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 flex items-center gap-2.5 border-b border-stone-200 pb-4">
-              <Scroll className="w-6 h-6 text-amber-700 shrink-0" />
+          <section className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8 space-y-6">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[var(--heading-text)] flex items-center gap-2.5 border-b border-[var(--border-color)] pb-4">
+              <Scroll className="w-6 h-6 text-[var(--accent-gold)] shrink-0" />
               <span>{ui.secInscriptionsEvidence}</span>
             </h2>
 
             {/* 5A: Corroborating Epigraphic Inscriptions */}
             {matchedInscriptions.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3 flex items-center gap-2">
-                  <Scroll className="w-4 h-4 text-amber-700" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--secondary-text)] mb-3 flex items-center gap-2">
+                  <Scroll className="w-4 h-4 text-[var(--accent-gold)]" />
                   <span>Corroborating Stone Inscriptions & Copper-Plate Grants ({matchedInscriptions.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1539,22 +1538,22 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     <div
                       key={insc.id}
                       onClick={() => onNavigate(`/inscriptions?id=${insc.id}`)}
-                      className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-4 transition-all cursor-pointer flex gap-4 items-start"
+                      className="group rounded-xl border border-[var(--border-color)] hover:border-[var(--accent-gold)] bg-[var(--surface-bg)] p-4 transition-all cursor-pointer flex gap-4 items-start"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-amber-900/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-                        <Scroll className="w-6 h-6 text-amber-800" />
+                      <div className="w-12 h-12 rounded-xl bg-[var(--secondary-button)] border border-[var(--border-color)] flex items-center justify-center shrink-0">
+                        <Scroll className="w-6 h-6 text-[var(--heading-text)]" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 text-[11px] font-bold text-amber-800">
+                        <div className="flex items-center gap-2 text-[11px] font-bold text-[var(--link-color)]">
                           <span>{insc.era_or_date}</span>
                           <span>•</span>
                           <span>{insc.language}</span>
                         </div>
-                        <h4 className="text-sm sm:text-base font-serif font-bold text-stone-900 group-hover:text-amber-800 transition-colors mt-0.5">
+                        <h4 className="text-sm sm:text-base font-serif font-bold text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors mt-0.5">
                           {insc.name}
                         </h4>
-                        <p className="text-xs text-stone-600 mt-1 line-clamp-2">{insc.historical_context}</p>
-                        <div className="text-[11px] font-bold text-amber-700 mt-2 inline-flex items-center gap-1">
+                        <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{insc.historical_context}</p>
+                        <div className="text-[11px] font-bold text-[var(--link-color)] mt-2 inline-flex items-center gap-1">
                           <span>Inspect Full Epigraphic Record</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </div>
@@ -1568,8 +1567,8 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             {/* 5B: Digitized Archival Documents & Royal Manuscripts */}
             {matchedDocuments.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-amber-700" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--secondary-text)] mb-3 flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[var(--accent-gold)]" />
                   <span>Associated Archival Manuscripts & Royal Charters ({matchedDocuments.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1577,18 +1576,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     <div
                       key={doc.id}
                       onClick={() => onNavigate(`/documents?id=${doc.id}`)}
-                      className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-4 transition-all cursor-pointer flex gap-4 items-start"
+                      className="group rounded-xl border border-[var(--border-color)] hover:border-[var(--accent-gold)] bg-[var(--surface-bg)] p-4 transition-all cursor-pointer flex gap-4 items-start"
                     >
-                      <div className="w-12 h-12 rounded-xl bg-amber-900/10 border border-amber-500/30 flex items-center justify-center shrink-0">
-                        <FileText className="w-6 h-6 text-amber-800" />
+                      <div className="w-12 h-12 rounded-xl bg-[var(--secondary-button)] border border-[var(--border-color)] flex items-center justify-center shrink-0">
+                        <FileText className="w-6 h-6 text-[var(--heading-text)]" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="text-[11px] font-bold text-amber-800">{doc.approximate_date}</div>
-                        <h4 className="text-sm sm:text-base font-serif font-bold text-stone-900 group-hover:text-amber-800 transition-colors mt-0.5">
+                        <div className="text-[11px] font-bold text-[var(--link-color)]">{doc.approximate_date}</div>
+                        <h4 className="text-sm sm:text-base font-serif font-bold text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors mt-0.5">
                           {doc.title}
                         </h4>
-                        <p className="text-xs text-stone-600 mt-1 line-clamp-2">{doc.translation_excerpt}</p>
-                        <div className="text-[11px] font-bold text-amber-700 mt-2 inline-flex items-center gap-1">
+                        <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{doc.translation_excerpt}</p>
+                        <div className="text-[11px] font-bold text-[var(--link-color)] mt-2 inline-flex items-center gap-1">
                           <span>View Archival Manuscript</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </div>
@@ -1602,8 +1601,8 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             {/* 5C: Fortresses, Temples & Archaeological Monuments */}
             {matchedMonuments.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3 flex items-center gap-2">
-                  <Landmark className="w-4 h-4 text-amber-700" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--secondary-text)] mb-3 flex items-center gap-2">
+                  <Landmark className="w-4 h-4 text-[var(--accent-gold)]" />
                   <span>Associated Temples, Fortresses & Archaeological Monuments ({matchedMonuments.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1611,23 +1610,23 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     <div
                       key={mon.id}
                       onClick={() => onNavigate('/temples-monuments')}
-                      className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-4 transition-all cursor-pointer flex gap-4 items-start"
+                      className="group rounded-xl border border-[var(--border-color)] hover:border-[var(--accent-gold)] bg-[var(--surface-bg)] p-4 transition-all cursor-pointer flex gap-4 items-start"
                     >
                       {mon.image_url && (
                         <img
                           src={mon.image_url}
                           alt={mon.name}
-                          className="w-20 h-20 rounded-lg object-cover border border-stone-300 shrink-0"
+                          className="w-20 h-20 rounded-lg object-cover border border-[var(--border-color)] shrink-0"
                         />
                       )}
                       <div className="min-w-0 flex-1">
-                        <div className="text-[11px] font-bold text-amber-800">
+                        <div className="text-[11px] font-bold text-[var(--link-color)]">
                           {mon.century} • {mon.location}
                         </div>
-                        <h4 className="text-sm sm:text-base font-serif font-bold text-stone-900 group-hover:text-amber-800 transition-colors mt-0.5">
+                        <h4 className="text-sm sm:text-base font-serif font-bold text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors mt-0.5">
                           {mon.name}
                         </h4>
-                        <p className="text-xs text-stone-600 mt-1 line-clamp-2">{mon.historical_significance}</p>
+                        <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{mon.historical_significance}</p>
                       </div>
                     </div>
                   ))}
@@ -1637,17 +1636,17 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </section>
 
           {/* SECTION 6: PRIMARY SOURCE REFERENCES & SCHOLARLY CITATIONS */}
-          <section className="bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8">
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mb-5 flex items-center gap-2.5 border-b border-stone-200 pb-4">
-              <FileText className="w-6 h-6 text-amber-700 shrink-0" />
+          <section className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[var(--heading-text)] mb-5 flex items-center gap-2.5 border-b border-[var(--border-color)] pb-4">
+              <FileText className="w-6 h-6 text-[var(--accent-gold)] shrink-0" />
               <span>{ui.secSourcesCitations}</span>
             </h2>
 
-            <ol className="space-y-3 list-decimal list-inside text-sm text-stone-800">
+            <ol className="space-y-3 list-decimal list-inside text-sm text-[var(--primary-text)]">
               {(activeFigure.citations || []).map((citation, idx) => (
                 <li
                   key={idx}
-                  className="p-3.5 rounded-xl bg-[#FAF7F2] border border-stone-200 leading-relaxed font-medium"
+                  className="p-3.5 rounded-xl bg-[var(--surface-bg)] border border-[var(--border-color)] leading-relaxed font-medium"
                 >
                   {citation}
                 </li>
@@ -1656,11 +1655,11 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </section>
 
           {/* SECTION 7: ARTICLE FOOTER — RELATED PERSONALITIES, DYNASTIES, KINGDOMS, ARTICLES, KEYWORDS & HASHTAGS */}
-          <footer className="print-article-footer bg-white rounded-2xl border border-stone-200/90 shadow-sm p-6 sm:p-8 space-y-8">
+          <footer className="print-article-footer bg-[var(--card-bg)] rounded-2xl border border-[var(--border-color)] shadow-sm p-6 sm:p-8 space-y-8">
             {/* 7A: Related Historical Personalities with Small Thumbnails */}
             <div>
-              <h3 className="text-lg font-serif font-bold text-stone-900 mb-4 flex items-center gap-2">
-                <Crown className="w-5 h-5 text-amber-700" />
+              <h3 className="text-lg font-serif font-bold text-[var(--heading-text)] mb-4 flex items-center gap-2">
+                <Crown className="w-5 h-5 text-[var(--accent-gold)]" />
                 <span>{ui.secRelatedPersonalities}</span>
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1668,12 +1667,12 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <div
                     key={rel.id}
                     onClick={() => openFigureDetail(rel.id)}
-                    className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-3 transition-all cursor-pointer flex items-center gap-3"
+                    className="royal-related-link-btn group transition-all cursor-pointer flex items-center gap-3"
                   >
                     <img
                       src={rel.image_url}
                       alt={rel.name}
-                      className="w-14 h-14 rounded-lg object-cover object-top border border-stone-300 shrink-0"
+                      className="w-14 h-14 rounded-lg object-cover object-top border border-[#E8BFC9] shrink-0"
                       onError={e => {
                         const target = e.currentTarget;
                         target.onerror = null;
@@ -1681,11 +1680,11 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       }}
                     />
                     <div className="min-w-0">
-                      <div className="text-[10px] font-bold text-amber-800 truncate">{rel.reign_period}</div>
-                      <div className="text-xs sm:text-sm font-serif font-bold text-stone-900 group-hover:text-amber-800 truncate">
+                      <div className="text-[10px] font-bold text-[#54351F] truncate">{rel.reign_period}</div>
+                      <div className="text-xs sm:text-sm font-serif font-bold text-[#54351F] truncate">
                         {rel.name}
                       </div>
-                      <div className="text-[11px] text-stone-500 truncate">{rel.dynasty_name}</div>
+                      <div className="text-[11px] text-[#54351F] truncate">{rel.dynasty_name}</div>
                     </div>
                   </div>
                 ))}
@@ -1693,9 +1692,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             </div>
 
             {/* 7B: Related Dynasties, Kingdoms & Historical Articles with Small Thumbnails */}
-            <div className="pt-6 border-t border-stone-200">
-              <h3 className="text-lg font-serif font-bold text-stone-900 mb-4 flex items-center gap-2">
-                <Landmark className="w-5 h-5 text-amber-700" />
+            <div className="pt-6 border-t border-[var(--border-color)]">
+              <h3 className="text-lg font-serif font-bold text-[var(--heading-text)] mb-4 flex items-center gap-2">
+                <Landmark className="w-5 h-5 text-[var(--accent-gold)]" />
                 <span>{ui.secRelatedKingdomsArticles}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1703,20 +1702,20 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <div
                     key={art.id}
                     onClick={() => onNavigate(`/documentary?article=${art.id}`)}
-                    className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-3.5 transition-all cursor-pointer flex items-start gap-3"
+                    className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
                   >
                     {art.featured_image && (
                       <img
                         src={art.featured_image}
                         alt={art.original_title}
-                        className="w-16 h-16 rounded-lg object-cover border border-stone-300 shrink-0"
+                        className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                       />
                     )}
                     <div className="min-w-0">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
                         {art.category}
                       </span>
-                      <h4 className="text-xs sm:text-sm font-serif font-bold text-stone-900 group-hover:text-amber-800 line-clamp-2 mt-0.5">
+                      <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] line-clamp-2 mt-0.5">
                         {art.original_title}
                       </h4>
                     </div>
@@ -1726,18 +1725,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 {/* Direct Kingdom & Dynasty Portal Cards */}
                 <div
                   onClick={() => onNavigate('/gajapathi-kings')}
-                  className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-3.5 transition-all cursor-pointer flex items-start gap-3"
+                  className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
                 >
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
                     alt="Suryavamsha Gajapathi Empire"
-                    className="w-16 h-16 rounded-lg object-cover border border-stone-300 shrink-0"
+                    className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                   />
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
                       Kingdoms & Dynasties
                     </span>
-                    <h4 className="text-xs sm:text-sm font-serif font-bold text-stone-900 group-hover:text-amber-800 mt-0.5">
+                    <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] mt-0.5">
                       Suryavamsha Gajapathi Empire & Sovereign Chronicles
                     </h4>
                   </div>
@@ -1745,18 +1744,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
                 <div
                   onClick={() => onNavigate('/genealogy')}
-                  className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-3.5 transition-all cursor-pointer flex items-start gap-3"
+                  className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
                 >
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
                     alt="Royal Genealogy & Dynastic Tree"
-                    className="w-16 h-16 rounded-lg object-cover border border-stone-300 shrink-0"
+                    className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                   />
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
                       Dynastic Lineage
                     </span>
-                    <h4 className="text-xs sm:text-sm font-serif font-bold text-stone-900 group-hover:text-amber-800 mt-0.5">
+                    <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] mt-0.5">
                       Interactive Suryavamsha & Odra Dynastic Genealogy
                     </h4>
                   </div>
@@ -1764,18 +1763,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
                 <div
                   onClick={() => onNavigate('/odra-desha')}
-                  className="group rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] p-3.5 transition-all cursor-pointer flex items-start gap-3"
+                  className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
                 >
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_ramparts.jpg`}
                     alt="Odra Desha Historical Geography"
-                    className="w-16 h-16 rounded-lg object-cover border border-stone-300 shrink-0"
+                    className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
                   />
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
                       Historical Geography
                     </span>
-                    <h4 className="text-xs sm:text-sm font-serif font-bold text-stone-900 group-hover:text-amber-800 mt-0.5">
+                    <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] mt-0.5">
                       Odra Desha Capitals, Fortresses & Epigraphic Sites
                     </h4>
                   </div>
@@ -1784,10 +1783,10 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             </div>
 
             {/* 7C: Keywords & Hashtags */}
-            <div className="pt-6 border-t border-stone-200 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="pt-6 border-t border-[var(--border-color)] grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-amber-700" />
+                <div className="text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] mb-2.5 flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                   <span>Related Archival Keywords</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -1798,7 +1797,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         setSearchQuery(kw);
                         closeFigureDetail();
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 text-stone-700 hover:text-amber-900 border border-stone-200 text-xs font-medium transition-colors cursor-pointer"
+                      className="royal-related-link-btn text-xs font-medium cursor-pointer"
                     >
                       {kw}
                     </button>
@@ -1807,15 +1806,15 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               </div>
 
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-2.5 flex items-center gap-1.5">
-                  <Hash className="w-3.5 h-3.5 text-amber-700" />
+                <div className="text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] mb-2.5 flex items-center gap-1.5">
+                  <Hash className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                   <span>Research Hashtags</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {figureHashtags.map((tag: string, idx: number) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold"
+                      className="theme-hashtag px-2.5 py-1 rounded-lg bg-[var(--card-bg)] text-[var(--heading-text)] border border-[var(--border-color)] text-xs font-bold"
                     >
                       {tag.startsWith('#') ? tag : `#${tag}`}
                     </span>
@@ -1825,18 +1824,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             </div>
 
             {/* 7D: Previous / Next Personality Navigation */}
-            <div className="pt-6 border-t border-stone-200 grid grid-cols-1 sm:grid-cols-2 gap-4 print:hidden">
+            <div className="pt-6 border-t border-[var(--border-color)] grid grid-cols-1 sm:grid-cols-2 gap-4 print:hidden">
               {prevFigure ? (
                 <button
                   onClick={() => openFigureDetail(prevFigure.id)}
-                  className="flex items-center gap-3 p-3.5 rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] text-left transition-all cursor-pointer"
+                  className="flex items-center gap-3 p-3.5 rounded-xl border border-[var(--border-color)] hover:border-[var(--accent-gold)] bg-[var(--surface-bg)] text-left transition-all cursor-pointer"
                 >
-                  <ChevronLeft className="w-5 h-5 text-amber-700 shrink-0" />
+                  <ChevronLeft className="w-5 h-5 text-[var(--accent-gold)] shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--secondary-text)]">
                       {ui.lblPrevPerson}
                     </div>
-                    <div className="text-sm font-serif font-bold text-stone-900 truncate">
+                    <div className="text-sm font-serif font-bold text-[var(--heading-text)] truncate">
                       {prevFigure.name}
                     </div>
                   </div>
@@ -1848,17 +1847,17 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               {nextFigure ? (
                 <button
                   onClick={() => openFigureDetail(nextFigure.id)}
-                  className="flex items-center justify-end gap-3 p-3.5 rounded-xl border border-stone-200 hover:border-amber-500 bg-[#FAF7F2] text-right transition-all cursor-pointer"
+                  className="flex items-center justify-end gap-3 p-3.5 rounded-xl border border-[var(--border-color)] hover:border-[var(--accent-gold)] bg-[var(--surface-bg)] text-right transition-all cursor-pointer"
                 >
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--secondary-text)]">
                       {ui.lblNextPerson}
                     </div>
-                    <div className="text-sm font-serif font-bold text-stone-900 truncate">
+                    <div className="text-sm font-serif font-bold text-[var(--heading-text)] truncate">
                       {nextFigure.name}
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-amber-700 shrink-0" />
+                  <ChevronRight className="w-5 h-5 text-[var(--accent-gold)] shrink-0" />
                 </button>
               ) : (
                 <div />
@@ -1866,20 +1865,20 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             </div>
 
             {/* 7E: Bottom Action Bar (Back, Home, Print, Share, Copy Link) */}
-            <div className="pt-6 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3 print:hidden">
+            <div className="pt-6 border-t border-[var(--border-color)] flex flex-wrap items-center justify-between gap-3 print:hidden">
               <div className="flex flex-wrap items-center gap-2.5">
                 <button
                   onClick={closeFigureDetail}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>{ui.backToList}</span>
                 </button>
                 <button
                   onClick={() => onNavigate('/')}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--secondary-button)] hover:bg-[#dfc9a4] text-[var(--heading-text)] border border-[var(--border-color)] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
-                  <Home className="w-4 h-4 text-amber-700" />
+                  <Home className="w-4 h-4 text-[var(--accent-gold)]" />
                   <span>{ui.returnHome}</span>
                 </button>
               </div>
@@ -1887,21 +1886,21 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div className="flex flex-wrap items-center gap-2.5">
                 <button
                   onClick={() => handlePrint(activeFigure)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--border-color)] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
-                  <Printer className="w-4 h-4 text-amber-700" />
+                  <Printer className="w-4 h-4 text-[var(--accent-gold)]" />
                   <span>{ui.printBtn}</span>
                 </button>
                 <button
                   onClick={() => handleNativeShare(activeFigure)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--border-color)] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
-                  <Share2 className="w-4 h-4 text-amber-700" />
+                  <Share2 className="w-4 h-4 text-[var(--accent-gold)]" />
                   <span>{ui.shareBtn}</span>
                 </button>
                 <button
                   onClick={() => handleCopyLink(activeFigure, false)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   <span>{copied ? ui.linkCopied : ui.copyLink}</span>
@@ -1910,7 +1909,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             </div>
 
             {/* 7F: Author Profile & Print/PDF Attribution */}
-            <div className="pt-6 border-t border-stone-200">
+            <div className="pt-6 border-t border-[var(--border-color)]">
               <PublisherCreditCard variant="article-profile" />
             </div>
           </footer>
@@ -1924,59 +1923,59 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
   // ARTICLE LIST INTERFACE — PROFESSIONAL THUMBNAIL BIOGRAPHY CARDS
   // ============================================================================
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 pb-20">
+    <div className="min-h-screen bg-[#F5EBD9] text-[#292521] pb-20">
       {/* HERO HEADER */}
-      <div className="bg-gradient-to-b from-[#1F1814] via-[#2A201B] to-[#1C1613] text-white border-b-4 border-amber-600/50">
+      <div className="bg-[#EFE3D0] text-[#292521] border-b-2 border-[#A87924]">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
             <button
               onClick={() => onNavigate('/')}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-amber-200 text-xs sm:text-sm font-bold transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] text-[#54351F] text-xs sm:text-sm font-bold transition-all cursor-pointer"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-[#762D35]" />
               <span>{ui.returnHome}</span>
             </button>
 
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold uppercase tracking-widest">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#762D35] border border-[#A87924] text-white text-xs font-bold uppercase tracking-widest">
               <Crown className="w-3.5 h-3.5" />
               <span>{ui.badge}</span>
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold tracking-tight text-white">
+          <h1 className="text-3xl sm:text-5xl font-serif font-bold tracking-tight text-[#54351F]">
             {ui.pageTitle}
           </h1>
-          <p className="mt-3 text-stone-300 text-sm sm:text-lg max-w-4xl leading-relaxed">
+          <p className="mt-3 text-[#292521] text-sm sm:text-lg max-w-4xl leading-relaxed">
             {ui.pageSubtitle}
           </p>
 
           {/* 3-Pillar Epistemic Methodology Banner */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-black/30 border border-amber-500/25 rounded-2xl p-4 sm:p-5">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#FFFCF5] border border-[#D8C3A2] rounded-2xl p-4 sm:p-5">
             <div className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-[#1c5236] shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#1c5236]">
                   {ui.epistemicVerifiedTitle}
                 </div>
-                <p className="text-xs text-stone-300 mt-1 leading-relaxed">{ui.epistemicVerifiedDesc}</p>
+                <p className="text-xs text-[#292521] mt-1 leading-relaxed">{ui.epistemicVerifiedDesc}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <Sparkles className="w-5 h-5 text-[#76501F] shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-amber-300">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#54351F]">
                   {ui.epistemicTradTitle}
                 </div>
-                <p className="text-xs text-stone-300 mt-1 leading-relaxed">{ui.epistemicTradDesc}</p>
+                <p className="text-xs text-[#292521] mt-1 leading-relaxed">{ui.epistemicTradDesc}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <BookOpen className="w-5 h-5 text-indigo-300 shrink-0 mt-0.5" />
+              <BookOpen className="w-5 h-5 text-[#762D35] shrink-0 mt-0.5" />
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-indigo-300">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#54351F]">
                   {ui.epistemicScholarTitle}
                 </div>
-                <p className="text-xs text-stone-300 mt-1 leading-relaxed">{ui.epistemicScholarDesc}</p>
+                <p className="text-xs text-[#292521] mt-1 leading-relaxed">{ui.epistemicScholarDesc}</p>
               </div>
             </div>
           </div>
@@ -1985,7 +1984,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
       {/* FILTER & SEARCH BAR */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-6 relative z-10">
-        <div className="bg-white rounded-2xl shadow-lg border border-stone-200 p-4 sm:p-6 space-y-4">
+        <div className="bg-[#FFFCF5] rounded-2xl shadow-md border border-[#D8C3A2] p-4 sm:p-6 space-y-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {/* Category Tabs */}
             <div className="flex flex-wrap gap-2">
@@ -1993,10 +1992,10 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer border ${
                     selectedCategory === cat.id
-                      ? 'bg-[#2A201B] text-amber-300 shadow-sm border border-amber-500/40'
-                      : 'bg-stone-100 hover:bg-stone-200 text-stone-700 border border-stone-200'
+                      ? 'bg-[#762D35] text-white shadow-sm border-[#A87924]'
+                      : 'bg-[#FFF9EF] hover:bg-[#E9D9BE] text-[#54351F] border-[#D8C3A2]'
                   }`}
                 >
                   {cat.label}
@@ -2006,18 +2005,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
             {/* Search Input */}
             <div className="relative w-full lg:w-80">
-              <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#76501F] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder={ui.searchPlaceholder}
-                className="w-full pl-10 pr-9 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:border-amber-600"
+                className="w-full pl-10 pr-9 py-2.5 bg-[#FFFFFF] border border-[#D8C3A2] rounded-xl text-sm text-[#292521] placeholder-[#6B5948] focus:outline-none focus:border-[#A87924]"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#54351F] cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -2026,9 +2025,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           </div>
 
           {/* Epistemic Evidence Filter Pills */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-stone-100">
-            <span className="text-xs font-bold text-stone-500 inline-flex items-center gap-1 mr-1">
-              <Filter className="w-3.5 h-3.5 text-amber-700" />
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#D8C3A2]">
+            <span className="text-xs font-bold text-[#54351F] inline-flex items-center gap-1 mr-1">
+              <Filter className="w-3.5 h-3.5 text-[#A87924]" />
               <span>Evidence Filter:</span>
             </span>
             {[
@@ -2039,10 +2038,10 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <button
                 key={ef.id}
                 onClick={() => setEvidenceFilter(ef.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
                   evidenceFilter === ef.id
-                    ? 'bg-amber-100 text-amber-950 border border-amber-400'
-                    : 'bg-stone-50 hover:bg-stone-100 text-stone-600 border border-stone-200'
+                    ? 'bg-[#762D35] text-white border-[#A87924]'
+                    : 'bg-[#FFF9EF] hover:bg-[#E9D9BE] text-[#54351F] border-[#D8C3A2]'
                 }`}
               >
                 {ef.label}
@@ -2055,16 +2054,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
       {/* PERSONALITIES THUMBNAIL CARD GRID */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-8">
         {filteredFigures.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-stone-200 p-12 text-center">
-            <Crown className="w-12 h-12 text-stone-300 mx-auto mb-3" />
-            <p className="text-stone-600 font-medium mb-4">{ui.noResults}</p>
+          <div className="bg-[#FFFCF5] rounded-2xl border border-[#D8C3A2] p-12 text-center">
+            <Crown className="w-12 h-12 text-[#A87924] mx-auto mb-3" />
+            <p className="text-[#292521] font-medium mb-4">{ui.noResults}</p>
             <button
               onClick={() => {
                 setSelectedCategory('all');
                 setEvidenceFilter('all');
                 setSearchQuery('');
               }}
-              className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-all cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs font-bold transition-all cursor-pointer"
             >
               {ui.resetFilters}
             </button>
@@ -2089,12 +2088,12 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <article
                   key={fig.id}
                   onClick={() => openFigureDetail(fig.id)}
-                  className="group bg-white rounded-2xl border border-stone-200/90 hover:border-amber-500 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer"
+                  className="group bg-[#FFFCF5] rounded-2xl border border-[#D8C3A2] hover:border-[#A87924] shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col cursor-pointer"
                 >
                   {/* Top Split: Portrait Thumbnail + Core Sovereign Metadata */}
                   <div className="flex flex-col sm:flex-row">
                     {/* Portrait Image Container */}
-                    <div className="sm:w-48 md:w-52 shrink-0 relative bg-stone-900 aspect-[4/3] sm:aspect-auto sm:min-h-[230px] overflow-hidden">
+                    <div className="sm:w-48 md:w-52 shrink-0 relative bg-[#EFE3D0] aspect-[4/3] sm:aspect-auto sm:min-h-[230px] overflow-hidden border-b sm:border-b-0 sm:border-r border-[#D8C3A2]">
                       <img
                         src={fig.image_url}
                         alt={fig.name}
@@ -2105,9 +2104,8 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                           target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_coronation.jpg`;
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent sm:hidden" />
                       <div className="absolute top-3 left-3">
-                        <span className="px-2.5 py-1 rounded-md bg-black/75 backdrop-blur-xs text-amber-300 border border-amber-400/40 text-[11px] font-bold">
+                        <span className="px-2.5 py-1 rounded-md bg-[#FFFCF5]/95 text-[#54351F] border border-[#D8C3A2] text-[11px] font-bold shadow-xs">
                           {fig.reign_period}
                         </span>
                       </div>
@@ -2117,45 +2115,45 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-amber-800">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#76501F]">
                             {categoryLabel}
                           </span>
                           <EvidenceBadge status={fig.evidence_status} />
                         </div>
 
-                        <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 group-hover:text-amber-800 transition-colors leading-snug">
+                        <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug">
                           {fig.name}
                         </h2>
 
-                        <p className="text-xs sm:text-sm font-serif italic text-amber-900/90 mt-1 line-clamp-1">
+                        <p className="text-xs sm:text-sm font-serif italic text-[#76501F] mt-1 line-clamp-1">
                           “{primaryTitle}”
                         </p>
 
-                        <div className="text-xs text-stone-500 font-medium mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <div className="text-xs text-[#6B5948] font-medium mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                           <span>{fig.dynasty_name}</span>
                           <span>•</span>
                           <span>{fig.approx_dates}</span>
                         </div>
 
                         {/* Short Biography Preview */}
-                        <p className="text-xs sm:text-sm text-stone-700 mt-3 line-clamp-3 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[#292521] mt-3 line-clamp-3 leading-relaxed">
                           {fig.historical_significance} {fig.biography}
                         </p>
                       </div>
 
                       {/* Associated Places & Hashtags Preview */}
-                      <div className="mt-4 pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-500">
+                      <div className="mt-4 pt-3 border-t border-[#D8C3A2] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#6B5948]">
                         <div className="flex items-center gap-3">
-                          <span className="inline-flex items-center gap-1 font-semibold text-stone-600">
-                            <Calendar className="w-3.5 h-3.5 text-amber-700" />
+                          <span className="inline-flex items-center gap-1 font-semibold text-[#54351F]">
+                            <Calendar className="w-3.5 h-3.5 text-[#A87924]" />
                             {(fig.major_events || []).length} Chronological Events
                           </span>
-                          <span className="inline-flex items-center gap-1 font-semibold text-stone-600">
-                            <FileText className="w-3.5 h-3.5 text-amber-700" />
+                          <span className="inline-flex items-center gap-1 font-semibold text-[#54351F]">
+                            <FileText className="w-3.5 h-3.5 text-[#A87924]" />
                             {(fig.citations || []).length} Citations
                           </span>
                         </div>
-                        <span className="text-amber-800 font-bold truncate max-w-[180px]">
+                        <span className="theme-hashtag px-2 py-0.5 rounded bg-[#FFFCF5] text-[#54351F] border border-[#D8C3A2] font-bold truncate max-w-[180px]">
                           {cardHashtags[0]}
                         </span>
                       </div>
@@ -2163,12 +2161,12 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   </div>
 
                   {/* Card Footer Action Bar */}
-                  <div className="px-5 py-3 bg-[#FAF7F2] border-t border-stone-200/80 flex items-center justify-between text-xs font-bold text-amber-900 group-hover:bg-amber-50 transition-colors">
+                  <div className="px-5 py-3 bg-[#FFF9EF] border-t border-[#D8C3A2] flex items-center justify-between text-xs font-bold text-[#76501F] group-hover:bg-[#EFE3D0] transition-colors">
                     <span className="flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-amber-700" />
+                      <BookOpen className="w-4 h-4 text-[#A87924]" />
                       <span>{ui.readFullBio}</span>
                     </span>
-                    <ChevronRight className="w-4 h-4 text-amber-700 group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-[#A87924] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </article>
               );

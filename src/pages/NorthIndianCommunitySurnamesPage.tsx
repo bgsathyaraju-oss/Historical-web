@@ -337,19 +337,19 @@ export function NorthIndianCommunitySurnamesPage({
   }, [filteredEntries]);
 
   return (
-    <div className="min-h-screen bg-[#0b0d14] text-[#f5f3ed] pb-24">
+    <div className="min-h-screen bg-[#F5EBD9] text-[#292521] pb-24">
       {/* Hero Banner */}
-      <section className="relative overflow-hidden border-b border-[#c99738]/30 bg-gradient-to-b from-[#1a1018] via-[#111522] to-[#0b0d14] pt-10 pb-12 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-[#D8C3A2] bg-[#EFE3D0] pt-10 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           {/* Top Navigation & Category Badges */}
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#221016] text-[#e8c872] border border-[#d4af37]/40">
-                <Crown className="w-3.5 h-3.5 text-[#d4af37]" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#762D35] text-white border border-[#A87924]">
+                <Crown className="w-3.5 h-3.5 text-white" />
                 {ui.pageBadge}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#121826] text-[#fae29c] border border-[#c99738]/40">
-                <MapPin className="w-3.5 h-3.5 text-[#d4af37]" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#FFFCF5] text-[#54351F] border border-[#D8C3A2]">
+                <MapPin className="w-3.5 h-3.5 text-[#A87924]" />
                 {ui.categoryLabel}
               </span>
             </div>
@@ -358,20 +358,20 @@ export function NorthIndianCommunitySurnamesPage({
               <button
                 type="button"
                 onClick={() => onNavigate('/community-heritage')}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#e8c872] hover:text-[#fae29c] bg-stone-900/80 hover:bg-stone-800/80 border border-[#c99738]/30 px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#54351F] bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] hover:border-[#A87924] px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
+                <ArrowLeft className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>{ui.backToHeritage}</span>
               </button>
             )}
           </div>
 
           {/* Required Page Heading */}
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#fae29c] via-[#e8c872] to-[#c99738] font-royal-heading leading-tight mb-4">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-[#54351F] font-royal-heading leading-tight mb-4">
             Suryavamshi Oad-Rajpoot Surnames or Sub-Casts
           </h1>
 
-          <p className="text-sm sm:text-base text-stone-300 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-[#292521] max-w-3xl leading-relaxed">
             {ui.subtitle}
           </p>
         </div>
@@ -380,50 +380,50 @@ export function NorthIndianCommunitySurnamesPage({
       {/* Main Content Container */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-6">
         {/* Control Panel: Search, 8-Language Transliteration Selector & Alphabetical Navigation */}
-        <div className="bg-[#121622] border border-[#c99738]/30 rounded-xl p-4 sm:p-5 shadow-xl space-y-5">
+        <div className="bg-[#FFFCF5] border border-[#D8C3A2] rounded-xl p-4 sm:p-5 shadow-md space-y-5">
           {/* Top Row: Search Input & Stats */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
             <div className="lg:col-span-7 relative">
-              <Search className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[#76501F] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={ui.searchPlaceholder}
                 aria-label={ui.searchPlaceholder}
-                className="w-full pl-10 pr-10 py-2.5 bg-[#0b0d14] border border-stone-700/80 focus:border-[#d4af37] rounded-lg text-sm text-[#f5f3ed] placeholder-stone-500 focus:outline-none transition-colors"
+                className="w-full pl-10 pr-10 py-2.5 bg-[#FFFFFF] border border-[#D8C3A2] focus:border-[#A87924] rounded-lg text-sm text-[#292521] placeholder-[#6B5948] focus:outline-none transition-colors"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
                   aria-label="Clear search"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#54351F] p-1"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
             </div>
 
-            <div className="lg:col-span-5 flex flex-wrap items-center justify-between lg:justify-end gap-3 text-xs text-stone-300">
-              <div className="flex items-center gap-2 bg-[#0b0d14] px-3 py-2 rounded-lg border border-stone-800">
-                <Users className="w-4 h-4 text-[#d4af37]" />
+            <div className="lg:col-span-5 flex flex-wrap items-center justify-between lg:justify-end gap-3 text-xs text-[#292521]">
+              <div className="flex items-center gap-2 bg-[#FFF9EF] px-3 py-2 rounded-lg border border-[#D8C3A2]">
+                <Users className="w-4 h-4 text-[#A87924]" />
                 <span>
                   {ui.showingCountLabel}:{' '}
-                  <strong className="text-[#fae29c]">{filteredEntries.length}</strong> /{' '}
+                  <strong className="text-[#54351F]">{filteredEntries.length}</strong> /{' '}
                   <span>{NORTH_INDIAN_SURNAME_ENTRIES.length}</span>
                 </span>
               </div>
-              <span className="px-3 py-2 rounded-lg bg-[#221016] text-[#e8c872] border border-[#c99738]/40 font-semibold">
+              <span className="px-3 py-2 rounded-lg bg-[#762D35] text-white border border-[#A87924] font-semibold">
                 North-Indian
               </span>
             </div>
           </div>
 
           {/* 8-Language Script Selector */}
-          <div className="pt-3 border-t border-stone-800/80">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#e8c872] mb-2.5">
-              <Languages className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="pt-3 border-t border-[#D8C3A2]">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#54351F] mb-2.5">
+              <Languages className="w-3.5 h-3.5 text-[#A87924]" />
               <span>{ui.languageSwitchLabel}:</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -436,12 +436,12 @@ export function NorthIndianCommunitySurnamesPage({
                     onClick={() => setLanguage(langOpt.code)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer border ${
                       active
-                        ? 'bg-[#580014] text-[#fae29c] border-[#d4af37] shadow-sm font-bold'
-                        : 'bg-[#0b0d14] text-stone-300 border-stone-800 hover:border-[#c99738]/50 hover:text-[#fae29c]'
+                        ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm font-bold'
+                        : 'bg-[#FFF9EF] text-[#54351F] border-[#D8C3A2] hover:bg-[#E9D9BE] hover:border-[#A87924]'
                     }`}
                   >
                     <span>{langOpt.nativeName}</span>
-                    <span className="text-[10px] text-stone-400 ml-1">({langOpt.label})</span>
+                    <span className={`text-[10px] ml-1 ${active ? 'text-white/90' : 'text-[#6B5948]'}`}>({langOpt.label})</span>
                   </button>
                 );
               })}
@@ -449,9 +449,9 @@ export function NorthIndianCommunitySurnamesPage({
           </div>
 
           {/* Alphabetical A-Z Navigation Bar */}
-          <div className="pt-3 border-t border-stone-800/80">
+          <div className="pt-3 border-t border-[#D8C3A2]">
             <div className="flex items-center justify-between gap-2 mb-2.5">
-              <span className="text-xs font-semibold text-[#e8c872]">
+              <span className="text-xs font-semibold text-[#54351F]">
                 {ui.alphabetNavLabel}
               </span>
               {(selectedLetter !== 'ALL' || searchQuery.trim() !== '') && (
@@ -461,7 +461,7 @@ export function NorthIndianCommunitySurnamesPage({
                     setSelectedLetter('ALL');
                     setSearchQuery('');
                   }}
-                  className="text-xs text-[#d4af37] hover:text-[#fae29c] underline cursor-pointer"
+                  className="text-xs text-[#76501F] hover:text-[#54351F] underline cursor-pointer font-semibold"
                 >
                   {ui.clearFilters}
                 </button>
@@ -474,8 +474,8 @@ export function NorthIndianCommunitySurnamesPage({
                 onClick={() => setSelectedLetter('ALL')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border ${
                   selectedLetter === 'ALL'
-                    ? 'bg-[#d4af37] text-[#1a080c] border-[#fae29c] shadow-sm'
-                    : 'bg-[#0b0d14] text-stone-300 border-stone-800 hover:border-[#c99738]/50'
+                    ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm'
+                    : 'bg-[#FFF9EF] text-[#54351F] border-[#D8C3A2] hover:bg-[#E9D9BE]'
                 }`}
               >
                 {ui.allLetters}
@@ -491,10 +491,10 @@ export function NorthIndianCommunitySurnamesPage({
                     onClick={() => setSelectedLetter(isSelected ? 'ALL' : letter)}
                     className={`min-w-[2.25rem] px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border flex items-center justify-center gap-1 ${
                       isSelected
-                        ? 'bg-[#d4af37] text-[#1a080c] border-[#fae29c] shadow-sm'
+                        ? 'bg-[#762D35] text-white border-[#A87924] shadow-sm'
                         : count > 0
-                        ? 'bg-[#0b0d14] text-[#fae29c] border-stone-700 hover:border-[#d4af37]'
-                        : 'bg-[#0b0d14]/50 text-stone-600 border-stone-800/60 hover:border-stone-700'
+                        ? 'bg-[#FFF9EF] text-[#54351F] border-[#D8C3A2] hover:bg-[#E9D9BE] hover:border-[#A87924]'
+                        : 'bg-[#F5EBD9]/60 text-[#6B5948]/60 border-[#D8C3A2]/60'
                     }`}
                     title={`${letter} (${count})`}
                   >
@@ -503,8 +503,8 @@ export function NorthIndianCommunitySurnamesPage({
                       <span
                         className={`text-[10px] px-1 rounded ${
                           isSelected
-                            ? 'bg-[#1a080c]/20 text-[#1a080c]'
-                            : 'bg-stone-800 text-[#e8c872]'
+                            ? 'bg-white/20 text-white'
+                            : 'bg-[#EFE3D0] text-[#76501F]'
                         }`}
                       >
                         {count}
@@ -519,15 +519,15 @@ export function NorthIndianCommunitySurnamesPage({
 
         {/* Surnames Directory Content */}
         {groupedByLetter.length === 0 ? (
-          <div className="bg-[#121622] border border-stone-800 rounded-xl p-10 text-center space-y-3">
-            <p className="text-sm text-stone-300">{ui.noResults}</p>
+          <div className="bg-[#FFFCF5] border border-[#D8C3A2] rounded-xl p-10 text-center space-y-3">
+            <p className="text-sm text-[#292521]">{ui.noResults}</p>
             <button
               type="button"
               onClick={() => {
                 setSelectedLetter('ALL');
                 setSearchQuery('');
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-[#580014] text-[#fae29c] border border-[#d4af37]/50 hover:bg-[#78001b] cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-[#762D35] text-white border border-[#A87924] hover:bg-[#5e2229] cursor-pointer"
             >
               {ui.clearFilters}
             </button>
@@ -541,15 +541,15 @@ export function NorthIndianCommunitySurnamesPage({
                 className="space-y-3"
               >
                 {/* Letter Section Header */}
-                <div className="flex items-center gap-3 border-b border-[#c99738]/30 pb-2">
-                  <div className="w-9 h-9 rounded-lg bg-[#221016] border border-[#d4af37]/50 flex items-center justify-center text-base font-bold text-[#fae29c] font-royal-heading shadow">
+                <div className="flex items-center gap-3 border-b border-[#D8C3A2] pb-2">
+                  <div className="w-9 h-9 rounded-lg bg-[#762D35] border border-[#A87924] flex items-center justify-center text-base font-bold text-white font-royal-heading shadow">
                     {group.letter}
                   </div>
                   <div>
-                    <h2 className="text-base sm:text-lg font-bold text-[#fae29c] font-royal-heading">
+                    <h2 className="text-base sm:text-lg font-bold text-[#54351F] font-royal-heading">
                       {group.letter} — North-Indian Surnames &amp; Sub-Casts
                     </h2>
-                    <p className="text-xs text-stone-400">
+                    <p className="text-xs text-[#6B5948]">
                       {group.items.length}{' '}
                       {group.items.length === 1 ? 'entry' : 'entries'}
                     </p>
@@ -566,22 +566,22 @@ export function NorthIndianCommunitySurnamesPage({
                     return (
                       <article
                         key={item.id}
-                        className="bg-[#121622] border border-[#c99738]/30 hover:border-[#d4af37]/70 rounded-xl p-4 transition-all shadow-md flex flex-col justify-between"
+                        className="bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] rounded-xl p-4 transition-all shadow-sm flex flex-col justify-between"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="inline-flex items-center gap-0.5 text-[10px] font-mono text-stone-400 bg-[#0b0d14] px-2 py-0.5 rounded border border-stone-800">
-                                <Hash className="w-2.5 h-2.5 text-[#d4af37]" />
+                              <span className="inline-flex items-center gap-0.5 text-[10px] font-mono text-[#6B5948] bg-[#FFF9EF] px-2 py-0.5 rounded border border-[#D8C3A2]">
+                                <Hash className="w-2.5 h-2.5 text-[#A87924]" />
                                 {String(item.orderIndex).padStart(3, '0')}
                               </span>
-                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#221016] text-[#e8c872] border border-[#d4af37]/30">
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2]">
                                 {item.category}
                               </span>
                             </div>
 
                             {/* Primary Display: Preserved Exact English Reference Spelling */}
-                            <h3 className="text-base sm:text-lg font-bold text-[#fae29c] font-royal-heading break-words">
+                            <h3 className="text-base sm:text-lg font-bold text-[#54351F] font-royal-heading break-words">
                               {item.surname}
                             </h3>
 
@@ -589,14 +589,14 @@ export function NorthIndianCommunitySurnamesPage({
                             {showRegionalScript && (
                               <p
                                 lang={language}
-                                className="mt-1.5 pt-1.5 border-t border-stone-800/80 text-base sm:text-lg font-bold text-[#e8c872] break-words leading-snug"
+                                className="mt-1.5 pt-1.5 border-t border-[#D8C3A2] text-base sm:text-lg font-bold text-[#76501F] break-words leading-snug"
                               >
                                 {scriptText}
                               </p>
                             )}
                           </div>
 
-                          <Shield className="w-4 h-4 text-[#d4af37]/80 shrink-0 mt-1" />
+                          <Shield className="w-4 h-4 text-[#A87924] shrink-0 mt-1" />
                         </div>
                       </article>
                     );
@@ -608,15 +608,15 @@ export function NorthIndianCommunitySurnamesPage({
         )}
 
         {/* Archival Context Note */}
-        <div className="bg-gradient-to-r from-[#1a121b] via-[#121622] to-[#121622] border border-[#c99738]/40 rounded-xl p-5 sm:p-6">
+        <div className="bg-[#FFF9EF] border border-[#D8C3A2] rounded-xl p-5 sm:p-6">
           <div className="flex items-start gap-3">
-            <ScrollText className="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5" />
+            <ScrollText className="w-5 h-5 text-[#A87924] shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-[#fae29c] mb-1.5 flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-[#54351F] mb-1.5 flex items-center gap-2">
                 <span>{ui.historicalNoteTitle}</span>
-                <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#A87924]" />
               </h3>
-              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
                 {ui.historicalNoteBody}
               </p>
             </div>
@@ -625,13 +625,13 @@ export function NorthIndianCommunitySurnamesPage({
 
         {/* Related Community Pages Section */}
         {onNavigate && (
-          <section className="bg-[#121622] border border-[#c99738]/30 rounded-xl p-5 sm:p-6 space-y-4">
+          <section className="bg-[#FFFCF5] border border-[#D8C3A2] rounded-xl p-5 sm:p-6 space-y-4">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-[#fae29c] font-royal-heading flex items-center gap-2">
-                <Crown className="w-4 h-4 text-[#d4af37]" />
+              <h2 className="text-base sm:text-lg font-bold text-[#54351F] font-royal-heading flex items-center gap-2">
+                <Crown className="w-4 h-4 text-[#A87924]" />
                 <span>{ui.relatedPagesTitle}</span>
               </h2>
-              <p className="text-xs sm:text-sm text-stone-400 mt-1">
+              <p className="text-xs sm:text-sm text-[#6B5948] mt-1">
                 {ui.relatedPagesSubtitle}
               </p>
             </div>
@@ -644,20 +644,20 @@ export function NorthIndianCommunitySurnamesPage({
                     key={page.path + page.title}
                     type="button"
                     onClick={() => onNavigate(page.path)}
-                    className="text-left bg-[#0b0d14] hover:bg-[#1a121b] border border-stone-800 hover:border-[#d4af37]/60 rounded-xl p-4 transition-all group flex flex-col justify-between cursor-pointer"
+                    className="text-left bg-[#FFF9EF] hover:bg-[#EFE3D0] border border-[#D8C3A2] hover:border-[#A87924] rounded-xl p-4 transition-all group flex flex-col justify-between cursor-pointer"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#221016] text-[#e8c872] border border-[#d4af37]/30">
-                          <IconComponent className="w-3 h-3 text-[#d4af37]" />
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#EFE3D0] text-[#54351F] border border-[#D8C3A2]">
+                          <IconComponent className="w-3 h-3 text-[#A87924]" />
                           {page.category}
                         </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-stone-500 group-hover:text-[#fae29c] group-hover:translate-x-0.5 transition-all" />
+                        <ArrowRight className="w-3.5 h-3.5 text-[#6B5948] group-hover:text-[#762D35] group-hover:translate-x-0.5 transition-all" />
                       </div>
-                      <h3 className="text-sm font-bold text-[#fae29c] group-hover:text-[#e8c872] font-royal-heading leading-snug mb-1">
+                      <h3 className="text-sm font-bold text-[#54351F] group-hover:text-[#762D35] font-royal-heading leading-snug mb-1">
                         {page.title}
                       </h3>
-                      <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[#292521] line-clamp-2 leading-relaxed">
                         {page.description}
                       </p>
                     </div>

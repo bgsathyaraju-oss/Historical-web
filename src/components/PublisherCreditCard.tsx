@@ -181,26 +181,26 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
   if (variant === 'compact') {
     return (
       <div
-        className={`inline-flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-[#FFFCF5] border border-[#A87924] text-xs print:bg-white print:text-black print:border-stone-400 ${className}`}
+        className={`inline-flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--accent-gold)] text-xs print:bg-white print:text-black print:border-stone-400 ${className}`}
       >
         <img
           src={imageSrc}
           alt="Dr.G Sathyanarayana Raju"
           loading="eager"
-          className="w-11 h-11 rounded-full object-cover object-top border border-[#A87924] shrink-0"
+          className="w-11 h-11 rounded-full object-cover object-top border border-[var(--accent-gold)] shrink-0"
         />
         <div className="text-left leading-snug">
-          <div className="text-[10px] text-[#76501F] print:text-stone-700 uppercase font-bold tracking-wider">
+          <div className="text-[10px] text-[var(--link-color)] print:text-stone-700 uppercase font-bold tracking-wider">
             {designedByText}
           </div>
-          <div className="font-bold text-[#54351F] print:text-black">
+          <div className="font-bold text-[var(--heading-text)] print:text-black">
             {publisherName}
             {localizedName ? ` (${localizedName})` : ''}
           </div>
-          <div className="text-[10.5px] text-[#292521] print:text-stone-800 font-medium">
+          <div className="text-[10.5px] text-[var(--primary-text)] print:text-stone-800 font-medium">
             {professionalTitles.join(' • ')}
           </div>
-          <div className="text-[10px] text-[#76501F] print:text-stone-700">
+          <div className="text-[10px] text-[var(--link-color)] print:text-stone-700">
             {organizationName}
           </div>
         </div>
@@ -222,11 +222,11 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
     return (
       <section
         aria-label="Author Profile — Dr.G Sathyanarayana Raju"
-        className={`rounded-2xl bg-[#FFFCF5] border-2 border-[#A87924] p-4 sm:p-6 shadow-md print:bg-white print:text-black print:border-stone-400 print:shadow-none print:break-inside-avoid ${className}`}
+        className={`rounded-2xl bg-[var(--card-bg)] border-2 border-[var(--accent-gold)] p-4 sm:p-6 shadow-md print:bg-white print:text-black print:border-stone-400 print:shadow-none print:break-inside-avoid ${className}`}
       >
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
           <div className="relative shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[var(--accent-gold)] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
               <img
                 src={imageSrc}
                 alt="Dr.G Sathyanarayana Raju — Founder, Web Developer / Designer, Digital Creator, Historical Documentation Contributor"
@@ -235,7 +235,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               />
             </div>
             <div
-              className="absolute -bottom-1.5 -right-1.5 bg-[#762D35] text-white p-1.5 rounded-lg border border-[#A87924] shadow print:hidden"
+              className="absolute -bottom-1.5 -right-1.5 bg-[#762D35] text-white p-1.5 rounded-lg border border-[var(--accent-gold)] shadow print:hidden"
               title="Dr.G Sathyanarayana Raju — Author & Founder"
             >
               <Crown className="w-3.5 h-3.5 text-white" />
@@ -243,17 +243,17 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
           </div>
 
           <div className="flex-1 space-y-2 min-w-0">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#FFF9EF] border border-[#A87924] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#54351F] print:bg-stone-100 print:text-black print:border-stone-400">
-              <Sparkles className="w-3 h-3 text-[#A87924] print:hidden shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--heading-text)] print:bg-stone-100 print:text-black print:border-stone-400">
+              <Sparkles className="w-3 h-3 text-[var(--accent-gold)] print:hidden shrink-0" />
               <span>{designedByText}</span>
             </div>
 
             <div>
-              <h3 className="font-royal-heading font-black text-lg sm:text-xl text-[#54351F] print:text-black leading-tight">
+              <h3 className="font-royal-heading font-black text-lg sm:text-xl text-[var(--heading-text)] print:text-black leading-tight">
                 {publisherName}
               </h3>
               {localizedName && (
-                <p className="text-xs font-semibold text-[#76501F] print:text-stone-800 mt-0.5">
+                <p className="text-xs font-semibold text-[var(--link-color)] print:text-stone-800 mt-0.5">
                   {localizedName}
                 </p>
               )}
@@ -267,7 +267,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               {professionalTitles.map((titleItem, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[#FFF9EF] border border-[#A87924]/70 text-[11px] sm:text-xs font-semibold text-[#292521] print:bg-stone-100 print:text-stone-900 print:border-stone-400"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--surface-bg)] border border-[var(--border-color)] text-[11px] sm:text-xs font-semibold text-[var(--primary-text)] print:bg-stone-100 print:text-stone-900 print:border-stone-400"
                 >
                   <Award className="w-3 h-3 text-[#762D35] print:hidden shrink-0" />
                   <span>{titleItem}</span>
@@ -275,11 +275,11 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               ))}
             </div>
 
-            <p className="text-xs sm:text-sm font-bold text-[#76501F] print:text-stone-900 pt-0.5">
+            <div className="royal-profile-title-box text-xs sm:text-sm font-semibold text-[#54351F] print:text-stone-900 mt-1 break-words">
               {organizationName}
-            </p>
+            </div>
 
-            <p className="text-[11px] sm:text-xs text-[#292521] print:text-stone-700 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-[var(--primary-text)] print:text-stone-700 leading-relaxed">
               {leaderBio}
             </p>
 
@@ -298,7 +298,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
 
               <a
                 href="tel:+919480112897"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#FFF9EF] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--accent-gold)] transition-all"
               >
                 <Phone className="w-3 h-3 text-[#762D35]" />
                 <span>+91 9480112897</span>
@@ -312,11 +312,11 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
 
   return (
     <div className={`w-full max-w-5xl mx-auto px-4 ${className}`}>
-      <div className="relative overflow-hidden rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] shadow-md transition-all p-5 sm:p-7 print:bg-white print:text-black print:border-stone-400 print:shadow-none">
+      <div className="relative overflow-hidden rounded-3xl bg-[var(--card-bg)] border-2 border-[var(--accent-gold)] shadow-md transition-all p-5 sm:p-7 print:bg-white print:text-black print:border-stone-400 print:shadow-none">
         <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 text-center sm:text-left">
           {/* Dr.G Sathyanarayana Raju Portrait */}
           <div className="relative shrink-0 group">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-[var(--accent-gold)] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
               <img
                 src={imageSrc}
                 alt={`${publisherName} — ${CANONICAL_PROFESSIONAL_TITLES.join(', ')}`}
@@ -326,7 +326,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
             </div>
             {/* Crown Embellishment Badge */}
             <div
-              className="absolute -bottom-2 -right-2 bg-[#762D35] text-white p-2 rounded-xl border border-[#A87924] shadow-md print:hidden"
+              className="absolute -bottom-2 -right-2 bg-[#762D35] text-white p-2 rounded-xl border border-[var(--accent-gold)] shadow-md print:hidden"
               title="Founder • Web Developer / Designer • Digital Creator • Historical Documentation Contributor"
             >
               <Crown className="w-4 h-4 text-white" />
@@ -335,17 +335,17 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
 
           {/* Publishing & Leadership Information */}
           <div className="flex-1 space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FFF9EF] border border-[#A87924] text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#54351F] shadow-sm print:bg-stone-100 print:text-black print:border-stone-400">
-              <Sparkles className="w-3.5 h-3.5 text-[#A87924] print:hidden shrink-0" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] shadow-sm print:bg-stone-100 print:text-black print:border-stone-400">
+              <Sparkles className="w-3.5 h-3.5 text-[var(--accent-gold)] print:hidden shrink-0" />
               <span>{designedByText}</span>
             </div>
 
             <div>
-              <h2 className="font-royal-heading font-black text-2xl sm:text-4xl text-[#54351F] tracking-tight leading-tight print:text-black">
+              <h2 className="font-royal-heading font-black text-2xl sm:text-4xl text-[var(--heading-text)] tracking-tight leading-tight print:text-black">
                 {publisherName}
               </h2>
               {localizedName && (
-                <p className="text-sm sm:text-base font-bold text-[#76501F] print:text-stone-800 mt-0.5">
+                <p className="text-sm sm:text-base font-bold text-[var(--link-color)] print:text-stone-800 mt-0.5">
                   {localizedName}
                 </p>
               )}
@@ -359,7 +359,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               {professionalTitles.map((titleItem, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FFF9EF] border border-[#A87924] text-xs sm:text-sm font-semibold text-[#292521] shadow-sm print:bg-stone-100 print:text-stone-900 print:border-stone-400"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-xs sm:text-sm font-semibold text-[var(--primary-text)] shadow-sm print:bg-stone-100 print:text-stone-900 print:border-stone-400"
                 >
                   <Award className="w-3.5 h-3.5 text-[#762D35] print:hidden shrink-0" />
                   <span>{titleItem}</span>
@@ -367,11 +367,11 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               ))}
             </div>
 
-            <p className="text-xs sm:text-sm font-bold text-[#76501F] print:text-stone-900 pt-0.5">
+            <div className="royal-profile-title-box text-xs sm:text-sm font-semibold text-[#54351F] print:text-stone-900 mt-1 break-words">
               {organizationName}
-            </p>
+            </div>
 
-            <p className="text-xs text-[#292521] max-w-2xl leading-relaxed print:text-stone-700">
+            <p className="text-xs text-[var(--primary-text)] max-w-2xl leading-relaxed print:text-stone-700">
               {leaderBio}
             </p>
 
@@ -391,7 +391,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
 
               <a
                 href="tel:+919480112897"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#FFF9EF] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--accent-gold)] transition-all"
               >
                 <Phone className="w-3.5 h-3.5 text-[#762D35]" />
                 <span>+91 9480112897</span>

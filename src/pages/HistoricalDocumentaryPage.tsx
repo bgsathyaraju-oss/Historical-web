@@ -379,73 +379,73 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
   const fallbackThumb = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 text-[#292521]">
       {/* Page Header */}
-      <div className="border-b border-stone-800 pb-6 space-y-3">
+      <div className="border-b border-[#D8C3A2] pb-6 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => onNavigate('/')}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-700 text-stone-200 text-xs font-semibold transition-all cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#FFFCF5] hover:bg-[#E9D9BE] border border-[#D8C3A2] hover:border-[#A87924] text-[#54351F] text-xs font-semibold transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5 text-[#d4af37]" />
+            <ArrowLeft className="w-3.5 h-3.5 text-[#762D35]" />
             <span>{ui.returnHome}</span>
           </button>
 
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#d4af37] font-royal-heading bg-[#1a1308] px-3.5 py-1.5 rounded-full border border-[#c99738]/40">
-            <BookOpen className="w-4 h-4" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#76501F] font-royal-heading bg-[#FFF9EF] px-3.5 py-1.5 rounded-full border border-[#D8C3A2]">
+            <BookOpen className="w-4 h-4 text-[#A87924]" />
             <span>{t.documentary?.badge || 'Historical Monographs & Knowledge Repository'}</span>
           </div>
         </div>
 
-        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#fcedc7]">
+        <h1 className="font-royal-heading font-extrabold text-2xl sm:text-4xl text-[#54351F]">
           {t.documentary?.title || 'Historical Monographs: Odra Desha & Suryavamsha Gajapathis'}
         </h1>
-        <p className="text-xs sm:text-sm text-stone-300 max-w-4xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#292521] max-w-4xl leading-relaxed">
           {t.documentary?.subtitle ||
             'Comprehensive historical monographs examining verified epigraphic evidence, royal administrative records, dynastic genealogies, and regional geopolitical developments across Odra Desha, Kalinga, and the Deccan.'}
         </p>
 
         {/* 3-Pillar Epistemic Methodology Banner */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-3">
-          <div className="p-3.5 rounded-2xl bg-[#121622] border border-emerald-800/50 flex items-start gap-3">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] flex items-start gap-3">
+            <CheckCircle2 className="w-4 h-4 text-[#1c5236] shrink-0 mt-0.5" />
             <div>
-              <div className="text-xs font-bold text-emerald-300">{ui.epistemicVerifiedTitle}</div>
-              <p className="text-[11px] text-stone-400 mt-0.5 leading-relaxed">{ui.epistemicVerifiedDesc}</p>
+              <div className="text-xs font-bold text-[#1c5236]">{ui.epistemicVerifiedTitle}</div>
+              <p className="text-[11px] text-[#292521] mt-0.5 leading-relaxed">{ui.epistemicVerifiedDesc}</p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#121622] border border-amber-800/50 flex items-start gap-3">
-            <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] flex items-start gap-3">
+            <Sparkles className="w-4 h-4 text-[#76501F] shrink-0 mt-0.5" />
             <div>
-              <div className="text-xs font-bold text-amber-300">{ui.epistemicTradTitle}</div>
-              <p className="text-[11px] text-stone-400 mt-0.5 leading-relaxed">{ui.epistemicTradDesc}</p>
+              <div className="text-xs font-bold text-[#54351F]">{ui.epistemicTradTitle}</div>
+              <p className="text-[11px] text-[#292521] mt-0.5 leading-relaxed">{ui.epistemicTradDesc}</p>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-[#121622] border border-indigo-800/50 flex items-start gap-3">
-            <ShieldCheck className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] flex items-start gap-3">
+            <ShieldCheck className="w-4 h-4 text-[#762D35] shrink-0 mt-0.5" />
             <div>
-              <div className="text-xs font-bold text-indigo-300">{ui.epistemicScholarTitle}</div>
-              <p className="text-[11px] text-stone-400 mt-0.5 leading-relaxed">{ui.epistemicScholarDesc}</p>
+              <div className="text-xs font-bold text-[#54351F]">{ui.epistemicScholarTitle}</div>
+              <p className="text-[11px] text-[#292521] mt-0.5 leading-relaxed">{ui.epistemicScholarDesc}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#121622] border border-stone-800 shadow-md">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
           {categories.map(cat => (
             <button
               key={cat.key}
               type="button"
               onClick={() => setActiveCategory(cat.key)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
                 activeCategory === cat.key
-                  ? 'bg-[#c99738] text-[#300207] font-bold shadow-md'
-                  : 'bg-stone-900 text-stone-400 hover:text-stone-200 hover:bg-stone-800 border border-stone-800'
+                  ? 'bg-[#762D35] text-white border-[#A87924] font-bold shadow-sm'
+                  : 'bg-[#FFF9EF] text-[#54351F] hover:bg-[#E9D9BE] border-[#D8C3A2]'
               }`}
             >
               {cat.label}
@@ -454,19 +454,19 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
         </div>
 
         <div className="w-full lg:w-80 relative">
-          <Search className="w-4 h-4 text-[#d4af37] absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#76501F] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={t.documentary?.searchPlaceholder || 'Search monographs, periods, categories...'}
-            className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm rounded-xl bg-[#182030] text-stone-200 border border-stone-700 focus:outline-none focus:border-[#c99738]"
+            className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5948] hover:text-[#54351F] cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -476,16 +476,16 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
 
       {/* Monograph Article Cards Grid */}
       {filteredArticles.length === 0 ? (
-        <div className="rounded-3xl bg-[#121622] border border-stone-800 p-12 text-center space-y-4">
-          <BookOpen className="w-10 h-10 text-stone-600 mx-auto" />
-          <p className="text-sm text-stone-300">{ui.noResults}</p>
+        <div className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] p-12 text-center space-y-4">
+          <BookOpen className="w-10 h-10 text-[#A87924] mx-auto" />
+          <p className="text-sm text-[#292521]">{ui.noResults}</p>
           <button
             type="button"
             onClick={() => {
               setActiveCategory('all');
               setSearchQuery('');
             }}
-            className="px-4 py-2 rounded-xl bg-[#c99738] text-[#290106] text-xs font-bold cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#762D35] text-white border border-[#A87924] text-xs font-bold cursor-pointer"
           >
             {ui.resetFilters}
           </button>
@@ -502,11 +502,11 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
               <article
                 key={art.id}
                 onClick={() => openMonographDetail(art)}
-                className="group rounded-3xl bg-[#121622] border border-stone-800 hover:border-[#c99738] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
+                className="group rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col justify-between hover:-translate-y-1"
               >
                 <div>
                   {/* Thumbnail Image + Historical Period Badge */}
-                  <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-stone-950 border-b border-stone-800">
+                  <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-[#EFE3D0] border-b border-[#D8C3A2]">
                     <img
                       src={art.featured_image || fallbackThumb}
                       alt={displayTitle}
@@ -520,12 +520,11 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
                       }}
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#121622] via-black/25 to-transparent" />
 
                     {/* Historical Period Pill */}
                     <div className="absolute top-3.5 left-3.5 right-3.5 flex flex-wrap items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/80 backdrop-blur-xs border border-[#d4af37]/50 text-[#fae29c] text-[11px] font-bold">
-                        <Clock className="w-3 h-3 text-[#d4af37] shrink-0" />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFCF5]/95 border border-[#D8C3A2] text-[#54351F] text-[11px] font-bold shadow-xs">
+                        <Clock className="w-3 h-3 text-[#762D35] shrink-0" />
                         <span className="truncate max-w-[260px]">{periodText}</span>
                       </span>
                       <EvidenceBadge category={art.evidence_category} size="sm" />
@@ -539,7 +538,7 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
                       {subjectCats.map((sc, idx) => (
                         <span
                           key={idx}
-                          className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37] bg-[#1a1308] px-2.5 py-0.5 rounded-md border border-[#c99738]/30"
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] bg-[#FFF9EF] px-2.5 py-0.5 rounded-md border border-[#D8C3A2]"
                         >
                           {sc}
                         </span>
@@ -547,36 +546,36 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
                     </div>
 
                     {/* Complete Title */}
-                    <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-stone-100 group-hover:text-[#fae29c] transition-colors leading-snug">
+                    <h2 className="font-royal-heading font-bold text-lg sm:text-xl text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug">
                       {displayTitle}
                     </h2>
 
                     {/* Short Introduction */}
-                    <p className="text-xs sm:text-sm text-stone-300 leading-relaxed line-clamp-3">
+                    <p className="text-xs sm:text-sm text-[#292521] leading-relaxed line-clamp-3">
                       {displaySummary}
                     </p>
                   </div>
                 </div>
 
                 {/* Card Footer: Metadata & Read More Button */}
-                <div className="px-6 pb-6 pt-4 border-t border-stone-800/80 space-y-3.5 bg-[#0f131d]">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-400">
-                    <span className="inline-flex items-center gap-1.5 font-medium text-stone-300">
-                      <User className="w-3.5 h-3.5 text-[#d4af37]" />
+                <div className="px-6 pb-6 pt-4 border-t border-[#D8C3A2] space-y-3.5 bg-[#FFF9EF]">
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#6B5948]">
+                    <span className="inline-flex items-center gap-1.5 font-medium text-[#54351F]">
+                      <User className="w-3.5 h-3.5 text-[#A87924]" />
                       {art.author_name}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 font-semibold text-amber-200/90">
-                      <FileText className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span className="inline-flex items-center gap-1.5 font-semibold text-[#76501F]">
+                      <FileText className="w-3.5 h-3.5 text-[#A87924]" />
                       {ui.sourcesCount((art.sources || []).length)}
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-stone-800/60 flex items-center justify-between text-xs font-bold text-[#e8c872] group-hover:text-[#fae29c]">
+                  <div className="pt-2 border-t border-[#D8C3A2] flex items-center justify-between text-xs font-bold text-[#76501F] group-hover:text-[#762D35]">
                     <span className="flex items-center gap-2">
-                      <BookOpen className="w-4 h-4 text-[#d4af37]" />
+                      <BookOpen className="w-4 h-4 text-[#A87924]" />
                       <span>{ui.readMoreBtn}</span>
                     </span>
-                    <ChevronRight className="w-4 h-4 text-[#d4af37] group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-[#A87924] group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </article>

@@ -3784,12 +3784,12 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 )}
               </div>
 
-              <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#fae29c] leading-snug break-words">
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#54351F] leading-snug break-words">
                 {fullArticleData.title}
               </h1>
 
               {fullArticleData.subtitle && (
-                <p className="text-sm sm:text-base text-[#e8c872] font-medium leading-relaxed break-words">
+                <p className="royal-profile-title-box text-sm sm:text-base text-[#54351F] font-semibold leading-relaxed break-words">
                   {fullArticleData.subtitle}
                 </p>
               )}
@@ -3816,7 +3816,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   )}
                 </figure>
                 {fullArticleData.imageCaption && (
-                  <p className="text-xs text-stone-300 leading-relaxed bg-[#121826] p-3 rounded-xl border border-stone-800/80">
+                  <p className="royal-profile-title-box text-xs text-[#54351F] leading-relaxed break-words">
                     {fullArticleData.imageCaption}
                   </p>
                 )}
@@ -4229,34 +4229,34 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         handleNavigateRelatedId(relCard.id);
                       }
                     }}
-                    className="group bg-[#121826] hover:bg-[#172033] border border-stone-800 hover:border-[#c99738]/60 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5 transition-all cursor-pointer shadow-md"
+                    className="royal-related-link-btn group flex items-start gap-3.5 transition-all cursor-pointer"
                   >
                     <img
                       src={relCard.imageUrl}
                       alt={relCard.title}
                       loading="lazy"
                       onError={handleImgError}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#d4af37]/50 shrink-0 bg-stone-950 group-hover:scale-105 transition-transform"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#E8BFC9] shrink-0 bg-[#FFF9EF] group-hover:scale-105 transition-transform"
                     />
                     <div className="min-w-0 flex-1 space-y-1.5">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#580014]/80 text-[#fae29c] border border-[#c99738]/30 truncate max-w-full">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#FFF9EF] text-[#54351F] border border-[#E8BFC9] truncate max-w-full">
                           {relCard.categoryBadge}
                         </span>
                         {relCard.eraOrRegion && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#1a2234] text-[#d4af37] border border-stone-700 truncate max-w-[180px]">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#FFFCF5] text-[#54351F] border border-[#E8BFC9] truncate max-w-[180px]">
                             {relCard.eraOrRegion}
                           </span>
                         )}
                       </div>
-                      <h3 className="text-xs sm:text-sm font-bold text-[#fae29c] group-hover:text-[#ffd966] transition-colors line-clamp-1 font-royal-heading">
+                      <h3 className="text-xs sm:text-sm font-bold text-[#54351F] transition-colors line-clamp-1 font-royal-heading">
                         {relCard.title}
                       </h3>
-                      <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[#54351F] line-clamp-2 leading-relaxed">
                         {relCard.summary}
                       </p>
                       <div className="pt-0.5 flex items-center justify-end">
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#d4af37] group-hover:text-[#fae29c] transition-colors">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#54351F] transition-colors">
                           <span>{articleDetailUi.readFullArticleBtn}</span>
                           <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                         </span>
@@ -4271,13 +4271,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
           {/* Related Keywords & Relevant Hashtags */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {fullArticleData.keywords.length > 0 && (
-              <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
-                <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
-                  <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
-                    <Search className="w-3.5 h-3.5 text-[#d4af37]" />
+              <section className="bg-[var(--surface-bg)] border border-[var(--border-color)] rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-sm">
+                <div className="border-b border-[var(--border-color)] pb-2.5 space-y-0.5">
+                  <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--heading-text)] font-royal-heading flex items-center gap-2">
+                    <Search className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                     <span>{articleDetailUi.relatedKeywordsHeading}</span>
                   </h2>
-                  <p className="text-[11px] text-stone-400">{articleDetailUi.relatedKeywordsSub}</p>
+                  <p className="text-[11px] text-[var(--secondary-text)]">{articleDetailUi.relatedKeywordsSub}</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {fullArticleData.keywords.map((kw, idx) => (
@@ -4288,7 +4288,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         setSearchTerm(kw);
                         closeActiveArticle();
                       }}
-                      className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-[#141a29] hover:bg-[#1f2940] text-stone-200 hover:text-[#fae29c] border border-stone-700/80 hover:border-[#c99738]/60 transition-colors cursor-pointer text-left"
+                      className="royal-related-link-btn text-[11px] font-medium cursor-pointer text-left"
                     >
                       {translateKeyword(kw)}
                     </button>
@@ -4298,13 +4298,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             )}
 
             {fullArticleData.hashtags.length > 0 && (
-              <section className="bg-[#0e131f] border border-stone-800 rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-lg">
-                <div className="border-b border-stone-800 pb-2.5 space-y-0.5">
-                  <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
-                    <Layers className="w-3.5 h-3.5 text-[#d4af37]" />
+              <section className="bg-[var(--surface-bg)] border border-[var(--border-color)] rounded-2xl p-5 sm:p-6 space-y-3.5 shadow-sm">
+                <div className="border-b border-[var(--border-color)] pb-2.5 space-y-0.5">
+                  <h2 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--heading-text)] font-royal-heading flex items-center gap-2">
+                    <Layers className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                     <span>{articleDetailUi.hashtagsHeading}</span>
                   </h2>
-                  <p className="text-[11px] text-stone-400">{articleDetailUi.hashtagsSub}</p>
+                  <p className="text-[11px] text-[var(--secondary-text)]">{articleDetailUi.hashtagsSub}</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {fullArticleData.hashtags.map((ht, idx) => (
@@ -4312,7 +4312,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       key={idx}
                       type="button"
                       onClick={() => handleModalTagClick(ht)}
-                      className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#21020b]/60 hover:bg-[#580014] text-[#d4af37] hover:text-[#fae29c] border border-[#c99738]/35 hover:border-[#d4af37] transition-colors cursor-pointer"
+                      className="theme-hashtag px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[var(--card-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--border-color)] hover:border-[var(--accent-gold)] transition-colors cursor-pointer"
                     >
                       {ht}
                     </button>
@@ -4648,15 +4648,15 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
           {/* Region filter badges */}
           <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0 scrollbar-none text-xs">
-            <span className="text-stone-400 text-[11px] whitespace-nowrap flex items-center gap-1">
-              <Compass className="w-3 h-3 text-[#d4af37]" /> {step5Ui.regionLabel}
+            <span className="text-[var(--secondary-text)] text-[11px] whitespace-nowrap flex items-center gap-1">
+              <Compass className="w-3 h-3 text-[var(--accent-gold)]" /> {step5Ui.regionLabel}
             </span>
             <button
               onClick={() => setSelectedRegionId(null)}
               className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 selectedRegionId === null
-                  ? 'bg-[#c99738] text-[#300207] font-bold'
-                  : 'bg-stone-900 text-stone-300 hover:bg-stone-800'
+                  ? 'bg-[#762D35] text-white font-bold border border-[var(--accent-gold)]'
+                  : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
               }`}
             >
               {step5Ui.allRegionsBtn}
@@ -4667,8 +4667,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 onClick={() => setSelectedRegionId(selectedRegionId === reg.id ? null : reg.id)}
                 className={`px-2.5 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                   selectedRegionId === reg.id
-                    ? 'bg-[#c99738] text-[#300207] font-bold shadow'
-                    : 'bg-stone-900 text-stone-300 hover:bg-stone-800'
+                    ? 'bg-[#762D35] text-white font-bold shadow border border-[var(--accent-gold)]'
+                    : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                 }`}
               >
                 {(reg.localized_region[language] || reg.region_name).split(' (')[0].split(',')[0]}
@@ -4684,17 +4684,17 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       {activeTab === 'synonyms' && (
         <div id="section-synonyms" className="space-y-10 scroll-mt-24">
           {/* STEP 2A: ORGANIZED 16-COMMUNITY DIRECTORY */}
-          <div className="bg-[#111522] border border-[#c99738]/40 rounded-3xl p-5 sm:p-8 space-y-6 shadow-2xl">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-stone-800 pb-5">
+          <div className="bg-[var(--section-bg)] border border-[var(--border-color)] rounded-3xl p-5 sm:p-8 space-y-6 shadow-md">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 border-b border-[var(--border-color)] pb-5">
               <div className="space-y-1.5">
-                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
-                  <Users className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[var(--link-color)]">
+                  <Users className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                   <span>{step2Labels.directorySectionBadge}</span>
                 </div>
-                <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
+                <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[var(--heading-text)]">
                   {step2Labels.directoryHeading}
                 </h2>
-                <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+                <p className="text-xs sm:text-sm text-[var(--primary-text)] max-w-3xl leading-relaxed">
                   {step2Labels.directorySubheading}
                 </p>
               </div>
@@ -4713,8 +4713,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     onClick={() => setDirectoryGroupFilter(grp.key)}
                     className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
                       directoryGroupFilter === grp.key
-                        ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
-                        : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                        ? 'bg-[#762D35] text-white border border-[var(--accent-gold)] shadow-sm'
+                        : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                     }`}
                   >
                     {grp.label}
@@ -4724,7 +4724,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             </div>
 
             {/* Methodological Note */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-[#220711] to-[#141a29] border border-[#d4af37]/30 text-xs text-stone-300 leading-relaxed">
+            <div className="p-4 rounded-2xl bg-[var(--surface-bg)] border border-[var(--border-color)] text-xs text-[var(--primary-text)] leading-relaxed">
               {step2Labels.directoryMethodologicalNote}
             </div>
 
@@ -4746,45 +4746,44 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   <div
                     key={entry.id}
                     onClick={() => openCommunityDirModal(entry)}
-                    className="bg-[#151a2a] border border-[#c99738]/30 hover:border-[#d4af37] rounded-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-lg"
+                    className="bg-[var(--card-bg)] border border-[var(--border-color)] hover:border-[var(--accent-gold)] rounded-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div>
                       {/* Step 4 Visual Banner with 8-Language Alt & Classification Badge */}
-                      <figure className="relative h-36 sm:h-40 w-full overflow-hidden bg-stone-950 border-b border-stone-800/80">
+                      <figure className="relative h-36 sm:h-40 w-full overflow-hidden bg-[var(--surface-bg)] border-b border-[var(--border-color)]">
                         <img
                           src={vis?.imageUrl || detailed?.imageUrl || fallbackArchiveImg}
                           alt={visAlt}
                           loading="lazy"
                           onError={handleImgError}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#151a2a] via-transparent to-black/30" />
                         {visClassLabel && (
-                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/75 text-[#fae29c] border border-[#d4af37]/40 text-[9px] font-semibold backdrop-blur-sm max-w-[90%] truncate">
+                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-[var(--card-bg)]/95 text-[var(--heading-text)] border border-[var(--border-color)] text-[9px] font-semibold backdrop-blur-sm max-w-[90%] truncate">
                             {visClassLabel}
                           </span>
                         )}
-                        <figcaption className="absolute bottom-1.5 left-2.5 right-2.5 text-[10px] text-stone-200 font-medium line-clamp-1 drop-shadow">
+                        <figcaption className="absolute bottom-1.5 left-2.5 right-2.5 px-2 py-0.5 rounded bg-[var(--card-bg)]/90 text-[10px] text-[var(--heading-text)] font-medium line-clamp-1">
                           {visTitle}
                         </figcaption>
                       </figure>
 
                       <div className="p-4 space-y-2.5">
                         <div className="flex items-start justify-between gap-2">
-                          <span className="px-2 py-0.5 rounded-md bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 text-[10px] font-bold">
+                          <span className="px-2 py-0.5 rounded-md bg-[#762D35] text-white border border-[var(--accent-gold)] text-[10px] font-bold">
                             #{entry.orderNumber} • {entry.canonicalName}
                           </span>
-                          <span className="text-[10px] text-stone-400 font-medium text-right line-clamp-1">
+                          <span className="text-[10px] text-[var(--secondary-text)] font-medium text-right line-clamp-1">
                             {locGroup}
                           </span>
                         </div>
 
                         <div>
-                          <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#fcedc7] group-hover:text-white transition-colors">
+                          <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors">
                             {locName}
                           </h3>
                           {locName !== entry.canonicalName && (
-                            <p className="text-[11px] text-[#d4af37] font-semibold">
+                            <p className="text-[11px] text-[var(--link-color)] font-semibold">
                               {entry.canonicalName}
                             </p>
                           )}
@@ -4797,24 +4796,24 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                           .map(([script, val]) => (
                             <span
                               key={script}
-                              className="px-1.5 py-0.5 rounded bg-stone-900/90 border border-stone-800 text-[10px] text-stone-300"
+                              className="px-1.5 py-0.5 rounded bg-[var(--surface-bg)] border border-[var(--border-color)] text-[10px] text-[var(--heading-text)]"
                             >
                               {val}
                             </span>
                           ))}
                       </div>
 
-                      <p className="text-xs text-stone-300 leading-relaxed line-clamp-3">
+                      <p className="text-xs text-[var(--primary-text)] leading-relaxed line-clamp-3">
                         {locOverview}
                       </p>
                       </div>
                     </div>
 
-                    <div className="px-4 pb-4 space-y-2 pt-2 border-t border-stone-800/80">
-                      <div className="text-[10px] text-stone-400 line-clamp-1">
+                    <div className="px-4 pb-4 space-y-2 pt-2 border-t border-[var(--border-color)]">
+                      <div className="text-[10px] text-[var(--secondary-text)] line-clamp-1">
                         📍 {locGeo}
                       </div>
-                      <div className="text-[10px] text-[#d4af37]/90 line-clamp-1 font-medium">
+                      <div className="text-[10px] text-[var(--link-color)] line-clamp-1 font-medium">
                         ✓ {locEpistemic}
                       </div>
 
@@ -4833,7 +4832,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                 e.stopPropagation();
                                 openProfessionModal(profCat);
                               }}
-                              className="px-1.5 py-0.5 rounded bg-[#1e2538] hover:bg-[#580014] text-[10px] text-amber-200 border border-amber-500/20 transition-colors cursor-pointer"
+                              className="royal-related-link-btn text-[10px] cursor-pointer"
                               title={profCat.title[language] || profCat.title.en}
                             >
                               {step5Ui.catPrefix}{catNum}
@@ -4851,7 +4850,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                 e.stopPropagation();
                                 handleNavigateRelatedId(relId);
                               }}
-                              className="px-1.5 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-amber-200 border border-stone-700/70 transition-colors cursor-pointer truncate max-w-[110px]"
+                              className="royal-related-link-btn text-[10px] cursor-pointer truncate max-w-[140px]"
                               title={resolveRelatedLabel(relId)}
                             >
                               ⇄ {resolveRelatedLabel(relId)}
@@ -4872,7 +4871,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                   e.stopPropagation();
                                   setSearchTerm(kw);
                                 }}
-                                className="px-1.5 py-0.5 rounded bg-[#111522] hover:bg-stone-800 text-[9px] text-amber-200/80 border border-stone-800 cursor-pointer"
+                                className="theme-hashtag px-1.5 py-0.5 rounded bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[9px] text-[var(--heading-text)] border border-[var(--border-color)] cursor-pointer"
                               >
                                 #{translateKeyword(kw)}
                               </button>
@@ -4880,7 +4879,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         </div>
                       )}
 
-                      <div className="pt-1 flex items-center justify-end text-[11px] font-semibold text-[#d4af37] group-hover:translate-x-0.5 transition-transform">
+                      <div className="pt-1 flex items-center justify-end text-[11px] font-semibold text-[var(--link-color)] group-hover:translate-x-0.5 transition-transform">
                         {step2Labels.exploreCommunityBtn} <ChevronRight className="w-3.5 h-3.5" />
                       </div>
                     </div>
@@ -4889,9 +4888,9 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               })}
             </div>
             {filteredCommunityDirectory.length === 0 && (
-              <div className="p-8 text-center rounded-2xl bg-stone-900/50 border border-stone-800 space-y-1">
-                <div className="text-sm font-bold text-[#fae29c]">{step5Ui.emptyStateTitle}</div>
-                <div className="text-xs text-stone-400">{step5Ui.emptyStateDesc}</div>
+              <div className="p-8 text-center rounded-2xl bg-[var(--surface-bg)] border border-[var(--border-color)] space-y-1">
+                <div className="text-sm font-bold text-[var(--heading-text)]">{step5Ui.emptyStateTitle}</div>
+                <div className="text-xs text-[var(--secondary-text)]">{step5Ui.emptyStateDesc}</div>
               </div>
             )}
           </div>
@@ -4899,14 +4898,14 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
           {/* Section Title & Category Filter Pills */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#d4af37]">
-                <Layers className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[var(--link-color)]">
+                <Layers className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
                 <span>{synonymSectionLabels.sectionTitle}</span>
               </div>
-              <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[#fcedc7]">
+              <h2 className="font-royal-heading font-bold text-2xl sm:text-3xl text-[var(--heading-text)]">
                 {synonymSectionLabels.sectionTitle}
               </h2>
-              <p className="text-xs sm:text-sm text-stone-300 max-w-3xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-[var(--primary-text)] max-w-3xl leading-relaxed">
                 {synonymSectionLabels.sectionSubtitle}
               </p>
             </div>
@@ -4924,8 +4923,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   onClick={() => setSynonymCategoryFilter(cat.key)}
                   className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
                     synonymCategoryFilter === cat.key
-                      ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
-                      : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                      ? 'bg-[#762D35] text-white border border-[var(--accent-gold)] shadow-sm'
+                      : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                   }`}
                 >
                   {cat.label}
@@ -5108,7 +5107,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                       e.stopPropagation();
                                       handleNavigateRelatedId(relId);
                                     }}
-                                    className="px-2 py-0.5 rounded bg-stone-900 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-amber-200 border border-stone-700/70 transition-colors cursor-pointer"
+                                    className="royal-related-link-btn text-[10px] cursor-pointer"
                                   >
                                     ⇄ {resolveRelatedLabel(relId)}
                                   </button>
@@ -5262,8 +5261,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       onClick={() => setRef70ClassFilter('all')}
                       className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
                         ref70ClassFilter === 'all'
-                          ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
-                          : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                          ? 'bg-[#762D35] text-white border border-[var(--accent-gold)] shadow-sm'
+                          : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                       }`}
                     >
                       {refUi.allClassifications} ({MASTER_70_REFERENCE_REGISTRY.length})
@@ -5279,8 +5278,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                           onClick={() => setRef70ClassFilter(ref70ClassFilter === cls ? 'all' : cls)}
                           className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
                             ref70ClassFilter === cls
-                              ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
-                              : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                              ? 'bg-[#762D35] text-white border border-[var(--accent-gold)] shadow-sm'
+                              : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                           }`}
                         >
                           {refUi.classifications[cls]} ({clsCount})
@@ -5359,7 +5358,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         <div className="pt-2.5 border-t border-stone-800/80 space-y-2">
                           {/* Related Heritage Articles Links */}
                           <div className="flex flex-wrap items-center gap-1">
-                            <span className="text-[10px] font-bold text-[#d4af37]">
+                            <span className="text-[10px] font-bold text-[var(--link-color)]">
                               {refUi.relatedTopicsLabel}:
                             </span>
                             {refEntry.relatedHeritageIds.slice(0, 3).map(hId => (
@@ -5367,7 +5366,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                 key={hId}
                                 type="button"
                                 onClick={() => handleNavigateRelatedId(hId)}
-                                className="px-2 py-0.5 rounded bg-stone-900 hover:bg-[#580014] text-[10px] text-stone-200 hover:text-[#fae29c] border border-stone-700 transition-colors cursor-pointer"
+                                className="royal-related-link-btn text-[10px] cursor-pointer"
                               >
                                 ⇄ {resolveRelatedLabel(hId)}
                               </button>
@@ -5381,7 +5380,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                 key={kw}
                                 type="button"
                                 onClick={() => setSearchTerm(kw)}
-                                className="px-1.5 py-0.5 rounded bg-stone-950 hover:bg-stone-800 text-[9px] text-amber-200/90 border border-stone-800 cursor-pointer"
+                                className="theme-hashtag px-1.5 py-0.5 rounded bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[9px] text-[var(--heading-text)] border border-[var(--border-color)] cursor-pointer"
                               >
                                 #{translateKeyword(kw)}
                               </button>
@@ -5394,7 +5393,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleNavigateRelatedId(primaryHeritageId)}
-                                className="px-2.5 py-1 rounded-lg bg-[#580014] hover:bg-[#78001c] text-[11px] font-semibold text-[#fae29c] border border-[#d4af37]/40 transition-colors cursor-pointer inline-flex items-center gap-1"
+                                className="px-2.5 py-1 rounded-lg bg-[#762D35] hover:bg-[#5f2229] text-[11px] font-semibold text-white border border-[var(--accent-gold)] transition-colors cursor-pointer inline-flex items-center gap-1"
                               >
                                 <span>{refUi.openLinkedArticleLabel}</span>
                                 <ChevronRight className="w-3 h-3" />
@@ -5410,7 +5409,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                     )}&alias=${encodeURIComponent(refEntry.canonicalTerm)}`
                                   )
                                 }
-                                className="px-2.5 py-1 rounded-lg bg-stone-900 hover:bg-stone-800 text-[11px] font-semibold text-[#d4af37] border border-stone-700 transition-colors cursor-pointer inline-flex items-center gap-1"
+                                className="px-2.5 py-1 rounded-lg bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[11px] font-semibold text-[var(--heading-text)] border border-[var(--border-color)] transition-colors cursor-pointer inline-flex items-center gap-1"
                               >
                                 <span>{refUi.viewProminentFiguresLabel}</span>
                                 <ExternalLink className="w-3 h-3" />
@@ -5453,8 +5452,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                 onClick={() => setSelectedProfessionCatNumber('all')}
                 className={`px-3 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
                   selectedProfessionCatNumber === 'all'
-                    ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
-                    : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                    ? 'bg-[#762D35] text-white border border-[var(--accent-gold)] shadow-sm'
+                    : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                 }`}
               >
                 {step2Labels.allNineCategoriesLabel}
@@ -5465,8 +5464,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   onClick={() => setSelectedProfessionCatNumber(cat.categoryNumber)}
                   className={`px-2.5 py-1.5 rounded-xl font-semibold cursor-pointer transition-all ${
                     selectedProfessionCatNumber === cat.categoryNumber
-                      ? 'bg-[#580014] text-[#fae29c] border border-[#d4af37] shadow-md'
-                      : 'bg-stone-900/90 text-stone-300 hover:bg-stone-800 border border-stone-800'
+                      ? 'bg-[#762D35] text-white border border-[var(--accent-gold)] shadow-sm'
+                      : 'bg-[var(--card-bg)] text-[var(--heading-text)] hover:bg-[var(--secondary-button)] border border-[var(--border-color)]'
                   }`}
                 >
                   #{cat.categoryNumber}
@@ -5584,7 +5583,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                               e.stopPropagation();
                               handleNavigateRelatedId(rel.targetIdOrPath);
                             }}
-                            className="px-2 py-0.5 rounded bg-stone-900/90 hover:bg-[#580014] text-[10px] text-stone-300 hover:text-amber-200 border border-stone-700/70 transition-colors cursor-pointer"
+                            className="royal-related-link-btn text-[10px] cursor-pointer"
                           >
                             ⇄ {rel.label[language] || rel.label.en}
                           </button>
@@ -5603,13 +5602,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                                 e.stopPropagation();
                                 setSearchTerm(kw);
                               }}
-                              className="px-2 py-0.5 rounded bg-[#1b2234] hover:bg-stone-800 text-amber-200/90 text-[10px] cursor-pointer"
+                              className="theme-hashtag px-2 py-0.5 rounded bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] text-[10px] border border-[var(--border-color)] cursor-pointer"
                             >
                               #{translateKeyword(kw)}
                             </button>
                           ))}
                       </div>
-                      <span className="text-[#d4af37] font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform shrink-0">
+                      <span className="text-[var(--link-color)] font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform shrink-0">
                         {step2Labels.exploreCategoryBtn} <ChevronRight className="w-4 h-4" />
                       </span>
                     </div>
@@ -5953,7 +5952,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                               e.stopPropagation();
                               handleNavigateRelatedId(relId);
                             }}
-                            className="px-2.5 py-1 rounded-lg bg-[#161c2d] hover:bg-[#580014] text-xs text-[#fae29c] hover:text-white border border-stone-700 hover:border-[#d4af37] transition-colors cursor-pointer"
+                            className="royal-related-link-btn text-xs cursor-pointer"
                           >
                             ⇄ {resolveRelatedLabel(relId)}
                           </button>
