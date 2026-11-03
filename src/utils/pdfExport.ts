@@ -567,6 +567,18 @@ type PdfBlock =
   | { type: 'sectionHeading'; text: string }
   | { type: 'subHeading'; text: string }
   | { type: 'summaryBox'; title?: string; paragraphs: string[] }
+  | {
+      type: 'contentCard';
+      title?: string;
+      subtitle?: string;
+      badge?: string;
+      index?: string;
+      paragraphs: string[];
+      bulletItems?: string[];
+      borderColor?: string;
+      bgColor?: string;
+      accentColor?: string;
+    }
   | { type: 'paragraph'; text: string }
   | { type: 'bullet'; marker: string; title?: string; text: string }
   | { type: 'metaGrid'; items: ExtractedMetaItem[] }
@@ -751,12 +763,206 @@ function isInsideSkippedElement(el: Element, root: HTMLElement): boolean {
   return false;
 }
 
+function isIndividualContentCard(el: Element, sourceEl: HTMLElement): boolean {
+  if (isInsideSkippedElement(el, sourceEl)) return false;
+  if (el.tagName === 'HEADER' || el.tagName === 'NAV') return false;
+  if (el.tagName === 'TABLE' || el.tagName === 'FIGURE' || el.tagName === 'IMG' || el.tagName === 'DL') return false;
+  if (el.classList.contains('royal-related-link-btn') || isVisualRelatedArticleCard(el)) return false;
+  if (el.classList.contains('archival-reference-index-section')) return false;
+
+  const isBoxStyled =
+    el.classList.contains('border-l-4') ||
+    el.classList.contains('scroll-mt-24') ||
+    el.classList.contains('bg-emerald-950/20') ||
+    el.classList.contains('bg-amber-950/20') ||
+    el.classList.contains('bg-[#141a29]') ||
+    el.classList.contains('bg-[#121725]') ||
+    el.classList.contains('bg-[#121826]') ||
+    el.classList.contains('bg-[#111623]') ||
+    el.classList.contains('bg-[#121724]') ||
+    el.classList.contains('bg-[#17121e]') ||
+    el.classList.contains('bg-[#161f33]') ||
+    ((el.classList.contains('rounded-xl') || el.classList.contains('rounded-2xl')) &&
+      (el.classList.contains('p-3.5') ||
+        el.classList.contains('p-4') ||
+        el.classList.contains('p-5') ||
+        el.classList.contains('p-6') ||
+        el.classList.contains('p-7') ||
+        el.classList.contains('border') ||
+        el.classList.contains('border-2')));
+
+  if (!isBoxStyled) return false;
+
+  // Crucial check: does this element contain nested descendant elements that are THEMSELVES cards?
+  // If so, el is a wrapper container (e.g. section or grid), not the individual card.
+  const allDescendants = Array.from(el.querySelectorAll('div, section'));
+  for (const child of allDescendants) {
+    if (child === el) continue;
+    if (
+      child.classList.contains('border-l-4') ||
+      child.classList.contains('scroll-mt-24') ||
+      child.classList.contains('bg-emerald-950/20') ||
+      child.classList.contains('bg-amber-950/20') ||
+      child.classList.contains('bg-[#141a29]') ||
+      child.classList.contains('bg-[#121725]') ||
+      child.classList.contains('bg-[#121826]') ||
+      child.classList.contains('bg-[#111623]') ||
+      child.classList.contains('bg-[#121724]') ||
+      ((child.classList.contains('rounded-xl') || child.classList.contains('rounded-2xl')) &&
+        (child.classList.contains('p-3.5') ||
+          child.classList.contains('p-4') ||
+          child.classList.contains('p-5') ||
+          child.classList.contains('p-6') ||
+          child.classList.contains('border')))
+    ) {
+      return false; // Wrapper container! Let TreeWalker visit children.
+    }
+  }
+
+  // Must have some body text
+  const rawText = cleanText(el.textContent);
+  return rawText.length > 5;
+}
+
+function extractContentCardFromElement(
+  el: Element,
+  sourceEl: HTMLElement,
+  mainTitle: string,
+  handledElements: Set<Element>
+): PdfBlock | null {
+  const headingEl = el.querySelector('h2, h3, h4, .royal-card-title-box, .font-royal-heading, strong');
+  let cardTitle = headingEl ? cleanText(headingEl.textContent) : undefined;
+  if (cardTitle === mainTitle) cardTitle = undefined;
+
+  const paragraphs: string[] = [];
+  const pEls = Array.from(el.querySelectorAll('p, .whitespace-pre-line, blockquote'));
+  for (const p of pEls) {
+    if (headingEl && headingEl.contains(p)) continue;
+    const lines = (p.textContent || '')
+      .split('\n')
+      .map((l) => cleanText(l))
+      .filter((l) => l.length > 0 && !isActionCtaText(l));
+    for (const l of lines) {
+      if (!paragraphs.includes(l) && l !== cardTitle) {
+        paragraphs.push(l);
+      }
+    }
+  }
+
+  const bulletItems: string[] = [];
+  const liEls = Array.from(el.querySelectorAll('li'));
+  for (const li of liEls) {
+    const l = cleanText(li.textContent).replace(/^[•·\-]\s*/, '');
+    if (l && !bulletItems.includes(l) && !isActionCtaText(l)) {
+      bulletItems.push(l);
+    }
+  }
+
+  // Check bullet-style rows if no li tags
+  if (bulletItems.length === 0) {
+    const directDivs = Array.from(el.querySelectorAll(':scope > div > div, :scope > div'));
+    for (const d of directDivs) {
+      const spans = Array.from(d.querySelectorAll(':scope > span'));
+      if (spans.length === 2 && cleanText(spans[0].textContent) === '') {
+        const bTxt = cleanText(spans[1].textContent);
+        if (bTxt && !isActionCtaText(bTxt) && !bulletItems.includes(bTxt)) {
+          bulletItems.push(bTxt);
+        }
+      }
+    }
+  }
+
+  if (paragraphs.length === 0 && bulletItems.length === 0) {
+    const raw = cleanText(el.textContent);
+    const bodyOnly = cardTitle ? raw.replace(cardTitle, '').trim() : raw;
+    if (bodyOnly.length > 5 && !isActionCtaText(bodyOnly)) {
+      paragraphs.push(bodyOnly);
+    }
+  }
+
+  if (paragraphs.length === 0 && bulletItems.length === 0 && !cardTitle) {
+    return null;
+  }
+
+  // Collect badges and index
+  let indexLabel: string | undefined;
+  const badgeList: string[] = [];
+  const spanEls = Array.from(el.querySelectorAll('span')).filter((s) => {
+    if (headingEl && headingEl.contains(s)) return false;
+    for (const p of pEls) {
+      if (p.contains(s)) return false;
+    }
+    return s.children.length === 0 && cleanText(s.textContent).length > 0;
+  });
+
+  for (const s of spanEls) {
+    const sTxt = cleanText(s.textContent);
+    if (!sTxt || sTxt === cardTitle || isActionCtaText(sTxt)) continue;
+    if (
+      !indexLabel &&
+      (/^#?\d+(\/\d+)?$/.test(sTxt) ||
+        /^\[#?\d+\]$/.test(sTxt) ||
+        sTxt.startsWith('Chapter '))
+    ) {
+      indexLabel = sTxt;
+    } else if (!badgeList.includes(sTxt)) {
+      badgeList.push(sTxt);
+    }
+  }
+
+  // If cardTitle is missing, see if badge contains a title-like structure
+  if (!cardTitle && badgeList.length > 0) {
+    const candidateIdx = badgeList.findIndex(
+      (b) => b.startsWith('#') || b.length > 15 || !b.toLowerCase().includes('verified')
+    );
+    if (candidateIdx >= 0) {
+      cardTitle = badgeList[candidateIdx];
+      badgeList.splice(candidateIdx, 1);
+    }
+  }
+
+  // If cardTitle is still missing, fallback to dignified title
+  if (!cardTitle) {
+    cardTitle = 'Historical Documentation & Analysis';
+  }
+
+  let bgColor: string = ROYAL_THEME.surfaceBg;
+  let borderColor: string = ROYAL_THEME.borderColor;
+  let accentColor: string = ROYAL_THEME.maroonAccent;
+
+  if (el.classList.contains('bg-emerald-950/20')) {
+    bgColor = '#F2F9F4';
+    borderColor = '#2E7D32';
+  } else if (el.classList.contains('bg-amber-950/20')) {
+    bgColor = '#FFFBF0';
+    borderColor = '#D97706';
+  } else if (el.classList.contains('border-l-4')) {
+    bgColor = ROYAL_THEME.surfaceBg;
+    borderColor = ROYAL_THEME.accentGold;
+  } else if (el.classList.contains('scroll-mt-24')) {
+    bgColor = ROYAL_THEME.cardBg;
+    borderColor = ROYAL_THEME.accentGold;
+  }
+
+  return {
+    type: 'contentCard',
+    title: cardTitle,
+    index: indexLabel,
+    badge: badgeList.join(' • ') || undefined,
+    paragraphs,
+    bulletItems: bulletItems.length > 0 ? bulletItems : undefined,
+    bgColor,
+    borderColor,
+    accentColor,
+  };
+}
+
 /**
  * Extracts structured content from the article DOM element so every heading, metadata field,
  * profile title box, image, executive summary, paragraph, bullet list, table, reference,
  * keyword/hashtag pill, and Related Articles card can be rendered directly via HTML5 2D Canvas.
  */
-function extractStructuredArticleContent(
+export function extractStructuredArticleContent(
   sourceEl: HTMLElement,
   fallbackTitle: string
 ): {
@@ -1157,6 +1363,20 @@ function extractStructuredArticleContent(
         }
         handledElements.add(el);
         continue;
+      }
+
+      // 2B. Handle Content Cards / Nested Descriptive Article Boxes
+      // (Executive Summary, Verification Panels, Chapter Cards, Timeline Cards, Inscription Cards, Citation Cards, Reference Mapping Cards, Historical Narrative Containers)
+      if (isIndividualContentCard(el, sourceEl)) {
+        const card = extractContentCardFromElement(el, sourceEl, title, handledElements);
+        if (card) {
+          blocks.push(card);
+          handledElements.add(el);
+          for (const child of Array.from(el.querySelectorAll('*'))) {
+            handledElements.add(child);
+          }
+          continue;
+        }
       }
 
       // 3. Handle dedicated pill-row containers (.royal-related-link-btn text pills, .theme-hashtag pills, or flex-wrap tag/badge rows)
@@ -2249,6 +2469,456 @@ async function renderArticlePagesToCanvases(
         cursorY += subLineH;
       }
       cursorY += 16;
+    } else if (block.type === 'contentCard') {
+      // Complete Structured Article Content Box / Card Rendering:
+      // Preserves all text, paragraphs, lists, badges, and titles inside an authentic Royal Content Box
+      // with vertical Royal Maroon accent bar, archival gold border, and zero clipping or truncation.
+      const innerPadTop = 20;
+      const innerPadBottom = 20;
+      const innerPadLeft = 32;
+      const innerPadRight = 24;
+      const barW = 6;
+      const barClearance = 16;
+      const textX = MARGIN_X + innerPadLeft + barW + barClearance;
+      const textAvailW = CONTENT_W - (innerPadLeft + barW + barClearance) - innerPadRight;
+
+      // 1. Prepare Header Items: Index, Badges, Title, Subtitle
+      interface PreparedCardBadge {
+        lines: string[];
+        w: number;
+        h: number;
+        isIndex: boolean;
+      }
+
+      const cardBadges: PreparedCardBadge[] = [];
+      ctx.font = `bold 15px ${sansFont}`;
+
+      if (block.index) {
+        const idxLines = wrapCanvasText(ctx, block.index, textAvailW - 20);
+        const maxW = Math.max(...idxLines.map((l) => ctx.measureText(l).width), 30);
+        cardBadges.push({
+          lines: idxLines,
+          w: Math.min(maxW + 24, textAvailW),
+          h: Math.max(30, idxLines.length * 20 + 10),
+          isIndex: true,
+        });
+      }
+
+      if (block.badge) {
+        const rawBadges = block.badge.split(' • ').map((b) => b.trim()).filter(Boolean);
+        for (const rb of rawBadges) {
+          const bLines = wrapCanvasText(ctx, rb, textAvailW - 20);
+          const maxW = Math.max(...bLines.map((l) => ctx.measureText(l).width), 30);
+          cardBadges.push({
+            lines: bLines,
+            w: Math.min(maxW + 22, textAvailW),
+            h: Math.max(28, bLines.length * 19 + 9),
+            isIndex: false,
+          });
+        }
+      }
+
+      let badgeRowH = 0;
+      if (cardBadges.length > 0) {
+        let bCurX = 0;
+        let bRowMax = 0;
+        for (const cb of cardBadges) {
+          if (bCurX > 0 && bCurX + cb.w > textAvailW) {
+            badgeRowH += bRowMax + 8;
+            bCurX = 0;
+            bRowMax = 0;
+          }
+          bCurX += cb.w + 10;
+          bRowMax = Math.max(bRowMax, cb.h);
+        }
+        badgeRowH += bRowMax + 12;
+      }
+
+      // Title lines
+      ctx.font = `bold 23px ${serifFont}`;
+      const titleLines = block.title
+        ? wrapCanvasText(ctx, block.title, textAvailW)
+        : [];
+      const titleH = titleLines.length > 0 ? titleLines.length * 34 + 8 : 0;
+
+      // Subtitle lines
+      ctx.font = `italic 19px ${serifFont}`;
+      const subLines = block.subtitle
+        ? wrapCanvasText(ctx, block.subtitle, textAvailW)
+        : [];
+      const subH = subLines.length > 0 ? subLines.length * 28 + 6 : 0;
+
+      const hasHeader = badgeRowH > 0 || titleH > 0 || subH > 0;
+      const headerH = badgeRowH + titleH + subH + (hasHeader ? 12 : 0);
+
+      // 2. Prepare Body Items (Paragraphs and Bullets)
+      interface PreparedCardLine {
+        type: 'text' | 'bullet' | 'gap';
+        text?: string;
+        bulletLines?: string[];
+        h: number;
+      }
+
+      const bodyLines: PreparedCardLine[] = [];
+
+      ctx.font = `400 21px ${sansFont}`;
+      const paras = block.paragraphs || [];
+      for (let pIdx = 0; pIdx < paras.length; pIdx++) {
+        const pLines = wrapCanvasText(ctx, paras[pIdx], textAvailW);
+        for (const pl of pLines) {
+          bodyLines.push({ type: 'text', text: pl, h: 32 });
+        }
+        if (pIdx < paras.length - 1 || (block.bulletItems && block.bulletItems.length > 0)) {
+          bodyLines.push({ type: 'gap', h: 10 });
+        }
+      }
+
+      if (block.bulletItems && block.bulletItems.length > 0) {
+        for (let bIdx = 0; bIdx < block.bulletItems.length; bIdx++) {
+          const bRaw = block.bulletItems[bIdx];
+          const bLines = wrapCanvasText(ctx, bRaw, textAvailW - 28);
+          bodyLines.push({
+            type: 'bullet',
+            bulletLines: bLines,
+            h: bLines.length * 32 + 6,
+          });
+          if (bIdx < block.bulletItems.length - 1) {
+            bodyLines.push({ type: 'gap', h: 6 });
+          }
+        }
+      }
+
+      const bodyTotalH = bodyLines.reduce((acc, it) => acc + it.h, 0);
+      const totalCardH = innerPadTop + headerH + bodyTotalH + innerPadBottom;
+
+      const cardBg = block.bgColor || ROYAL_THEME.surfaceBg;
+      const cardBorder = block.borderColor || ROYAL_THEME.accentGold;
+      const cardAccent = block.accentColor || ROYAL_THEME.maroonAccent;
+
+      // Draw helper function for card background and vertical maroon bar
+      const drawCardContainerBox = (y: number, h: number) => {
+        drawRoundedRect(ctx, MARGIN_X, y, CONTENT_W, h, 14);
+        ctx.fillStyle = cardBg;
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = cardBorder;
+        ctx.stroke();
+
+        // Vertical Royal Maroon Accent Bar (#762D35)
+        const barTop = y + 14;
+        const barH = Math.max(28, h - 28);
+        drawRoundedRect(ctx, MARGIN_X + 16, barTop, barW, barH, 3);
+        ctx.fillStyle = cardAccent;
+        ctx.fill();
+      };
+
+      // Check available space on current page
+      let availSpace = MAX_Y - cursorY;
+
+      // If available space is too small to even fit header and 2 body lines, start a fresh page
+      if (availSpace < 160 && pages.length > 0) {
+        startNewPage();
+        availSpace = MAX_Y - cursorY;
+      }
+
+      if (totalCardH <= availSpace) {
+        // ENTIRE CARD FITS ON ONE PAGE
+        ensureSpace(totalCardH + 18);
+        drawCardContainerBox(cursorY, totalCardH);
+
+        let drawY = cursorY + innerPadTop;
+
+        // Draw Badges
+        if (cardBadges.length > 0) {
+          let bX = textX;
+          let rowMax = 0;
+          for (const cb of cardBadges) {
+            if (bX > textX && bX + cb.w > textX + textAvailW) {
+              drawY += rowMax + 8;
+              bX = textX;
+              rowMax = 0;
+            }
+            drawRoundedRect(ctx, bX, drawY, cb.w, cb.h, 8);
+            ctx.fillStyle = cb.isIndex ? ROYAL_THEME.maroonAccent : ROYAL_THEME.sectionBg;
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = cb.isIndex ? ROYAL_THEME.accentGold : ROYAL_THEME.borderColor;
+            ctx.stroke();
+
+            ctx.font = `bold 15px ${sansFont}`;
+            ctx.fillStyle = cb.isIndex ? '#FFFFFF' : ROYAL_THEME.headingText;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            for (let bl = 0; bl < cb.lines.length; bl++) {
+              ctx.fillText(cb.lines[bl], bX + 10, drawY + 6 + bl * 19);
+            }
+
+            bX += cb.w + 10;
+            rowMax = Math.max(rowMax, cb.h);
+          }
+          drawY += rowMax + 12;
+        }
+
+        // Draw Title
+        if (titleLines.length > 0) {
+          ctx.font = `bold 23px ${serifFont}`;
+          ctx.fillStyle = ROYAL_THEME.headingText;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'top';
+          for (const tl of titleLines) {
+            ctx.fillText(tl, textX, drawY);
+            drawY += 34;
+          }
+          drawY += 8;
+        }
+
+        // Draw Subtitle
+        if (subLines.length > 0) {
+          ctx.font = `italic 19px ${serifFont}`;
+          ctx.fillStyle = ROYAL_THEME.secondaryText;
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'top';
+          for (const sl of subLines) {
+            ctx.fillText(sl, textX, drawY);
+            drawY += 28;
+          }
+          drawY += 6;
+        }
+
+        // Draw Divider
+        if (hasHeader && bodyLines.length > 0) {
+          ctx.fillStyle = ROYAL_THEME.borderColor;
+          ctx.fillRect(textX, drawY, textAvailW, 1);
+          drawY += 12;
+        }
+
+        // Draw Body Lines
+        for (const item of bodyLines) {
+          if (item.type === 'text' && item.text) {
+            ctx.font = `400 21px ${sansFont}`;
+            ctx.fillStyle = ROYAL_THEME.primaryText;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText(item.text, textX, drawY);
+            drawY += item.h;
+          } else if (item.type === 'bullet' && item.bulletLines) {
+            ctx.font = `bold 21px ${sansFont}`;
+            ctx.fillStyle = ROYAL_THEME.maroonAccent;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('•', textX, drawY);
+
+            ctx.font = `400 21px ${sansFont}`;
+            ctx.fillStyle = ROYAL_THEME.primaryText;
+            let bLineY = drawY;
+            for (const bl of item.bulletLines) {
+              ctx.fillText(bl, textX + 24, bLineY);
+              bLineY += 32;
+            }
+            drawY += item.h;
+          } else if (item.type === 'gap') {
+            drawY += item.h;
+          }
+        }
+
+        cursorY += totalCardH + 20;
+      } else {
+        // MULTI-PAGE SPLITTING: Card exceeds remaining page height!
+        // Split cleanly across pages so ZERO lines are lost, truncated or clipped!
+        let bodyIdx = 0;
+        let isFirstPage = true;
+
+        while (bodyIdx < bodyLines.length || isFirstPage) {
+          if (!isFirstPage) {
+            startNewPage();
+          }
+          availSpace = MAX_Y - cursorY;
+
+          if (isFirstPage) {
+            const availForBody = Math.max(64, availSpace - innerPadTop - innerPadBottom - headerH);
+            const chunk: PreparedCardLine[] = [];
+            let chunkH = 0;
+
+            while (bodyIdx < bodyLines.length) {
+              const it = bodyLines[bodyIdx];
+              if (chunk.length > 0 && chunkH + it.h > availForBody) {
+                break;
+              }
+              chunk.push(it);
+              chunkH += it.h;
+              bodyIdx++;
+            }
+
+            const pageBoxH = innerPadTop + headerH + chunkH + innerPadBottom;
+            ensureSpace(pageBoxH + 18);
+            drawCardContainerBox(cursorY, pageBoxH);
+
+            let drawY = cursorY + innerPadTop;
+
+            if (cardBadges.length > 0) {
+              let bX = textX;
+              let rowMax = 0;
+              for (const cb of cardBadges) {
+                if (bX > textX && bX + cb.w > textX + textAvailW) {
+                  drawY += rowMax + 8;
+                  bX = textX;
+                  rowMax = 0;
+                }
+                drawRoundedRect(ctx, bX, drawY, cb.w, cb.h, 8);
+                ctx.fillStyle = cb.isIndex ? ROYAL_THEME.maroonAccent : ROYAL_THEME.sectionBg;
+                ctx.fill();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = cb.isIndex ? ROYAL_THEME.accentGold : ROYAL_THEME.borderColor;
+                ctx.stroke();
+
+                ctx.font = `bold 15px ${sansFont}`;
+                ctx.fillStyle = cb.isIndex ? '#FFFFFF' : ROYAL_THEME.headingText;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                for (let bl = 0; bl < cb.lines.length; bl++) {
+                  ctx.fillText(cb.lines[bl], bX + 10, drawY + 6 + bl * 19);
+                }
+
+                bX += cb.w + 10;
+                rowMax = Math.max(rowMax, cb.h);
+              }
+              drawY += rowMax + 12;
+            }
+
+            if (titleLines.length > 0) {
+              ctx.font = `bold 23px ${serifFont}`;
+              ctx.fillStyle = ROYAL_THEME.headingText;
+              ctx.textAlign = 'left';
+              ctx.textBaseline = 'top';
+              for (const tl of titleLines) {
+                ctx.fillText(tl, textX, drawY);
+                drawY += 34;
+              }
+              drawY += 8;
+            }
+
+            if (subLines.length > 0) {
+              ctx.font = `italic 19px ${serifFont}`;
+              ctx.fillStyle = ROYAL_THEME.secondaryText;
+              ctx.textAlign = 'left';
+              ctx.textBaseline = 'top';
+              for (const sl of subLines) {
+                ctx.fillText(sl, textX, drawY);
+                drawY += 28;
+              }
+              drawY += 6;
+            }
+
+            if (hasHeader && chunk.length > 0) {
+              ctx.fillStyle = ROYAL_THEME.borderColor;
+              ctx.fillRect(textX, drawY, textAvailW, 1);
+              drawY += 12;
+            }
+
+            for (const item of chunk) {
+              if (item.type === 'text' && item.text) {
+                ctx.font = `400 21px ${sansFont}`;
+                ctx.fillStyle = ROYAL_THEME.primaryText;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(item.text, textX, drawY);
+                drawY += item.h;
+              } else if (item.type === 'bullet' && item.bulletLines) {
+                ctx.font = `bold 21px ${sansFont}`;
+                ctx.fillStyle = ROYAL_THEME.maroonAccent;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText('•', textX, drawY);
+
+                ctx.font = `400 21px ${sansFont}`;
+                ctx.fillStyle = ROYAL_THEME.primaryText;
+                let bLineY = drawY;
+                for (const bl of item.bulletLines) {
+                  ctx.fillText(bl, textX + 24, bLineY);
+                  bLineY += 32;
+                }
+                drawY += item.h;
+              } else if (item.type === 'gap') {
+                drawY += item.h;
+              }
+            }
+
+            cursorY += pageBoxH + 20;
+            isFirstPage = false;
+          } else {
+            const contTitle = block.title
+              ? `${block.title} (Continued)`
+              : 'Historical Monograph Analysis (Continued)';
+            ctx.font = `bold 20px ${serifFont}`;
+            const contTitleLines = wrapCanvasText(ctx, contTitle, textAvailW);
+            const contHeaderH = contTitleLines.length * 30 + 14;
+
+            const availForBody = Math.max(64, availSpace - innerPadTop - innerPadBottom - contHeaderH);
+            const chunk: PreparedCardLine[] = [];
+            let chunkH = 0;
+
+            while (bodyIdx < bodyLines.length) {
+              const it = bodyLines[bodyIdx];
+              if (chunk.length > 0 && chunkH + it.h > availForBody) {
+                break;
+              }
+              chunk.push(it);
+              chunkH += it.h;
+              bodyIdx++;
+            }
+
+            const pageBoxH = innerPadTop + contHeaderH + chunkH + innerPadBottom;
+            ensureSpace(pageBoxH + 18);
+            drawCardContainerBox(cursorY, pageBoxH);
+
+            let drawY = cursorY + innerPadTop;
+
+            ctx.font = `bold 20px ${serifFont}`;
+            ctx.fillStyle = ROYAL_THEME.headingText;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            for (const ctl of contTitleLines) {
+              ctx.fillText(ctl, textX, drawY);
+              drawY += 30;
+            }
+            drawY += 4;
+
+            ctx.fillStyle = ROYAL_THEME.borderColor;
+            ctx.fillRect(textX, drawY, textAvailW, 1);
+            drawY += 10;
+
+            for (const item of chunk) {
+              if (item.type === 'text' && item.text) {
+                ctx.font = `400 21px ${sansFont}`;
+                ctx.fillStyle = ROYAL_THEME.primaryText;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(item.text, textX, drawY);
+                drawY += item.h;
+              } else if (item.type === 'bullet' && item.bulletLines) {
+                ctx.font = `bold 21px ${sansFont}`;
+                ctx.fillStyle = ROYAL_THEME.maroonAccent;
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText('•', textX, drawY);
+
+                ctx.font = `400 21px ${sansFont}`;
+                ctx.fillStyle = ROYAL_THEME.primaryText;
+                let bLineY = drawY;
+                for (const bl of item.bulletLines) {
+                  ctx.fillText(bl, textX + 24, bLineY);
+                  bLineY += 32;
+                }
+                drawY += item.h;
+              } else if (item.type === 'gap') {
+                drawY += item.h;
+              }
+            }
+
+            cursorY += pageBoxH + 20;
+          }
+        }
+      }
     } else if (block.type === 'summaryBox') {
       ctx.font = `italic 23px ${serifFont}`;
       const allLines: string[] = [];

@@ -23,6 +23,8 @@ import {
 import { KALINGA_WAR_CONTENT } from '../src/data/kalingaWarData.ts';
 import { COMMUNITY_SYNONYMS } from '../src/data/historyContent.ts';
 import { performClientSearch } from '../src/utils/searchEngine.ts';
+import { extractStructuredArticleContent } from '../src/utils/pdfExport.ts';
+import { JSDOM } from 'jsdom';
 import fs from 'fs';
 import path from 'path';
 
@@ -820,6 +822,163 @@ async function runTestSuite() {
     results.push({
       suite: 'Community-Heritage Reference',
       test: 'syn_waddar_vaddar restored to exact previous state across all 8 languages',
+      passed: false,
+      error: err.message
+    });
+  }
+
+  // Test 15: Direct PDF Export Complete Content Box & Description Preservation
+  try {
+    const testDomHtml = `
+      <article class="print-article-container">
+        <header>
+          <h1>Odra-Kshatriya Heritage Analysis</h1>
+          <span>Suryavamsha Imperial Heritage</span>
+        </header>
+
+        <!-- Section 2: Executive Historical Summary -->
+        <section class="border-l-4 border-[#d4af37]">
+          <h2>Executive Historical Summary</h2>
+          <p class="whitespace-pre-line">Comprehensive historical summary of royal inscriptions and lineage continuity.</p>
+        </section>
+
+        <!-- Section 3: Complete Monograph Content -->
+        <section>
+          <h2>Complete Historical Content</h2>
+          <div class="whitespace-pre-line bg-[#111623] rounded-xl p-5 border">
+            Monograph narrative detailed body paragraph 1 explaining dynastic migration.
+            Monograph narrative detailed body paragraph 2 examining military settlements.
+          </div>
+        </section>
+
+        <!-- Section 4: Detailed Subject Analysis (3 numbered verification sections) -->
+        <section>
+          <h2>Detailed Subject Analysis</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2">
+            <div class="bg-emerald-950/20 rounded-xl p-4 border">
+              <h3>1. VERIFIED EPIGRAPHIC & ARCHAEOLOGICAL EVIDENCE</h3>
+              <p class="whitespace-pre-line">Primary epigraphic proof attested in Veligalani and Kondavidu copper plates.</p>
+            </div>
+            <div class="bg-[#141a29] rounded-xl p-4 border">
+              <h3>2. CULTURAL TRADITION & LINEAGE RECORDS</h3>
+              <p class="whitespace-pre-line">Dynastic genealogies preserved in temple palm leaf manuscripts and copper plates.</p>
+            </div>
+          </div>
+          <div class="bg-amber-950/20 rounded-xl p-4 border">
+            <h3>3. EPISTEMIC CLASSIFICATION & CRITICAL SCOPE</h3>
+            <p class="whitespace-pre-line">Historiographical demarcation of primary archaeological evidence versus local oral traditions.</p>
+          </div>
+        </section>
+
+        <!-- Section 5: Chronological Timeline -->
+        <section>
+          <h2>Chronological Timeline</h2>
+          <div class="space-y-3">
+            <div class="bg-[#121725] rounded-xl p-4 border flex">
+              <div class="sm:w-64">
+                <span>1435 CE – 1466 CE</span>
+                <div><span>Epigraphically Confirmed</span></div>
+              </div>
+              <div>
+                <h3>Accession of Emperor Kapilendra Deva</h3>
+                <p class="whitespace-pre-line">Ascended the throne at Cuttack and founded the Suryavamsha Gajapathi Imperial dynasty.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: Verified Inscriptions -->
+        <section>
+          <h2>Verified Inscriptions & Archaeological Evidence</h2>
+          <div class="p-4 rounded-xl bg-[#121826] border">
+            <div>
+              <h3>Veligalani Copper Plate Charter</h3>
+              <span>1458 CE</span>
+            </div>
+            <p class="whitespace-pre-line">Bilingual grant in Sanskrit and Odia recording land endowment by Gajapati Kapilendra Deva.</p>
+          </div>
+        </section>
+
+        <!-- Section 7: Historical Source References -->
+        <section>
+          <h2>Historical Source References</h2>
+          <div class="p-4 rounded-xl bg-[#121826] border">
+            <div>
+              <span>Epigraphia Indica</span>
+              <span>Verified Source</span>
+            </div>
+            <p>Epigraphia Indica Vol. XXXIII, pp. 275-292, Edited by Dr. D.C. Sircar.</p>
+          </div>
+        </section>
+
+        <!-- Section 8: Related Context -->
+        <section>
+          <h2>Related Historical Context</h2>
+          <div class="p-3.5 rounded-xl border bg-[#121826]">
+            <div>
+              <span>#1/74 Gajapati</span>
+              <span>Imperial Dynasty</span>
+            </div>
+            <p>Dynastic title assumed by the rulers of Odisha from the 15th century.</p>
+          </div>
+        </section>
+      </article>
+    `;
+
+    const dom = new JSDOM(testDomHtml);
+    (global as any).window = dom.window;
+    (global as any).document = dom.window.document;
+    (global as any).Node = dom.window.Node;
+    (global as any).Element = dom.window.Element;
+    (global as any).HTMLElement = dom.window.HTMLElement;
+    (global as any).NodeFilter = dom.window.NodeFilter;
+
+    const articleEl = dom.window.document.querySelector('article') as HTMLElement;
+    const extracted = extractStructuredArticleContent(articleEl, 'Odra-Kshatriya Heritage Analysis');
+
+    const contentCards = extracted.blocks.filter((b): b is Extract<typeof b, { type: 'contentCard' }> => b.type === 'contentCard');
+    assert(contentCards.length >= 8, `Expected at least 8 content cards, got ${contentCards.length}`);
+
+    // Verify Executive Summary card
+    const execCard = contentCards.find(c => c.title?.includes('Executive') || c.paragraphs[0]?.includes('Comprehensive historical summary'));
+    assert(!!execCard && execCard.paragraphs.length > 0, 'Missing Executive Summary content card or descriptive text');
+
+    // Verify 3 Verification sections
+    const card1 = contentCards.find(c => c.title?.includes('VERIFIED EPIGRAPHIC'));
+    assert(!!card1 && card1.paragraphs[0]?.includes('Veligalani and Kondavidu'), 'Missing Verification Section 1 description');
+
+    const card2 = contentCards.find(c => c.title?.includes('CULTURAL TRADITION'));
+    assert(!!card2 && card2.paragraphs[0]?.includes('Dynastic genealogies'), 'Missing Verification Section 2 description');
+
+    const card3 = contentCards.find(c => c.title?.includes('EPISTEMIC CLASSIFICATION'));
+    assert(!!card3 && card3.paragraphs[0]?.includes('Historiographical demarcation'), 'Missing Verification Section 3 description');
+
+    // Verify Timeline card
+    const timelineCard = contentCards.find(c => c.title?.includes('Kapilendra Deva'));
+    assert(Boolean(timelineCard && timelineCard.paragraphs[0]?.includes('Ascended the throne')), 'Missing Timeline event description');
+    assert(Boolean(timelineCard?.badge && timelineCard.badge.includes('1435 CE')), 'Missing Timeline period badge');
+
+    // Verify Inscription card
+    const inscCard = contentCards.find(c => c.title?.includes('Veligalani'));
+    assert(Boolean(inscCard && inscCard.paragraphs[0]?.includes('Bilingual grant')), 'Missing Inscription details description');
+
+    // Verify Source Reference card
+    const refCard = contentCards.find(c => c.title?.includes('Epigraphia Indica') || c.badge?.includes('Verified Source'));
+    assert(Boolean(refCard && refCard.paragraphs[0]?.includes('Vol. XXXIII')), 'Missing Source Reference citation description');
+
+    // Verify Related 70 card
+    const r70Card = contentCards.find(c => c.title?.includes('Gajapati') || c.badge?.includes('Imperial Dynasty'));
+    assert(Boolean(r70Card && r70Card.paragraphs[0]?.includes('Dynastic title assumed')), 'Missing Related 70 context note description');
+
+    results.push({
+      suite: 'Direct Download PDF Pipeline',
+      test: 'Complete content box preservation, recursive text extraction & zero truncation for all 8 article sections',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Direct Download PDF Pipeline',
+      test: 'Complete content box preservation, recursive text extraction & zero truncation for all 8 article sections',
       passed: false,
       error: err.message
     });
