@@ -388,7 +388,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const siteMeta = SITE_METADATA_TRANSLATIONS[targetLang] || SITE_METADATA_TRANSLATIONS.en;
     if (siteMeta) {
-      document.title = siteMeta.title;
+      if (typeof window !== 'undefined') {
+        (window as unknown as { __PORTAL_DEFAULT_TITLE__?: string }).__PORTAL_DEFAULT_TITLE__ = siteMeta.title;
+      }
+      const activeArticleTitle =
+        typeof window !== 'undefined'
+          ? (window as unknown as { __ACTIVE_ARTICLE_TITLE__?: string }).__ACTIVE_ARTICLE_TITLE__
+          : undefined;
+      if (!activeArticleTitle) {
+        document.title = siteMeta.title;
+      }
 
       const descMeta = document.querySelector('meta[name="description"]');
       if (descMeta) {

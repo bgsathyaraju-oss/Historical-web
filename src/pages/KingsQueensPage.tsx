@@ -38,10 +38,13 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
+  setActiveArticleDocumentTitle,
   PDF_EXPORT_UI_LABELS,
   hasAppInventorBridge,
   isAndroidWebViewEnvironment,
   sendUrlToAppInventorBridge,
+  copyTextCrossPlatform,
+  triggerCrossPlatformShare,
   handleWhatsAppLinkClick,
   handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
@@ -646,25 +649,87 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     }
   }, [initialFigureId, figures]);
 
-  // Support automatic print when opened in external browser with ?autoprint=1
+  const activeFigure = useMemo(() => {
+    if (!activeFigureId) return null;
+    return figures.find(f => f.id === activeFigureId) || null;
+  }, [activeFigureId, figures]);
+
+  const getFigureBiographyArticleTitle = (figure: HistoricalFigure): string => {
+    const bioSuffixMap: Record<LanguageCode, string> = {
+      en: 'Historical Biography',
+      hi: 'ऐतिहासिक जीवनी',
+      te: 'చారిత్రక జీవిత చరిత్ర',
+      kn: 'ಐತಿಹಾಸಿಕ ಜೀವನ ಚರಿತ್ರೆ',
+      ta: 'வரலாற்று வாழ்க்கை வரலாறு',
+      mr: 'ऐतिहासिक चरित्र',
+      or: 'ଐତିହାସିକ ଜୀବନୀ',
+      bn: 'ঐতিহাসিক জীবনী'
+    };
+    const suffix = bioSuffixMap[language] || bioSuffixMap.en;
+    return `${figure.name} – ${suffix}`;
+  };
+
+  // Keep document.title synchronized with the active ruler biography title
+  useEffect(() => {
+    if (activeFigure) {
+      setActiveArticleDocumentTitle(getFigureBiographyArticleTitle(activeFigure));
+    } else {
+      setActiveArticleDocumentTitle(null);
+    }
+    return () => {
+      setActiveArticleDocumentTitle(null);
+    };
+  }, [activeFigure, language]);
+
+  // Support automatic print or PDF download when opened in external Chrome browser with ?autoprint=1 or ?autodownloadpdf=1
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('autoprint') === '1' && activeFigureId) {
+      const langParam = params.get('lang') as LanguageCode | null;
+      if (
+        langParam &&
+        ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
+        langParam !== language
+      ) {
+        setLanguage(langParam);
+        return;
+      }
+
+      if (params.get('autodownloadpdf') === '1' && activeFigure && !isAndroidWebViewEnvironment()) {
         const timer = setTimeout(() => {
-          window.print();
+          try {
+            const cleanParams = new URLSearchParams(window.location.search);
+            cleanParams.delete('autodownloadpdf');
+            const newQuery = cleanParams.toString();
+            const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+            window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+          } catch {
+            // Ignore
+          }
+          handleDownloadFigurePdf(activeFigure);
         }, 700);
+        return () => clearTimeout(timer);
+      }
+
+      if (params.get('autoprint') === '1' && activeFigure && !isAndroidWebViewEnvironment()) {
+        const timer = setTimeout(() => {
+          try {
+            const cleanParams = new URLSearchParams(window.location.search);
+            cleanParams.delete('autoprint');
+            const newQuery = cleanParams.toString();
+            const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+            window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+          } catch {
+            // Ignore
+          }
+          triggerArticlePrintWithTitle(getFigureBiographyArticleTitle(activeFigure));
+        }, 650);
         return () => clearTimeout(timer);
       }
     } catch {
       // Ignore
     }
-  }, [activeFigureId]);
-
-  const activeFigure = useMemo(() => {
-    if (!activeFigureId) return null;
-    return figures.find(f => f.id === activeFigureId) || null;
-  }, [activeFigureId, figures]);
+  }, [activeFigure, language, setLanguage]);
 
   const openFigureDetail = (figureId: string) => {
     savedScrollY.current = window.scrollY;
@@ -700,19 +765,20 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     try {
       const url = new URL(window.location.origin + '/kings-queens');
       url.searchParams.set('figure', figureId);
+      url.searchParams.set('lang', language);
       if (autoPrint) url.searchParams.set('autoprint', '1');
       return url.toString();
     } catch {
-      return `${window.location.origin}/kings-queens?figure=${figureId}`;
+      return `${window.location.origin}/kings-queens?figure=${encodeURIComponent(figureId)}&lang=${encodeURIComponent(language)}${autoPrint ? '&autoprint=1' : ''}`;
     }
   };
 
-  const handleCopyLink = (figure: HistoricalFigure, includeTitle = false) => {
+  const handleCopyLink = async (figure: HistoricalFigure, includeTitle = false) => {
     const shareUrl = getDirectFigureUrl(figure.id);
     const textToCopy = includeTitle
       ? `${figure.name} (${figure.reign_period}) — ${shareUrl}`
       : shareUrl;
-    navigator.clipboard?.writeText(textToCopy);
+    await copyTextCrossPlatform(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
@@ -725,21 +791,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     isAndroidWebView?: boolean;
   } | null>(null);
   const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
-
-  const getFigureBiographyArticleTitle = (figure: HistoricalFigure): string => {
-    const bioSuffixMap: Record<LanguageCode, string> = {
-      en: 'Historical Biography',
-      hi: 'ऐतिहासिक जीवनी',
-      te: 'చారిత్రక జీవిత చరిత్ర',
-      kn: 'ಐತಿಹಾಸಿಕ ಜೀವನ ಚರಿತ್ರೆ',
-      ta: 'வரலாற்று வாழ்க்கை வரலாறு',
-      mr: 'ऐतिहासिक चरित्र',
-      or: 'ଐତିହାସିକ ଜୀବନୀ',
-      bn: 'ঐতিহাসিক জীবনী'
-    };
-    const suffix = bioSuffixMap[language] || bioSuffixMap.en;
-    return `${figure.name} – ${suffix}`;
-  };
+  const figureContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleDownloadFigurePdf = async (figure: HistoricalFigure) => {
     if (isDownloadingPdf) return;
@@ -750,7 +802,8 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
       const result = await downloadArticleAsPdf({
         articleTitle: fullTitle,
         language,
-        articleUrl: getDirectFigureUrl(figure.id, false)
+        articleUrl: getDirectFigureUrl(figure.id, false),
+        containerElement: figureContainerRef.current
       });
       setPdfDownloadResult({
         filename: result.filename,
@@ -780,19 +833,14 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
   const handleNativeShare = async (figure: HistoricalFigure) => {
     const shareUrl = getDirectFigureUrl(figure.id);
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `${figure.name} — ${figure.reign_period}`,
-          text: `${figure.name} (${figure.dynasty_name}): ${figure.historical_significance}`,
-          url: shareUrl
-        });
-        return;
-      } catch {
-        // User cancelled or Web Share unsupported; open share menu fallback
-      }
+    const outcome = await triggerCrossPlatformShare({
+      title: `${figure.name} — ${figure.reign_period}`,
+      text: `${figure.name} (${figure.dynasty_name}): ${figure.historical_significance}`,
+      url: shareUrl
+    });
+    if (outcome === 'fallback') {
+      setShareMenuOpen(prev => !prev);
     }
-    setShareMenuOpen(prev => !prev);
   };
 
   const categories = [
@@ -1146,16 +1194,13 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
         </div>
 
         {/* HERO BIOGRAPHICAL PORTRAIT & SOVEREIGN HEADER */}
-        <div className="print-article-container">
+        <div ref={figureContainerRef} className="print-article-container">
           <div className="print-only hidden print:block border-b-2 border-[#A87924] pb-3 mb-4 text-[#292521]">
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
               Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal — {ui.pageTitle}
             </p>
             <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
               Research, Documentation &amp; Compilation by Dr.G Sathyanarayana Raju • Founder &amp; Historical Documentation Contributor
-            </p>
-            <p className="text-[10px] text-[#6B5948] break-all mt-0.5">
-              {getDirectFigureUrl(activeFigure.id, false)}
             </p>
           </div>
         <header className="print-article-header bg-[#EFE3D0] text-[#292521] border-b-2 border-[#A87924]">
@@ -1188,11 +1233,11 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     }}
                   />
                 </div>
-                <div className="royal-profile-title-box text-left break-words">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
+                <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-left break-words">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[var(--profile-title-box-text)]">
                     {activeFigure.dynasty_name}
                   </p>
-                  <p className="text-xs text-[#54351F] font-semibold mt-0.5">{activeFigure.approx_dates}</p>
+                  <p className="text-xs text-[var(--profile-title-box-text)] font-semibold mt-0.5">{activeFigure.approx_dates}</p>
                 </div>
               </div>
 
@@ -1214,9 +1259,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
                 {/* Royal & Spiritual Titles (Birudas) */}
                 {activeFigure.known_titles && activeFigure.known_titles.length > 0 && (
-                  <div className="royal-profile-title-box break-words">
-                    <div className="text-[11px] font-bold uppercase tracking-widest text-[#54351F] mb-2 flex items-center gap-1.5">
-                      <Award className="w-4 h-4 text-[#54351F]" />
+                  <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] break-words">
+                    <div className="text-[11px] font-bold uppercase tracking-widest text-[var(--profile-title-box-text)] mb-2 flex items-center gap-1.5">
+                      <Award className="w-4 h-4 text-[var(--profile-title-box-text)]" />
                       <span>{ui.lblKnownTitles}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -1606,27 +1651,30 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <span>Associated Temples, Fortresses & Archaeological Monuments ({matchedMonuments.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {matchedMonuments.map(mon => (
+                  {matchedMonuments.map((mon, idx) => (
                     <div
                       key={mon.id}
                       onClick={() => onNavigate('/temples-monuments')}
-                      className="group rounded-xl border border-[var(--border-color)] hover:border-[var(--accent-gold)] bg-[var(--surface-bg)] p-4 transition-all cursor-pointer flex gap-4 items-start"
+                      className="royal-related-link-btn group rounded-xl border border-[#E8BFC9] bg-[#F8DDE3] hover:bg-[#F1C8D2] p-4 transition-all cursor-pointer flex gap-4 items-start"
                     >
                       {mon.image_url && (
                         <img
                           src={mon.image_url}
                           alt={mon.name}
-                          className="w-20 h-20 rounded-lg object-cover border border-[var(--border-color)] shrink-0"
+                          className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                         />
                       )}
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[11px] font-bold text-[var(--link-color)]">
-                          {mon.century} • {mon.location}
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="royal-index-box">#{idx + 1}</span>
+                          <span className="text-[11px] font-bold text-[#54351F] break-words">
+                            {mon.century} • {mon.location}
+                          </span>
                         </div>
-                        <h4 className="text-sm sm:text-base font-serif font-bold text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors mt-0.5">
+                        <h4 className="royal-card-title-box text-sm sm:text-base font-serif font-bold text-[#54351F] break-words">
                           {mon.name}
                         </h4>
-                        <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{mon.historical_significance}</p>
+                        <p className="text-xs text-[#54351F] break-words">{mon.historical_significance}</p>
                       </div>
                     </div>
                   ))}
@@ -1663,28 +1711,31 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <span>{ui.secRelatedPersonalities}</span>
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {relatedPersonalities.map(rel => (
+                {relatedPersonalities.map((rel, idx) => (
                   <div
                     key={rel.id}
                     onClick={() => openFigureDetail(rel.id)}
-                    className="royal-related-link-btn group transition-all cursor-pointer flex items-center gap-3"
+                    className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
                   >
                     <img
                       src={rel.image_url}
                       alt={rel.name}
-                      className="w-14 h-14 rounded-lg object-cover object-top border border-[#E8BFC9] shrink-0"
+                      className="w-14 h-14 rounded-lg object-cover object-top border border-[#A87924] shrink-0"
                       onError={e => {
                         const target = e.currentTarget;
                         target.onerror = null;
                         target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_coronation.jpg`;
                       }}
                     />
-                    <div className="min-w-0">
-                      <div className="text-[10px] font-bold text-[#54351F] truncate">{rel.reign_period}</div>
-                      <div className="text-xs sm:text-sm font-serif font-bold text-[#54351F] truncate">
-                        {rel.name}
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="royal-index-box">#{idx + 1}</span>
+                        <span className="text-[10px] font-bold text-[#54351F] break-words">{rel.reign_period}</span>
                       </div>
-                      <div className="text-[11px] text-[#54351F] truncate">{rel.dynasty_name}</div>
+                      <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
+                        {rel.name}
+                      </h4>
+                      <p className="text-[11px] text-[#54351F] break-words">{rel.dynasty_name}</p>
                     </div>
                   </div>
                 ))}
@@ -1698,7 +1749,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <span>{ui.secRelatedKingdomsArticles}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {relatedArticles.map(art => (
+                {relatedArticles.map((art, idx) => (
                   <div
                     key={art.id}
                     onClick={() => onNavigate(`/documentary?article=${art.id}`)}
@@ -1708,14 +1759,17 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       <img
                         src={art.featured_image}
                         alt={art.original_title}
-                        className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                        className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                       />
                     )}
-                    <div className="min-w-0">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                        {art.category}
-                      </span>
-                      <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] line-clamp-2 mt-0.5">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="royal-index-box">#{idx + 1}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] break-words">
+                          {art.category}
+                        </span>
+                      </div>
+                      <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
                         {art.original_title}
                       </h4>
                     </div>
@@ -1730,13 +1784,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
                     alt="Suryavamsha Gajapathi Empire"
-                    className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                    className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                      Kingdoms & Dynasties
-                    </span>
-                    <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] mt-0.5">
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="royal-index-box">#{relatedArticles.length + 1}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
+                        Kingdoms & Dynasties
+                      </span>
+                    </div>
+                    <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
                       Suryavamsha Gajapathi Empire & Sovereign Chronicles
                     </h4>
                   </div>
@@ -1749,13 +1806,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
                     alt="Royal Genealogy & Dynastic Tree"
-                    className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                    className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                      Dynastic Lineage
-                    </span>
-                    <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] mt-0.5">
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="royal-index-box">#{relatedArticles.length + 2}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
+                        Dynastic Lineage
+                      </span>
+                    </div>
+                    <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
                       Interactive Suryavamsha & Odra Dynastic Genealogy
                     </h4>
                   </div>
@@ -1768,13 +1828,16 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_ramparts.jpg`}
                     alt="Odra Desha Historical Geography"
-                    className="w-16 h-16 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                    className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                      Historical Geography
-                    </span>
-                    <h4 className="text-xs sm:text-sm font-serif font-bold text-[#54351F] mt-0.5">
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="royal-index-box">#{relatedArticles.length + 3}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
+                        Historical Geography
+                      </span>
+                    </div>
+                    <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
                       Odra Desha Capitals, Fortresses & Epigraphic Sites
                     </h4>
                   </div>
@@ -1885,11 +1948,20 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
               <div className="flex flex-wrap items-center gap-2.5">
                 <button
+                  onClick={() => handleDownloadFigurePdf(activeFigure)}
+                  disabled={isDownloadingPdf}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] text-xs sm:text-sm font-bold transition-all cursor-pointer disabled:opacity-60"
+                  title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(getFigureBiographyArticleTitle(activeFigure))})`}
+                >
+                  <Download className="w-4 h-4 shrink-0" />
+                  <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+                </button>
+                <button
                   onClick={() => handlePrint(activeFigure)}
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--border-color)] text-xs sm:text-sm font-bold transition-all cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-[var(--accent-gold)]" />
-                  <span>{ui.printBtn}</span>
+                  <span>{pdfUi.printBtn}</span>
                 </button>
                 <button
                   onClick={() => handleNativeShare(activeFigure)}
@@ -2125,7 +2197,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                           {fig.name}
                         </h2>
 
-                        <p className="text-xs sm:text-sm font-serif italic text-[#76501F] mt-1 line-clamp-1">
+                        <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-serif italic mt-1.5 break-words">
                           “{primaryTitle}”
                         </p>
 

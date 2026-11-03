@@ -30,27 +30,27 @@
     --profile-title-box-text: #54351F;
     --profile-title-box-border: #E4B879;
 
-    --website-bg-main: #F5EBD9;
-    --website-bg-secondary: #FFF9EF;
-    --website-bg-card: #FFFCF5;
-    --website-heading: #54351F;
-    --website-body: #292521;
-    --website-link: #76501F;
-    --website-accent: #A87924;
-    --website-btn-primary: #762D35;
-    --website-btn-text: #FFFFFF;
+    --website-bg-main: var(--page-bg);
+    --website-bg-secondary: var(--surface-bg);
+    --website-bg-card: var(--card-bg);
+    --website-heading: var(--heading-text);
+    --website-body: var(--primary-text);
+    --website-link: var(--link-color);
+    --website-accent: var(--accent-gold);
+    --website-btn-primary: var(--primary-button);
+    --website-btn-text: var(--primary-button-text);
 
-    --royal-maroon: #762D35;
-    --royal-maroon-dark: #54351F;
-    --royal-gold: #A87924;
-    --royal-gold-light: #FFF9EF;
-    --royal-gold-dark: #76501F;
-    --royal-navy: #F5EBD9;
-    --royal-navy-dark: #FFF9EF;
-    --royal-ivory: #FFFCF5;
-    --royal-cream: #FFF9EF;
-    --royal-sand: #F5EBD9;
-    --royal-slate: #FFFCF5;
+    --royal-maroon: var(--primary-button);
+    --royal-maroon-dark: var(--heading-text);
+    --royal-gold: var(--accent-gold);
+    --royal-gold-light: var(--surface-bg);
+    --royal-gold-dark: var(--link-color);
+    --royal-navy: var(--page-bg);
+    --royal-navy-dark: var(--surface-bg);
+    --royal-ivory: var(--card-bg);
+    --royal-cream: var(--surface-bg);
+    --royal-sand: var(--page-bg);
+    --royal-slate: var(--card-bg);
   }
 
   html,
@@ -83,6 +83,10 @@
     font-family: 'Cormorant Garamond', Georgia, serif;
   }
 }
+
+/* Canonical screen rules for .royal-profile-title-box, .royal-card-title-box,
+   .article-profile-title, .profile-title-box, and .archival-reference-index-*
+   are defined in ./styles/lightAlmondTheme.css */
 
 /* Custom Scrollbar - Light Almond Theme */
 ::-webkit-scrollbar {
@@ -195,14 +199,21 @@
   html,
   body,
   #root,
-  main {
-    background: #FFFFFF !important;
-    background-color: #FFFFFF !important;
-    color: #292521 !important;
+  #root > div,
+  main,
+  main > div,
+  .min-h-screen {
+    background: var(--page-bg, #F5EBD9) !important;
+    background-color: var(--page-bg, #F5EBD9) !important;
+    color: var(--primary-text, #292521) !important;
     font-size: 10.5pt !important;
     line-height: 1.55 !important;
+    min-height: 0 !important;
     height: auto !important;
     max-height: none !important;
+    flex: 0 0 auto !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
     overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -212,10 +223,14 @@
     display: table !important;
     width: 100% !important;
     max-width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
     border-collapse: collapse !important;
     border-spacing: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
   }
 
   .print-document-tbody {
@@ -228,6 +243,8 @@
 
   .print-document-tr {
     display: table-row !important;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
   }
 
   .print-document-td {
@@ -242,8 +259,11 @@
   .print-footer-spacer {
     display: block !important;
     width: 100% !important;
-    height: 21mm !important;
-    min-height: 21mm !important;
+    height: 17.5mm !important;
+    min-height: 17.5mm !important;
+    max-height: 17.5mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   header:not(.print-article-header):not(article header),
@@ -252,6 +272,10 @@
   aside[aria-label*="Floating Navigation"],
   .no-print {
     display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .print-only {
@@ -273,9 +297,9 @@
     width: 100% !important;
     height: 17.5mm !important;
     max-height: 17.5mm !important;
-    background: #FFFCF5 !important;
-    background-color: #FFFCF5 !important;
-    border-top: 1.5px solid #A87924 !important;
+    background: var(--card-bg, #FFFCF5) !important;
+    background-color: var(--card-bg, #FFFCF5) !important;
+    border-top: 1.5px solid var(--accent-gold, #A87924) !important;
     border-bottom: 2px solid #762D35 !important;
     padding: 1.8mm 3mm !important;
     z-index: 99999 !important;
@@ -317,10 +341,10 @@
     max-height: 30px !important;
     border-radius: 9999px !important;
     overflow: hidden !important;
-    border: 1.5px solid #A87924 !important;
+    border: 1.5px solid var(--accent-gold, #A87924) !important;
     box-shadow: 0 0 0 1px #762D35 !important;
     flex-shrink: 0 !important;
-    background: #FFFFFF !important;
+    background: var(--surface-bg, #FFF9EF) !important;
   }
 
   .print-repeating-author-footer img.print-author-avatar {
@@ -356,7 +380,7 @@
     gap: 4px !important;
     font-size: 7.8pt !important;
     line-height: 1.25 !important;
-    color: #292521 !important;
+    color: var(--primary-text, #292521) !important;
     background: transparent !important;
   }
 
@@ -364,16 +388,16 @@
     font-family: 'Cinzel', Georgia, serif !important;
     font-weight: 800 !important;
     font-size: 8.2pt !important;
-    color: #54351F !important;
-    -webkit-text-fill-color: #54351F !important;
+    color: var(--heading-text, #54351F) !important;
+    -webkit-text-fill-color: var(--heading-text, #54351F) !important;
     letter-spacing: 0.01em !important;
   }
 
   .print-author-role {
     font-weight: 700 !important;
     font-size: 7.2pt !important;
-    color: #292521 !important;
-    -webkit-text-fill-color: #292521 !important;
+    color: var(--primary-text, #292521) !important;
+    -webkit-text-fill-color: var(--primary-text, #292521) !important;
   }
 
   .print-author-line-secondary {
@@ -383,99 +407,132 @@
     gap: 4px !important;
     font-size: 6.8pt !important;
     line-height: 1.25 !important;
-    color: #292521 !important;
+    color: var(--secondary-text, #6B5948) !important;
     background: transparent !important;
     margin-top: 1px !important;
   }
 
   .print-author-credit {
     font-weight: 700 !important;
-    color: #76501F !important;
-    -webkit-text-fill-color: #76501F !important;
+    color: var(--link-color, #76501F) !important;
+    -webkit-text-fill-color: var(--link-color, #76501F) !important;
   }
 
   .print-author-org {
     font-weight: 600 !important;
-    color: #292521 !important;
-    -webkit-text-fill-color: #292521 !important;
+    color: var(--secondary-text, #6B5948) !important;
+    -webkit-text-fill-color: var(--secondary-text, #6B5948) !important;
   }
 
   .print-author-sep {
-    color: #A87924 !important;
-    -webkit-text-fill-color: #A87924 !important;
+    color: var(--accent-gold, #A87924) !important;
+    -webkit-text-fill-color: var(--accent-gold, #A87924) !important;
     font-weight: 700 !important;
   }
 
-  .print-author-footer-right {
-    flex-shrink: 0 !important;
-    text-align: right !important;
-    padding-left: 6px !important;
-    border-left: 1px solid #A87924 !important;
-    background: transparent !important;
-  }
-
-  .print-footer-page-counter {
-    display: inline-block !important;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
-    font-size: 7.5pt !important;
-    font-weight: 800 !important;
-    color: #54351F !important;
-    -webkit-text-fill-color: #54351F !important;
-    white-space: nowrap !important;
-    background: #FFF9EF !important;
-    border: 1px solid #A87924 !important;
-    border-radius: 4px !important;
-    padding: 2px 6px !important;
-  }
-
+  .print-author-footer-right,
+  .print-footer-page-counter,
   .print-footer-page-counter::after {
-    content: attr(data-page-word) " " counter(page) " " attr(data-of-word) " " attr(data-total-pages);
+    display: none !important;
+    content: none !important;
   }
 
   .print-article-wrapper {
-    background: #FFFFFF !important;
-    color: #292521 !important;
-    min-height: auto !important;
+    background: var(--page-bg, #F5EBD9) !important;
+    color: var(--primary-text, #292521) !important;
+    min-height: 0 !important;
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
     padding: 0 !important;
     margin: 0 !important;
+  }
+
+  .print-article-wrapper > div {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    min-height: 0 !important;
   }
 
   .print-article-container,
   article.print-article-container {
-    background: #FFFFFF !important;
-    color: #292521 !important;
+    background: var(--card-bg, #FFFCF5) !important;
+    color: var(--primary-text, #292521) !important;
     max-width: 100% !important;
     width: 100% !important;
+    min-height: 0 !important;
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
-    padding: 0 !important;
+    padding: 8px 8px 4px 8px !important;
     margin: 0 !important;
-    border: none !important;
+    border: 1px solid var(--border-color, #D8C3A2) !important;
     box-shadow: none !important;
+  }
+
+  .print-article-container > :last-child,
+  .print-article-footer,
+  .print-article-footer > :last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .print-article-container > .no-print + div {
+    margin-top: 8px !important;
+    padding-top: 0 !important;
   }
 
   .print-article-container header,
   .print-article-container section,
   .print-article-container footer,
   .print-article-container figure,
-  .print-article-container figcaption,
-  .print-article-container div,
+  .print-article-container figcaption:not(.royal-profile-title-box):not(.royal-card-title-box):not(.article-profile-title):not(.profile-title-box),
   .print-article-container dl,
-  .print-article-container ul,
-  .print-article-container ol,
+  .print-article-container blockquote {
+    background-color: var(--surface-bg, #FFF9EF) !important;
+    background-image: none !important;
+    color: var(--primary-text, #292521) !important;
+    border-color: var(--border-color, #D8C3A2) !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .print-article-container div:not(.inset-0)[class*="bg-[#0"],
+  .print-article-container div:not(.inset-0)[class*="bg-[#1"],
+  .print-article-container div:not(.inset-0)[class*="bg-[#21020b]"],
+  .print-article-container div:not(.inset-0)[class*="bg-[#2a030d]"],
+  .print-article-container div:not(.inset-0)[class*="bg-[#38000c]"],
+  .print-article-container div:not(.inset-0)[class*="bg-[#420813]"],
+  .print-article-container div:not(.inset-0)[class*="bg-stone-9"],
+  .print-article-container div:not(.inset-0)[class*="bg-stone-8"],
+  .print-article-container div:not(.inset-0)[class*="bg-slate-9"],
+  .print-article-container div:not(.inset-0)[class*="bg-slate-8"],
+  .print-article-container div:not(.inset-0)[class*="bg-black/"],
+  .print-article-container dl[class*="bg-[#0"],
+  .print-article-container dl[class*="bg-[#1"],
+  .print-article-container dl[class*="bg-stone-9"],
+  .print-article-container dl[class*="bg-stone-8"],
+  .print-article-container li[class*="bg-[#0"],
+  .print-article-container li[class*="bg-[#1"],
+  .print-article-container li[class*="bg-stone-9"] {
+    background-color: var(--surface-bg, #FFF9EF) !important;
+    background-image: none !important;
+    color: var(--primary-text, #292521) !important;
+    border-color: var(--border-color, #D8C3A2) !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .print-article-container ul:not(.archival-reference-index-box):not(.archival-reference-index-list),
+  .print-article-container ol:not(.archival-reference-index-box):not(.archival-reference-index-list),
   .print-article-container table,
   .print-article-container thead,
   .print-article-container tbody,
   .print-article-container tr,
   .print-article-container th,
   .print-article-container td {
-    background: #FFFFFF !important;
     background-image: none !important;
-    color: #292521 !important;
+    color: var(--primary-text, #292521) !important;
     box-shadow: none !important;
     overflow: visible !important;
   }
@@ -485,69 +542,396 @@
     min-width: 0 !important;
     max-width: 100% !important;
     border-collapse: collapse !important;
+    background: var(--card-bg, #FFFCF5) !important;
+  }
+
+  .print-article-container thead th {
+    background: var(--section-bg, #EFE3D0) !important;
+    color: var(--heading-text, #54351F) !important;
   }
 
   .print-article-container th,
   .print-article-container td {
-    border: 1px solid #A87924 !important;
+    border: 1px solid var(--border-color, #D8C3A2) !important;
     padding: 6px 8px !important;
     word-break: break-word !important;
   }
 
   .print-article-container header,
   .print-article-container section {
-    background: #FFFCF5 !important;
-    border: 1px solid #A87924 !important;
-    border-radius: 8px !important;
+    background: var(--surface-bg, #FFF9EF) !important;
+    border: 1px solid var(--border-color, #D8C3A2) !important;
+    border-radius: 10px !important;
     padding: 12px 15px !important;
     margin-bottom: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Preserve Article Profile Title Box & Related Card Title Box (#F4C78A Light Orange) in Print/PDF */
+  .article-profile-title,
+  .profile-title-box,
+  .royal-profile-title-box,
+  .royal-card-title-box,
+  .print-article-container .article-profile-title,
+  .print-article-container .profile-title-box,
+  .print-article-container .royal-profile-title-box,
+  .print-article-container .royal-card-title-box,
+  .royal-related-link-btn .royal-profile-title-box,
+  .royal-related-link-btn .royal-card-title-box {
+    background: var(--profile-title-box-bg, #F4C78A) !important;
+    background-color: var(--profile-title-box-bg, #F4C78A) !important;
+    background-image: none !important;
+    color: var(--profile-title-box-text, #54351F) !important;
+    -webkit-text-fill-color: var(--profile-title-box-text, #54351F) !important;
+    border: 1px solid var(--profile-title-box-border, #E4B879) !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.45 !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .royal-card-title-box,
+  .print-article-container .royal-card-title-box,
+  .royal-related-link-btn .royal-card-title-box {
+    border-radius: 8px !important;
+    padding: 5px 10px !important;
+    margin-bottom: 4px !important;
+    font-size: 9.5pt !important;
+    line-height: 1.35 !important;
+  }
+
+  .article-profile-title *,
+  .profile-title-box *,
+  .royal-profile-title-box *,
+  .royal-card-title-box *,
+  .print-article-container .article-profile-title *,
+  .print-article-container .profile-title-box *,
+  .print-article-container .royal-profile-title-box *,
+  .print-article-container .royal-card-title-box *,
+  .royal-related-link-btn .royal-profile-title-box *,
+  .royal-related-link-btn .royal-card-title-box * {
+    color: var(--profile-title-box-text, #54351F) !important;
+    -webkit-text-fill-color: var(--profile-title-box-text, #54351F) !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    max-height: none !important;
+    max-width: none !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  /* Preserve Index Box (#762D35 Royal Maroon with #FFFFFF text and #A87924 Gold border) in Print/PDF */
+  .royal-index-box,
+  .print-article-container .royal-index-box,
+  .royal-related-link-btn .royal-index-box {
+    background: var(--primary-button, #762D35) !important;
+    background-color: var(--primary-button, #762D35) !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: 1px solid var(--accent-gold, #A87924) !important;
+    border-radius: 6px !important;
+    padding: 2px 8px !important;
+    font-size: 7.5pt !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .royal-index-box *,
+  .print-article-container .royal-index-box *,
+  .royal-related-link-btn .royal-index-box * {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+  }
+
+  /* Related Articles Grid Layout in Print/PDF: Prevent cramping and awkward page splits */
+  .grid:has(> .royal-related-link-btn),
+  .print-article-container .grid:has(> .royal-related-link-btn) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  /* Preserve Related Articles Visual Cards & Related Links (#F8DDE3 Light Pink) in Print/PDF */
+  .royal-related-link-btn,
+  .print-article-container .royal-related-link-btn {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: var(--related-link-bg, #F8DDE3) !important;
+    background-color: var(--related-link-bg, #F8DDE3) !important;
+    background-image: none !important;
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+    border: 1px solid var(--related-link-border, #E8BFC9) !important;
+    border-radius: 12px !important;
+    padding: 10px 12px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Properly size thumbnail wrapper and image inside Related Article cards in Print/PDF */
+  .royal-related-link-btn > div:first-child:has(img),
+  .royal-related-link-btn .shrink-0:has(img),
+  .print-article-container .royal-related-link-btn > div:first-child:has(img),
+  .print-article-container .royal-related-link-btn .shrink-0:has(img) {
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+    max-width: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    border: 1px solid var(--accent-gold, #A87924) !important;
+    background: var(--surface-bg, #FFF9EF) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .royal-related-link-btn img,
+  .print-article-container .royal-related-link-btn img {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+    max-width: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 9px !important;
+    border: none !important;
+    background: var(--surface-bg, #FFF9EF) !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .royal-related-link-btn > div.flex-1,
+  .print-article-container .royal-related-link-btn > div.flex-1 {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  .royal-related-link-btn *:not(.royal-profile-title-box):not(.royal-profile-title-box *):not(.royal-card-title-box):not(.royal-card-title-box *):not(.royal-index-box):not(.royal-index-box *),
+  .print-article-container .royal-related-link-btn *:not(.royal-profile-title-box):not(.royal-profile-title-box *):not(.royal-card-title-box):not(.royal-card-title-box *):not(.royal-index-box):not(.royal-index-box *) {
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+  }
+
+  /* Ensure complete titles, title boxes, index boxes, badges, and summaries without truncation in Print/PDF */
+  .print-article-container [class*="line-clamp-"],
+  .print-article-container .line-clamp-1,
+  .print-article-container .line-clamp-2,
+  .print-article-container .line-clamp-3,
+  .print-article-container .truncate,
+  .print-article-container .whitespace-nowrap,
+  .print-article-container .text-ellipsis,
+  .royal-related-link-btn [class*="line-clamp-"],
+  .royal-related-link-btn .line-clamp-1,
+  .royal-related-link-btn .line-clamp-2,
+  .royal-related-link-btn .line-clamp-3,
+  .royal-related-link-btn .truncate,
+  .royal-related-link-btn h3,
+  .royal-related-link-btn h4,
+  .royal-related-link-btn p,
+  .royal-related-link-btn span:not(.royal-index-box) {
+    display: block !important;
+    -webkit-box-orient: initial !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  /* Remove restrictive overflow, fixed-height, and max-height rules inside print articles so sections never clip or fold */
+  .print-article-container,
+  .print-article-container section,
+  .print-article-container article,
+  .print-article-container .overflow-hidden,
+  .print-article-container .overflow-x-hidden,
+  .print-article-container .overflow-y-hidden,
+  .print-article-container .overflow-x-auto,
+  .print-article-container [class*="max-h-"],
+  .print-article-container .h-full {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Flex and Grid layout safeguards in Print/PDF:
+     - min-width: 0 on flex/grid children prevents horizontal overflow beyond A4 page boundaries
+     - box-sizing: border-box ensures padding and borders never push text outside the page */
+  .print-article-container * {
+    box-sizing: border-box !important;
+  }
+
+  .print-article-container .flex > *,
+  .print-article-container .inline-flex > *,
+  .print-article-container .grid > * {
+    min-width: 0 !important;
+  }
+
+  /* Prevent icons, badges, and vertical accent bars inside headings from shrinking or overlapping text */
+  .print-article-container h2 > svg,
+  .print-article-container h3 > svg,
+  .print-article-container h4 > svg,
+  .print-article-container [class*="border-l-4"] > svg {
+    flex-shrink: 0 !important;
+  }
+
+  /* Strictly exclude raw URLs in Print/PDF */
+  a[href]::after,
+  .print-canonical-url {
+    content: none !important;
+    display: none !important;
   }
 
   .print-article-container h1,
   .print-article-container h2,
-  .print-article-container h3,
-  .print-article-container h4 {
-    color: #54351F !important;
-    -webkit-text-fill-color: #54351F !important;
+  .print-article-container h3:not(.royal-card-title-box):not(.royal-profile-title-box):not(.article-profile-title):not(.profile-title-box):not(.archival-reference-index-box):not(.archival-reference-index-title),
+  .print-article-container h4:not(.royal-card-title-box):not(.royal-profile-title-box):not(.article-profile-title):not(.profile-title-box):not(.archival-reference-index-box):not(.archival-reference-index-title) {
+    color: var(--heading-text, #54351F) !important;
+    -webkit-text-fill-color: var(--heading-text, #54351F) !important;
     background: none !important;
   }
 
   .print-article-container dt,
   .print-article-container dd,
-  .print-article-container p,
-  .print-article-container li,
-  .print-article-container span,
-  .print-article-container strong,
-  .print-article-container figcaption,
+  .print-article-container p:not(.royal-profile-title-box):not(.royal-card-title-box):not(.article-profile-title):not(.profile-title-box):not(.royal-related-link-btn *):not(.archival-reference-index-box *),
+  .print-article-container li:not(.archival-reference-index-box *):not(.archival-reference-index-list *),
+  .print-article-container figcaption:not(.royal-profile-title-box):not(.royal-card-title-box):not(.article-profile-title):not(.profile-title-box),
   .print-article-container th,
-  .print-article-container td,
-  .print-article-container a {
-    color: #292521 !important;
-    -webkit-text-fill-color: #292521 !important;
+  .print-article-container td {
+    color: var(--primary-text, #292521) !important;
+    -webkit-text-fill-color: var(--primary-text, #292521) !important;
   }
 
   .print-article-container h1 {
     display: block !important;
     visibility: visible !important;
     font-size: 19pt !important;
-    line-height: 1.3 !important;
+    line-height: 1.35 !important;
     margin-bottom: 6px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
   }
 
+  /* Section Headings with Vertical Royal Maroon Accent Bar (#762D35):
+     - Visible 5px left Royal Maroon accent bar and 1px bottom Archival Gold rule
+     - Sufficient left padding (12px) so the vertical accent bar never covers or squeezes heading text
+     - Natural multi-line wrapping across full available width */
   .print-article-container h2 {
+    display: flex !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
     font-size: 13pt !important;
-    line-height: 1.35 !important;
-    border-bottom: 1px solid #A87924 !important;
-    padding-bottom: 4px !important;
-    margin-bottom: 8px !important;
+    line-height: 1.4 !important;
+    border-left: 5px solid var(--maroon-accent, #762D35) !important;
+    border-bottom: 1.5px solid var(--accent-gold, #A87924) !important;
+    padding-left: 12px !important;
+    padding-right: 4px !important;
+    padding-top: 2px !important;
+    padding-bottom: 6px !important;
+    margin-top: 12px !important;
+    margin-bottom: 10px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    overflow: visible !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Callout boxes and subheadings with a vertical left accent bar (border-l-4) */
+  .print-article-container [class*="border-l-4"] {
+    border-left-width: 4px !important;
+    border-left-style: solid !important;
+    border-left-color: var(--maroon-accent, #762D35) !important;
+    padding-left: 12px !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    overflow: visible !important;
   }
 
   .print-article-container h3,
   .print-article-container h4 {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
     font-size: 11pt !important;
+    line-height: 1.38 !important;
     font-weight: 700 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    overflow: visible !important;
     page-break-after: avoid !important;
     break-after: avoid !important;
   }
@@ -555,10 +939,10 @@
   .print-lead-figure {
     display: block !important;
     visibility: visible !important;
-    border: 1px solid #A87924 !important;
+    border: 1px solid var(--border-color, #D8C3A2) !important;
     border-radius: 8px !important;
     overflow: visible !important;
-    background: #FFFCF5 !important;
+    background: var(--surface-bg, #FFF9EF) !important;
     margin: 10px 0 !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
@@ -570,7 +954,7 @@
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
-    background: #FFFFFF !important;
+    background: var(--card-bg, #FFFCF5) !important;
     padding: 8px !important;
     text-align: center !important;
   }
@@ -587,12 +971,27 @@
     margin: 0 auto !important;
   }
 
-  .print-article-header,
-  .print-avoid-break,
+  /* Allow large article sections, multi-card containers, tables, and lists to continue naturally onto the next PDF page */
+  .print-article-container section,
+  .print-article-container article,
+  .print-article-container .royal-card,
+  .print-article-container .print-avoid-break,
+  .print-article-container table,
+  .print-article-container tbody,
+  .print-article-container ul,
+  .print-article-container ol,
+  .print-article-container dl,
+  .print-article-container .grid,
+  .print-article-container .archival-reference-index-list {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Keep only compact atomic items (images, single table rows, single metadata pairs) from splitting mid-line */
   .print-article-container img,
   .print-article-container dl > div,
-  .print-article-container tr,
-  .print-article-container li {
+  .print-article-container tr {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
@@ -607,5 +1006,111 @@
     max-width: 165px !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+  }
+
+  /* ========================================================
+     GLOBAL HERITAGE PORTAL - PRINT & PDF SAFEGUARDS
+     ======================================================== */
+
+  /* 1. Force exact background & component colors in Print/PDF */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+  }
+
+  /* 2. Hide empty decorative dark gradient overlays and neutralize non-empty overlay backgrounds so they never render as black patches */
+  div.inset-0:empty,
+  div.absolute.inset-0.pointer-events-none {
+    display: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  .print-article-container div.inset-0[class*="from-[#"],
+  .print-article-container div.inset-0[class*="via-[#"],
+  .print-article-container div.inset-0[class*="to-[#"],
+  .print-article-container div.inset-0[class*="from-stone-9"],
+  .print-article-container div.inset-0[class*="bg-black"],
+  .print-article-container div.inset-0[class*="bg-[#0"],
+  .print-article-container div.inset-0[class*="bg-[#1"],
+  .print-article-container div.inset-0[class*="bg-stone-9"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+  }
+
+  /* 3. Prevent text truncation across print text elements without overriding component colors */
+  p:not(.print-repeating-author-footer *),
+  span:not(.royal-index-box):not(.print-footer-page-counter):not(.print-repeating-author-footer *),
+  h1, h2, h3, h4, h5, h6,
+  li, td, th, dt, dd, figcaption, blockquote {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-height: none !important;
+    height: auto !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+  }
+
+  /* 4. Archival Reference Summary & Catalogue Index — Light Sky Blue (#D4EEFC) & Deep Black (#000000) in Print/PDF */
+  .archival-reference-index-box,
+  .archival-reference-index-title,
+  .archival-reference-index-list,
+  h3.archival-reference-index-box,
+  ul.archival-reference-index-box,
+  .print-article-container .archival-reference-index-box,
+  .print-article-container .archival-reference-index-title,
+  .print-article-container .archival-reference-index-list {
+    background: #D4EEFC !important;
+    background-color: #D4EEFC !important;
+    background-image: none !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    border: 1px solid #7CC4EA !important;
+    border-color: #7CC4EA !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    max-height: none !important;
+    height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .archival-reference-index-box *,
+  .archival-reference-index-title *,
+  .archival-reference-index-list *,
+  .print-article-container .archival-reference-index-box *,
+  .print-article-container .archival-reference-index-title *,
+  .print-article-container .archival-reference-index-list * {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  /* 5. Prevent page breaks only inside compact title badges/boxes and figures (never on large sections or lists) */
+  img,
+  .article-profile-title, .profile-title-box,
+  .royal-profile-title-box, .royal-card-title-box, .royal-related-link-btn,
+  .archival-reference-index-title {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 }

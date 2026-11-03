@@ -1149,7 +1149,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         </h3>
 
                         {titles && titles.length > 0 && (
-                          <p className="text-[11px] text-[#76501F] font-medium line-clamp-1">
+                          <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-[11px] font-semibold break-words">
                             {titles[0]}
                           </p>
                         )}

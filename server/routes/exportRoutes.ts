@@ -231,20 +231,33 @@ function cleanupPdfCache() {
 }
 
 function buildContentDispositionHeader(filename: string): string {
-  const cleanName = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
-  // ASCII-safe fallback for legacy user-agents
-  const asciiFallback = cleanName
-    .replace(/[^\x20-\x7E]/g, '_')
-    .replace(/["\\]/g, '_')
-    .replace(/_+/g, '_')
-    .replace(/^_+|_+$/g, '');
+  const cleanName = (filename.endsWith('.pdf') ? filename : `${filename}.pdf`)
+    .replace(/[\r\n"]/g, '')
+    .trim();
+  const baseWithoutExt = cleanName.replace(/\.pdf$/i, '');
+
+  // Strip non-ASCII characters to check if a meaningful ASCII-only name exists
+  const asciiCandidateBase = baseWithoutExt
+    .replace(/[^\x20-\x7E]/g, ' ')
+    .replace(/["\\<>:|?*]+/g, ' ')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^[\-_.\s]+|[\-_.\s]+$/g, '');
+
+  // Only use asciiCandidateBase if it contains at least 3 ASCII letters (never allow bare digits like "3.pdf" or "_-_.pdf")
+  const asciiLettersCount = (asciiCandidateBase.match(/[A-Za-z]/g) || []).length;
   const safeAscii =
-    asciiFallback && asciiFallback !== '.pdf' && asciiFallback !== '_.pdf'
-      ? asciiFallback
-      : 'Historical_Article.pdf';
+    asciiLettersCount >= 3
+      ? `${asciiCandidateBase}.pdf`
+      : 'Suryavamsha-Historical-Article.pdf';
+
   const encodedUtf8 = encodeURIComponent(cleanName)
-    .replace(/['()]/g, escape)
+    .replace(/['()]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)
     .replace(/\*/g, '%2A');
+
+  // If the filename is pure ASCII with letters, both filename and filename* match;
+  // if it contains Kannada/Indic script characters, filename*=UTF-8'' carries the full native script title
+  // while filename="..." never falls back to a broken numeric fragment like "3.pdf".
   return `attachment; filename="${safeAscii}"; filename*=UTF-8''${encodedUtf8}`;
 }
 
@@ -265,12 +278,14 @@ exportRouter.post('/prepare-pdf', (req: Request, res: Response) => {
       return;
     }
 
+    const rawTrimmed = typeof filename === 'string' ? filename.trim() : '';
+    const hasValidLetters = /[A-Za-z\u0900-\u0DFF]/.test(rawTrimmed.replace(/\.pdf$/i, ''));
     const safeFilename =
-      typeof filename === 'string' && filename.trim()
-        ? filename.trim().endsWith('.pdf')
-          ? filename.trim()
-          : `${filename.trim()}.pdf`
-        : 'Historical_Article.pdf';
+      rawTrimmed && hasValidLetters
+        ? rawTrimmed.endsWith('.pdf')
+          ? rawTrimmed
+          : `${rawTrimmed}.pdf`
+        : 'Suryavamsha-Historical-Article.pdf';
 
     const token = `pdf_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
     pdfDownloadCache.set(token, {
@@ -293,16 +308,21 @@ exportRouter.post('/prepare-pdf', (req: Request, res: Response) => {
 // GET /api/export/download-pdf/:token/:filename - Streams the PDF binary as a file attachment
 exportRouter.get('/download-pdf/:token/:filename?', (req: Request, res: Response) => {
   cleanupPdfCache();
-  const { token } = req.params;
+  const { token, filename: paramFilename } = req.params;
   const entry = pdfDownloadCache.get(token);
   if (!entry) {
     res.status(404).send('PDF download link has expired. Please click Download PDF again.');
     return;
   }
 
+  const effectiveFilename =
+    paramFilename && /[A-Za-z\u0900-\u0DFF]/.test(paramFilename.replace(/\.pdf$/i, ''))
+      ? paramFilename
+      : entry.filename;
+
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Length', String(entry.buffer.length));
-  res.setHeader('Content-Disposition', buildContentDispositionHeader(entry.filename));
+  res.setHeader('Content-Disposition', buildContentDispositionHeader(effectiveFilename));
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'private, max-age=1800');
   res.status(200).send(entry.buffer);

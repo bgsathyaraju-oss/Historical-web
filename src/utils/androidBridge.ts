@@ -46,8 +46,10 @@ export function isAndroidWebViewEnvironment(): boolean {
 
 /**
  * Sends a complete URL string to the Android app via `window.AppInventor.setWebViewString(url)`.
- * If `WebViewString` already holds the exact same URL, briefly clears it first so that
- * MIT App Inventor's `when WebViewer1.WebViewStringChange` event is guaranteed to fire on repeated taps.
+ * Never sends an empty string `""` (which can trigger MIT App Inventor's `WebViewStringChange`
+ * with an empty DataUri and cause ActivityStarter Error 601). Instead, if `WebViewString` already
+ * holds the exact same URL, appends a harmless cache-busting query parameter so `WebViewStringChange`
+ * is guaranteed to fire with a valid HTTPS URL on repeated taps.
  */
 export function sendUrlToAppInventorBridge(url: string): boolean {
   if (typeof window === 'undefined') return false;
@@ -64,22 +66,117 @@ export function sendUrlToAppInventorBridge(url: string): boolean {
         ? window.AppInventor.getWebViewString()
         : undefined;
 
+    let payloadUrl = trimmed;
     if (currentVal === trimmed) {
-      window.AppInventor.setWebViewString('');
-      window.setTimeout(() => {
+      if (isWhatsAppUrl(trimmed)) {
+        const httpsWa = normalizeWhatsAppUrlToHttps(trimmed);
+        payloadUrl = httpsWa.includes('?') ? `${httpsWa}%20` : `${httpsWa}?text=`;
+      } else {
         try {
-          window.AppInventor?.setWebViewString?.(trimmed);
+          const parsed = new URL(trimmed, window.location.origin);
+          parsed.searchParams.set('_wvts', String(Date.now()));
+          payloadUrl = parsed.toString();
         } catch {
-          // Ignore bridge error
+          const sep = trimmed.includes('?') ? '&' : '?';
+          payloadUrl = `${trimmed}${sep}_wvts=${Date.now()}`;
         }
-      }, 15);
-    } else {
-      window.AppInventor.setWebViewString(trimmed);
+      }
     }
+
+    window.AppInventor.setWebViewString(payloadUrl);
     return true;
   } catch {
     return false;
   }
+}
+
+/**
+ * Cross-platform clipboard copy helper that works in both Chrome Browser (via `navigator.clipboard`)
+ * and Android WebView / MIT App Inventor WebViewer (via hidden `<textarea>` fallback).
+ */
+export async function copyTextCrossPlatform(textToCopy: string): Promise<boolean> {
+  if (!textToCopy) return false;
+
+  if (
+    typeof navigator !== 'undefined' &&
+    navigator.clipboard &&
+    typeof navigator.clipboard.writeText === 'function'
+  ) {
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      return true;
+    } catch {
+      // Fall through to execCommand fallback for restricted WebViews
+    }
+  }
+
+  if (typeof document !== 'undefined') {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = textToCopy;
+      textArea.setAttribute('readonly', '');
+      textArea.style.position = 'fixed';
+      textArea.style.top = '-9999px';
+      textArea.style.left = '-9999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const copied = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return copied;
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+export interface CrossPlatformSharePayload {
+  title: string;
+  text?: string;
+  url: string;
+}
+
+/**
+ * Cross-platform Share handler matching Chrome Browser and Android App:
+ * - In normal Chrome Browser (Android Chrome / Desktop Chrome with Web Share support):
+ *   invokes `navigator.share({ title, text, url })`. Returns `'shared'` if handled or aborted by user,
+ *   or `'fallback'` if Web Share API is unavailable/unsupported so the caller can toggle the Share Menu.
+ * - In Android WebView / AppInventor WebViewer:
+ *   returns `'fallback'` immediately so the inline Share Menu (with WhatsApp `https://wa.me/...` routed
+ *   to `window.AppInventor.setWebViewString`, Copy Direct Link, and Copy Title & Link) opens reliably.
+ */
+export async function triggerCrossPlatformShare(
+  payload: CrossPlatformSharePayload
+): Promise<'shared' | 'fallback'> {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return 'fallback';
+  }
+
+  // Inside Android WebView / AppInventor WebViewer, native navigator.share is either missing or blocked;
+  // always use the portal's rich Share menu (WhatsApp via AppInventor bridge + Clipboard copy options).
+  if (isAndroidWebViewEnvironment()) {
+    return 'fallback';
+  }
+
+  if (typeof navigator.share === 'function') {
+    try {
+      await navigator.share({
+        title: payload.title,
+        text: payload.text || payload.title,
+        url: payload.url,
+      });
+      return 'shared';
+    } catch (err) {
+      if ((err as Error)?.name === 'AbortError') {
+        return 'shared';
+      }
+      return 'fallback';
+    }
+  }
+
+  return 'fallback';
 }
 
 /**

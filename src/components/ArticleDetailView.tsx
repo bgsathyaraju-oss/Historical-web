@@ -35,10 +35,13 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
+  setActiveArticleDocumentTitle,
   PDF_EXPORT_UI_LABELS,
   hasAppInventorBridge,
   isAndroidWebViewEnvironment,
   sendUrlToAppInventorBridge,
+  copyTextCrossPlatform,
+  triggerCrossPlatformShare,
   handleWhatsAppLinkClick,
   handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
@@ -617,27 +620,73 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const historicalPeriod = getMonographPeriod(article, language);
   const subjectCategories = getMonographCategories(article, localizedCat);
   const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
+  const autoActionTriggeredRef = useRef<string | null>(null);
 
-  // Support automatic print or PDF download when opened in external browser with ?autoprint=1 or ?autodownloadpdf=1
+  // Keep document.title synchronized with the active article title so browser Print / Save as PDF always uses the article's title
+  useEffect(() => {
+    setActiveArticleDocumentTitle(displayTitle, articleRef.current);
+    return () => {
+      setActiveArticleDocumentTitle(null);
+    };
+  }, [displayTitle, language]);
+
+  // Support automatic print or PDF download when opened in external Chrome browser with ?autoprint=1 or ?autodownloadpdf=1
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('autoprint') === '1') {
-        const timer = setTimeout(() => {
-          window.print();
-        }, 700);
-        return () => clearTimeout(timer);
+      const langParam = params.get('lang') as LanguageCode | null;
+      if (
+        langParam &&
+        ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
+        langParam !== language
+      ) {
+        setLanguage(langParam);
+        return;
       }
-      if (params.get('autodownloadpdf') === '1') {
-        const timer = setTimeout(() => {
-          handleDownloadPdf();
-        }, 800);
-        return () => clearTimeout(timer);
+
+      if (params.get('autodownloadpdf') === '1' && !isAndroidWebViewEnvironment()) {
+        const actionKey = `pdf-${article.id}-${language}`;
+        if (autoActionTriggeredRef.current !== actionKey) {
+          autoActionTriggeredRef.current = actionKey;
+          const timer = setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autodownloadpdf');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            handleDownloadPdf();
+          }, 700);
+          return () => clearTimeout(timer);
+        }
+      }
+
+      if (params.get('autoprint') === '1' && !isAndroidWebViewEnvironment()) {
+        const actionKey = `print-${article.id}-${language}`;
+        if (autoActionTriggeredRef.current !== actionKey) {
+          autoActionTriggeredRef.current = actionKey;
+          const timer = setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autoprint');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            triggerArticlePrintWithTitle(displayTitle);
+          }, 650);
+          return () => clearTimeout(timer);
+        }
       }
     } catch {
       // Ignore
     }
-  }, [article.id]);
+  }, [article.id, displayTitle, language, setLanguage]);
 
   // Parse complete monograph chapters and sections (never truncating or omitting any line)
   const contentLines = (displayContent || '').split('\n');
@@ -743,20 +792,20 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     try {
       const url = new URL(window.location.origin + basePath);
       url.searchParams.set('article', article.id);
+      url.searchParams.set('lang', language);
       if (autoPrint) url.searchParams.set('autoprint', '1');
       return url.toString();
     } catch {
-      return `${window.location.origin}${basePath}?article=${encodeURIComponent(article.id)}`;
+      return `${window.location.origin}${basePath}?article=${encodeURIComponent(article.id)}&lang=${encodeURIComponent(language)}${autoPrint ? '&autoprint=1' : ''}`;
     }
   };
 
-  const handleCopyLink = (includeTitle = false) => {
+  const handleCopyLink = async (includeTitle = false) => {
     const shareUrl = getDirectMonographUrl(false);
     const textToCopy = includeTitle ? `${displayTitle} — ${shareUrl}` : shareUrl;
-    navigator.clipboard?.writeText(textToCopy).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    });
+    await copyTextCrossPlatform(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
   };
 
   const articleRef = useRef<HTMLElement | null>(null);
@@ -808,19 +857,14 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
   const handleShare = async () => {
     const shareUrl = getDirectMonographUrl(false);
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: displayTitle,
-          text: displaySummary,
-          url: shareUrl
-        });
-        return;
-      } catch {
-        // User cancelled or share unsupported
-      }
+    const outcome = await triggerCrossPlatformShare({
+      title: displayTitle,
+      text: displaySummary,
+      url: shareUrl
+    });
+    if (outcome === 'fallback') {
+      setShareMenuOpen(prev => !prev);
     }
-    setShareMenuOpen(prev => !prev);
   };
 
   const scrollToSection = (id: string) => {
@@ -1068,12 +1112,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div className="text-[#292521] font-bold mt-1">{historicalPeriod}</div>
             </div>
 
-            <div className="royal-profile-title-box p-3.5 rounded-xl bg-[#F4C78A] border border-[#E4B879]">
-              <div className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#54351F]" />
+            <div className="royal-profile-title-box p-3.5 rounded-xl bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)]">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--profile-title-box-text)] flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[var(--profile-title-box-text)]" />
                 <span>{ui.authorLabel}</span>
               </div>
-              <div className="text-[#54351F] font-semibold mt-1 break-words">{article.author_name}</div>
+              <div className="text-[var(--profile-title-box-text)] font-semibold mt-1 break-words">{article.author_name}</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
@@ -1112,9 +1156,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 className="print-lead-image w-full h-64 sm:h-80 md:h-[420px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
               />
             </div>
-            <figcaption className="royal-profile-title-box bg-[#F4C78A] p-4 text-xs text-[#54351F] border-t border-[#E4B879] break-words">
-              <span className="text-[#54351F] font-bold mr-1.5">{ui.artifactLabel}</span>
-              {displayTitle} — <span className="text-[#54351F] font-semibold">{historicalPeriod}</span>
+            <figcaption className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] p-4 text-xs border-t border-[var(--profile-title-box-border)] break-words">
+              <span className="text-[var(--profile-title-box-text)] font-bold mr-1.5">{ui.artifactLabel}</span>
+              {displayTitle} — <span className="text-[var(--profile-title-box-text)] font-semibold">{historicalPeriod}</span>
             </figcaption>
           </figure>
         )}
@@ -1302,28 +1346,31 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               Documented Monarchs, Emperors & Sacred Guardians Involved
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-              {involvedFigures.map(fig => (
+              {involvedFigures.map((fig, idx) => (
                 <div
                   key={fig.id}
                   onClick={() => onNavigate && onNavigate(`/kings-queens?figure=${fig.id}`)}
-                  className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
+                  className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
                 >
                   <img
                     src={fig.image_url}
                     alt={fig.name}
-                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#E8BFC9] shrink-0"
+                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#A87924] shrink-0"
                     onError={e => {
                       const target = e.currentTarget;
                       target.onerror = null;
                       target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_coronation.jpg`;
                     }}
                   />
-                  <div className="min-w-0">
-                    <div className="text-[10px] font-bold text-[#54351F] truncate">{fig.reign_period}</div>
-                    <div className="text-xs font-royal-heading font-bold text-[#54351F] truncate">
-                      {fig.name}
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="royal-index-box">#{idx + 1}</span>
+                      <span className="text-[10px] font-bold text-[#54351F] break-words">{fig.reign_period}</span>
                     </div>
-                    <div className="text-[10px] text-[#54351F] truncate">{fig.dynasty_name}</div>
+                    <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                      {fig.name}
+                    </h4>
+                    <p className="text-[10px] text-[#54351F] break-words">{fig.dynasty_name}</p>
                   </div>
                 </div>
               ))}
@@ -1338,52 +1385,61 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               <div
                 onClick={() => onNavigate && onNavigate('/gajapathi-kings')}
-                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
                   alt="Suryavamsha Gajapathi Empire"
-                  className="w-14 h-14 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
-                <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#54351F] uppercase">Imperial Dynasty</div>
-                  <div className="text-xs font-royal-heading font-bold text-[#54351F]">
-                    Suryavamsha Gajapathi Kingdom & Empire
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#1</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">Imperial Dynasty</span>
                   </div>
+                  <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                    Suryavamsha Gajapathi Kingdom & Empire
+                  </h4>
                 </div>
               </div>
 
               <div
                 onClick={() => onNavigate && onNavigate('/odra-desha')}
-                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`}
                   alt="Odra Desha & Kalinga"
-                  className="w-14 h-14 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
-                <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#54351F] uppercase">Sovereign Territory</div>
-                  <div className="text-xs font-royal-heading font-bold text-[#54351F]">
-                    Ancient Odra Desha, Utkala & Kalinga
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#2</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">Sovereign Territory</span>
                   </div>
+                  <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                    Ancient Odra Desha, Utkala & Kalinga
+                  </h4>
                 </div>
               </div>
 
               <div
                 onClick={() => onNavigate && onNavigate('/genealogy')}
-                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-center gap-3"
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
                   alt="Royal Dynastic Genealogy"
-                  className="w-14 h-14 rounded-lg object-cover border border-[#E8BFC9] shrink-0"
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
-                <div className="min-w-0">
-                  <div className="text-[10px] font-bold text-[#54351F] uppercase">Royal Succession</div>
-                  <div className="text-xs font-royal-heading font-bold text-[#54351F]">
-                    Suryavamsha & Odra Dynastic Genealogy
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#3</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">Royal Succession</span>
                   </div>
+                  <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                    Suryavamsha & Odra Dynastic Genealogy
+                  </h4>
                 </div>
               </div>
             </div>
@@ -1423,7 +1479,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                       <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
                         {insc.name}
                       </h4>
-                      <p className="text-xs text-[#292521] mt-1 line-clamp-2">{insc.historical_context}</p>
+                      <p className="text-xs text-[#292521] mt-1">{insc.historical_context}</p>
                     </div>
                   </div>
                 ))}
@@ -1449,16 +1505,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
                     {doc.title}
                   </h4>
-                  <p className="text-xs text-[#292521] mt-1 line-clamp-2">{doc.translation_excerpt}</p>
+                  <p className="text-xs text-[#292521] mt-1">{doc.translation_excerpt}</p>
                 </div>
               </div>
             ))}
 
-            {involvedMonuments.map(mon => (
+            {involvedMonuments.map((mon, idx) => (
               <div
                 key={mon.id}
                 onClick={() => onNavigate && onNavigate('/temples-monuments')}
-                className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-start gap-3.5"
+                className="royal-related-link-btn p-4 rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3.5"
               >
                 {mon.image_url && (
                   <img
@@ -1467,14 +1523,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
                 )}
-                <div className="min-w-0 flex-1">
-                  <div className="text-[10px] font-bold uppercase text-[#76501F]">
-                    Archaeological Monument • {mon.century}
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#{idx + 1}</span>
+                    <span className="text-[10px] font-bold uppercase text-[#54351F]">
+                      Archaeological Monument • {mon.century}
+                    </span>
                   </div>
-                  <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
+                  <h4 className="royal-card-title-box text-xs sm:text-sm font-royal-heading font-bold text-[#54351F]">
                     {mon.name}
                   </h4>
-                  <p className="text-xs text-[#292521] mt-1 line-clamp-2">{mon.historical_significance}</p>
+                  <p className="text-xs text-[#54351F]">{mon.historical_significance}</p>
                 </div>
               </div>
             ))}
@@ -1516,7 +1575,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 >
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-bold text-white uppercase bg-[#762D35] px-2.5 py-0.5 rounded border border-[#A87924]">
+                      <span className="royal-index-box text-[10px] font-bold text-white uppercase bg-[#762D35] px-2.5 py-0.5 rounded border border-[#A87924]">
                         #{i + 1} • {src.source_type}
                       </span>
                       <h4 className="font-bold text-[#54351F] text-xs sm:text-sm">{src.title}</h4>
@@ -1547,7 +1606,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <span>{ui.relatedHeading}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {relatedArticles.map(rel => {
+                {relatedArticles.map((rel, idx) => {
                   const { title: relTitle, summary: relSummary } = getArticleContent(rel);
                   return (
                     <div
@@ -1566,19 +1625,22 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                               target.src = fallbackBanner;
                             }
                           }}
-                          className="w-16 h-16 rounded-xl object-cover border border-[#E8BFC9] shrink-0"
+                          className="w-16 h-16 rounded-xl object-cover border border-[#A87924] shrink-0"
                         />
-                        <div className="min-w-0">
-                          <span className="text-[10px] font-bold text-[#54351F] uppercase block truncate">
-                            {getMetadataLabel('category', rel.category) || rel.category}
-                          </span>
-                          <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] line-clamp-2 mt-0.5">
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="royal-index-box">#{idx + 1}</span>
+                            <span className="text-[10px] font-bold text-[#54351F] uppercase break-words">
+                              {getMetadataLabel('category', rel.category) || rel.category}
+                            </span>
+                          </div>
+                          <h4 className="royal-card-title-box font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] break-words">
                             {relTitle}
                           </h4>
                         </div>
                       </div>
-                      <p className="text-[11px] text-[#54351F] line-clamp-2">{relSummary}</p>
-                      <div className="text-[11px] text-[#54351F] font-bold flex items-center gap-1">
+                      <p className="text-[11px] text-[#54351F] break-words">{relSummary}</p>
+                      <div className="no-print text-[11px] text-[#54351F] font-bold flex items-center gap-1">
                         <span>{ui.readArticleBtn}</span>
                         <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>
@@ -1704,11 +1766,21 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
+                onClick={handleDownloadPdf}
+                disabled={isDownloadingPdf}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold transition-all cursor-pointer disabled:opacity-60"
+                title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(displayTitle)})`}
+              >
+                <Download className="w-4 h-4 shrink-0" />
+                <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+              </button>
+              <button
+                type="button"
                 onClick={handlePrint}
                 className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] font-bold transition-all cursor-pointer"
               >
                 <Printer className="w-4 h-4 text-[#762D35]" />
-                <span>{ui.printBtn}</span>
+                <span>{pdfUi.printBtn}</span>
               </button>
               <button
                 type="button"

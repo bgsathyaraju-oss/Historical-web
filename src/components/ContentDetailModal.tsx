@@ -18,6 +18,7 @@ import {
 import { EvidenceCategory, VerificationStatus, LanguageCode } from '../types';
 import { EvidenceBadge } from './EvidenceBadge';
 import { useLanguage } from '../context/LanguageContext';
+import { copyTextCrossPlatform, triggerCrossPlatformShare } from '../utils/pdfExport';
 
 const MODAL_UI_LABELS: Record<
   LanguageCode,
@@ -277,11 +278,11 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
   const displayImageStyle = item.imageStyle || item.imageLayout || item.imageAspect || 'banner';
   const displayFullText = item.content || item.fullText;
 
-  const handleCopyLink = () => {
+  const handleCopyLink = async () => {
     const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
     let url =
       item.shareUrl ||
-      `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(item.id)}`;
+      `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(item.id)}&lang=${encodeURIComponent(language)}`;
     if (
       basePath &&
       url.startsWith(window.location.origin + '/') &&
@@ -289,10 +290,16 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
     ) {
       url = `${window.location.origin}${basePath}${url.slice(window.location.origin.length)}`;
     }
-    navigator.clipboard.writeText(url).then(() => {
+    const outcome = await triggerCrossPlatformShare({
+      title: item.title,
+      text: item.summary || item.subtitle || item.title,
+      url
+    });
+    if (outcome === 'fallback') {
+      await copyTextCrossPlatform(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    });
+    }
   };
 
   return (
@@ -393,7 +400,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
               </h3>
 
               {item.subtitle && (
-                <p className="royal-profile-title-box text-xs sm:text-sm text-[#54351F] font-semibold break-words">
+                <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold break-words">
                   {item.subtitle}
                 </p>
               )}
@@ -426,9 +433,9 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
                 className="w-full max-h-80 object-cover"
               />
               {item.imageCaption && (
-                <figcaption className="royal-profile-title-box p-3 bg-[#F4C78A] border-t border-[#E4B879] text-xs text-[#54351F] flex flex-wrap items-center justify-between gap-2 break-words">
-                  <span className="text-[#54351F] font-semibold">{ui.visualRecord}</span>
-                  <span className="text-[#6B5948] truncate max-w-md">{item.imageCaption}</span>
+                <figcaption className="royal-profile-title-box p-3 bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border-t border-[var(--profile-title-box-border)] text-xs flex flex-wrap items-center justify-between gap-2 break-words">
+                  <span className="text-[var(--profile-title-box-text)] font-semibold">{ui.visualRecord}</span>
+                  <span className="text-[var(--profile-title-box-text)] break-words">{item.imageCaption}</span>
                 </figcaption>
               )}
             </figure>

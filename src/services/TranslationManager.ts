@@ -99,6 +99,16 @@ export class TranslationManager {
     if (initialLang) {
       this.currentLanguage = initialLang;
     } else if (typeof window !== 'undefined') {
+      try {
+        const urlLang = new URLSearchParams(window.location.search).get('lang') as LanguageCode | null;
+        if (urlLang && SUPPORTED_LANGUAGES.some(l => l.code === urlLang)) {
+          this.currentLanguage = urlLang;
+          safeStorageSet('suryavamsha_lang', urlLang);
+          return;
+        }
+      } catch {
+        // Ignore URL parsing errors
+      }
       const saved = safeStorageGet('suryavamsha_lang') as LanguageCode | null;
       if (saved && SUPPORTED_LANGUAGES.some(l => l.code === saved)) {
         this.currentLanguage = saved;

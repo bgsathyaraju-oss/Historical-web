@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Users,
   Crown,
@@ -43,10 +43,13 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
+  setActiveArticleDocumentTitle,
   PDF_EXPORT_UI_LABELS,
   hasAppInventorBridge,
   isAndroidWebViewEnvironment,
   sendUrlToAppInventorBridge,
+  copyTextCrossPlatform,
+  triggerCrossPlatformShare,
   handleWhatsAppLinkClick,
   handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
@@ -868,14 +871,15 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         langParam !== language
       ) {
         setLanguage(langParam);
+        return;
       }
       const autoDownloadPdf = params.get('autodownloadpdf');
       const autoPrint = params.get('autoprint');
       const targetId = params.get('id') || params.get('figure') || params.get('article') || activeArticleId;
 
       if (autoDownloadPdf === '1' && targetId && !isAndroidWebViewEnvironment()) {
-        if (autoPrintTriggeredRef.current !== `pdf-${targetId}-${langParam || language}`) {
-          autoPrintTriggeredRef.current = `pdf-${targetId}-${langParam || language}`;
+        if (autoPrintTriggeredRef.current !== `pdf-${targetId}-${language}`) {
+          autoPrintTriggeredRef.current = `pdf-${targetId}-${language}`;
           const timer = window.setTimeout(() => {
             try {
               const cleanParams = new URLSearchParams(window.location.search);
@@ -886,8 +890,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             } catch {
               // Ignore
             }
-            const h1Text = document.querySelector('.print-article-container h1')?.textContent;
-            handleDownloadHeritagePdf(h1Text || document.title || 'Community_Heritage_Article');
+            const h1Text = document.querySelector('.print-article-container h1')?.textContent?.trim();
+            handleDownloadHeritagePdf(h1Text || '');
           }, 600);
           return () => window.clearTimeout(timer);
         }
@@ -896,8 +900,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       if (autoPrint === '1' && targetId) {
         if (isAndroidWebViewEnvironment()) {
           setIsPrintFallbackOpen(true);
-        } else if (autoPrintTriggeredRef.current !== `${targetId}-${langParam || language}`) {
-          autoPrintTriggeredRef.current = `${targetId}-${langParam || language}`;
+        } else if (autoPrintTriggeredRef.current !== `${targetId}-${language}`) {
+          autoPrintTriggeredRef.current = `${targetId}-${language}`;
           const timer = window.setTimeout(() => {
             try {
               const cleanParams = new URLSearchParams(window.location.search);
@@ -908,9 +912,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             } catch {
               // Ignore history replaceState errors
             }
-            if (typeof window.print === 'function') {
-              window.print();
-            }
+            const h1Text = document.querySelector('.print-article-container h1')?.textContent?.trim();
+            triggerArticlePrintWithTitle(h1Text || '');
           }, 550);
           return () => window.clearTimeout(timer);
         }
@@ -1023,6 +1026,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     isAndroidWebView?: boolean;
   } | null>(null);
   const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
+  const articleContainerRef = useRef<HTMLElement | null>(null);
 
   const handleDownloadHeritagePdf = async (articleTitle: string) => {
     if (isDownloadingPdf) return;
@@ -1035,7 +1039,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       const result = await downloadArticleAsPdf({
         articleTitle,
         language,
-        articleUrl: canonicalUrl
+        articleUrl: canonicalUrl,
+        containerElement: articleContainerRef.current
       });
       setPdfDownloadResult({
         filename: result.filename,
@@ -1074,7 +1079,11 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     window.addEventListener('blur', onBeforePrintOrBlur, { once: true });
 
     try {
-      triggerArticlePrintWithTitle(articleTitle || 'Community_Heritage_Article');
+      const h1Text =
+        typeof document !== 'undefined'
+          ? document.querySelector('.print-article-container h1')?.textContent?.trim()
+          : '';
+      triggerArticlePrintWithTitle(articleTitle || h1Text || '');
     } catch {
       setIsPrintFallbackOpen(true);
     }
@@ -1094,31 +1103,27 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const handleCopyHeritageLink = async (itemId: string) => {
-    const canonicalUrl = getCanonicalHeritageUrl(itemId);
-    await copyTextToClipboard(canonicalUrl);
+    const canonicalUrl = `${getCanonicalHeritageUrl(itemId)}&lang=${encodeURIComponent(language)}`;
+    await copyTextCrossPlatform(canonicalUrl);
     showTemporaryShareFeedback('link');
   };
 
   const handleCopyHeritageTitleAndLink = async (itemId: string, articleTitle: string) => {
-    const canonicalUrl = getCanonicalHeritageUrl(itemId);
+    const canonicalUrl = `${getCanonicalHeritageUrl(itemId)}&lang=${encodeURIComponent(language)}`;
     const combined = `${articleTitle} — ${canonicalUrl}`;
-    await copyTextToClipboard(combined);
+    await copyTextCrossPlatform(combined);
     showTemporaryShareFeedback('title_link');
   };
 
   const handleShareHeritageArticle = async (itemId: string, articleTitle: string, articleSummary: string) => {
-    const canonicalUrl = getCanonicalHeritageUrl(itemId);
-    setIsShareMenuOpen(prev => !prev);
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-      try {
-        await navigator.share({
-          title: articleTitle,
-          text: `${articleTitle} — ${articleSummary}`,
-          url: canonicalUrl
-        });
-      } catch {
-        // User cancelled native share sheet or browser restricted share in iframe
-      }
+    const canonicalUrl = `${getCanonicalHeritageUrl(itemId)}&lang=${encodeURIComponent(language)}`;
+    const outcome = await triggerCrossPlatformShare({
+      title: articleTitle,
+      text: `${articleTitle} — ${articleSummary}`,
+      url: canonicalUrl
+    });
+    if (outcome === 'fallback') {
+      setIsShareMenuOpen(prev => !prev);
     }
   };
 
@@ -3450,6 +3455,18 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     synonymSectionLabels
   ]);
 
+  // Synchronize document.title with the active Community Heritage article title
+  useEffect(() => {
+    if (fullArticleData?.title) {
+      setActiveArticleDocumentTitle(fullArticleData.title);
+    } else {
+      setActiveArticleDocumentTitle(null);
+    }
+    return () => {
+      setActiveArticleDocumentTitle(null);
+    };
+  }, [fullArticleData, language]);
+
   // ============================================================================
   // DEDICATED FULL ARTICLE DETAIL VIEW (Mobile-First, Non-Overlapping Reading View)
   // ============================================================================
@@ -3461,7 +3478,10 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     return (
       <div className="min-h-screen bg-[#07090e] text-stone-200 print-article-wrapper">
         {/* Full Structured Article Container — Natural Vertical Scrolling, No Sticky Overlays */}
-        <article className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-7 print-article-container">
+        <article
+          ref={articleContainerRef}
+          className="max-w-5xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-7 print-article-container"
+        >
           {/* Print-Only Website Identification Masthead */}
           <div className="print-only border-b-2 border-stone-800 pb-3 mb-4">
             <p className="text-xs font-bold uppercase tracking-wider">
@@ -3469,9 +3489,6 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             </p>
             <p className="text-[11px] font-semibold mt-0.5">
               Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
-            </p>
-            <p className="text-[10px] mt-0.5">
-              {articleDetailUi.canonicalUrlLabel}: {canonicalArticleUrl}
             </p>
           </div>
 
@@ -3789,7 +3806,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               </h1>
 
               {fullArticleData.subtitle && (
-                <p className="royal-profile-title-box text-sm sm:text-base text-[#54351F] font-semibold leading-relaxed break-words">
+                <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-sm sm:text-base font-semibold leading-relaxed break-words">
                   {fullArticleData.subtitle}
                 </p>
               )}
@@ -3816,7 +3833,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                   )}
                 </figure>
                 {fullArticleData.imageCaption && (
-                  <p className="royal-profile-title-box text-xs text-[#54351F] leading-relaxed break-words">
+                  <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs leading-relaxed break-words">
                     {fullArticleData.imageCaption}
                   </p>
                 )}
@@ -4217,7 +4234,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {fullArticleData.relatedCards.map(relCard => (
+                {fullArticleData.relatedCards.map((relCard, idx) => (
                   <div
                     key={relCard.id}
                     onClick={() => handleNavigateRelatedId(relCard.id)}
@@ -4236,26 +4253,27 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       alt={relCard.title}
                       loading="lazy"
                       onError={handleImgError}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#E8BFC9] shrink-0 bg-[#FFF9EF] group-hover:scale-105 transition-transform"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-[#A87924] shrink-0 bg-[#FFF9EF] group-hover:scale-105 transition-transform"
                     />
                     <div className="min-w-0 flex-1 space-y-1.5">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#FFF9EF] text-[#54351F] border border-[#E8BFC9] truncate max-w-full">
+                        <span className="royal-index-box">#{idx + 1}</span>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#FFF9EF] text-[#54351F] border border-[#E8BFC9] break-words">
                           {relCard.categoryBadge}
                         </span>
                         {relCard.eraOrRegion && (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#FFFCF5] text-[#54351F] border border-[#E8BFC9] truncate max-w-[180px]">
+                          <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#FFFCF5] text-[#54351F] border border-[#E8BFC9] break-words">
                             {relCard.eraOrRegion}
                           </span>
                         )}
                       </div>
-                      <h3 className="text-xs sm:text-sm font-bold text-[#54351F] transition-colors line-clamp-1 font-royal-heading">
+                      <h3 className="royal-card-title-box text-xs sm:text-sm font-bold text-[#54351F] transition-colors font-royal-heading break-words">
                         {relCard.title}
                       </h3>
-                      <p className="text-xs text-[#54351F] line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[#54351F] leading-relaxed break-words">
                         {relCard.summary}
                       </p>
-                      <div className="pt-0.5 flex items-center justify-end">
+                      <div className="no-print pt-0.5 flex items-center justify-end">
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#54351F] transition-colors">
                           <span>{articleDetailUi.readFullArticleBtn}</span>
                           <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -5163,68 +5181,6 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             );
           })}
 
-          {/* Structured Reference Table (Responsive on Android Mobile & Desktop) */}
-          <div className="bg-[#121624] border border-[#c99738]/40 rounded-2xl overflow-hidden shadow-xl">
-            <div className="p-4 sm:p-6 bg-gradient-to-r from-[#260713] to-[#121624] border-b border-stone-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h3 className="font-royal-heading font-bold text-lg sm:text-xl text-[#fcedc7]">
-                  {synonymSectionLabels.tableHeading}
-                </h3>
-                <p className="text-xs text-stone-400 mt-0.5">{synonymSectionLabels.tableSubheading}</p>
-              </div>
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 self-start sm:self-auto">
-                {filteredSynonyms.length} {step5Ui.designationsCountLabel}
-              </span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[680px]">
-                <thead>
-                  <tr className="bg-stone-900/90 border-b border-stone-800 text-[11px] uppercase tracking-wider text-[#d4af37]">
-                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colDesignation}</th>
-                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colCategory}</th>
-                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colGeography}</th>
-                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colEpistemic}</th>
-                    <th className="py-3.5 px-4 font-bold">{synonymSectionLabels.colSummary}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-800/80 text-xs">
-                  {filteredSynonyms.map(item => (
-                    <tr
-                      key={`row_${item.id}`}
-                      onClick={() => openSynonymModal(item)}
-                      className="hover:bg-stone-900/70 transition-colors cursor-pointer group"
-                    >
-                      <td className="py-3.5 px-4 align-top font-bold text-[#fae29c] group-hover:text-white whitespace-nowrap">
-                        <div>{item.title}</div>
-                        <div className="text-[11px] font-normal text-stone-400 mt-0.5">
-                          {Object.values(item.native_scripts).slice(0, 2).join(' • ')}
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4 align-top text-stone-300">
-                        <span className="inline-block px-2 py-0.5 rounded bg-stone-900 border border-stone-700 text-[11px] text-stone-200">
-                          {localizeSynonymGroup(item.designation_group)}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 align-top font-semibold text-stone-200">
-                        {localizeHeritagePhrase(translateText(item.geographical_association))}
-                      </td>
-                      <td className="py-3.5 px-4 align-top text-stone-300">
-                        <span className="text-[11px] text-[#d4af37] font-medium">
-                          {synonymSectionLabels.epistemicClasses[item.epistemic_classification] ||
-                            item.epistemic_classification}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 align-top text-stone-300 max-w-md leading-relaxed">
-                        {item.historical_role[language] || item.historical_role.en}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
           {/* ==================================================================== */}
           {/* STAGE 2: 74-NAME MASTER REFERENCE & SEARCH ALIAS CROSS-REFERENCE INDEX */}
           {/* ==================================================================== */}
@@ -5541,7 +5497,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         <h3 className="font-royal-heading font-bold text-xl sm:text-2xl text-[#fcedc7] group-hover:text-white transition-colors">
                           {titleText}
                         </h3>
-                        <p className="text-xs text-[#d4af37] font-semibold mt-1">
+                        <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs font-semibold mt-1.5 break-words">
                           {subText}
                         </p>
                       </div>
@@ -5679,7 +5635,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                         <h3 className="font-royal-heading font-bold text-lg text-[#fae29c] group-hover:text-white transition-colors">
                           {displayName}
                         </h3>
-                        <p className="text-[11px] text-[#d4af37] font-semibold leading-snug line-clamp-2">
+                        <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-[11px] font-semibold leading-snug mt-1.5 break-words">
                           {displayTitle}
                         </p>
                       </div>

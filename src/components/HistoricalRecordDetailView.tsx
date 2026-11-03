@@ -46,10 +46,13 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
+  setActiveArticleDocumentTitle,
   PDF_EXPORT_UI_LABELS,
   hasAppInventorBridge,
   isAndroidWebViewEnvironment,
   sendUrlToAppInventorBridge,
+  copyTextCrossPlatform,
+  triggerCrossPlatformShare,
   handleWhatsAppLinkClick,
   handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
@@ -3124,6 +3127,18 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
     await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())));
   };
 
+  // Keep document.title synchronized with the active record title so browser Print / Save as PDF uses the article title
+  useEffect(() => {
+    if (activeRecord) {
+      setActiveArticleDocumentTitle(activeRecord.title, articleContainerRef.current);
+    } else {
+      setActiveArticleDocumentTitle(null);
+    }
+    return () => {
+      setActiveArticleDocumentTitle(null);
+    };
+  }, [activeRecord, language]);
+
   // Auto-print or Auto-download PDF if opened in Chrome with ?autoprint=1 or ?autodownloadpdf=1
   useEffect(() => {
     if (typeof window === 'undefined' || !activeRecord) return;
@@ -3132,6 +3147,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
       const langParam = params.get('lang') as LanguageCode | null;
       if (langParam && SUPPORTED_LANGUAGES.some(l => l.code === langParam) && langParam !== language) {
         setLanguage(langParam);
+        return;
       }
 
       if (params.get('autodownloadpdf') === '1' && !isAndroidWebViewEnvironment()) {
@@ -3166,6 +3182,15 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           waitForArticleImagesBeforePrint().then(() => {
             if (cancelled) return;
             try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autoprint');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            try {
               triggerArticlePrintWithTitle(activeRecord.title);
             } catch {
               // Ignore
@@ -3180,7 +3205,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
     } catch {
       // Ignore
     }
-  }, [activeRecord]);
+  }, [activeRecord, language, setLanguage]);
 
   const getCanonicalRecordUrl = (recId: string): string => {
     if (typeof window === 'undefined') return `${basePath}?id=${encodeURIComponent(recId)}`;
@@ -3253,30 +3278,26 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
   const handleCopyLink = async (rec: UnifiedHistoricalRecord, includeTitle = false) => {
     const url = getCanonicalRecordUrl(rec.id);
     const payload = includeTitle ? `${rec.title} — ${rec.subtitle}\n${url}` : url;
-    try {
-      await navigator.clipboard.writeText(payload);
+    const copiedOk = await copyTextCrossPlatform(payload);
+    if (copiedOk) {
       setShareFeedback(ui.copiedFeedback);
       setTimeout(() => setShareFeedback(null), 2600);
-    } catch {
+    } else {
       setShareFeedback(url);
     }
   };
 
   const handleShareRecord = async (rec: UnifiedHistoricalRecord) => {
     const shareUrl = getCanonicalRecordUrl(rec.id);
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-      try {
-        await navigator.share({
-          title: rec.title,
-          text: `${rec.title} (${rec.chronologicalDate})`,
-          url: shareUrl
-        });
-        return;
-      } catch (err) {
-        if ((err as Error)?.name === 'AbortError') return;
-      }
+    const outcome = await triggerCrossPlatformShare({
+      title: rec.title,
+      text: `${rec.title} (${rec.chronologicalDate})`,
+      url: shareUrl
+    });
+    if (outcome === 'fallback') {
+      setIsActionsMenuOpen(true);
+      setIsShareMenuOpen(prev => !prev);
     }
-    setIsShareMenuOpen(prev => !prev);
   };
 
   // ============================================================================
@@ -3630,7 +3651,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               <h1 className="font-royal-heading font-extrabold text-xl sm:text-3xl lg:text-4xl text-[#54351F] leading-snug break-words">
                 {activeRecord.title}
               </h1>
-              <p className="text-xs sm:text-base text-[#76501F] font-semibold leading-relaxed break-words">
+              <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-base font-semibold leading-relaxed break-words">
                 {activeRecord.subtitle}
               </p>
             </div>
@@ -3651,9 +3672,9 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   {activeRecord.eraLabel}
                 </span>
               </div>
-              <figcaption className="p-3 sm:p-4 bg-[#FFF9EF] border-t border-[#D8C3A2] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs">
-                <span className="text-[#292521] font-medium break-words">{activeRecord.imageCaption}</span>
-                <span className="text-[#76501F] font-semibold break-words">{activeRecord.sourceAttribution}</span>
+              <figcaption className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] p-3 sm:p-4 border-t border-[var(--profile-title-box-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 text-xs break-words">
+                <span className="text-[var(--profile-title-box-text)] font-medium break-words">{activeRecord.imageCaption}</span>
+                <span className="text-[var(--profile-title-box-text)] font-semibold break-words">{activeRecord.sourceAttribution}</span>
               </figcaption>
             </figure>
           </header>
@@ -3809,7 +3830,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-              {relatedPersonalities.map(fig => (
+              {relatedPersonalities.map((fig, idx) => (
                 <div
                   key={fig.id}
                   onClick={() => {
@@ -3817,23 +3838,26 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       onNavigate(`/kings-queens?figure=${encodeURIComponent(fig.id)}`);
                     }
                   }}
-                  className="print-avoid-break p-3 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-center gap-3 group"
+                  className="royal-related-link-btn print-avoid-break p-3 rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer flex items-start gap-3 group"
                 >
                   <img
                     src={fig.image_url || '/assets/gallery/jagannath_puri.svg'}
                     alt={fig.name}
                     loading="lazy"
                     onError={handleImgError}
-                    className="w-12 h-12 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0]"
+                    className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#A87924] bg-[#FFF9EF]"
                   />
-                  <div className="min-w-0 flex-1">
-                    <span className="text-[10px] font-bold text-[#76501F] uppercase tracking-wider block truncate">
-                      {fig.dynasty_name}
-                    </span>
-                    <h4 className="font-royal-heading font-bold text-xs text-[#54351F] group-hover:text-[#762D35] truncate">
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="royal-index-box">#{idx + 1}</span>
+                      <span className="text-[10px] font-bold text-[#54351F] uppercase tracking-wider break-words">
+                        {fig.dynasty_name}
+                      </span>
+                    </div>
+                    <h4 className="royal-card-title-box font-royal-heading font-bold text-xs text-[#54351F] break-words">
                       {fig.name}
                     </h4>
-                    <span className="text-[10px] text-[#6B5948] block truncate">{fig.reign_period}</span>
+                    <p className="text-[10px] text-[#54351F] break-words">{fig.reign_period}</p>
                   </div>
                 </div>
               ))}
@@ -3974,27 +3998,30 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {relatedCards.map(rel => (
+                  {relatedCards.map((rel, idx) => (
                     <div
                       key={rel.id}
                       onClick={() => openRecordDetail(rel.id, true)}
-                      className="print-avoid-break p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
+                      className="royal-related-link-btn print-avoid-break p-3.5 rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                     >
                       <img
                         src={rel.imageUrl}
                         alt={rel.title}
                         loading="lazy"
                         onError={handleImgError}
-                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0] group-hover:scale-105 transition-transform"
+                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#A87924] bg-[#FFF9EF] group-hover:scale-105 transition-transform"
                       />
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <span className="inline-block text-[10px] font-bold text-[#76501F] uppercase tracking-wider">
-                          {rel.chronologicalDate}
-                        </span>
-                        <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35] line-clamp-2 leading-snug">
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="royal-index-box">#{idx + 1}</span>
+                          <span className="inline-block text-[10px] font-bold text-[#54351F] uppercase tracking-wider break-words">
+                            {rel.chronologicalDate}
+                          </span>
+                        </div>
+                        <h4 className="royal-card-title-box font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] leading-snug break-words">
                           {rel.title}
                         </h4>
-                        <p className="text-[11px] text-[#6B5948] line-clamp-2 leading-snug">
+                        <p className="text-[11px] text-[#54351F] leading-snug break-words">
                           {rel.summary}
                         </p>
                       </div>
@@ -4013,7 +4040,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {relatedMonographs.map(mono => (
+                  {relatedMonographs.map((mono, idx) => (
                     <div
                       key={mono.id}
                       onClick={() => {
@@ -4021,23 +4048,26 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                           onNavigate(`/documentary?article=${encodeURIComponent(mono.slug || mono.id)}`);
                         }
                       }}
-                      className="print-avoid-break p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
+                      className="royal-related-link-btn print-avoid-break p-3.5 rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                     >
                       <img
                         src={mono.featured_image || '/assets/gallery/konark_wheel.svg'}
                         alt={mono.original_title}
                         loading="lazy"
                         onError={handleImgError}
-                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0] group-hover:scale-105 transition-transform"
+                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-[#A87924] bg-[#FFF9EF] group-hover:scale-105 transition-transform"
                       />
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <span className="inline-block text-[10px] font-bold text-[#76501F] uppercase tracking-wider line-clamp-1">
-                          {localizeMonographCategory(mono.category || '') || recLoc.historicalMonographBadge}
-                        </span>
-                        <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35] line-clamp-2 leading-snug">
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="royal-index-box">#{idx + 1}</span>
+                          <span className="inline-block text-[10px] font-bold text-[#54351F] uppercase tracking-wider break-words">
+                            {localizeMonographCategory(mono.category || '') || recLoc.historicalMonographBadge}
+                          </span>
+                        </div>
+                        <h4 className="royal-card-title-box font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] leading-snug break-words">
                           {mono.original_title}
                         </h4>
-                        <p className="text-[11px] text-[#6B5948] line-clamp-2 leading-snug">
+                        <p className="text-[11px] text-[#54351F] leading-snug break-words">
                           {mono.summary}
                         </p>
                       </div>
@@ -4056,7 +4086,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       <Users className="w-4 h-4 text-[#A87924] shrink-0" />
                       <span>{ref74Ui.sectionTitle}</span>
                     </h3>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#762D35] text-white border border-[#A87924]">
+                    <span className="royal-index-box px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#762D35] text-white border border-[#A87924]">
                       {activeRecord.related74References.length} / {MASTER_70_REFERENCE_REGISTRY.length}
                     </span>
                   </div>
@@ -4105,7 +4135,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         className="print-avoid-break p-3.5 rounded-xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer space-y-2 group"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-1.5">
-                          <span className="px-2 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-bold border border-[#A87924]">
+                          <span className="royal-index-box px-2 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-bold border border-[#A87924]">
                             #{refEntry.order} / 74
                           </span>
                           <span
@@ -4124,15 +4154,15 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         </div>
 
                         <div>
-                          <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35]">
+                          <h4 className="royal-card-title-box font-royal-heading font-bold text-xs sm:text-sm text-[#54351F]">
                             {localizedTerm}
                           </h4>
-                          <span className="text-[10px] font-semibold text-[#76501F] block mt-0.5">
+                          <span className="text-[10px] font-semibold text-[#76501F] block mt-1">
                             {classBadgeText} • {groupBadgeText}
                           </span>
                         </div>
 
-                        <p className="text-[11px] text-[#292521] leading-relaxed line-clamp-3">
+                        <p className="text-[11px] text-[#292521] leading-relaxed break-words">
                           {localizedContext}
                         </p>
                       </div>
@@ -4158,23 +4188,26 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                         onNavigate(k.route);
                       }
                     }}
-                    className="print-avoid-break p-3.5 rounded-2xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
+                    className="royal-related-link-btn print-avoid-break p-3.5 rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                   >
                     <img
                       src={k.imageUrl}
                       alt={k.title}
                       loading="lazy"
                       onError={handleImgError}
-                      className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#D8C3A2] bg-[#EFE3D0] group-hover:scale-105 transition-transform"
+                      className="w-14 h-14 rounded-xl object-cover shrink-0 border border-[#A87924] bg-[#FFF9EF] group-hover:scale-105 transition-transform"
                     />
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <span className="inline-block text-[10px] font-bold text-[#76501F] uppercase tracking-wider">
-                        {k.badge}
-                      </span>
-                      <h4 className="font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] group-hover:text-[#762D35] line-clamp-2 leading-snug">
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="royal-index-box">#{idx + 1}</span>
+                        <span className="inline-block text-[10px] font-bold text-[#54351F] uppercase tracking-wider break-words">
+                          {k.badge}
+                        </span>
+                      </div>
+                      <h4 className="royal-card-title-box font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] leading-snug break-words">
                         {k.title}
                       </h4>
-                      <p className="text-[11px] text-[#6B5948] line-clamp-1">
+                      <p className="text-[11px] text-[#54351F] break-words">
                         {k.period}
                       </p>
                     </div>
@@ -4306,11 +4339,22 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
+                  onClick={() => handleDownloadPdfRecord(activeRecord)}
+                  disabled={isDownloadingPdf}
+                  title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(activeRecord.title)})`}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer disabled:opacity-60"
+                >
+                  <Download className="w-4 h-4 shrink-0" />
+                  <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => handlePrintRecord(activeRecord)}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#E9D9BE] hover:bg-[#dec9a6] text-[#54351F] border border-[#D8C3A2] hover:border-[#A87924] transition-all cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-[#76501F]" />
-                  <span>{ui.printButton}</span>
+                  <span>{pdfUi.printBtn}</span>
                 </button>
 
                 <button
@@ -4610,7 +4654,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       <h3 className="font-royal-heading font-bold text-lg text-[#54351F] group-hover:text-[#762D35] transition-colors leading-snug">
                         {rec.title}
                       </h3>
-                      <p className="text-xs text-[#76501F] font-semibold mt-1 line-clamp-1">
+                      <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs font-semibold mt-1.5 break-words">
                         {rec.rulerOrAuthority}
                       </p>
                     </div>

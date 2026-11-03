@@ -8,7 +8,7 @@
 
 @media screen {
   /* ========================================================================
-     1. GLOBAL PAGE, ROOT & RESPONSIVE VIEWPORT FOUNDATION
+     1. GLOBAL PAGE, ROOT & RESPONSIVE VIEWPORT FOUNDATION (SCREEN ONLY)
      ======================================================================== */
   html,
   body,
@@ -39,8 +39,190 @@
     z-index: 20 !important;
   }
 
+  .theme-menu {
+    background-color: var(--menu-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .theme-input {
+    background-color: var(--input-bg) !important;
+    color: var(--primary-text) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+
+  .theme-card {
+    box-shadow: 0 4px 16px var(--shadow-color) !important;
+  }
+
+  .theme-hashtag:hover {
+    background-color: var(--secondary-button) !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border-color: var(--accent-gold) !important;
+  }
+
+  article,
+  .print-article-container,
+  article.print-article-container {
+    box-shadow: 0 8px 28px var(--shadow-color) !important;
+  }
+
+  /* Modal backdrop overlays (.fixed.inset-0) keep subtle warm translucent backdrop on screen */
+  div.fixed.inset-0[class*="bg-black"],
+  div.fixed.inset-0[class*="bg-[#0"] {
+    background-color: rgba(41, 37, 33, 0.55) !important;
+    pointer-events: auto;
+  }
+
   /* ========================================================================
-     2. REUSABLE SEMANTIC THEME CLASSES
+     5. NAVIGATION, MENUS, DROPDOWNS & FLOATING DOCK (SCREEN ONLY)
+     ======================================================================== */
+  header.sticky,
+  nav[aria-label*="Main"],
+  aside[aria-label*="Navigation"] {
+    background-color: var(--menu-bg) !important;
+    background-image: none !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  tbody tr:hover {
+    background-color: var(--menu-bg) !important;
+  }
+
+  /* ========================================================================
+     7. INPUTS, SEARCH BARS, SELECTORS & TEXTAREAS (SCREEN ONLY)
+     ======================================================================== */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    background-color: var(--input-bg) !important;
+    color: var(--primary-text) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--secondary-text) !important;
+    opacity: 0.85 !important;
+  }
+
+  select option {
+    background-color: var(--card-bg) !important;
+    color: var(--primary-text) !important;
+  }
+
+  /* Prevent group-hover:text-white or hover:text-white from turning card headings invisible on hover */
+  .group:hover .group-hover\:text-white,
+  .group:hover [class*="group-hover:text-[#fcedc7]"],
+  .group:hover [class*="group-hover:text-[#fae29c]"],
+  .group:hover [class*="group-hover:text-[#e8c872]"],
+  .group:hover [class*="group-hover:text-[#d4af37]"],
+  .group:hover [class*="group-hover:text-amber-"] {
+    color: var(--primary-button) !important;
+    -webkit-text-fill-color: var(--primary-button) !important;
+  }
+
+  button[class*="bg-[#21020b]"]:hover,
+  button[class*="bg-[#0"]:hover,
+  button[class*="bg-[#1"]:hover,
+  button[class*="bg-stone-9"]:hover,
+  button[class*="bg-stone-8"]:hover,
+  button[class*="bg-slate-9"]:hover,
+  button[class*="bg-slate-8"]:hover,
+  a[class*="bg-[#0"]:hover,
+  a[class*="bg-[#1"]:hover,
+  a[class*="bg-stone-9"]:hover,
+  a[class*="bg-stone-8"]:hover {
+    background-color: var(--secondary-button) !important;
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+    border-color: var(--accent-gold) !important;
+  }
+
+  button[class*="bg-[#21020b]"]:hover *,
+  button[class*="bg-[#0"]:hover *,
+  button[class*="bg-[#1"]:hover *,
+  button[class*="bg-stone-9"]:hover *,
+  button[class*="bg-stone-8"]:hover *,
+  button[class*="bg-slate-9"]:hover *,
+  button[class*="bg-slate-8"]:hover *,
+  a[class*="bg-[#0"]:hover *,
+  a[class*="bg-[#1"]:hover *,
+  a[class*="bg-stone-9"]:hover *,
+  a[class*="bg-stone-8"]:hover * {
+    color: var(--heading-text) !important;
+    -webkit-text-fill-color: var(--heading-text) !important;
+  }
+
+  /* Hover state for buttons that explicitly transition to #762D35 on hover */
+  button[class~="hover:bg-[#762D35]"]:hover,
+  a[class~="hover:bg-[#762D35]"]:hover {
+    background-color: var(--primary-button) !important;
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+  }
+
+  button[class~="hover:bg-[#762D35]"]:hover *,
+  a[class~="hover:bg-[#762D35]"]:hover * {
+    color: var(--primary-button-text) !important;
+    -webkit-text-fill-color: var(--primary-button-text) !important;
+  }
+
+  .royal-related-link-btn,
+  button.royal-related-link-btn,
+  a.royal-related-link-btn,
+  div[role="button"].royal-related-link-btn,
+  div.royal-related-link-btn,
+  section div.royal-related-link-btn,
+  article div.royal-related-link-btn {
+    box-shadow: 0 2px 6px rgba(84, 53, 31, 0.08) !important;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+  }
+
+  .royal-related-link-btn:hover,
+  button.royal-related-link-btn:hover,
+  a.royal-related-link-btn:hover,
+  div[role="button"].royal-related-link-btn:hover,
+  div.royal-related-link-btn:hover,
+  section div.royal-related-link-btn:hover,
+  article div.royal-related-link-btn:hover {
+    background-color: var(--related-link-hover-bg, #F1C8D2) !important;
+    background-image: none !important;
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+    border-color: var(--related-link-border, #E8BFC9) !important;
+    box-shadow: 0 4px 10px rgba(84, 53, 31, 0.14) !important;
+  }
+
+  .royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *),
+  button.royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *),
+  a.royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *),
+  div[role="button"].royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *),
+  div.royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *),
+  section div.royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *),
+  article div.royal-related-link-btn:hover *:not(.royal-index-box):not(.royal-index-box *) {
+    color: var(--related-link-text, #54351F) !important;
+    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
+  }
+
+  .article-profile-title,
+  .profile-title-box,
+  .royal-profile-title-box,
+  div.royal-profile-title-box,
+  p.royal-profile-title-box,
+  figcaption.royal-profile-title-box,
+  section .royal-profile-title-box,
+  header .royal-profile-title-box,
+  article .royal-profile-title-box {
+    box-shadow: 0 2px 8px rgba(84, 53, 31, 0.10) !important;
+  }
+}
+
+@media screen, print {
+  /* ========================================================================
+     2. REUSABLE SEMANTIC THEME CLASSES (SCREEN & PRINT)
      ======================================================================== */
   .theme-page {
     background-color: var(--page-bg) !important;
@@ -61,19 +243,6 @@
 
   .theme-card {
     background-color: var(--card-bg) !important;
-    color: var(--primary-text) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 4px 16px var(--shadow-color) !important;
-  }
-
-  .theme-menu {
-    background-color: var(--menu-bg) !important;
-    color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  .theme-input {
-    background-color: var(--input-bg) !important;
     color: var(--primary-text) !important;
     border: 1px solid var(--border-color) !important;
   }
@@ -105,15 +274,8 @@
     border: 1px solid var(--border-color) !important;
   }
 
-  .theme-hashtag:hover {
-    background-color: var(--secondary-button) !important;
-    color: var(--heading-text) !important;
-    -webkit-text-fill-color: var(--heading-text) !important;
-    border-color: var(--accent-gold) !important;
-  }
-
   /* ========================================================================
-     3. ARTICLE & READING CONTAINERS
+     3. ARTICLE & READING CONTAINERS (SCREEN & PRINT)
      ======================================================================== */
   article,
   .print-article-container,
@@ -122,7 +284,6 @@
     background-image: none !important;
     color: var(--primary-text) !important;
     border-color: var(--border-color) !important;
-    box-shadow: 0 8px 28px var(--shadow-color) !important;
   }
 
   article header,
@@ -141,7 +302,7 @@
   /* ========================================================================
      4. COMPLETE DARK / NAVY / MAROON SURFACE CONVERSION TO LIGHT ALMOND
      Covers all sections, cards, figures, lists, definition lists, modals,
-     and badges across all 38 pages and detail views.
+     and badges across all 38 pages and detail views in both screen and print.
      ======================================================================== */
   main > div[class*="bg-[#0"],
   main > div[class*="bg-[#1"],
@@ -173,7 +334,9 @@
   div:not(.inset-0)[class*="bg-[#38000c]"],
   div:not(.inset-0)[class*="bg-[#420813]"],
   div:not(.inset-0)[class*="bg-stone-9"],
+  div:not(.inset-0)[class*="bg-stone-8"],
   div:not(.inset-0)[class*="bg-slate-9"],
+  div:not(.inset-0)[class*="bg-slate-8"],
   div:not(.inset-0)[class*="bg-black/"],
   div:not(.inset-0)[class*="from-[#0"],
   div:not(.inset-0)[class*="from-[#1"],
@@ -194,6 +357,13 @@
   dl[class*="bg-[#0"],
   dl[class*="bg-[#1"],
   dl[class*="bg-stone-9"],
+  dl[class*="bg-stone-8"],
+  ul:not(.archival-reference-index-box)[class*="bg-[#0"],
+  ul:not(.archival-reference-index-box)[class*="bg-[#1"],
+  ul:not(.archival-reference-index-box)[class*="bg-stone-9"],
+  ol:not(.archival-reference-index-box)[class*="bg-[#0"],
+  ol:not(.archival-reference-index-box)[class*="bg-[#1"],
+  ol:not(.archival-reference-index-box)[class*="bg-stone-9"],
   li[class*="bg-[#0"],
   li[class*="bg-[#1"],
   li[class*="bg-[#2"],
@@ -216,6 +386,44 @@
     border-color: var(--border-color) !important;
   }
 
+  /* Archival Reference Summary & Catalogue Index — Light Sky Blue Background (#D4EEFC) & Deep Black Text (#000000) */
+  .archival-reference-index-box,
+  .archival-reference-index-title,
+  .archival-reference-index-list,
+  h3.archival-reference-index-box,
+  ul.archival-reference-index-box {
+    background: #D4EEFC !important;
+    background-color: #D4EEFC !important;
+    background-image: none !important;
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    border: 1px solid #7CC4EA !important;
+    border-color: #7CC4EA !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .archival-reference-index-box *,
+  .archival-reference-index-title *,
+  .archival-reference-index-list * {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+  }
+
   /* Nested cards inside cards use warm ivory surface (#FFF9EF) for visual depth */
   section[class*="bg-[#0"] div:not(.inset-0)[class*="bg-[#0"],
   section[class*="bg-[#0"] div:not(.inset-0)[class*="bg-[#1"],
@@ -225,7 +433,8 @@
   article div:not(.inset-0)[class*="bg-[#1"],
   article div:not(.inset-0)[class*="bg-[#21020b]"],
   article div:not(.inset-0)[class*="bg-[#2a030d]"],
-  article div:not(.inset-0)[class*="bg-stone-9"] {
+  article div:not(.inset-0)[class*="bg-stone-9"],
+  article div:not(.inset-0)[class*="bg-stone-8"] {
     background-color: var(--surface-bg) !important;
     background-image: none !important;
     color: var(--primary-text) !important;
@@ -237,34 +446,30 @@
   div.inset-0[class*="from-[#1"],
   div.inset-0[class*="from-[#2"],
   div.inset-0[class*="from-[#580014]"],
+  div.inset-0[class*="from-stone-9"],
   div.inset-0[class*="via-[#0"],
   div.inset-0[class*="via-[#1"],
+  div.inset-0[class*="via-stone-9"],
   div.inset-0[class*="to-[#0"],
   div.inset-0[class*="to-[#1"],
   div.inset-0[class*="bg-black/"],
   div.inset-0[class*="bg-[#0"],
-  div.inset-0[class*="bg-[#1"] {
+  div.inset-0[class*="bg-[#1"],
+  div.inset-0[class*="bg-stone-9"] {
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
     pointer-events: none;
   }
 
-  /* Modal backdrop overlays (.fixed.inset-0) keep subtle warm translucent backdrop */
-  div.fixed.inset-0[class*="bg-black"],
-  div.fixed.inset-0[class*="bg-[#0"] {
-    background-color: rgba(41, 37, 33, 0.55) !important;
-    pointer-events: auto;
-  }
-
   /* Corner badges and pills with dark backgrounds (e.g. bg-black/75, bg-[#0b0f19]/90, bg-[#21020b]) */
-  span[class*="bg-black/"],
-  span[class*="bg-[#0"],
-  span[class*="bg-[#1"],
-  span[class*="bg-[#21020b]"],
-  span[class*="bg-[#2a030d]"],
-  span[class*="bg-stone-9"],
-  span[class*="bg-stone-8"] {
+  span:not(.royal-index-box)[class*="bg-black/"],
+  span:not(.royal-index-box)[class*="bg-[#0"],
+  span:not(.royal-index-box)[class*="bg-[#1"],
+  span:not(.royal-index-box)[class*="bg-[#21020b]"],
+  span:not(.royal-index-box)[class*="bg-[#2a030d]"],
+  span:not(.royal-index-box)[class*="bg-stone-9"],
+  span:not(.royal-index-box)[class*="bg-stone-8"] {
     background-color: var(--surface-bg) !important;
     background-image: none !important;
     color: var(--heading-text) !important;
@@ -273,19 +478,7 @@
   }
 
   /* ========================================================================
-     5. NAVIGATION, MENUS, DROPDOWNS & FLOATING DOCK
-     ======================================================================== */
-  header.sticky,
-  nav[aria-label*="Main"],
-  aside[aria-label*="Navigation"] {
-    background-color: var(--menu-bg) !important;
-    background-image: none !important;
-    color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  /* ========================================================================
-     6. TABLES, DATA GRIDS & CHRONOLOGIES
+     6. TABLES, DATA GRIDS & CHRONOLOGIES (SCREEN & PRINT)
      ======================================================================== */
   table {
     background-color: var(--card-bg) !important;
@@ -315,37 +508,11 @@
     background-color: var(--surface-bg) !important;
   }
 
-  tbody tr:hover {
-    background-color: var(--menu-bg) !important;
-  }
-
   tbody td,
   tbody th {
     color: var(--primary-text) !important;
     border-color: var(--border-color) !important;
     word-break: break-word;
-  }
-
-  /* ========================================================================
-     7. INPUTS, SEARCH BARS, SELECTORS & TEXTAREAS
-     ======================================================================== */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  select,
-  textarea {
-    background-color: var(--input-bg) !important;
-    color: var(--primary-text) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--secondary-text) !important;
-    opacity: 0.85 !important;
-  }
-
-  select option {
-    background-color: var(--card-bg) !important;
-    color: var(--primary-text) !important;
   }
 
   /* ========================================================================
@@ -405,17 +572,6 @@
     color: var(--heading-text) !important;
     -webkit-text-fill-color: var(--heading-text) !important;
     background-image: none !important;
-  }
-
-  /* Prevent group-hover:text-white or hover:text-white from turning card headings invisible on hover */
-  .group:hover .group-hover\:text-white,
-  .group:hover [class*="group-hover:text-[#fcedc7]"],
-  .group:hover [class*="group-hover:text-[#fae29c]"],
-  .group:hover [class*="group-hover:text-[#e8c872]"],
-  .group:hover [class*="group-hover:text-[#d4af37]"],
-  .group:hover [class*="group-hover:text-amber-"] {
-    color: var(--primary-button) !important;
-    -webkit-text-fill-color: var(--primary-button) !important;
   }
 
   /* Secondary / muted text classes mapped to warm readable brown (#6B5948) */
@@ -515,7 +671,7 @@
 
   /* 9A. Hashtag, Keyword & Secondary Dark-Surface Buttons / Spans (Default Light Ivory var(--card-bg), Text var(--heading-text), Border var(--border-color)) */
   button[class*="bg-[#21020b]"],
-  span[class*="bg-[#21020b]"],
+  span:not(.royal-index-box)[class*="bg-[#21020b]"],
   button[class*="bg-[#0"],
   button[class*="bg-[#1"],
   button[class*="bg-stone-9"],
@@ -534,7 +690,7 @@
   }
 
   button[class*="bg-[#21020b]"] *,
-  span[class*="bg-[#21020b]"] *,
+  span:not(.royal-index-box)[class*="bg-[#21020b]"] *,
   button[class*="bg-[#0"] *,
   button[class*="bg-[#1"] *,
   button[class*="bg-stone-9"] *,
@@ -545,38 +701,6 @@
   a[class*="bg-[#1"] *,
   a[class*="bg-stone-9"] *,
   a[class*="bg-stone-8"] * {
-    color: var(--heading-text) !important;
-    -webkit-text-fill-color: var(--heading-text) !important;
-  }
-
-  button[class*="bg-[#21020b]"]:hover,
-  button[class*="bg-[#0"]:hover,
-  button[class*="bg-[#1"]:hover,
-  button[class*="bg-stone-9"]:hover,
-  button[class*="bg-stone-8"]:hover,
-  button[class*="bg-slate-9"]:hover,
-  button[class*="bg-slate-8"]:hover,
-  a[class*="bg-[#0"]:hover,
-  a[class*="bg-[#1"]:hover,
-  a[class*="bg-stone-9"]:hover,
-  a[class*="bg-stone-8"]:hover {
-    background-color: var(--secondary-button) !important;
-    color: var(--heading-text) !important;
-    -webkit-text-fill-color: var(--heading-text) !important;
-    border-color: var(--accent-gold) !important;
-  }
-
-  button[class*="bg-[#21020b]"]:hover *,
-  button[class*="bg-[#0"]:hover *,
-  button[class*="bg-[#1"]:hover *,
-  button[class*="bg-stone-9"]:hover *,
-  button[class*="bg-stone-8"]:hover *,
-  button[class*="bg-slate-9"]:hover *,
-  button[class*="bg-slate-8"]:hover *,
-  a[class*="bg-[#0"]:hover *,
-  a[class*="bg-[#1"]:hover *,
-  a[class*="bg-stone-9"]:hover *,
-  a[class*="bg-stone-8"]:hover * {
     color: var(--heading-text) !important;
     -webkit-text-fill-color: var(--heading-text) !important;
   }
@@ -606,6 +730,7 @@
   span[class~="bg-[#762D35]"],
   span[class~="bg-[#580014]"],
   span[class~="bg-[#780016]"],
+  div[class~="bg-[#762D35]"],
   .theme-btn-primary,
   .btn-primary-almond,
   .royal-gold-gradient {
@@ -614,6 +739,20 @@
     color: var(--primary-button-text) !important;
     -webkit-text-fill-color: var(--primary-button-text) !important;
     border-color: var(--accent-gold) !important;
+  }
+
+  div[class~="bg-[#A87924]"] {
+    background-color: var(--accent-gold) !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+  }
+
+  div[class~="bg-[#54351F]"] {
+    background-color: var(--heading-text) !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
   }
 
   button[class~="bg-[#762D35]"] *,
@@ -639,23 +778,12 @@
   span[class~="bg-[#762D35]"] *,
   span[class~="bg-[#580014]"] *,
   span[class~="bg-[#780016]"] *,
+  div[class~="bg-[#762D35]"] *,
+  div[class~="bg-[#A87924]"] *,
+  div[class~="bg-[#54351F]"] *,
   .theme-btn-primary *,
   .btn-primary-almond *,
   .royal-gold-gradient * {
-    color: var(--primary-button-text) !important;
-    -webkit-text-fill-color: var(--primary-button-text) !important;
-  }
-
-  /* Hover state for buttons that explicitly transition to #762D35 on hover */
-  button[class~="hover:bg-[#762D35]"]:hover,
-  a[class~="hover:bg-[#762D35]"]:hover {
-    background-color: var(--primary-button) !important;
-    color: var(--primary-button-text) !important;
-    -webkit-text-fill-color: var(--primary-button-text) !important;
-  }
-
-  button[class~="hover:bg-[#762D35]"]:hover *,
-  a[class~="hover:bg-[#762D35]"]:hover * {
     color: var(--primary-button-text) !important;
     -webkit-text-fill-color: var(--primary-button-text) !important;
   }
@@ -678,10 +806,10 @@
   }
 
   /* ========================================================================
-     10. ROYAL UI SPECIFIC ELEMENTS: RELATED LINKS BUTTONS & ARTICLE PROFILE TITLE BOXES
+     10. ROYAL UI SPECIFIC ELEMENTS: RELATED LINKS BUTTONS, TITLE BOXES & INDEX BOXES
      ======================================================================== */
 
-  /* 10A. Related Links Buttons (Light Pink #F8DDE3, Text #54351F, Border 1px solid #E8BFC9, Radius 18px, Padding 10px 16px, Hover #F1C8D2) */
+  /* 10A. Related Links Buttons & Related Article Cards (Light Pink #F8DDE3, Text #54351F, Border 1px solid #E8BFC9, Radius 18px, Padding 10px 16px) */
   .royal-related-link-btn,
   button.royal-related-link-btn,
   a.royal-related-link-btn,
@@ -696,48 +824,22 @@
     border: 1px solid var(--related-link-border, #E8BFC9) !important;
     border-radius: 18px !important;
     padding: 10px 16px !important;
-    box-shadow: 0 2px 6px rgba(84, 53, 31, 0.08) !important;
-    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
   }
 
-  .royal-related-link-btn *,
-  button.royal-related-link-btn *,
-  a.royal-related-link-btn *,
-  div[role="button"].royal-related-link-btn *,
-  div.royal-related-link-btn *,
-  section div.royal-related-link-btn *,
-  article div.royal-related-link-btn * {
+  .royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *),
+  button.royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *),
+  a.royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *),
+  div[role="button"].royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *),
+  div.royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *),
+  section div.royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *),
+  article div.royal-related-link-btn *:not(.royal-index-box):not(.royal-index-box *) {
     color: var(--related-link-text, #54351F) !important;
     -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
   }
 
-  .royal-related-link-btn:hover,
-  button.royal-related-link-btn:hover,
-  a.royal-related-link-btn:hover,
-  div[role="button"].royal-related-link-btn:hover,
-  div.royal-related-link-btn:hover,
-  section div.royal-related-link-btn:hover,
-  article div.royal-related-link-btn:hover {
-    background-color: var(--related-link-hover-bg, #F1C8D2) !important;
-    background-image: none !important;
-    color: var(--related-link-text, #54351F) !important;
-    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
-    border-color: var(--related-link-border, #E8BFC9) !important;
-    box-shadow: 0 4px 10px rgba(84, 53, 31, 0.14) !important;
-  }
-
-  .royal-related-link-btn:hover *,
-  button.royal-related-link-btn:hover *,
-  a.royal-related-link-btn:hover *,
-  div[role="button"].royal-related-link-btn:hover *,
-  div.royal-related-link-btn:hover *,
-  section div.royal-related-link-btn:hover *,
-  article div.royal-related-link-btn:hover * {
-    color: var(--related-link-text, #54351F) !important;
-    -webkit-text-fill-color: var(--related-link-text, #54351F) !important;
-  }
-
-  /* 10B. Article Profile Title Boxes (Light Orange #F4C78A, Text #54351F, Border 1px solid #E4B879, Radius 14px, Padding 10px 16px, Font Weight 600) */
+  /* 10B. Article Profile Title Boxes & Related Card Title Boxes (Light Orange #F4C78A, Text #54351F, Border 1px solid #E4B879) */
+  .article-profile-title,
+  .profile-title-box,
   .royal-profile-title-box,
   div.royal-profile-title-box,
   p.royal-profile-title-box,
@@ -745,6 +847,7 @@
   section .royal-profile-title-box,
   header .royal-profile-title-box,
   article .royal-profile-title-box {
+    background: var(--profile-title-box-bg, #F4C78A) !important;
     background-color: var(--profile-title-box-bg, #F4C78A) !important;
     background-image: none !important;
     color: var(--profile-title-box-text, #54351F) !important;
@@ -753,24 +856,95 @@
     border-radius: 14px !important;
     padding: 10px 16px !important;
     font-weight: 600 !important;
-    box-shadow: 0 2px 8px rgba(84, 53, 31, 0.10) !important;
-    overflow-wrap: break-word !important;
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    overflow-wrap: anywhere !important;
     word-break: break-word !important;
     white-space: normal !important;
     line-height: 1.5 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
+  .royal-card-title-box,
+  h3.royal-card-title-box,
+  h4.royal-card-title-box,
+  div.royal-card-title-box,
+  .royal-related-link-btn .royal-card-title-box {
+    background: var(--profile-title-box-bg, #F4C78A) !important;
+    background-color: var(--profile-title-box-bg, #F4C78A) !important;
+    background-image: none !important;
+    color: var(--profile-title-box-text, #54351F) !important;
+    -webkit-text-fill-color: var(--profile-title-box-text, #54351F) !important;
+    border: 1px solid var(--profile-title-box-border, #E4B879) !important;
+    border-radius: 10px !important;
+    padding: 6px 10px !important;
+    font-weight: 700 !important;
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .article-profile-title *,
+  .profile-title-box *,
   .royal-profile-title-box *,
   div.royal-profile-title-box *,
   p.royal-profile-title-box *,
   figcaption.royal-profile-title-box *,
   section .royal-profile-title-box *,
   header .royal-profile-title-box *,
-  article .royal-profile-title-box * {
+  article .royal-profile-title-box *,
+  .royal-card-title-box *,
+  .royal-related-link-btn .royal-card-title-box * {
     color: var(--profile-title-box-text, #54351F) !important;
     -webkit-text-fill-color: var(--profile-title-box-text, #54351F) !important;
     font-weight: 600 !important;
-    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
+    max-height: none !important;
+    max-width: none !important;
+    overflow-wrap: anywhere !important;
     word-break: break-word !important;
+  }
+
+  /* 10C. Royal Index Box (#762D35 Royal Maroon bg, #FFFFFF text, #A87924 Gold border, never truncated) */
+  .royal-index-box,
+  span.royal-index-box,
+  div.royal-index-box,
+  .royal-related-link-btn .royal-index-box {
+    background-color: var(--primary-button, #762D35) !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: 1px solid var(--accent-gold, #A87924) !important;
+    border-radius: 6px !important;
+    padding: 2px 7px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    flex-shrink: 0 !important;
   }
 }

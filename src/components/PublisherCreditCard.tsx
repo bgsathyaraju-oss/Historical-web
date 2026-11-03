@@ -200,7 +200,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
           <div className="text-[10.5px] text-[var(--primary-text)] print:text-stone-800 font-medium">
             {professionalTitles.join(' • ')}
           </div>
-          <div className="text-[10px] text-[var(--link-color)] print:text-stone-700">
+          <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-[10px] font-semibold mt-1 break-words">
             {organizationName}
           </div>
         </div>
@@ -275,7 +275,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               ))}
             </div>
 
-            <div className="royal-profile-title-box text-xs sm:text-sm font-semibold text-[#54351F] print:text-stone-900 mt-1 break-words">
+            <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold mt-1 break-words">
               {organizationName}
             </div>
 
@@ -367,7 +367,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               ))}
             </div>
 
-            <div className="royal-profile-title-box text-xs sm:text-sm font-semibold text-[#54351F] print:text-stone-900 mt-1 break-words">
+            <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold mt-1 break-words">
               {organizationName}
             </div>
 

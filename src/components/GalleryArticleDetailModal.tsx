@@ -379,13 +379,13 @@ export const GalleryArticleDetailModal: React.FC<GalleryArticleDetailModalProps>
             </h1>
 
             {currentArticle.linkedArticleTitle && (
-              <div className="text-xs text-[#6B5948] flex flex-wrap items-center gap-x-4 gap-y-1">
-                <span className="inline-flex items-center gap-1.5 text-[#76501F] font-semibold">
-                  <BookOpen className="w-3.5 h-3.5 text-[#A87924]" />
+              <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs flex flex-wrap items-center gap-x-4 gap-y-1 break-words">
+                <span className="inline-flex items-center gap-1.5 text-[var(--profile-title-box-text)] font-semibold break-words">
+                  <BookOpen className="w-3.5 h-3.5 text-[var(--profile-title-box-text)] shrink-0" />
                   {currentArticle.linkedArticleTitle}
                 </span>
                 {currentArticle.linkedArticleAuthor && (
-                  <span>• {currentArticle.linkedArticleAuthor}</span>
+                  <span className="text-[var(--profile-title-box-text)] break-words">• {currentArticle.linkedArticleAuthor}</span>
                 )}
               </div>
             )}
@@ -401,9 +401,9 @@ export const GalleryArticleDetailModal: React.FC<GalleryArticleDetailModalProps>
                   className="w-full max-h-[440px] object-contain"
                 />
               </div>
-              <div className="px-4 py-3 bg-[#FFF9EF] border-t border-[#D8C3A2] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                <span className="text-[#292521] font-medium">{activeSlide.caption}</span>
-                <span className="text-[#6B5948] shrink-0">
+              <div className="royal-profile-title-box px-4 py-3 bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border-t border-[var(--profile-title-box-border)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs break-words">
+                <span className="text-[var(--profile-title-box-text)] font-medium break-words">{activeSlide.caption}</span>
+                <span className="text-[var(--profile-title-box-text)] font-semibold break-words">
                   {ui.archivalSourceLabel}: {activeSlide.source}
                 </span>
               </div>

@@ -62,10 +62,9 @@ app.use(authMiddleware);
 // Serve static uploaded documents and photos securely
 app.use('/uploads', express.static(path.resolve(__dirname, 'data', 'uploads')));
 
-// Security Headers
+// Security Headers (Note: do not set X-Frame-Options: SAMEORIGIN so AI Studio preview iframe works seamlessly)
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-XSS-Protection', '1; mode=block');
   next();
 });
@@ -104,7 +103,7 @@ process.on('uncaughtException', (err) => {
   console.error('[SURYAVAMSHA PORTAL] Uncaught Exception thrown:', err);
 });
 
-// Full-stack Vite mounting
+// Full-stack Vite mounting with immediate port binding to prevent 502 warmup timeouts
 async function startServer() {
   const distPath = path.resolve(__dirname, 'dist');
   const hasDist = fs.existsSync(path.resolve(distPath, 'index.html'));
@@ -116,7 +115,33 @@ async function startServer() {
     (process.env.NODE_ENV === 'production' ||
      process.env.npm_lifecycle_event === 'start');
 
+  // Bind HTTP port immediately so Nginx/control-plane never sees ECONNREFUSED (502 warmup)
+  const srv = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[SURYAVAMSHA PORTAL] Server listening in ${isProduction ? 'production' : 'development'} mode on http://0.0.0.0:${PORT}`);
+  });
+
+  srv.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE' && PORT !== 3000) {
+      console.warn(`[SURYAVAMSHA PORTAL] Port ${PORT} in use, falling back to port 3000...`);
+      app.listen(3000, '0.0.0.0', () => {
+        console.log(`[SURYAVAMSHA PORTAL] Server running on fallback port 3000`);
+      });
+    } else {
+      console.error('Server listen error:', err);
+    }
+  });
+
   if (!isProduction) {
+    let resolveViteReady!: () => void;
+    const viteReadyPromise = new Promise<void>((resolve) => {
+      resolveViteReady = resolve;
+    });
+
+    app.use(async (_req, _res, next) => {
+      await viteReadyPromise;
+      next();
+    });
+
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: {
@@ -148,27 +173,14 @@ async function startServer() {
         next(e);
       }
     });
+
+    resolveViteReady();
   } else {
     app.use(express.static(distPath));
     app.get('*', (_req, res) => {
       res.sendFile(path.resolve(distPath, 'index.html'));
     });
   }
-
-  const srv = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[SURYAVAMSHA PORTAL] Server running in ${isProduction ? 'production' : 'development'} mode on port ${PORT}`);
-  });
-
-  srv.on('error', (err: NodeJS.ErrnoException) => {
-    if (err.code === 'EADDRINUSE' && PORT !== 3000) {
-      console.warn(`[SURYAVAMSHA PORTAL] Port ${PORT} in use, falling back to port 3000...`);
-      app.listen(3000, '0.0.0.0', () => {
-        console.log(`[SURYAVAMSHA PORTAL] Server running on fallback port 3000`);
-      });
-    } else {
-      console.error('Server listen error:', err);
-    }
-  });
 }
 
 startServer().catch(err => {

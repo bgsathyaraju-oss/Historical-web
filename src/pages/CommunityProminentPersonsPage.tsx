@@ -36,10 +36,13 @@ import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
   generateArticlePdfFilename,
+  setActiveArticleDocumentTitle,
   PDF_EXPORT_UI_LABELS,
   hasAppInventorBridge,
   isAndroidWebViewEnvironment,
   sendUrlToAppInventorBridge,
+  copyTextCrossPlatform,
+  triggerCrossPlatformShare,
   handleWhatsAppLinkClick,
   handleExternalBrowserUrlClick
 } from '../utils/pdfExport';
@@ -1084,6 +1087,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   const appliedUrlLangRef = useRef<string | null>(null);
   const savedListingScrollYRef = useRef<number>(0);
   const shouldRestoreScrollRef = useRef<boolean>(false);
+  const personArticleRef = useRef<HTMLElement | null>(null);
 
   const readPersonIdFromLocation = (): string | null => {
     if (typeof window === 'undefined') return null;
@@ -1129,6 +1133,36 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     }
   }, [initialPersonId]);
 
+  const activePerson = useMemo(() => findProminentPerson(activePersonId), [activePersonId]);
+
+  const getPersonPdfTitle = (person: ProminentPerson): string => {
+    const locName = person.name[currentLang] || person.name.en;
+    const biographySuffixMap: Record<LanguageCode, string> = {
+      en: 'Historical Biography',
+      hi: 'ऐतिहासिक जीवनी',
+      te: 'చారిత్రక జీవిత చరిత్ర',
+      kn: 'ಐತಿಹಾಸಿಕ ಜೀವನ ಚರಿತ್ರೆ',
+      ta: 'வரலாற்று வாழ்க்கை வரலாறு',
+      mr: 'ऐतिहासिक चरित्र',
+      or: 'ଐତିହାସିକ ଜୀବନୀ',
+      bn: 'ঐতিহাসিক জীবনী'
+    };
+    const suffix = biographySuffixMap[currentLang] || biographySuffixMap.en;
+    return `${locName} – ${suffix}`;
+  };
+
+  // Keep document.title synchronized with the active prominent person article title
+  useEffect(() => {
+    if (activePerson) {
+      setActiveArticleDocumentTitle(getPersonPdfTitle(activePerson));
+    } else {
+      setActiveArticleDocumentTitle(null);
+    }
+    return () => {
+      setActiveArticleDocumentTitle(null);
+    };
+  }, [activePerson, currentLang]);
+
   // Preserve selected article language when opened in external browser via ?lang= query parameter,
   // and automatically invoke browser print if opened with &autoprint=1 in a full browser
   useEffect(() => {
@@ -1146,6 +1180,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         appliedUrlLangRef.current = searchStr;
         if (langParam !== language) {
           setLanguage(langParam);
+          return;
         }
       }
 
@@ -1154,8 +1189,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       const targetId = params.get('id') || activePersonId;
 
       if (autoDownloadPdf === '1' && targetId && !isAndroidWebViewEnvironment()) {
-        if (autoPrintTriggeredRef.current !== `pdf-${targetId}-${langParam || language}`) {
-          autoPrintTriggeredRef.current = `pdf-${targetId}-${langParam || language}`;
+        if (autoPrintTriggeredRef.current !== `pdf-${targetId}-${language}`) {
+          autoPrintTriggeredRef.current = `pdf-${targetId}-${language}`;
           const timer = window.setTimeout(() => {
             try {
               const cleanParams = new URLSearchParams(window.location.search);
@@ -1177,8 +1212,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           // If WebViewer had UseExternalBrowser=false and loaded the &autoprint=1 URL inside itself,
           // keep the Print fallback panel open so the user sees the URL and Copy Link option.
           setIsPrintFallbackOpen(true);
-        } else if (autoPrintTriggeredRef.current !== `${targetId}-${langParam || language}`) {
-          autoPrintTriggeredRef.current = `${targetId}-${langParam || language}`;
+        } else if (autoPrintTriggeredRef.current !== `${targetId}-${language}`) {
+          autoPrintTriggeredRef.current = `${targetId}-${language}`;
           const timer = window.setTimeout(() => {
             try {
               const cleanParams = new URLSearchParams(window.location.search);
@@ -1189,9 +1224,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             } catch {
               // Ignore history replaceState errors
             }
-            if (typeof window.print === 'function') {
-              window.print();
-            }
+            const h1Text = document.querySelector('.print-article-container h1')?.textContent?.trim();
+            triggerArticlePrintWithTitle(
+              activePerson ? getPersonPdfTitle(activePerson) : h1Text || ''
+            );
           }, 550);
           return () => window.clearTimeout(timer);
         }
@@ -1199,7 +1235,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     } catch {
       // Ignore malformed query string
     }
-  }, [activePersonId, language, setLanguage]);
+  }, [activePersonId, activePerson, language, setLanguage]);
 
   // Reset share menu, print fallback, and feedback state when switching or closing articles
   useEffect(() => {
@@ -1316,22 +1352,6 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
     // If the bridge is unavailable, default <a target="_blank"> external-browser navigation proceeds
   };
 
-  const getPersonPdfTitle = (person: ProminentPerson): string => {
-    const locName = person.name[currentLang] || person.name.en;
-    const biographySuffixMap: Record<LanguageCode, string> = {
-      en: 'Historical Biography',
-      hi: 'ऐतिहासिक जीवनी',
-      te: 'చారిత్రక జీవిత చరిత్ర',
-      kn: 'ಐತಿಹಾಸಿಕ ಜೀವನ ಚರಿತ್ರೆ',
-      ta: 'வரலாற்று வாழ்க்கை வரலாறு',
-      mr: 'ऐतिहासिक चरित्र',
-      or: 'ଐତିହାସିକ ଜୀବନୀ',
-      bn: 'ঐতিহাসিক জীবনী'
-    };
-    const suffix = biographySuffixMap[currentLang] || biographySuffixMap.en;
-    return `${locName} – ${suffix}`;
-  };
-
   const handlePrintArticle = () => {
     setIsShareMenuOpen(false);
     if (!activePerson) return;
@@ -1391,7 +1411,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       const result = await downloadArticleAsPdf({
         articleTitle: getPersonPdfTitle(activePerson),
         language: currentLang,
-        articleUrl: canonicalUrl
+        articleUrl: canonicalUrl,
+        containerElement: personArticleRef.current
       });
       setPdfDownloadResult({
         filename: result.filename,
@@ -1407,31 +1428,27 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
   };
 
   const handleCopyArticleLink = async (personId: string) => {
-    const canonicalUrl = getCanonicalArticleUrl(personId);
-    await copyTextToClipboard(canonicalUrl);
+    const canonicalUrl = `${getCanonicalArticleUrl(personId)}&lang=${encodeURIComponent(currentLang)}`;
+    await copyTextCrossPlatform(canonicalUrl);
     showTemporaryShareFeedback('link');
   };
 
   const handleCopyTitleAndUrl = async (personId: string, articleTitle: string) => {
-    const canonicalUrl = getCanonicalArticleUrl(personId);
+    const canonicalUrl = `${getCanonicalArticleUrl(personId)}&lang=${encodeURIComponent(currentLang)}`;
     const combined = `${articleTitle} — ${canonicalUrl}`;
-    await copyTextToClipboard(combined);
+    await copyTextCrossPlatform(combined);
     showTemporaryShareFeedback('title_link');
   };
 
   const handleShareArticle = async (personId: string, articleTitle: string, articleSummary: string) => {
-    const canonicalUrl = getCanonicalArticleUrl(personId);
-    setIsShareMenuOpen(prev => !prev);
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
-      try {
-        await navigator.share({
-          title: articleTitle,
-          text: `${articleTitle} — ${articleSummary}`,
-          url: canonicalUrl
-        });
-      } catch {
-        // User cancelled native share sheet or browser restricted share in iframe; fallback menu remains open
-      }
+    const canonicalUrl = `${getCanonicalArticleUrl(personId)}&lang=${encodeURIComponent(currentLang)}`;
+    const outcome = await triggerCrossPlatformShare({
+      title: articleTitle,
+      text: `${articleTitle} — ${articleSummary}`,
+      url: canonicalUrl
+    });
+    if (outcome === 'fallback') {
+      setIsShareMenuOpen(prev => !prev);
     }
   };
 
@@ -1472,8 +1489,6 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       return orderA - orderB;
     });
   }, []);
-
-  const activePerson = useMemo(() => findProminentPerson(activePersonId), [activePersonId]);
 
   const openPersonArticle = (person: ProminentPerson) => {
     if (!activePersonId && typeof window !== 'undefined') {
@@ -4090,7 +4105,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         </div>
 
         {/* Full Structured Article Container */}
-        <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 print-article-container">
+        <article
+          ref={personArticleRef}
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8 print-article-container"
+        >
           {/* Print-Only Website Identification Masthead */}
           <div className="print-only border-b-2 border-stone-800 pb-3 mb-4">
             <p className="text-xs font-bold uppercase tracking-wider">
@@ -4098,9 +4116,6 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             </p>
             <p className="text-[11px] font-semibold mt-0.5">
               Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
-            </p>
-            <p className="text-[10px] mt-0.5">
-              {detailSectionHeadings.printCanonicalUrlLabel}: {canonicalArticleUrl}
             </p>
           </div>
 
@@ -4119,8 +4134,8 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   variant="detail"
                 />
                 {detail?.portraitCaption && (
-                  <p className="royal-profile-title-box text-[11px] text-[#54351F] leading-relaxed break-words">
-                    <span className="text-[#54351F] font-bold block mb-0.5">
+                  <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-[11px] leading-relaxed break-words">
+                    <span className="text-[var(--profile-title-box-text)] font-bold block mb-0.5">
                       {detailSectionHeadings.section2CaptionHeading}:
                     </span>
                     {selectLocalizedOrFallback(
@@ -4160,7 +4175,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#54351F] leading-tight break-words">
                     {localizedName}
                   </h1>
-                  <p className="royal-profile-title-box text-sm sm:text-base text-[#54351F] font-semibold leading-relaxed break-words">
+                  <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-sm sm:text-base font-semibold leading-relaxed break-words">
                     {localizedTitles}
                   </p>
                 </div>
@@ -5056,7 +5071,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                         </div>
 
                         {src.sourceUrl && (
-                          <div className="pt-1">
+                          <div className="no-print pt-1">
                             <a
                               href={src.sourceUrl}
                               target="_blank"
@@ -5065,9 +5080,6 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                               <span>{detailSectionHeadings.sourceExternalLinkLabel}</span>
-                              <span className="print-only print-only-inline font-normal text-[10px]">
-                                {' '}({src.sourceUrl})
-                              </span>
                             </a>
                           </div>
                         )}
@@ -5079,15 +5091,15 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
             )}
 
             {/* Supplementary Archival Reference Summary */}
-            <div className="space-y-2 pt-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400">
+            <div className="archival-reference-index-section space-y-2.5 pt-2">
+              <h3 className="archival-reference-index-title archival-reference-index-box text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl border bg-[#D4EEFC] text-[#000000] border-[#7CC4EA]">
                 {detailSectionHeadings.supplementaryBibliographySubheading}
               </h3>
-              <ul className="space-y-2.5 text-xs sm:text-sm text-stone-300 bg-[#0a0d14] p-5 rounded-xl border border-stone-800">
+              <ul className="archival-reference-index-list archival-reference-index-box space-y-2.5 text-xs sm:text-sm p-5 rounded-xl border bg-[#D4EEFC] text-[#000000] border-[#7CC4EA]">
                 {activePerson.evidenceSources.map((source, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 leading-relaxed">
-                    <span className="text-[#d4af37] font-bold">•</span>
-                    <span>{source}</span>
+                  <li key={idx} className="flex items-start gap-2.5 leading-relaxed text-[#000000]">
+                    <span className="text-[#000000] font-bold">•</span>
+                    <span className="text-[#000000]">{source}</span>
                   </li>
                 ))}
               </ul>
@@ -5149,7 +5161,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {relatedArticles.map(({ person: relPerson, candExt, candChrono }) => {
+                {relatedArticles.map(({ person: relPerson, candExt, candChrono }, idx) => {
                   const relName = relPerson.name[currentLang] || relPerson.name.en;
                   const relSummary = relPerson.summary[currentLang] || relPerson.summary.en;
                   const relBadge =
@@ -5188,25 +5200,26 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--surface-bg)] text-[var(--link-color)] border border-[var(--border-color)] truncate max-w-full">
+                          <span className="royal-index-box">#{idx + 1}</span>
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[var(--surface-bg)] text-[var(--link-color)] border border-[var(--border-color)] break-words">
                             {relPeriod}
                           </span>
                           {relPrimaryProf && (
-                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[var(--card-bg)] text-[var(--heading-text)] border border-[var(--border-color)] truncate max-w-full">
+                            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[var(--card-bg)] text-[var(--heading-text)] border border-[var(--border-color)] break-words">
                               {relPrimaryProf}
                             </span>
                           )}
                         </div>
 
-                        <h3 className="text-xs sm:text-sm font-bold text-[var(--heading-text)] group-hover:text-[#762D35] transition-colors line-clamp-1 font-royal-heading">
+                        <h3 className="royal-card-title-box text-xs sm:text-sm font-bold text-[var(--heading-text)] transition-colors font-royal-heading break-words">
                           {relName}
                         </h3>
 
-                        <p className="text-xs text-[var(--primary-text)] line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[var(--primary-text)] leading-relaxed break-words">
                           {relSummary}
                         </p>
 
-                        <div className="pt-1 flex items-center justify-end">
+                        <div className="no-print pt-1 flex items-center justify-end">
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--link-color)] group-hover:text-[#762D35] transition-colors">
                             <span>{detailSectionHeadings.readMoreLabel}</span>
                             <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -6310,7 +6323,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                               {extMeta.alternativeNames.join(' · ')}
                             </p>
                           )}
-                          <p className="royal-profile-title-box text-xs text-[#54351F] font-semibold line-clamp-2 mt-1.5 break-words">
+                          <p className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs font-semibold mt-1.5 break-words">
                             {localizedTitles}
                           </p>
                         </div>
