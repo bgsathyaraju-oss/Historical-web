@@ -11,12 +11,12 @@ import type {
   UserProfile,
   SiteStatistics,
   LanguageCode
-} from '../types';
+} from '../types/index.ts';
 import {
   INSCRIPTION_TRANSLATIONS,
   MONUMENT_TRANSLATIONS
-} from '../../server/contentTranslations';
-import { CANONICAL_ARTICLES } from './articlesRepository';
+} from '../../server/contentTranslations.ts';
+import { CANONICAL_ARTICLES } from './articlesRepository.ts';
 import {
   GENEALOGY_NODE_TRANSLATIONS,
   CLAIM_TRANSLATIONS,
@@ -24,7 +24,7 @@ import {
   LOCATION_TRANSLATIONS,
   DOCUMENT_TRANSLATIONS,
   GALLERY_TRANSLATIONS
-} from './multilingualSeedTranslations';
+} from './multilingualSeedTranslations.ts';
 
 export const CANONICAL_GENEALOGY: GenealogyNode[] = [
   {

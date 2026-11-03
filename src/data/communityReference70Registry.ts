@@ -1,5 +1,5 @@
-import { LanguageCode } from '../types';
-import { SearchableCommunityLabelId } from './communityProminentPersonsData';
+import type { LanguageCode } from '../types/index.ts';
+import type { SearchableCommunityLabelId } from './communityProminentPersonsData.ts';
 
 export type ReferenceTermClassification =
   | 'Community names'

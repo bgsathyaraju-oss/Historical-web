@@ -72,6 +72,7 @@ export default defineConfig(() => {
     server: {
       port: 3000,
       host: '0.0.0.0',
+      allowedHosts: true,
       // HMR is disabled in AI Studio environment to prevent port conflicts and flickering.
       hmr: false,
       watch: null,

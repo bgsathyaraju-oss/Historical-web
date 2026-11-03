@@ -984,6 +984,124 @@ async function runTestSuite() {
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // 16. DYNAMIC SOCIAL SHARING PREVIEW IMAGE SYSTEM (OPEN GRAPH & TWITTER CARDS)
+  // ---------------------------------------------------------------------------
+  try {
+    const {
+      resolveSeoMetadata,
+      injectSeoMetadataIntoHtml,
+      getAllPrerenderTargets
+    } = await import('../src/utils/seoMetadata');
+    const fs = await import('fs');
+    const path = await import('path');
+
+    const testOrigin = 'https://suryavamsha-odiyaraju.org';
+
+    // 1. Verify all 61 pre-rendered OG images in public/assets/og/ are 1200x630 JPEGs
+    const ogDir = path.resolve(process.cwd(), 'public/assets/og');
+    assert(fs.existsSync(ogDir), 'Missing public/assets/og directory');
+    const ogFiles = fs.readdirSync(ogDir).filter(f => f.endsWith('.jpg'));
+    assert(ogFiles.length >= 61, `Expected at least 61 OG preview images, found ${ogFiles.length}`);
+
+    for (const file of ogFiles) {
+      const buf = fs.readFileSync(path.join(ogDir, file));
+      assert(buf[0] === 0xff && buf[1] === 0xd8, `${file} is not a valid JPEG`);
+      let offset = 2;
+      let width = 0;
+      let height = 0;
+      while (offset < buf.length) {
+        if (buf[offset] !== 0xff) {
+          offset++;
+          continue;
+        }
+        const marker = buf[offset + 1];
+        if (marker === 0xc0 || marker === 0xc2) {
+          height = buf.readUInt16BE(offset + 5);
+          width = buf.readUInt16BE(offset + 7);
+          break;
+        }
+        const segLen = buf.readUInt16BE(offset + 2);
+        offset += 2 + segLen;
+      }
+      assert(width === 1200 && height === 630, `${file} dimensions ${width}x${height} !== 1200x630`);
+    }
+
+    // 2. Verify distinct metadata and images across routes and individual articles/figures
+    const kapilendraMeta = resolveSeoMetadata({
+      pathname: '/kings-queens',
+      search: '?figure=fig_kapilendra_deva',
+      origin: testOrigin
+    });
+    const purushottamaMeta = resolveSeoMetadata({
+      pathname: '/kings-queens',
+      search: '?figure=fig_purushottama_deva',
+      origin: testOrigin
+    });
+    const odraArticleMeta = resolveSeoMetadata({
+      pathname: '/research',
+      search: '?article=art_odra_desha_history',
+      origin: testOrigin
+    });
+    const baxiMeta = resolveSeoMetadata({
+      pathname: '/community-prominent-persons',
+      search: '?id=baxi_jagabandhu_paika_general',
+      origin: testOrigin
+    });
+    const publisherMeta = resolveSeoMetadata({
+      pathname: '/community-prominent-persons',
+      search: '?id=dr_g_sathyanarayana_raju',
+      origin: testOrigin
+    });
+
+    assert(kapilendraMeta.title !== purushottamaMeta.title, 'Monarch OG titles must be distinct');
+    assert(kapilendraMeta.imageUrl !== purushottamaMeta.imageUrl, 'Monarch OG images must be distinct');
+    assert(kapilendraMeta.imageUrl.endsWith('/assets/og/kapilendra_deva_portrait.jpg'), 'Unexpected Kapilendra OG image');
+    assert(purushottamaMeta.imageUrl.endsWith('/assets/og/purushottama_deva_kanchi.jpg'), 'Unexpected Purushottama OG image');
+    assert(odraArticleMeta.imageUrl.endsWith('/assets/og/odra_kalinga_map.jpg'), 'Unexpected Odra article OG image');
+    assert(baxiMeta.imageUrl.endsWith('/assets/og/baxi_jagabandhu_statue.jpg'), 'Unexpected Baxi Jagabandhu OG image');
+    assert(publisherMeta.imageUrl.endsWith('/assets/og/dr_g_sathyanarayana_raju.jpg'), 'Unexpected Dr.G Sathyanarayana Raju OG image');
+
+    // 3. Verify 8-language localized metadata
+    const langs = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'] as const;
+    for (const lang of langs) {
+      const m = resolveSeoMetadata({
+        pathname: '/kings-queens',
+        search: `?figure=fig_kapilendra_deva&lang=${lang}`,
+        origin: testOrigin
+      });
+      assert(Boolean(m.title && !m.title.includes('undefined')), `Missing localized title for ${lang}`);
+      assert(Boolean(m.description && !m.description.includes('undefined')), `Missing localized description for ${lang}`);
+      assert(m.imageUrl.startsWith('https://'), `Non-HTTPS imageUrl for ${lang}`);
+    }
+
+    // 4. Verify HTML injection produces complete Open Graph and Twitter Card tags
+    const baseHtml = fs.readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf-8');
+    const injected = injectSeoMetadataIntoHtml(baseHtml, kapilendraMeta);
+    assert(injected.includes('property="og:title" content="Kapilendra Deva Gajapathi'), 'Injected HTML missing og:title');
+    assert(injected.includes('property="og:image" content="https://suryavamsha-odiyaraju.org/assets/og/kapilendra_deva_portrait.jpg"'), 'Injected HTML missing og:image');
+    assert(injected.includes('property="og:image:width" content="1200"'), 'Injected HTML missing og:image:width');
+    assert(injected.includes('property="og:image:height" content="630"'), 'Injected HTML missing og:image:height');
+    assert(injected.includes('name="twitter:card" content="summary_large_image"'), 'Injected HTML missing twitter:card');
+    assert(injected.includes('name="twitter:image" content="https://suryavamsha-odiyaraju.org/assets/og/kapilendra_deva_portrait.jpg"'), 'Injected HTML missing twitter:image');
+
+    const targets = getAllPrerenderTargets();
+    assert(targets.length >= 150, `Expected >= 150 prerender targets, got ${targets.length}`);
+
+    results.push({
+      suite: 'Dynamic Social Sharing SEO',
+      test: '61 1200x630 OG images, route & article metadata, 8 languages, and crawler HTML injection',
+      passed: true
+    });
+  } catch (err: any) {
+    results.push({
+      suite: 'Dynamic Social Sharing SEO',
+      test: '61 1200x630 OG images, route & article metadata, 8 languages, and crawler HTML injection',
+      passed: false,
+      error: err.message
+    });
+  }
+
   // Print Summary Table
   console.log('-----------------------------------------------------------------------------------------------------');
   console.log('| Suite                               | Test Name                                            | Status');

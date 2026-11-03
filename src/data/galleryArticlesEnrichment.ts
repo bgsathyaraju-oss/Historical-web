@@ -1,7 +1,7 @@
-import {
+import type {
   GalleryItem,
   LanguageCode
-} from '../types';
+} from '../types/index.ts';
 import {
   getCanonicalGallery,
   getCanonicalLocations,
@@ -9,8 +9,8 @@ import {
   getCanonicalDocuments,
   getCanonicalInscriptions,
   getCanonicalTimelineEvents
-} from './archivalSeedData';
-import { getAllArticles } from './articlesRepository';
+} from './archivalSeedData.ts';
+import { getAllArticles } from './articlesRepository.ts';
 
 export interface GalleryKeywordTag {
   id: string;

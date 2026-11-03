@@ -1,4 +1,4 @@
-import { HistoricalFigure, LanguageCode } from '../types';
+import type { HistoricalFigure, LanguageCode } from '../types/index.ts';
 
 export interface MultilingualString {
   en: string;

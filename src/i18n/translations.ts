@@ -1,5 +1,5 @@
-import { LanguageCode, LanguageOption } from '../types';
-import { PageTranslations, PAGE_TRANSLATIONS } from './pageTranslations';
+import type { LanguageCode, LanguageOption } from '../types/index.ts';
+import { type PageTranslations, PAGE_TRANSLATIONS } from './pageTranslations.ts';
 
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { code: 'en', label: 'English', nativeName: 'English', script: 'Latin' },

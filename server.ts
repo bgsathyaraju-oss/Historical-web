@@ -14,6 +14,10 @@ import { uploadRouter } from './server/routes/uploadRoutes.ts';
 import { exportRouter } from './server/routes/exportRoutes.ts';
 import { getDb } from './server/db.ts';
 import { runMigrations } from './server/migrate.ts';
+import {
+  resolveSeoMetadata,
+  injectSeoMetadataIntoHtml
+} from './src/utils/seoMetadata.ts';
 
 dotenv.config();
 
@@ -21,6 +25,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+function getRequestPublicOrigin(req: express.Request): string {
+  const forwardedHost = (req.headers['x-forwarded-host'] as string | undefined)?.split(',')[0]?.trim();
+  const host = forwardedHost || req.headers.host || '';
+  if (!host) {
+    return process.env.APP_URL || 'https://historical-web.web.app';
+  }
+  if (/^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?$/i.test(host)) {
+    return `http://${host.replace(/^0\.0\.0\.0/, 'localhost')}`;
+  }
+  return `https://${host}`;
+}
 
 function determinePort(): number {
   const portIndex = process.argv.indexOf('--port');
@@ -59,8 +75,26 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 app.use(authMiddleware);
 
-// Serve static uploaded documents and photos securely
-app.use('/uploads', express.static(path.resolve(__dirname, 'data', 'uploads')));
+// Serve static uploaded documents, photos, and OG preview images with crawler-friendly CORS & caching headers
+app.use(
+  '/uploads',
+  express.static(path.resolve(__dirname, 'data', 'uploads'), {
+    setHeaders: res => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  })
+);
+
+app.use(
+  '/assets',
+  express.static(path.resolve(__dirname, 'public', 'assets'), {
+    setHeaders: res => {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  })
+);
 
 // Security Headers (Note: do not set X-Frame-Options: SAMEORIGIN so AI Studio preview iframe works seamlessly)
 app.use((_req, res, next) => {
@@ -77,6 +111,38 @@ app.use('/api/admin', adminRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/export', exportRouter);
+
+// Dynamic Social Sharing Preview & Open Graph Metadata Inspection Endpoint
+app.get('/api/seo/preview', (req, res) => {
+  try {
+    const rawTargetUrl = (req.query.url as string | undefined) || '/';
+    let pathname = rawTargetUrl;
+    let search = '';
+    if (rawTargetUrl.startsWith('http://') || rawTargetUrl.startsWith('https://')) {
+      const parsed = new URL(rawTargetUrl);
+      pathname = parsed.pathname;
+      search = parsed.search;
+    } else if (rawTargetUrl.includes('?')) {
+      const qIdx = rawTargetUrl.indexOf('?');
+      pathname = rawTargetUrl.slice(0, qIdx) || '/';
+      search = rawTargetUrl.slice(qIdx);
+    } else if (req.query.lang && !rawTargetUrl.includes('lang=')) {
+      search = `?lang=${encodeURIComponent(String(req.query.lang))}`;
+    }
+
+    const dbArticles = getDb()?.articles || [];
+    const origin = getRequestPublicOrigin(req);
+    const meta = resolveSeoMetadata({
+      pathname,
+      search,
+      origin,
+      extraArticles: dbArticles
+    });
+    res.status(200).json(meta);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to resolve SEO metadata', detail: String(err) });
+  }
+});
 
 // Health check endpoints for Cloud Run / Kubernetes probes
 app.get(['/api/health', '/health', '/healthz', '/_health'], (_req, res) => {
@@ -148,15 +214,16 @@ async function startServer() {
         middlewareMode: true,
         host: '0.0.0.0',
         port: PORT,
+        allowedHosts: true,
         hmr: false,
         watch: null,
       },
-      appType: 'spa'
+      appType: 'custom'
     });
 
     app.use(vite.middlewares);
 
-    // Fallback to transformIndexHtml for SPA routing in development
+    // Dynamic SEO & Open Graph HTML injection for SPA routes and social media crawlers in development
     app.use('*', async (req, res, next) => {
       const url = req.originalUrl;
       try {
@@ -164,7 +231,19 @@ async function startServer() {
         if (fs.existsSync(indexPath)) {
           let template = fs.readFileSync(indexPath, 'utf-8');
           template = await vite.transformIndexHtml(url, template);
-          res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
+          const qIdx = url.indexOf('?');
+          const pathname = qIdx >= 0 ? url.slice(0, qIdx) : url;
+          const search = qIdx >= 0 ? url.slice(qIdx) : '';
+          const origin = getRequestPublicOrigin(req);
+          const dbArticles = getDb()?.articles || [];
+          const seoMeta = resolveSeoMetadata({
+            pathname,
+            search,
+            origin,
+            extraArticles: dbArticles
+          });
+          const injectedHtml = injectSeoMetadataIntoHtml(template, seoMeta);
+          res.status(200).set({ 'Content-Type': 'text/html; charset=utf-8' }).end(injectedHtml);
           return;
         }
         next();
@@ -176,9 +255,35 @@ async function startServer() {
 
     resolveViteReady();
   } else {
-    app.use(express.static(distPath));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.resolve(distPath, 'index.html'));
+    app.use(
+      express.static(distPath, {
+        index: false,
+        setHeaders: res => {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+        }
+      })
+    );
+    app.get('*', (req, res) => {
+      const indexFile = path.resolve(distPath, 'index.html');
+      try {
+        const rawHtml = fs.readFileSync(indexFile, 'utf-8');
+        const url = req.originalUrl || req.url || '/';
+        const qIdx = url.indexOf('?');
+        const pathname = qIdx >= 0 ? url.slice(0, qIdx) : url;
+        const search = qIdx >= 0 ? url.slice(qIdx) : '';
+        const origin = getRequestPublicOrigin(req);
+        const dbArticles = getDb()?.articles || [];
+        const seoMeta = resolveSeoMetadata({
+          pathname,
+          search,
+          origin,
+          extraArticles: dbArticles
+        });
+        const injectedHtml = injectSeoMetadataIntoHtml(rawHtml, seoMeta);
+        res.status(200).set({ 'Content-Type': 'text/html; charset=utf-8' }).send(injectedHtml);
+      } catch {
+        res.sendFile(indexFile);
+      }
     });
   }
 }

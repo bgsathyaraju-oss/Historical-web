@@ -1,5 +1,5 @@
-import { LanguageCode } from '../types';
-import { KALINGA_WAR_TRANSLATIONS_PART2 } from './kalingaWarTranslationsPart2';
+import type { LanguageCode } from '../types/index.ts';
+import { KALINGA_WAR_TRANSLATIONS_PART2 } from './kalingaWarTranslationsPart2.ts';
 
 export interface KalingaQuickSummary {
   sectionTitle: string;

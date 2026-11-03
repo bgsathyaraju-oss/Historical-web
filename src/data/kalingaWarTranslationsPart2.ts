@@ -1,4 +1,4 @@
-import type { KalingaWarLocaleContent } from './kalingaWarData';
+import type { KalingaWarLocaleContent } from './kalingaWarData.ts';
 
 export const KALINGA_WAR_TRANSLATIONS_PART2: Record<'ta' | 'mr' | 'or' | 'bn', KalingaWarLocaleContent> = {
   // ============================================================================

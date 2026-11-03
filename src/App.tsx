@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { FloatingPageDock } from './components/FloatingPageDock';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { PrintRepeatingAuthorFooter } from './components/PrintRepeatingAuthorFooter';
+import { SeoHeadManager } from './components/SeoHeadManager';
+import { resolveItemMetadataById } from './utils/seoMetadata';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -78,6 +80,47 @@ function getNormalizedAppPath(rawPath: string): string {
   return path || '/';
 }
 
+function resolveRouteAndItemFromUrl(rawPath: string, rawSearch: string): {
+  routePath: string;
+  itemParam: string | null;
+} {
+  const normalized = getNormalizedAppPath(rawPath);
+  let queryItem: string | null = null;
+  try {
+    const params = new URLSearchParams(rawSearch);
+    queryItem =
+      params.get('article') ||
+      params.get('figure') ||
+      params.get('person') ||
+      params.get('id');
+  } catch {
+    queryItem = null;
+  }
+
+  // Support /share/<itemId>
+  const shareMatch = normalized.match(/^\/share\/([^/]+)$/i);
+  if (shareMatch) {
+    const decodedId = decodeURIComponent(shareMatch[1]);
+    const itemMeta = resolveItemMetadataById(decodedId, 'en');
+    if (itemMeta) {
+      return { routePath: itemMeta.canonicalRoute, itemParam: itemMeta.itemId };
+    }
+  }
+
+  // Support /<route>/<itemId> (e.g. /kings-queens/fig_kapilendra_deva)
+  const twoSegMatch = normalized.match(/^(\/[a-z0-9-]+)\/([^/]+)$/i);
+  if (twoSegMatch) {
+    const baseRoute = twoSegMatch[1];
+    const decodedId = decodeURIComponent(twoSegMatch[2]);
+    const itemMeta = resolveItemMetadataById(decodedId, 'en');
+    if (itemMeta) {
+      return { routePath: baseRoute, itemParam: itemMeta.itemId };
+    }
+  }
+
+  return { routePath: normalized, itemParam: queryItem };
+}
+
 function consumeSpaRedirect(): void {
   if (typeof window === 'undefined') return;
   try {
@@ -100,19 +143,15 @@ function consumeSpaRedirect(): void {
 }
 
 function AppContent() {
+  const { language } = useLanguage();
   const [currentPath, setCurrentPath] = useState<string>(() => {
     if (typeof window === 'undefined') return '/';
     consumeSpaRedirect();
-    return getNormalizedAppPath(window.location.pathname);
+    return resolveRouteAndItemFromUrl(window.location.pathname, window.location.search).routePath;
   });
   const [searchParam, setSearchParam] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('article') || params.get('figure') || params.get('id');
-    } catch {
-      return null;
-    }
+    return resolveRouteAndItemFromUrl(window.location.pathname, window.location.search).itemParam;
   });
   const [searchModalOpen, setSearchModalOpen] = useState(false);
 
@@ -123,10 +162,9 @@ function AppContent() {
 
     const handlePopState = () => {
       try {
-        const appPath = getNormalizedAppPath(window.location.pathname);
-        setCurrentPath(appPath);
-        const params = new URLSearchParams(window.location.search);
-        setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
+        const resolved = resolveRouteAndItemFromUrl(window.location.pathname, window.location.search);
+        setCurrentPath(resolved.routePath);
+        setSearchParam(resolved.itemParam);
       } catch {
         setCurrentPath('/');
         setSearchParam(null);
@@ -151,19 +189,11 @@ function AppContent() {
 
   const navigateTo = (pathWithQuery: string) => {
     const [rawPath, query] = pathWithQuery.split('?');
-    const path = getNormalizedAppPath(rawPath);
+    const resolved = resolveRouteAndItemFromUrl(rawPath, query ? `?${query}` : '');
+    const path = resolved.routePath;
     const basePath = import.meta.env.BASE_URL || '/';
     setCurrentPath(path);
-    if (query) {
-      try {
-        const params = new URLSearchParams(query);
-        setSearchParam(params.get('article') || params.get('figure') || params.get('id'));
-      } catch {
-        setSearchParam(null);
-      }
-    } else {
-      setSearchParam(null);
-    }
+    setSearchParam(resolved.itemParam);
     const cleanPath = path.startsWith('/') ? path : `/${path}`;
     const fullPath = `${basePath.replace(/\/$/, '')}${cleanPath}${query ? `?${query}` : ''}`;
     try {
@@ -276,6 +306,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5EBD9] text-[#292521] print:block print:min-h-0 print:bg-white print:text-black">
+      {/* Dynamic SEO, Open Graph & Twitter Card Synchronizer */}
+      <SeoHeadManager currentPath={currentPath} language={language} />
+
       {/* Royal Header */}
       <Navbar
         currentPath={currentPath}

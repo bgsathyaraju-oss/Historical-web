@@ -1,4 +1,4 @@
-import { LanguageCode } from '../types';
+import type { LanguageCode } from '../types/index.ts';
 
 export interface SurnameTransliterations {
   en: string;

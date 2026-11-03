@@ -1,5 +1,5 @@
-import { LanguageCode } from '../types';
-import { SurnameTransliterations, ALPHABET_LETTERS } from './communitySurnamesData';
+import type { LanguageCode } from '../types/index.ts';
+import { type SurnameTransliterations, ALPHABET_LETTERS } from './communitySurnamesData.ts';
 
 export interface NorthIndianSurnameEntry {
   /** 1-based sequential index preserving exact array order (1 to 90) */

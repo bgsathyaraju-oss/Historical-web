@@ -1,5 +1,5 @@
-import { Article, LanguageCode, SourceReference } from '../types';
-import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
+import type { Article, LanguageCode, SourceReference } from '../types/index.ts';
+import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations.ts';
 
 const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
 

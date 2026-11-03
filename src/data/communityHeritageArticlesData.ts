@@ -1,5 +1,5 @@
 import type { LanguageCode } from '../types/index.ts';
-import { m8, SourceReferenceItem } from './communityHeritageDirectoryData.ts';
+import { m8, type SourceReferenceItem } from './communityHeritageDirectoryData.ts';
 
 const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
 
