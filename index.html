@@ -78,8 +78,8 @@
                   '<p style="color:#292521;font-size:13px;line-height:1.5;margin:0 0 12px;">A script, network cache, or WebView restriction prevented the portal from finishing initialization.</p>' +
                   '<div style="background:#FFF9EF;border:1px solid #A87924;color:#54351F;padding:12px;border-radius:10px;font-size:12px;font-family:monospace;word-break:break-word;margin-bottom:16px;">Diagnostic: ' + safeReason + '</div>' +
                   '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
-                    '<button onclick="window.location.href=\'/?v=\'+Date.now()" style="background:#762D35;color:#FFFFFF;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">Reload Fresh Copy</button>' +
-                    '<a href="/?v=fresh" style="background:#FFF9EF;color:#54351F;border:1px solid #A87924;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;">Open Home Page</a>' +
+                    '<button onclick="window.location.href=window.location.pathname+\'?v=\'+Date.now()" style="background:#762D35;color:#FFFFFF;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;">Reload Fresh Copy</button>' +
+                    '<a href="./?v=fresh" style="background:#FFF9EF;color:#54351F;border:1px solid #A87924;padding:10px 16px;border-radius:10px;font-weight:600;font-size:13px;text-decoration:none;display:inline-block;">Open Home Page</a>' +
                   '</div>' +
                 '</div>' +
               '</div>';
@@ -184,9 +184,6 @@
         }, true);
       })();
     </script>
-
-    <!-- Preload Main Royal Hero Banner Image for Instant LCP Rendering -->
-    <link rel="preload" as="image" href="/assets/royal-hero-banner.png" fetchpriority="high" />
 
     <!-- Non-blocking Google Fonts for Classical Royal Typography & Indic Scripts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

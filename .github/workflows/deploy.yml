@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master
   workflow_dispatch:
 
 permissions:
@@ -23,20 +24,42 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '22'
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
-         
 
       - name: Install dependencies
-        run: bun install 
+        run: bun install
 
-      - name: Build website
-        run: bun run build
+      - name: Typecheck codebase
+        run: bun run lint
+
+      - name: Build website for GitHub Pages
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          CUSTOM_BASE_PATH: ${{ vars.VITE_BASE_PATH }}
+          PRERENDER_STATIC_DIRS: 'true'
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          if [ -n "$CUSTOM_BASE_PATH" ]; then
+            export VITE_BASE_PATH="$CUSTOM_BASE_PATH"
+          elif [ -n "$PAGES_BASE_PATH" ]; then
+            export VITE_BASE_PATH="${PAGES_BASE_PATH}/"
+          else
+            export VITE_BASE_PATH="/${REPO_NAME}/"
+          fi
+          echo "Building GitHub Pages bundle with VITE_BASE_PATH=${VITE_BASE_PATH}"
+          bun run build
+          touch dist/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

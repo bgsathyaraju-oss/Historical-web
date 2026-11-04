@@ -1189,6 +1189,42 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     imageAlt: 'Suryavamsha Odiyaraju Kshatriya Original Homepage Layout – Test Page',
     section: 'Original Layout Archive',
     keywords: ['Suryavamsha Odiyaraju Kshatriya', 'Original Layout', 'Test Page', 'Historical Archive']
+  },
+  '/copyright': {
+    title: lang => {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      return `Copyright & Archival Permissions | ${t.siteTitle}`;
+    },
+    description: () =>
+      'Copyright notice, academic citation guidelines, and archival usage permissions for the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.',
+    rawImagePath: CATEGORY_FALLBACK_IMAGES.documents,
+    imageAlt: 'Copyright & Archival Permissions — Suryavamsha Odiyaraju Kshatriya Portal',
+    section: 'Copyright & Permissions',
+    keywords: ['Copyright', 'Archival Permissions', 'Academic Citations']
+  },
+  '/terms': {
+    title: lang => {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      return `Disclaimer & Terms of Use | ${t.siteTitle}`;
+    },
+    description: () =>
+      'Historical disclaimer, epistemic standards, and terms of use for the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.',
+    rawImagePath: CATEGORY_FALLBACK_IMAGES.documents,
+    imageAlt: 'Disclaimer & Terms of Use — Suryavamsha Odiyaraju Kshatriya Portal',
+    section: 'Disclaimer & Terms',
+    keywords: ['Disclaimer', 'Terms of Use', 'Epistemic Standards']
+  },
+  '/privacy': {
+    title: lang => {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      return `Privacy Policy | ${t.siteTitle}`;
+    },
+    description: () =>
+      'Privacy policy and member directory data protection guidelines for the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.',
+    rawImagePath: CATEGORY_FALLBACK_IMAGES.about,
+    imageAlt: 'Privacy Policy — Suryavamsha Odiyaraju Kshatriya Portal',
+    section: 'Privacy Policy',
+    keywords: ['Privacy Policy', 'Data Protection', 'Community Directory']
   }
 };
 
@@ -1196,6 +1232,8 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
 const ROUTE_ALIASES: Record<string, string> = {
   '/test_page': '/test-page',
   '/testpage': '/test-page',
+  '/disclaimer': '/terms',
+  '/historical-sources': '/references',
   '/heritage': '/community-heritage',
   '/documented-historical-figures': '/kings-queens',
   '/historical-figures': '/kings-queens',

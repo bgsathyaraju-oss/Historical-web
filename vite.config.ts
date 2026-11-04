@@ -21,8 +21,12 @@ function androidWebViewCssCompatPlugin(): Plugin {
 }
 
 export default defineConfig(() => {
+  const rawBase = process.env.VITE_BASE_PATH?.trim() || '/';
+  const withLeadingSlash = rawBase.startsWith('/') ? rawBase : `/${rawBase}`;
+  const normalizedBase = withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`;
+
   return {
-    base: process.env.VITE_BASE_PATH || (process.env.GITHUB_ACTIONS === 'true' ? '/Historical-web/' : '/'),
+    base: normalizedBase,
     // Tailwind v4 plugin MUST precede @vitejs/plugin-react
     plugins: [tailwindcss(), react(), androidWebViewCssCompatPlugin()],
     resolve: {

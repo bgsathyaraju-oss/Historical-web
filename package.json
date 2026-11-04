@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build && node scripts/prerender-seo.ts",
+    "build": "vite build && tsx scripts/prerender-seo.ts",
+    "build:firebase": "VITE_BASE_PATH=/ vite build && tsx scripts/prerender-seo.ts",
+    "build:gh-pages": "VITE_BASE_PATH=/Historical-web/ PRERENDER_STATIC_DIRS=true vite build && tsx scripts/prerender-seo.ts",
     "start": "node server.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
