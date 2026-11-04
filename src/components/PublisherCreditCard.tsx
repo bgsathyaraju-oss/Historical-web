@@ -168,7 +168,7 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
     t.publisher?.whatsappGreeting ||
     'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
-  const imageSrc = `${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`;
+  const imageSrc = `${(import.meta as any).env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`;
 
   const publisherName = CANONICAL_AUTHOR_NAME;
   const localizedName = language !== 'en' ? profile.localizedName : undefined;
@@ -183,12 +183,27 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
       <div
         className={`inline-flex items-center gap-3 px-3.5 py-2.5 rounded-2xl bg-[var(--card-bg)] border border-[var(--accent-gold)] text-xs print:bg-white print:text-black print:border-stone-400 ${className}`}
       >
-        <img
-          src={imageSrc}
-          alt="Dr.G Sathyanarayana Raju"
-          loading="eager"
-          className="w-11 h-11 rounded-full object-cover object-top border border-[var(--accent-gold)] shrink-0"
-        />
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+          className="relative shrink-0 group cursor-pointer"
+          title={`${contactWhatsApp} (+91 9480112897)`}
+          aria-label={contactWhatsApp}
+        >
+          <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-md ring-2 ring-[#762D35]/40">
+            <img
+              src={imageSrc}
+              alt="Dr.G Sathyanarayana Raju"
+              loading="eager"
+              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform"
+            />
+          </div>
+          <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-[#25D366] text-white border border-[#D4AF37] flex items-center justify-center shadow print:hidden">
+            <WhatsAppIcon className="w-3 h-3 fill-current" />
+          </span>
+        </a>
         <div className="text-left leading-snug">
           <div className="text-[10px] text-[var(--link-color)] print:text-stone-700 uppercase font-bold tracking-wider">
             {designedByText}
@@ -204,16 +219,6 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
             {organizationName}
           </div>
         </div>
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
-          className="ml-1 p-1.5 rounded-lg bg-[#762D35] text-white hover:bg-[#5e2229] transition-all print:hidden shrink-0"
-          title={`${contactWhatsApp} (+91 9480112897)`}
-        >
-          <WhatsAppIcon className="w-3.5 h-3.5" />
-        </a>
       </div>
     );
   }
@@ -225,35 +230,43 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
         className={`rounded-2xl bg-[var(--card-bg)] border-2 border-[var(--accent-gold)] p-4 sm:p-6 shadow-md print:bg-white print:text-black print:border-stone-400 print:shadow-none print:break-inside-avoid ${className}`}
       >
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 text-center sm:text-left">
-          <div className="relative shrink-0">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[var(--accent-gold)] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+            className="relative shrink-0 group cursor-pointer"
+            title={contactWhatsApp}
+            aria-label={contactWhatsApp}
+          >
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
               <img
                 src={imageSrc}
                 alt="Dr.G Sathyanarayana Raju — Founder, Web Developer / Designer, Digital Creator, Historical Documentation Contributor"
                 loading="eager"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            <div
-              className="absolute -bottom-1.5 -right-1.5 bg-[#762D35] text-white p-1.5 rounded-lg border border-[var(--accent-gold)] shadow print:hidden"
-              title="Dr.G Sathyanarayana Raju — Author & Founder"
+            <span
+              className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#25D366] text-white border-2 border-[#D4AF37] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform print:hidden"
+              title={contactWhatsApp}
             >
-              <Crown className="w-3.5 h-3.5 text-white" />
-            </div>
-          </div>
+              <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
+            </span>
+          </a>
 
-          <div className="flex-1 space-y-2 min-w-0">
-            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[var(--heading-text)] print:bg-stone-100 print:text-black print:border-stone-400">
+          <div className="flex-1 space-y-2 min-w-0 max-w-full">
+            <div className="inline-flex items-center justify-center sm:justify-start gap-1.5 px-3 py-1 rounded-2xl bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider leading-[1.4] text-[var(--heading-text)] max-w-full break-words print:bg-stone-100 print:text-black print:border-stone-400">
               <Sparkles className="w-3 h-3 text-[var(--accent-gold)] print:hidden shrink-0" />
-              <span>{designedByText}</span>
+              <span className="break-words">{designedByText}</span>
             </div>
 
             <div>
-              <h3 className="font-royal-heading font-black text-lg sm:text-xl text-[var(--heading-text)] print:text-black leading-tight">
+              <h3 className="font-royal-heading font-black text-lg sm:text-xl text-[var(--heading-text)] print:text-black leading-[1.35] break-words">
                 {publisherName}
               </h3>
               {localizedName && (
-                <p className="text-xs font-semibold text-[var(--link-color)] print:text-stone-800 mt-0.5">
+                <p className="text-xs font-semibold text-[var(--link-color)] print:text-stone-800 mt-0.5 leading-[1.4]">
                   {localizedName}
                 </p>
               )}
@@ -267,19 +280,19 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
               {professionalTitles.map((titleItem, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--surface-bg)] border border-[var(--border-color)] text-[11px] sm:text-xs font-semibold text-[var(--primary-text)] print:bg-stone-100 print:text-stone-900 print:border-stone-400"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-[var(--surface-bg)] border border-[var(--border-color)] text-[11px] sm:text-xs font-semibold leading-[1.4] text-[var(--primary-text)] max-w-full break-words text-left print:bg-stone-100 print:text-stone-900 print:border-stone-400"
                 >
                   <Award className="w-3 h-3 text-[#762D35] print:hidden shrink-0" />
-                  <span>{titleItem}</span>
+                  <span className="break-words">{titleItem}</span>
                 </span>
               ))}
             </div>
 
-            <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold mt-1 break-words">
+            <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold leading-[1.45] mt-1 break-words">
               {organizationName}
             </div>
 
-            <p className="text-[11px] sm:text-xs text-[var(--primary-text)] print:text-stone-700 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-[var(--primary-text)] print:text-stone-700 leading-relaxed break-words">
               {leaderBio}
             </p>
 
@@ -289,18 +302,18 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold leading-[1.4] bg-[#762D35] hover:bg-[#5e2229] text-white transition-all cursor-pointer max-w-full"
               >
-                <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
-                <span>{contactWhatsApp}</span>
-                <ExternalLink className="w-3 h-3 opacity-80" />
+                <WhatsAppIcon className="w-3.5 h-3.5 fill-current shrink-0" />
+                <span className="break-words">{contactWhatsApp}</span>
+                <ExternalLink className="w-3 h-3 opacity-80 shrink-0" />
               </a>
 
               <a
                 href="tel:+919480112897"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--accent-gold)] transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold leading-[1.4] bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--accent-gold)] transition-all"
               >
-                <Phone className="w-3 h-3 text-[#762D35]" />
+                <Phone className="w-3 h-3 text-[#762D35] shrink-0" />
                 <span>+91 9480112897</span>
               </a>
             </div>
@@ -311,12 +324,20 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
   }
 
   return (
-    <div className={`w-full max-w-5xl mx-auto px-4 ${className}`}>
-      <div className="relative overflow-hidden rounded-3xl bg-[var(--card-bg)] border-2 border-[var(--accent-gold)] shadow-md transition-all p-5 sm:p-7 print:bg-white print:text-black print:border-stone-400 print:shadow-none">
-        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 text-center sm:text-left">
-          {/* Dr.G Sathyanarayana Raju Portrait */}
-          <div className="relative shrink-0 group">
-            <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-[var(--accent-gold)] shadow-md ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
+    <div className={`w-full max-w-5xl mx-auto px-2 sm:px-4 ${className}`}>
+      <div className="relative overflow-hidden rounded-3xl bg-[var(--card-bg)] border-2 border-[var(--accent-gold)] shadow-md transition-all p-4 sm:p-7 print:bg-white print:text-black print:border-stone-400 print:shadow-none">
+        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-5 sm:gap-8 text-center sm:text-left">
+          {/* Dr.G Sathyanarayana Raju Circular Gold-Bordered Portrait with Clickable WhatsApp Badge */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+            className="relative shrink-0 group cursor-pointer"
+            title={contactWhatsApp}
+            aria-label={contactWhatsApp}
+          >
+            <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-[3px] border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.45)] ring-2 ring-[#762D35]/40 print:border-stone-500 print:ring-0">
               <img
                 src={imageSrc}
                 alt={`${publisherName} — ${CANONICAL_PROFESSIONAL_TITLES.join(', ')}`}
@@ -324,28 +345,28 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
               />
             </div>
-            {/* Crown Embellishment Badge */}
-            <div
-              className="absolute -bottom-2 -right-2 bg-[#762D35] text-white p-2 rounded-xl border border-[var(--accent-gold)] shadow-md print:hidden"
-              title="Founder • Web Developer / Designer • Digital Creator • Historical Documentation Contributor"
+            {/* Attached WhatsApp Icon Badge */}
+            <span
+              className="absolute bottom-0.5 right-0.5 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#25D366] text-white border-2 border-[#D4AF37] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform print:hidden"
+              title={contactWhatsApp}
             >
-              <Crown className="w-4 h-4 text-white" />
-            </div>
-          </div>
+              <WhatsAppIcon className="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-current" />
+            </span>
+          </a>
 
           {/* Publishing & Leadership Information */}
-          <div className="flex-1 space-y-2.5">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] shadow-sm print:bg-stone-100 print:text-black print:border-stone-400">
+          <div className="flex-1 space-y-2.5 min-w-0 max-w-full">
+            <div className="inline-flex items-center justify-center sm:justify-start gap-2 px-3 py-1 rounded-2xl bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[10.5px] sm:text-xs font-bold uppercase tracking-wider leading-[1.4] text-[var(--heading-text)] shadow-sm max-w-full break-words print:bg-stone-100 print:text-black print:border-stone-400">
               <Sparkles className="w-3.5 h-3.5 text-[var(--accent-gold)] print:hidden shrink-0" />
-              <span>{designedByText}</span>
+              <span className="break-words">{designedByText}</span>
             </div>
 
             <div>
-              <h2 className="font-royal-heading font-black text-2xl sm:text-4xl text-[var(--heading-text)] tracking-tight leading-tight print:text-black">
+              <h2 className="font-royal-heading font-black text-xl sm:text-4xl text-[var(--heading-text)] tracking-tight leading-[1.35] break-words print:text-black">
                 {publisherName}
               </h2>
               {localizedName && (
-                <p className="text-sm sm:text-base font-bold text-[var(--link-color)] print:text-stone-800 mt-0.5">
+                <p className="text-sm sm:text-base font-bold text-[var(--link-color)] leading-[1.4] print:text-stone-800 mt-0.5">
                   {localizedName}
                 </p>
               )}
@@ -353,47 +374,47 @@ export const PublisherCreditCard: React.FC<PublisherCreditCardProps> = ({
 
             {/* All 4 Professional Titles */}
             <div
-              className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-0.5"
+              className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 pt-0.5"
               aria-label="Professional Titles"
             >
               {professionalTitles.map((titleItem, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-xs sm:text-sm font-semibold text-[var(--primary-text)] shadow-sm print:bg-stone-100 print:text-stone-900 print:border-stone-400"
+                  className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-lg bg-[var(--surface-bg)] border border-[var(--accent-gold)] text-[11px] sm:text-sm font-semibold leading-[1.4] text-[var(--primary-text)] shadow-sm max-w-full break-words text-left print:bg-stone-100 print:text-stone-900 print:border-stone-400"
                 >
                   <Award className="w-3.5 h-3.5 text-[#762D35] print:hidden shrink-0" />
-                  <span>{titleItem}</span>
+                  <span className="break-words">{titleItem}</span>
                 </span>
               ))}
             </div>
 
-            <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold mt-1 break-words">
+            <div className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)] text-xs sm:text-sm font-semibold leading-[1.45] mt-1 break-words">
               {organizationName}
             </div>
 
-            <p className="text-xs text-[var(--primary-text)] max-w-2xl leading-relaxed print:text-stone-700">
+            <p className="text-xs text-[var(--primary-text)] max-w-2xl leading-relaxed break-words print:text-stone-700">
               {leaderBio}
             </p>
 
             {/* Direct WhatsApp Contact Button & Direct Mobile Call */}
-            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-3 print:hidden">
+            <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3 print:hidden">
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#762D35] hover:bg-[#5e2229] text-white shadow-sm transition-all cursor-pointer group"
+                className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold leading-[1.4] bg-[#762D35] hover:bg-[#5e2229] text-white shadow-sm transition-all cursor-pointer group max-w-full"
               >
-                <WhatsAppIcon className="w-4 h-4 fill-current" />
-                <span>{contactWhatsApp}</span>
-                <ExternalLink className="w-3.5 h-3.5 opacity-80 group-hover:translate-x-0.5 transition-transform" />
+                <WhatsAppIcon className="w-4 h-4 fill-current shrink-0" />
+                <span className="break-words">{contactWhatsApp}</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-80 shrink-0 group-hover:translate-x-0.5 transition-transform" />
               </a>
 
               <a
                 href="tel:+919480112897"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--accent-gold)] transition-all"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold leading-[1.4] bg-[var(--surface-bg)] hover:bg-[var(--secondary-button)] text-[var(--heading-text)] border border-[var(--accent-gold)] transition-all"
               >
-                <Phone className="w-3.5 h-3.5 text-[#762D35]" />
+                <Phone className="w-3.5 h-3.5 text-[#762D35] shrink-0" />
                 <span>+91 9480112897</span>
               </a>
             </div>

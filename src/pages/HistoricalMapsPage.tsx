@@ -265,19 +265,48 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
               </div>
             </div>
 
-            <div className="relative w-full h-80 sm:h-96 rounded-2xl overflow-hidden bg-[#EFE3D0] border border-[#D8C3A2]">
-              <img
-                src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&auto=format&fit=crop&q=80"
-                alt="Historical Cartography Map of Eastern India"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-6">
-                <h3 className="font-royal-heading font-bold text-lg text-white">
-                  Ganges to Kaveri Hegemony (Zenith under Kapilendra Deva)
-                </h3>
-                <p className="text-xs text-[#FFF9EF] max-w-2xl mt-1 leading-relaxed">
-                  Based on the findspots of the Veligalani plates, Srirangam donations, Kondavidu inscriptions, and Cuttack Barabati fortress ruins.
-                </p>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+              <div className="lg:col-span-8 relative rounded-2xl overflow-hidden bg-[#0B1B3D] border-2 border-[#D4AF37]">
+                <img
+                  src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
+                  alt="Labeled Historical Map of Suryavamsha Gajapathi Empire (1465 CE) from Ganga to Kaveri"
+                  loading="eager"
+                  className="w-full h-full object-contain bg-[#0B1B3D] group-hover:scale-[1.02] transition-transform duration-500"
+                />
+                <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#0B1B3D]/95 border border-[#D4AF37] text-[#F5E1A4] text-[10px] font-bold uppercase tracking-wider shadow">
+                  Cartographic Reconstruction • Labeled Atlas
+                </span>
+              </div>
+
+              <div className="lg:col-span-4 flex flex-col justify-between rounded-2xl overflow-hidden bg-[#0B1B3D] border-2 border-[#D4AF37]/80 text-[#FFFCF5]">
+                <div className="relative h-56 overflow-hidden border-b border-[#D4AF37]/50">
+                  <img
+                    src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`}
+                    alt="Museum Map of Eastern Ganga Emperor Narasimhadeva I Empire (1238-1264 CE)"
+                    loading="lazy"
+                    className="w-full h-full object-cover object-center"
+                  />
+                  <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded bg-[#762D35]/95 border border-[#D4AF37]/70 text-[#FFF8E7] text-[10px] font-bold uppercase">
+                    Verified Museum Map (1238–1264 CE)
+                  </span>
+                </div>
+                <div className="p-5 space-y-2.5 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-[#D4AF37]">
+                      Epigraphic Findspot Synthesis
+                    </span>
+                    <h3 className="font-royal-heading font-bold text-base sm:text-lg text-[#FFF7DF]">
+                      Ganges to Kaveri Hegemony (Zenith under Kapilendra Deva)
+                    </h3>
+                    <p className="text-xs text-[#E5DEC9] leading-relaxed">
+                      Corroborated by the Veligalani copper-plate grant (1458 CE), Lingaraja temple proclamations (1452 CE), Kondavidu and Udayagiri fortress bastions, Kolletikota Jala-Durga, and Srirangam donations (1464 CE).
+                    </p>
+                  </div>
+                  <div className="pt-2 border-t border-[#D4AF37]/30 flex items-center justify-between text-xs font-bold text-[#F5E1A4]">
+                    <span>Inspect Full Boundary Model</span>
+                    <ArrowRight className="w-4 h-4 text-[#D4AF37]" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -19,6 +19,17 @@ const SCRIPT_ICONS: Record<LanguageCode, string> = {
   bn: 'বা'
 };
 
+const DOCK_LANG_HEADER: Record<LanguageCode, string> = {
+  en: 'Select Language (8 Supported)',
+  hi: 'भाषा चुनें (8 भाषाएँ उपलब्ध)',
+  te: 'భాషను ఎంచుకోండి (8 భాషలు)',
+  kn: 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ (8 ಭಾಷೆಗಳು)',
+  ta: 'மொழியைத் தேர்ந்தெடுக்கவும் (8 மொழிகள்)',
+  mr: 'भाषा निवडा (८ भाषा उपलब्ध)',
+  or: 'ଭାଷା ବାଛନ୍ତୁ (୮ଟି ଭାଷା)',
+  bn: 'ভাষা নির্বাচন করুন (৮টি ভাষা)'
+};
+
 const checkIsArticleReadingActive = (): boolean => {
   if (typeof window === 'undefined' || typeof document === 'undefined') return false;
   if (document.body.getAttribute('data-article-reading') === 'true') {
@@ -86,110 +97,107 @@ export const FloatingPageDock: React.FC<FloatingPageDockProps> = ({ currentPath,
   };
 
   return (
-    <aside aria-label="Floating Navigation & Language Controls" className="no-print print:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-max max-w-[96vw] transition-all duration-300">
-      {/* Expanded 8-Language Selector Flyout */}
-      {isExpanded && (
-        <div className="mb-2 p-3 sm:p-4 rounded-2xl bg-[#F1E4D0] border-2 border-[#A87924] shadow-[0_12px_36px_rgba(75,51,31,0.22)] animate-in fade-in slide-in-from-bottom-2 duration-150">
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#D8C3A2] text-xs">
-            <div className="flex items-center gap-1.5 font-bold text-[#54351F]">
-              <Languages className="w-3.5 h-3.5 text-[#A87924]" />
-              <span>Select Language (8 Supported)</span>
+    <aside
+      aria-label="Navigation & Language Controls"
+      className="model4-navy-scope no-print print:hidden relative z-30 w-full bg-gradient-to-r from-[#071229] via-[#0B1B3D] to-[#071229] border-t-2 border-[#D4AF37] py-2.5 px-3 sm:px-6 transition-all duration-300"
+    >
+      <div className="max-w-4xl mx-auto flex flex-col items-center">
+        {/* Expanded 8-Language Selector Flyout */}
+        {isExpanded && (
+          <div className="w-full mb-2.5 p-3 sm:p-4 rounded-2xl bg-[#F5EBD9] text-[#292521] border-2 border-[#D4AF37] shadow-[0_12px_32px_rgba(7,18,41,0.45)] animate-in fade-in duration-150">
+            <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-[#D8C3A2] text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-[#54351F] min-w-0 leading-[1.4]">
+                <Languages className="w-3.5 h-3.5 text-[#A87924] shrink-0" />
+                <span className="break-words">{DOCK_LANG_HEADER[language] || DOCK_LANG_HEADER.en}</span>
+              </div>
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="p-1 text-[#6B5948] hover:text-[#292521] rounded-md hover:bg-[#E9D9BE] shrink-0"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button
-              onClick={() => setIsExpanded(false)}
-              className="p-1 text-[#6B5948] hover:text-[#292521] rounded-md hover:bg-[#E9D9BE]"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-            {SUPPORTED_LANGUAGES.map((langOpt) => {
-              const isSelected = langOpt.code === language;
-              const glyph = SCRIPT_ICONS[langOpt.code];
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              {SUPPORTED_LANGUAGES.map(langOpt => {
+                const isSelected = langOpt.code === language;
+                const glyph = SCRIPT_ICONS[langOpt.code];
 
-              return (
-                <button
-                  key={langOpt.code}
-                  type="button"
-                  onClick={() => {
-                    setLanguage(langOpt.code);
-                    setIsExpanded(false);
-                  }}
-                  className={`p-2 rounded-xl text-left transition-all flex items-center gap-2 cursor-pointer border ${
-                    isSelected
-                      ? 'bg-[#762D35] border-[#A87924] text-white font-bold shadow-sm'
-                      : 'bg-[#FFFCF5] border-[#D8C3A2] text-[#292521] hover:border-[#A87924] hover:bg-[#E9D9BE] hover:text-[#54351F]'
-                  }`}
-                >
-                  <span
-                    className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                return (
+                  <button
+                    key={langOpt.code}
+                    type="button"
+                    onClick={() => {
+                      setLanguage(langOpt.code);
+                      setIsExpanded(false);
+                    }}
+                    className={`p-2 rounded-xl text-left transition-all flex items-center gap-2 cursor-pointer border min-w-0 ${
                       isSelected
-                        ? 'bg-[#FFFCF5] text-[#762D35]'
-                        : 'bg-[#E9D9BE] text-[#54351F]'
+                        ? 'bg-[#762D35] border-[#D4AF37] text-white font-bold shadow-sm'
+                        : 'bg-[#FFFCF5] border-[#D8C3A2] text-[#292521] hover:border-[#A87924] hover:bg-[#E9D9BE] hover:text-[#54351F]'
                     }`}
                   >
-                    {glyph}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="text-xs truncate">{langOpt.nativeName}</div>
-                    <div className={`text-[10px] truncate ${isSelected ? 'text-[#FFF9EF]' : 'text-[#6B5948]'}`}>
-                      {langOpt.label}
+                    <span
+                      className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
+                        isSelected ? 'bg-[#FFFCF5] text-[#762D35]' : 'bg-[#E9D9BE] text-[#54351F]'
+                      }`}
+                    >
+                      {glyph}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs leading-[1.4] break-words">{langOpt.nativeName}</div>
+                      <div className={`text-[10px] leading-[1.35] truncate ${isSelected ? 'text-[#FFF9EF]' : 'text-[#6B5948]'}`}>
+                        {langOpt.label}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Main Floating Pill Bar */}
-      <div className="flex items-center justify-center gap-1.5 p-1.5 sm:p-2 rounded-2xl bg-[#F1E4D0]/98 backdrop-blur-md border-2 border-[#A87924] shadow-[0_8px_28px_rgba(75,51,31,0.18)] text-xs text-[#292521]">
-        {/* Home Button */}
-        <button
-          type="button"
-          onClick={() => onNavigate('/')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer shadow-sm ${
-            currentPath === '/'
-              ? 'bg-[#762D35] text-white border border-[#A87924]'
-              : 'bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2]'
-          }`}
-          title="Go to Homepage"
-        >
-          <Home className={`w-3.5 h-3.5 ${currentPath === '/' ? 'text-white' : 'text-[#A87924]'}`} />
-          <span className="hidden sm:inline">{t.nav?.home || 'Home'}</span>
-        </button>
-
-        {/* Close Button */}
-        {currentPath !== '/' && (
-          <button
-            type="button"
-            onClick={handleCloseOrBack}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2] transition-all cursor-pointer shadow-sm"
-            title="Close page / return to Home"
-          >
-            <X className="w-3.5 h-3.5 text-[#762D35]" />
-            <span className="hidden sm:inline">{t.common?.close || 'Close'}</span>
-          </button>
         )}
 
-        {/* 8-Language Quick Toggle Trigger / Indicator */}
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm"
-          title="Toggle Language Menu (8 Supported)"
-        >
-          <Globe className="w-3.5 h-3.5 text-white" />
-          <span>{currentLang.nativeName}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FFFCF5]" />
-          {isExpanded ? (
-            <ChevronDown className="w-3 h-3 text-white" />
-          ) : (
-            <ChevronUp className="w-3 h-3 text-white" />
+        {/* Main Royal Navy & Antique Gold Pill Bar (Docked cleanly, never covering hero or content) */}
+        <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 sm:p-2 rounded-2xl border border-[#D4AF37]/80 bg-[#0B1B3D]/90 shadow-md text-xs max-w-full">
+          {/* Home Button */}
+          <button
+            type="button"
+            onClick={() => onNavigate('/')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold leading-[1.4] transition-all cursor-pointer shadow-sm ${
+              currentPath === '/' ? 'model4-btn-gold' : 'model4-navy-pill'
+            }`}
+            title="Go to Homepage"
+          >
+            <Home className="w-3.5 h-3.5 shrink-0" />
+            <span>{t.nav?.home || 'Home'}</span>
+          </button>
+
+          {/* Close Button */}
+          {currentPath !== '/' && (
+            <button
+              type="button"
+              onClick={handleCloseOrBack}
+              className="model4-navy-pill flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-semibold leading-[1.4] transition-all cursor-pointer shadow-sm"
+              title="Close page / return to Home"
+            >
+              <X className="w-3.5 h-3.5 text-[#F5E1A4] shrink-0" />
+              <span>{t.common?.close || 'Close'}</span>
+            </button>
           )}
-        </button>
+
+          {/* 8-Language Quick Toggle Trigger / Indicator */}
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="model4-btn-maroon flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold leading-[1.4] transition-all cursor-pointer shadow-sm"
+            title="Toggle Language Menu (8 Supported)"
+          >
+            <Globe className="w-3.5 h-3.5 shrink-0" />
+            <span>{currentLang.nativeName}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F5E1A4] shrink-0" />
+            {isExpanded ? <ChevronDown className="w-3 h-3 shrink-0" /> : <ChevronUp className="w-3 h-3 shrink-0" />}
+          </button>
+        </div>
       </div>
     </aside>
   );

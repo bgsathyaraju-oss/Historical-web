@@ -208,12 +208,28 @@ export function getMonographPeriod(article: Article, lang: LanguageCode): string
   return article.publication_date || 'Classical & Medieval Era';
 }
 
-export function getMonographCategories(article: Article, localizedPrimaryCategory: string): string[] {
+export function getMonographCategories(
+  article: Article,
+  localizedPrimaryCategory: string,
+  translateFn?: (text: string) => string,
+  getMetaFn?: (type: 'category' | 'evidence' | 'status' | 'source_type', val: string) => string
+): string[] {
+  const localize = (raw: string) => {
+    if (getMetaFn) {
+      const meta = getMetaFn('category', raw);
+      if (meta && meta !== raw) return meta;
+    }
+    return translateFn ? translateFn(raw) : raw;
+  };
   const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
   if (enrichment) {
-    return Array.from(new Set([localizedPrimaryCategory, ...enrichment.subjectCategories.slice(1)]));
+    return Array.from(
+      new Set([localizedPrimaryCategory, ...enrichment.subjectCategories.slice(1).map(localize)])
+    );
   }
-  return Array.from(new Set([localizedPrimaryCategory, ...(article.tags || []).slice(0, 2)]));
+  return Array.from(
+    new Set([localizedPrimaryCategory, ...(article.tags || []).slice(0, 2).map(localize)])
+  );
 }
 
 const ARTICLE_DETAIL_UI: Record<
@@ -235,6 +251,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: string;
     tocHeading: (count: number) => string;
     chaptersHeading: string;
+    chapterLabel: (num: number) => string;
+    copyDirectLink: string;
+    copyTitleAndLink: string;
+    shareWhatsApp: string;
+    inspectChronology: string;
+    documentedMonarchsSub: string;
+    associatedKingdomsSub: string;
+    imperialDynastyBadge: string;
+    gajapathiKingdomTitle: string;
+    sovereignTerritoryBadge: string;
+    ancientOdraTitle: string;
+    royalSuccessionBadge: string;
+    dynasticGenealogyTitle: string;
+    corroboratingInscriptionsSub: (count: number) => string;
+    archivalManuscriptLabel: string;
+    archaeologicalMonumentLabel: string;
     epistemicHeading: string;
     epistemicVerifiedTitle: string;
     epistemicVerifiedDesc: string;
@@ -278,6 +310,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'Short Introduction & Historical Scope',
     tocHeading: count => `Complete Monograph Chapters & Sections (${count})`,
     chaptersHeading: 'Complete Monograph Chapters & Detailed Historical Analysis',
+    chapterLabel: num => `Chapter ${num}`,
+    copyDirectLink: 'Copy Direct Monograph Link',
+    copyTitleAndLink: 'Copy Title & Link',
+    shareWhatsApp: 'Share via WhatsApp',
+    inspectChronology: 'Inspect Chronology Record',
+    documentedMonarchsSub: 'Documented Monarchs, Emperors & Sacred Guardians Involved',
+    associatedKingdomsSub: 'Associated Kingdoms, Dynasties & Territorial Realms',
+    imperialDynastyBadge: 'Imperial Dynasty',
+    gajapathiKingdomTitle: 'Suryavamsha Gajapathi Kingdom & Empire',
+    sovereignTerritoryBadge: 'Sovereign Territory',
+    ancientOdraTitle: 'Ancient Odra Desha, Utkala & Kalinga',
+    royalSuccessionBadge: 'Royal Succession',
+    dynasticGenealogyTitle: 'Suryavamsha & Odra Dynastic Genealogy',
+    corroboratingInscriptionsSub: count => `Corroborating Stone Inscriptions & Copper-Plate Charters (${count})`,
+    archivalManuscriptLabel: 'Archival Manuscript',
+    archaeologicalMonumentLabel: 'Archaeological Monument',
     epistemicHeading: 'Epistemic Distinction: Verified Evidence, Traditional Accounts & Scholarly Analysis',
     epistemicVerifiedTitle: '1. Verified Epigraphic & Archaeological Evidence',
     epistemicVerifiedDesc: 'Corroborated directly by dated copper-plate charters, lithic temple edicts, and surveyed fortification remains.',
@@ -320,6 +368,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'संक्षिप्त परिचय एवं ऐतिहासिक परिधि',
     tocHeading: count => `संपूर्ण अध्याय एवं अनुभाग (${count})`,
     chaptersHeading: 'संपूर्ण मोनोग्राफ अध्याय एवं विस्तृत ऐतिहासिक व्याख्या',
+    chapterLabel: num => `अध्याय ${num}`,
+    copyDirectLink: 'प्रत्यक्ष मोनोग्राफ लिंक कॉपी करें',
+    copyTitleAndLink: 'शीर्षक एवं लिंक कॉपी करें',
+    shareWhatsApp: 'व्हाट्सएप द्वारा साझा करें',
+    inspectChronology: 'कालक्रम अभिलेख देखें',
+    documentedMonarchsSub: 'संबद्ध प्रमाणित सम्राट, शासक एवं संरक्षक विभूतियाँ',
+    associatedKingdomsSub: 'संबद्ध साम्राज्य, राजवंश एवं ऐतिहासिक क्षेत्र',
+    imperialDynastyBadge: 'साम्राज्यिक राजवंश',
+    gajapathiKingdomTitle: 'सूर्यवंश गजपति राज्य एवं साम्राज्य',
+    sovereignTerritoryBadge: 'सार्वभौम क्षेत्र',
+    ancientOdraTitle: 'प्राचीन ओड्र देश, उत्कल एवं कलिंग',
+    royalSuccessionBadge: 'राजकीय उत्तराधिकार',
+    dynasticGenealogyTitle: 'सूर्यवंश एवं ओड्र राजवंशीय वंशावली',
+    corroboratingInscriptionsSub: count => `पुष्टिकारक पाषाण शिलालेख एवं ताम्रपत्र राजपत्र (${count})`,
+    archivalManuscriptLabel: 'अभिलेखीय पांडुलिपि',
+    archaeologicalMonumentLabel: 'पुरातात्विक स्मारक',
     epistemicHeading: 'साक्ष्य वर्गीकरण: प्रमाणित साक्ष्य, पारंपरिक आख्यान एवं विद्वत विश्लेषण',
     epistemicVerifiedTitle: '1. प्रमाणित शिलालेख एवं पुरातात्विक साक्ष्य',
     epistemicVerifiedDesc: 'तिथियुक्त ताम्रपत्रों, मंदिर शिलालेखों और पुरातात्विक स्मारकों द्वारा प्रत्यक्ष रूप से पुष्ट।',
@@ -362,6 +426,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'సంక్షిప్త పరిచయం & చారిత్రక పరిధి',
     tocHeading: count => `పూర్తి అధ్యాయాలు & విభాగాలు (${count})`,
     chaptersHeading: 'పూర్తి మోనోగ్రాఫ్ అధ్యాయాలు & సమగ్ర చారిత్రక వివరణ',
+    chapterLabel: num => `అధ్యాయం ${num}`,
+    copyDirectLink: 'నేరుగా మోనోగ్రాఫ్ లింక్ కాపీ చేయండి',
+    copyTitleAndLink: 'శీర్షిక & లింక్ కాపీ చేయండి',
+    shareWhatsApp: 'వాట్సాప్ ద్వారా షేర్ చేయండి',
+    inspectChronology: 'కాలక్రమ రికార్డును చూడండి',
+    documentedMonarchsSub: 'సంబంధిత చారిత్రక చక్రవర్తులు, రాజులు & ఆరాధ్యమూర్తులు',
+    associatedKingdomsSub: 'సంబంధిత రాజ్యాలు, రాజవంశాలు & చారిత్రక ప్రాంతాలు',
+    imperialDynastyBadge: 'సామ్రాజ్య రాజవంశం',
+    gajapathiKingdomTitle: 'సూర్యవంశ గజపతి రాజ్యం & సామ్రాజ్యం',
+    sovereignTerritoryBadge: 'సార్వభౌమ భూభాగం',
+    ancientOdraTitle: 'ప్రాచీన ఓడ్ర దేశం, ఉత్కళ & కళింగ',
+    royalSuccessionBadge: 'రాజవంశ వారసత్వం',
+    dynasticGenealogyTitle: 'సూర్యవంశ & ఓడ్ర రాజవంశ వంశావళి',
+    corroboratingInscriptionsSub: count => `ధృవీకరించే శిలాశాసనాలు & తామ్రపత్ర శాసనాలు (${count})`,
+    archivalManuscriptLabel: 'పురావస్తు తాళపత్ర గ్రంథం',
+    archaeologicalMonumentLabel: 'పురావస్తు స్మారక చిహ్నం',
     epistemicHeading: 'ఆధారాల విశ్లేషణ: ధృవీకరించబడిన సాక్ష్యాలు, సాంప్రదాయ కథనాలు & పరిశోధన',
     epistemicVerifiedTitle: '1. ధృవీకరించబడిన శాసన & పురావస్తు ఆధారాలు',
     epistemicVerifiedDesc: 'తామ్రపత్ర శాసనాలు, ఆలయ శిలాశాసనాలు మరియు కోటల పురావస్తు ఆధారాలతో నిర్ధారించబడినవి.',
@@ -404,6 +484,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'ಸಂಕ್ಷಿಪ್ತ ಪರಿಚಯ ಮತ್ತು ಐತಿಹಾಸಿಕ ವ್ಯಾಪ್ತಿ',
     tocHeading: count => `ಸಂಪೂರ್ಣ ಅಧ್ಯಾಯಗಳು ಮತ್ತು ವಿಭಾಗಗಳು (${count})`,
     chaptersHeading: 'ಸಂಪೂರ್ಣ ಮೊನೊಗ್ರಾಫ್ ಅಧ್ಯಾಯಗಳು ಮತ್ತು ವಿವರವಾದ ಐತಿಹಾಸಿಕ ವಿಶ್ಲೇಷಣೆ',
+    chapterLabel: num => `ಅಧ್ಯಾಯ ${num}`,
+    copyDirectLink: 'ನೇರ ಮೊನೊಗ್ರಾಫ್ ಲಿಂಕ್ ನಕಲಿಸಿ',
+    copyTitleAndLink: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಿ',
+    shareWhatsApp: 'ವಾಟ್ಸಾಪ್ ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ',
+    inspectChronology: 'ಕಾಲಾನುಕ್ರಮ ದಾಖಲೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
+    documentedMonarchsSub: 'ಸಂಬಂಧಿತ ಐತಿಹಾಸಿಕ ಸಾಮ್ರಾಟರು, ಅರಸರು ಮತ್ತು ಆರಾಧ್ಯ ದೈವಗಳು',
+    associatedKingdomsSub: 'ಸಂಬಂಧಿತ ಸಾಮ್ರಾಜ್ಯಗಳು, ರಾಜವಂಶಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಪ್ರದೇಶಗಳು',
+    imperialDynastyBadge: 'ಸಾಮ್ರಾಜ್ಯಶಾಹಿ ರಾಜವಂಶ',
+    gajapathiKingdomTitle: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ರಾಜ್ಯ ಮತ್ತು ಸಾಮ್ರಾಜ್ಯ',
+    sovereignTerritoryBadge: 'ಸಾರ್ವಭೌಮ ಪ್ರದೇಶ',
+    ancientOdraTitle: 'ಪ್ರಾಚೀನ ಓಡ್ರ ದೇಶ, ಉತ್ಕಲ ಮತ್ತು ಕಳಿಂಗ',
+    royalSuccessionBadge: 'ರಾಜವಂಶದ ಉತ್ತರಾಧಿಕಾರ',
+    dynasticGenealogyTitle: 'ಸೂರ್ಯವಂಶ ಮತ್ತು ಓಡ್ರ ರಾಜವಂಶದ ವಂಶಾವಳಿ',
+    corroboratingInscriptionsSub: count => `ದೃಢೀಕರಿಸುವ ಶಿಲಾಶಾಸನಗಳು ಮತ್ತು ತಾಮ್ರಪತ್ರ ಶಾಸನಗಳು (${count})`,
+    archivalManuscriptLabel: 'ಪತ್ರಾಗಾರ ಹಸ್ತಪ್ರತಿ',
+    archaeologicalMonumentLabel: 'ಪುರಾತತ್ವ ಸ್ಮಾರಕ',
     epistemicHeading: 'ಸಾಕ್ಷ್ಯ ವರ್ಗೀಕರಣ: ದೃಢೀಕೃತ ಸಾಕ್ಷ್ಯ, ಸಂಪ್ರದಾಯ ಮತ್ತು ವಿದ್ವತ್ ವಿಶ್ಲೇಷಣೆ',
     epistemicVerifiedTitle: '1. ದೃಢೀಕೃತ ಶಾಸನ ಮತ್ತು ಪುರಾತತ್ವ ಸಾಕ್ಷ್ಯ',
     epistemicVerifiedDesc: 'ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ಶಾಸನಗಳು ಮತ್ತು ಪುರಾತತ್ವ ಸ್ಮಾರಕಗಳಿಂದ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ.',
@@ -446,6 +542,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'சுருக்கமான அறிமுகம் மற்றும் வரலாற்று எல்லை',
     tocHeading: count => `முழு அத்தியாயங்கள் மற்றும் பிரிவுகள் (${count})`,
     chaptersHeading: 'முழு ஆய்வுக் கட்டுரை அத்தியாயங்கள் மற்றும் விரிவான வரலாற்று விளக்கம்',
+    chapterLabel: num => `அத்தியாயம் ${num}`,
+    copyDirectLink: 'நேரடி கட்டுரை இணைப்பை நகலெடு',
+    copyTitleAndLink: 'தலைப்பு மற்றும் இணைப்பை நகலெடு',
+    shareWhatsApp: 'வாட்ஸ்அப் மூலம் பகிர்',
+    inspectChronology: 'காலவரிசைப் பதிவைப் பார்க்க',
+    documentedMonarchsSub: 'தொடர்புடைய பேரரசர்கள், மன்னர்கள் மற்றும் குலதெய்வ ஆளுமைகள்',
+    associatedKingdomsSub: 'தொடர்புடைய பேரரசுகள், அரச வம்சங்கள் மற்றும் வரலாற்றுப் பகுதிகள்',
+    imperialDynastyBadge: 'பேரரசு வம்சம்',
+    gajapathiKingdomTitle: 'சூர்யவம்ச கஜபதி அரசு மற்றும் பேரரசு',
+    sovereignTerritoryBadge: 'இறையாண்மைப் பகுதி',
+    ancientOdraTitle: 'பண்டைய ஒட்ர தேசம், உத்கலம் மற்றும் கலிங்கம்',
+    royalSuccessionBadge: 'அரச வம்ச மரபு',
+    dynasticGenealogyTitle: 'சூர்யவம்ச மற்றும் ஒட்ர அரச வம்சாவளி',
+    corroboratingInscriptionsSub: count => `உறுதிப்படுத்தும் கல்வெட்டுகள் மற்றும் செப்பேட்டுச் சாசனங்கள் (${count})`,
+    archivalManuscriptLabel: 'ஆவணக் காப்பக ஓலைச்சுவடி',
+    archaeologicalMonumentLabel: 'தொல்லியல் நினைவுச்சின்னம்',
     epistemicHeading: 'சான்று வகைப்பாடு: கல்வெட்டுச் சான்றுகள், மரபு மற்றும் அறிஞர் ஆய்வு',
     epistemicVerifiedTitle: '1. உறுதிப்படுத்தப்பட்ட கல்வெட்டு & தொல்லியல் சான்றுகள்',
     epistemicVerifiedDesc: 'செப்பேடுகள், கோயில் கல்வெட்டுகள் மற்றும் தொல்லியல் சின்னங்களால் உறுதிப்படுத்தப்பட்டவை.',
@@ -488,6 +600,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'संक्षिप्त प्रस्तावना आणि ऐतिहासिक व्याप्ती',
     tocHeading: count => `संपूर्ण प्रकरणे आणि विभाग (${count})`,
     chaptersHeading: 'संपूर्ण मोनोग्राफ प्रकरणे आणि सविस्तर ऐतिहासिक विश्लेषण',
+    chapterLabel: num => `प्रकरण ${num}`,
+    copyDirectLink: 'थेट मोनोग्राफ लिंक कॉपी करा',
+    copyTitleAndLink: 'शीर्षक आणि लिंक कॉपी करा',
+    shareWhatsApp: 'व्हॉट्सॲपद्वारे शेअर करा',
+    inspectChronology: 'कालानुक्रम नोंद पहा',
+    documentedMonarchsSub: 'संबंधित ऐतिहासिक सम्राट, राजे आणि आराध्य विभूती',
+    associatedKingdomsSub: 'संबंधित साम्राज्ये, राजवंश आणि ऐतिहासिक प्रदेश',
+    imperialDynastyBadge: 'साम्राज्यिक राजवंश',
+    gajapathiKingdomTitle: 'सूर्यवंश गजपती राज्य आणि साम्राज्य',
+    sovereignTerritoryBadge: 'सार्वभौम प्रदेश',
+    ancientOdraTitle: 'प्राचीन ओड्र देश, उत्कल आणि कलिंग',
+    royalSuccessionBadge: 'राजकीय उत्तराधिकार',
+    dynasticGenealogyTitle: 'सूर्यवंश आणि ओड्र राजवंश वंशावळ',
+    corroboratingInscriptionsSub: count => `पुष्टी देणारे शिलालेख आणि ताम्रपट (${count})`,
+    archivalManuscriptLabel: 'अभिलेखीय हस्तलिखित',
+    archaeologicalMonumentLabel: 'पुरातत्त्वीय स्मारक',
     epistemicHeading: 'पुरावा वर्गीकरण: प्रमाणित पुरावे, परंपरा आणि संशोधन विश्लेषण',
     epistemicVerifiedTitle: '१. प्रमाणित शिलालेख आणि पुरातत्त्वीय पुरावे',
     epistemicVerifiedDesc: 'ताम्रपट, मंदिर शिलालेख आणि किल्ल्यांच्या पुरातत्त्वीय अवशेषांद्वारे पुष्टी केलेले.',
@@ -530,6 +658,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'ସଂକ୍ଷିପ୍ତ ପରିଚୟ ଓ ଐତିହାସିକ ପରିସର',
     tocHeading: count => `ସମ୍ପୂର୍ଣ୍ଣ ଅଧ୍ୟାୟ ଓ ବିଭାଗ (${count})`,
     chaptersHeading: 'ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍ ଅଧ୍ୟାୟ ଓ ବିସ୍ତୃତ ଐତିହାସିକ ବ୍ୟାଖ୍ୟା',
+    chapterLabel: num => `ଅଧ୍ୟାୟ ${num}`,
+    copyDirectLink: 'ସିଧାସଳଖ ମୋନୋଗ୍ରାଫ୍ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    copyTitleAndLink: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    shareWhatsApp: 'ହ୍ୱାଟ୍ସଆପ୍ ମାଧ୍ୟମରେ ସେୟାର କରନ୍ତୁ',
+    inspectChronology: 'କାଳାନୁକ୍ରମ ଅଭିଲେଖ ଦେଖନ୍ତୁ',
+    documentedMonarchsSub: 'ସମ୍ପୃକ୍ତ ପ୍ରମାଣିତ ସମ୍ରାଟ, ରାଜା ଓ ଆରାଧ୍ୟ ବିଭୂତି',
+    associatedKingdomsSub: 'ସମ୍ପୃକ୍ତ ସାମ୍ରାଜ୍ୟ, ରାଜବଂଶ ଓ ଐତିହାସିକ କ୍ଷେତ୍ର',
+    imperialDynastyBadge: 'ସାମ୍ରାଜ୍ୟିକ ରାଜବଂଶ',
+    gajapathiKingdomTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଗଜପତି ରାଜ୍ୟ ଓ ସାମ୍ରାଜ୍ୟ',
+    sovereignTerritoryBadge: 'ସାର୍ବଭୌମ କ୍ଷେତ୍ର',
+    ancientOdraTitle: 'ପ୍ରାଚୀନ ଓଡ଼୍ର ଦେଶ, ଉତ୍କଳ ଓ କଳିଙ୍ଗ',
+    royalSuccessionBadge: 'ରାଜକୀୟ ଉତ୍ତରାଧିକାର',
+    dynasticGenealogyTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଓ ଓଡ଼୍ର ରାଜବଂଶ ବଂଶାବଳୀ',
+    corroboratingInscriptionsSub: count => `ପ୍ରମାଣିତ ପ୍ରସ୍ତର ଶିଳାଲେଖ ଓ ତାମ୍ରଶାସନ (${count})`,
+    archivalManuscriptLabel: 'ଅଭିଲେଖୀୟ ତାଳପତ୍ର ପୋଥି',
+    archaeologicalMonumentLabel: 'ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସ୍ମାରକୀ',
     epistemicHeading: 'ପ୍ରମାଣ ବର୍ଗୀକରଣ: ପ୍ରମାଣିତ ସାକ୍ଷ୍ୟ, ପରମ୍ପରା ଓ ଗବେଷଣା ବିଶ୍ଳେଷଣ',
     epistemicVerifiedTitle: '୧. ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସାକ୍ଷ୍ୟ',
     epistemicVerifiedDesc: 'ତାମ୍ରଶାସନ, ମନ୍ଦିର ଶିଳାଲେଖ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସ୍ମାରକୀ ଦ୍ୱାରା ପ୍ରମାଣିତ।',
@@ -541,7 +685,7 @@ const ARTICLE_DETAIL_UI: Record<
     kingdomsPersonalitiesHeading: 'ସମ୍ପୃକ୍ତ ସାମ୍ରାଜ୍ୟ, ରାଜବଂଶ ଓ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
     inscriptionsEvidenceHeading: 'ଉପଲବ୍ଧ ଶିଳାଲେଖ, ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଅଭିଲେଖ ଓ ଦଲିଲ ପ୍ରମାଣ',
     conclusionHeading: 'ଐତିହାସିକ ବିଶ୍ଳେଷଣ ଓ ସିଦ୍ଧାନ୍ତ',
-    conclusionDesc: 'ଏହି ମୋନୋଗ୍ରାଫରେ ସଂକଳିତ ପ୍ରാଥମିକ ଶିଳାଲେଖ, ସାହିତ୍ୟିକ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ପ୍ରମାଣ ଓଡ଼୍ର ଦେଶର ଐତିହାସିକ ଧାରା ଏବଂ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟର ଗୌରବକୁ ପ୍ରତିପାଦିତ କରେ।',
+    conclusionDesc: 'ଏହି ମୋନୋଗ୍ରାଫରେ ସଂକଳିତ ପ୍ରାଥମିକ ଶିଳାଲେଖ, ସାହିତ୍ୟିକ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ପ୍ରମାଣ ଓଡ଼୍ର ଦେଶର ଐତିହାସିକ ଧାରା ଏବଂ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟର ଗୌରବକୁ ପ୍ରତିପାଦିତ କରେ।',
     sourcesHeading: count => `ମୌଳିକ ଉତ୍ସ ଓ ଗବେଷଣା ପ୍ରମାଣ (${count})`,
     sourcesNote: 'ଅଭିଲେଖ କର୍ତ୍ତୃପକ୍ଷଙ୍କ ଦ୍ୱାରା ତାଲିକାଭୁକ୍ତ ଉତ୍ସ',
     verifiedSource: 'ପ୍ରମାଣିତ ଉତ୍ସ',
@@ -572,6 +716,22 @@ const ARTICLE_DETAIL_UI: Record<
     execIntroHeading: 'সংক্ষিপ্ত ভূমিকা ও ঐতিহাসিক পরিধি',
     tocHeading: count => `সম্পূর্ণ অধ্যায় ও বিভাগ (${count})`,
     chaptersHeading: 'সম্পূর্ণ মনোগ্রাফ অধ্যায় ও বিস্তারিত ঐতিহাসিক বিশ্লেষণ',
+    chapterLabel: num => `অধ্যায় ${num}`,
+    copyDirectLink: 'সরাসরি মনোগ্রাফ লিঙ্ক কপি করুন',
+    copyTitleAndLink: 'শিরোনাম ও লিঙ্ক কপি করুন',
+    shareWhatsApp: 'হোয়াটসঅ্যাপের মাধ্যমে শেয়ার করুন',
+    inspectChronology: 'কালানুক্রমিক নথি দেখুন',
+    documentedMonarchsSub: 'সংশ্লিষ্ট প্রামাণ্য সম্রাট, রাজা ও আরাধ্য ব্যক্তিত্ব',
+    associatedKingdomsSub: 'সংশ্লিষ্ট সাম্রাজ্য, রাজবংশ ও ঐতিহাসিক অঞ্চল',
+    imperialDynastyBadge: 'সাম্রাজ্যিক রাজবংশ',
+    gajapathiKingdomTitle: 'সূর্যবংশ গজপতি রাজ্য ও সাম্রাজ্য',
+    sovereignTerritoryBadge: 'সার্বভৌম অঞ্চল',
+    ancientOdraTitle: 'প্রাচীন ওড্র দেশ, উৎকল ও কলিঙ্গ',
+    royalSuccessionBadge: 'রাজকীয় উত্তরাধিকার',
+    dynasticGenealogyTitle: 'সূর্যবংশ ও ওড্র রাজবংশের বংশাবলী',
+    corroboratingInscriptionsSub: count => `প্রমাণবাহী প্রস্তর শিলালিপি ও তাম্রশাসন (${count})`,
+    archivalManuscriptLabel: 'আর্কাইভ পাণ্ডুলিপি',
+    archaeologicalMonumentLabel: 'প্রত্নতাত্ত্বিক স্মৃতিস্তম্ভ',
     epistemicHeading: 'প্রমাণ শ্রেণীবিন্যাস: প্রমাণিত সাক্ষ্য, ঐতিহ্য ও গবেষণা বিশ্লেষণ',
     epistemicVerifiedTitle: '১. প্রমাণিত শিলালিপি ও প্রত্নতাত্ত্বিক সাক্ষ্য',
     epistemicVerifiedDesc: 'তাম্রশাসন, মন্দির শিলালিপি ও প্রত্নতাত্ত্বিক নিদর্শন দ্বারা প্রমাণিত।',
@@ -609,7 +769,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   showLanguageSwitcher = true,
   basePath = '/documentary'
 }) => {
-  const { language, setLanguage, getArticleContent, getMetadataLabel } = useLanguage();
+  const { language, setLanguage, t, getArticleContent, getMetadataLabel, translateText } = useLanguage();
   const ui = ARTICLE_DETAIL_UI[language] || ARTICLE_DETAIL_UI.en;
   const [copied, setCopied] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
@@ -618,9 +778,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const { title: displayTitle, summary: displaySummary, content: displayContent } = getArticleContent(article);
   const localizedCat = getMetadataLabel('category', article.category) || article.category;
   const historicalPeriod = getMonographPeriod(article, language);
-  const subjectCategories = getMonographCategories(article, localizedCat);
+  const subjectCategories = getMonographCategories(article, localizedCat, translateText, getMetadataLabel);
   const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
   const autoActionTriggeredRef = useRef<string | null>(null);
+  const langParamInitializedRef = useRef<boolean>(false);
 
   // Keep document.title synchronized with the active article title so browser Print / Save as PDF always uses the article's title
   useEffect(() => {
@@ -635,13 +796,26 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     try {
       const params = new URLSearchParams(window.location.search);
       const langParam = params.get('lang') as LanguageCode | null;
-      if (
-        langParam &&
-        ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
-        langParam !== language
-      ) {
-        setLanguage(langParam);
-        return;
+      if (!langParamInitializedRef.current) {
+        langParamInitializedRef.current = true;
+        if (
+          langParam &&
+          ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
+          langParam !== language
+        ) {
+          setLanguage(langParam);
+          return;
+        }
+      } else if (langParam && langParam !== language) {
+        try {
+          const updatedParams = new URLSearchParams(window.location.search);
+          updatedParams.set('lang', language);
+          const updatedQuery = updatedParams.toString();
+          const updatedUrl = `${window.location.pathname}${updatedQuery ? `?${updatedQuery}` : ''}${window.location.hash || ''}`;
+          window.history.replaceState({ path: updatedUrl }, '', updatedUrl);
+        } catch {
+          // Ignore
+        }
       }
 
       if (params.get('autodownloadpdf') === '1' && !isAndroidWebViewEnvironment()) {
@@ -973,7 +1147,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                 >
                   <Copy className="w-4 h-4 text-[#762D35]" />
-                  <span>Copy Direct Monograph Link</span>
+                  <span>{ui.copyDirectLink}</span>
                 </button>
                 <button
                   type="button"
@@ -984,7 +1158,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                 >
                   <FileText className="w-4 h-4 text-[#762D35]" />
-                  <span>Copy Title & Link</span>
+                  <span>{ui.copyTitleAndLink}</span>
                 </button>
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(
@@ -999,7 +1173,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold text-[#76501F]"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  <span>Share via WhatsApp</span>
+                  <span>{ui.shareWhatsApp}</span>
                 </a>
               </div>
             )}
@@ -1074,10 +1248,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* PRINT-ONLY ARCHIVAL MASTHEAD */}
         <div className="hidden print:block border-b-2 border-[#A87924] pb-3 mb-4 text-[#292521]">
           <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
-            Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal
+            {t.siteTitle} • {t.siteSubtitle}
           </p>
           <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
-            Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
+            {translateText('Research, Documentation & Compilation by Dr.G Sathyanarayana Raju')}
           </p>
           <p className="text-[10px] text-[#76501F] break-all mt-0.5">
             {getDirectMonographUrl(false)}
@@ -1126,7 +1300,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <span>{ui.statusLabel}</span>
               </div>
               <div className="text-emerald-800 font-bold mt-1">
-                {article.verification_status} ({article.publication_date})
+                {getMetadataLabel('status', article.verification_status) || article.verification_status} ({article.publication_date})
               </div>
             </div>
           </div>
@@ -1223,7 +1397,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             >
               <div className="flex items-center gap-3 border-b border-[#A87924]/50 pb-3">
                 <span className="px-2.5 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] text-xs font-bold">
-                  Chapter {sIdx + 1}
+                  {ui.chapterLabel(sIdx + 1)}
                 </span>
                 <h3 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F]">
                   {sec.title}
@@ -1316,7 +1490,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                       {ev.year_text} • {ev.period}
                     </span>
                     <span className="text-[11px] text-[#76501F] font-semibold inline-flex items-center gap-1">
-                      <span>Inspect Chronology Record</span>
+                      <span>{ui.inspectChronology}</span>
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                     </span>
                   </div>
@@ -1343,7 +1517,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           {/* Historical Personalities Cards */}
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
-              Documented Monarchs, Emperors & Sacred Guardians Involved
+              {ui.documentedMonarchsSub}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
               {involvedFigures.map((fig, idx) => (
@@ -1380,7 +1554,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           {/* Kingdoms & Dynasties Cards */}
           <div className="pt-3 border-t border-[#A87924]/40">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
-              Associated Kingdoms, Dynasties & Territorial Realms
+              {ui.associatedKingdomsSub}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               <div
@@ -1389,16 +1563,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
-                  alt="Suryavamsha Gajapathi Empire"
+                  alt={ui.gajapathiKingdomTitle}
                   className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="royal-index-box">#1</span>
-                    <span className="text-[10px] font-bold text-[#54351F] uppercase">Imperial Dynasty</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">{ui.imperialDynastyBadge}</span>
                   </div>
                   <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
-                    Suryavamsha Gajapathi Kingdom & Empire
+                    {ui.gajapathiKingdomTitle}
                   </h4>
                 </div>
               </div>
@@ -1409,16 +1583,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`}
-                  alt="Odra Desha & Kalinga"
+                  alt={ui.ancientOdraTitle}
                   className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="royal-index-box">#2</span>
-                    <span className="text-[10px] font-bold text-[#54351F] uppercase">Sovereign Territory</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">{ui.sovereignTerritoryBadge}</span>
                   </div>
                   <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
-                    Ancient Odra Desha, Utkala & Kalinga
+                    {ui.ancientOdraTitle}
                   </h4>
                 </div>
               </div>
@@ -1429,16 +1603,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               >
                 <img
                   src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
-                  alt="Royal Dynastic Genealogy"
+                  alt={ui.dynasticGenealogyTitle}
                   className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
                 />
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="royal-index-box">#3</span>
-                    <span className="text-[10px] font-bold text-[#54351F] uppercase">Royal Succession</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">{ui.royalSuccessionBadge}</span>
                   </div>
                   <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
-                    Suryavamsha & Odra Dynastic Genealogy
+                    {ui.dynasticGenealogyTitle}
                   </h4>
                 </div>
               </div>
@@ -1460,7 +1634,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           {involvedInscriptions.length > 0 && (
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
-                Corroborating Stone Inscriptions & Copper-Plate Charters ({involvedInscriptions.length})
+                {ui.corroboratingInscriptionsSub(involvedInscriptions.length)}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {involvedInscriptions.map(insc => (
@@ -1500,7 +1674,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[10px] font-bold uppercase text-[#76501F]">
-                    Archival Manuscript • {doc.approximate_date}
+                    {ui.archivalManuscriptLabel} • {doc.approximate_date}
                   </div>
                   <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
                     {doc.title}
@@ -1527,7 +1701,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="royal-index-box">#{idx + 1}</span>
                     <span className="text-[10px] font-bold uppercase text-[#54351F]">
-                      Archaeological Monument • {mon.century}
+                      {ui.archaeologicalMonumentLabel} • {mon.century}
                     </span>
                   </div>
                   <h4 className="royal-card-title-box text-xs sm:text-sm font-royal-heading font-bold text-[#54351F]">
@@ -1576,7 +1750,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="royal-index-box text-[10px] font-bold text-white uppercase bg-[#762D35] px-2.5 py-0.5 rounded border border-[#A87924]">
-                        #{i + 1} • {src.source_type}
+                        #{i + 1} • {getMetadataLabel('source_type', src.source_type) || src.source_type}
                       </span>
                       <h4 className="font-bold text-[#54351F] text-xs sm:text-sm">{src.title}</h4>
                     </div>
@@ -1669,7 +1843,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     }}
                     className="royal-related-link-btn text-xs font-medium cursor-pointer"
                   >
-                    {kw}
+                    {getMetadataLabel('category', kw) || translateText(kw)}
                   </button>
                 ))}
               </div>

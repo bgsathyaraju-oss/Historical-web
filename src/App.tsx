@@ -1,54 +1,141 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
-import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { FloatingPageDock } from './components/FloatingPageDock';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { PrintRepeatingAuthorFooter } from './components/PrintRepeatingAuthorFooter';
 import { SeoHeadManager } from './components/SeoHeadManager';
 import { resolveItemMetadataById } from './utils/seoMetadata';
+import {
+  resolveCanonicalArticleId,
+  DUP_SYNONYM_TO_CANONICAL_DIR_MAP,
+  MONO_SECTION_TO_CANONICAL_ARTICLE_MAP,
+  HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP
+} from './data/canonicalArticleMap';
 
-// Pages
+// Eagerly loaded primary landing page and original layout test page for instant rendering
 import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { HistoricalDocumentaryPage } from './pages/HistoricalDocumentaryPage';
-import { OdraDeshaPage } from './pages/OdraDeshaPage';
-import { GajapathiKingdomPage } from './pages/GajapathiKingdomPage';
-import { KingsQueensPage } from './pages/KingsQueensPage';
-import { RoyalGenealogyPage } from './pages/RoyalGenealogyPage';
-import { HistoricalMapsPage } from './pages/HistoricalMapsPage';
-import { HistoricalTimelinePage } from './pages/HistoricalTimelinePage';
-import { InscriptionsPage } from './pages/InscriptionsPage';
-import { TemplesMonumentsPage } from './pages/TemplesMonumentsPage';
-import { HistoricalDocumentsPage } from './pages/HistoricalDocumentsPage';
-import { ResearchArticlesPage } from './pages/ResearchArticlesPage';
-import { HistoricalGalleryPage } from './pages/HistoricalGalleryPage';
-import { CultureTraditionsPage } from './pages/CultureTraditionsPage';
-import { LiteraturePublicationsPage } from './pages/LiteraturePublicationsPage';
-import { HistoricalReferencesPage } from './pages/HistoricalReferencesPage';
-import { CommunityHeritagePage } from './pages/CommunityHeritagePage';
-import { CommunityActivitiesPage } from './pages/CommunityActivitiesPage';
-import { EventsAnnouncementsPage } from './pages/EventsAnnouncementsPage';
-import { PublicMemberDirectoryPage } from './pages/PublicMemberDirectoryPage';
-import { MemberRegistrationPage } from './pages/MemberRegistrationPage';
-import { MemberLoginPage } from './pages/MemberLoginPage';
-import { PasswordRecoveryPage } from './pages/PasswordRecoveryPage';
-import { MemberDashboardPage } from './pages/MemberDashboardPage';
-import { EditProfilePage } from './pages/EditProfilePage';
-import { SubmitResearchPage } from './pages/SubmitResearchPage';
-import { ContactUsPage } from './pages/ContactUsPage';
-import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
-import { TermsConditionsPage } from './pages/TermsConditionsPage';
-import { CopyrightPermissionsPage } from './pages/CopyrightPermissionsPage';
-import { AccessibilityStatementPage } from './pages/AccessibilityStatementPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
-import { UiDesignSystemPage } from './pages/UiDesignSystemPage';
-import { CommunityProminentPersonsPage } from './pages/CommunityProminentPersonsPage';
-import { KalingaWarPage } from './pages/KalingaWarPage';
-import { CommunitySurnamesPage } from './pages/CommunitySurnamesPage';
-import { NorthIndianCommunitySurnamesPage } from './pages/NorthIndianCommunitySurnamesPage';
+import { TestPage } from './pages/TestPage';
+
+// Lazy-loaded global search modal and secondary route pages for optimal bundle splitting
+const GlobalSearchModal = lazy(() =>
+  import('./components/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal }))
+);
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const HistoricalDocumentaryPage = lazy(() =>
+  import('./pages/HistoricalDocumentaryPage').then(m => ({ default: m.HistoricalDocumentaryPage }))
+);
+const OdraDeshaPage = lazy(() =>
+  import('./pages/OdraDeshaPage').then(m => ({ default: m.OdraDeshaPage }))
+);
+const GajapathiKingdomPage = lazy(() =>
+  import('./pages/GajapathiKingdomPage').then(m => ({ default: m.GajapathiKingdomPage }))
+);
+const KingsQueensPage = lazy(() =>
+  import('./pages/KingsQueensPage').then(m => ({ default: m.KingsQueensPage }))
+);
+const RoyalGenealogyPage = lazy(() =>
+  import('./pages/RoyalGenealogyPage').then(m => ({ default: m.RoyalGenealogyPage }))
+);
+const HistoricalMapsPage = lazy(() =>
+  import('./pages/HistoricalMapsPage').then(m => ({ default: m.HistoricalMapsPage }))
+);
+const HistoricalTimelinePage = lazy(() =>
+  import('./pages/HistoricalTimelinePage').then(m => ({ default: m.HistoricalTimelinePage }))
+);
+const InscriptionsPage = lazy(() =>
+  import('./pages/InscriptionsPage').then(m => ({ default: m.InscriptionsPage }))
+);
+const TemplesMonumentsPage = lazy(() =>
+  import('./pages/TemplesMonumentsPage').then(m => ({ default: m.TemplesMonumentsPage }))
+);
+const HistoricalDocumentsPage = lazy(() =>
+  import('./pages/HistoricalDocumentsPage').then(m => ({ default: m.HistoricalDocumentsPage }))
+);
+const ResearchArticlesPage = lazy(() =>
+  import('./pages/ResearchArticlesPage').then(m => ({ default: m.ResearchArticlesPage }))
+);
+const HistoricalGalleryPage = lazy(() =>
+  import('./pages/HistoricalGalleryPage').then(m => ({ default: m.HistoricalGalleryPage }))
+);
+const CultureTraditionsPage = lazy(() =>
+  import('./pages/CultureTraditionsPage').then(m => ({ default: m.CultureTraditionsPage }))
+);
+const LiteraturePublicationsPage = lazy(() =>
+  import('./pages/LiteraturePublicationsPage').then(m => ({ default: m.LiteraturePublicationsPage }))
+);
+const HistoricalReferencesPage = lazy(() =>
+  import('./pages/HistoricalReferencesPage').then(m => ({ default: m.HistoricalReferencesPage }))
+);
+const CommunityHeritagePage = lazy(() =>
+  import('./pages/CommunityHeritagePage').then(m => ({ default: m.CommunityHeritagePage }))
+);
+const CommunityActivitiesPage = lazy(() =>
+  import('./pages/CommunityActivitiesPage').then(m => ({ default: m.CommunityActivitiesPage }))
+);
+const EventsAnnouncementsPage = lazy(() =>
+  import('./pages/EventsAnnouncementsPage').then(m => ({ default: m.EventsAnnouncementsPage }))
+);
+const PublicMemberDirectoryPage = lazy(() =>
+  import('./pages/PublicMemberDirectoryPage').then(m => ({ default: m.PublicMemberDirectoryPage }))
+);
+const MemberRegistrationPage = lazy(() =>
+  import('./pages/MemberRegistrationPage').then(m => ({ default: m.MemberRegistrationPage }))
+);
+const MemberLoginPage = lazy(() =>
+  import('./pages/MemberLoginPage').then(m => ({ default: m.MemberLoginPage }))
+);
+const PasswordRecoveryPage = lazy(() =>
+  import('./pages/PasswordRecoveryPage').then(m => ({ default: m.PasswordRecoveryPage }))
+);
+const MemberDashboardPage = lazy(() =>
+  import('./pages/MemberDashboardPage').then(m => ({ default: m.MemberDashboardPage }))
+);
+const EditProfilePage = lazy(() =>
+  import('./pages/EditProfilePage').then(m => ({ default: m.EditProfilePage }))
+);
+const SubmitResearchPage = lazy(() =>
+  import('./pages/SubmitResearchPage').then(m => ({ default: m.SubmitResearchPage }))
+);
+const ContactUsPage = lazy(() =>
+  import('./pages/ContactUsPage').then(m => ({ default: m.ContactUsPage }))
+);
+const PrivacyPolicyPage = lazy(() =>
+  import('./pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage }))
+);
+const TermsConditionsPage = lazy(() =>
+  import('./pages/TermsConditionsPage').then(m => ({ default: m.TermsConditionsPage }))
+);
+const CopyrightPermissionsPage = lazy(() =>
+  import('./pages/CopyrightPermissionsPage').then(m => ({ default: m.CopyrightPermissionsPage }))
+);
+const AccessibilityStatementPage = lazy(() =>
+  import('./pages/AccessibilityStatementPage').then(m => ({ default: m.AccessibilityStatementPage }))
+);
+const AdminDashboardPage = lazy(() =>
+  import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage }))
+);
+const UiDesignSystemPage = lazy(() =>
+  import('./pages/UiDesignSystemPage').then(m => ({ default: m.UiDesignSystemPage }))
+);
+const CommunityProminentPersonsPage = lazy(() =>
+  import('./pages/CommunityProminentPersonsPage').then(m => ({
+    default: m.CommunityProminentPersonsPage
+  }))
+);
+const KalingaWarPage = lazy(() =>
+  import('./pages/KalingaWarPage').then(m => ({ default: m.KalingaWarPage }))
+);
+const CommunitySurnamesPage = lazy(() =>
+  import('./pages/CommunitySurnamesPage').then(m => ({ default: m.CommunitySurnamesPage }))
+);
+const NorthIndianCommunitySurnamesPage = lazy(() =>
+  import('./pages/NorthIndianCommunitySurnamesPage').then(m => ({
+    default: m.NorthIndianCommunitySurnamesPage
+  }))
+);
 
 function safeScrollToTop(): void {
   if (typeof window === 'undefined') return;
@@ -115,6 +202,41 @@ function resolveRouteAndItemFromUrl(rawPath: string, rawSearch: string): {
     const itemMeta = resolveItemMetadataById(decodedId, 'en');
     if (itemMeta) {
       return { routePath: baseRoute, itemParam: itemMeta.itemId };
+    }
+  }
+
+  if (queryItem) {
+    // 1. Short monograph section ID -> Canonical full documentary article
+    if (MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[queryItem]) {
+      return {
+        routePath: '/documentary',
+        itemParam: MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[queryItem]
+      };
+    }
+
+    // 2. Short historical progenitor card -> Canonical 10-section biography page in /kings-queens
+    if (
+      (normalized === '/historical-persons' || rawSearch.includes('tab=figures')) &&
+      HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[queryItem]
+    ) {
+      return {
+        routePath: '/kings-queens',
+        itemParam: HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[queryItem]
+      };
+    }
+
+    // 3. Consolidated short community synonym -> Canonical 11-section directory article
+    if (DUP_SYNONYM_TO_CANONICAL_DIR_MAP[queryItem]) {
+      queryItem = DUP_SYNONYM_TO_CANONICAL_DIR_MAP[queryItem];
+    }
+
+    // 4. Legacy article ID alias -> Canonical full article ID
+    if (
+      normalized === '/documentary' ||
+      normalized === '/research' ||
+      normalized === '/articles'
+    ) {
+      queryItem = resolveCanonicalArticleId(queryItem);
     }
   }
 
@@ -208,6 +330,9 @@ function AppContent() {
     switch (currentPath) {
       case '/':
         return <HomePage onNavigate={navigateTo} onOpenSearch={() => setSearchModalOpen(true)} />;
+      case '/test-page':
+      case '/test_page':
+        return <TestPage onNavigate={navigateTo} onOpenSearch={() => setSearchModalOpen(true)} />;
       case '/about':
         return <AboutPage onNavigate={navigateTo} />;
       case '/documentary':
@@ -256,6 +381,7 @@ function AppContent() {
       case '/publications':
         return <LiteraturePublicationsPage />;
       case '/references':
+      case '/historical-sources':
         return <HistoricalReferencesPage onNavigate={navigateTo} initialReferenceId={searchParam} />;
       case '/community-heritage':
       case '/heritage':
@@ -289,6 +415,7 @@ function AppContent() {
       case '/privacy':
         return <PrivacyPolicyPage />;
       case '/terms':
+      case '/disclaimer':
         return <TermsConditionsPage />;
       case '/copyright':
         return <CopyrightPermissionsPage />;
@@ -309,12 +436,14 @@ function AppContent() {
       {/* Dynamic SEO, Open Graph & Twitter Card Synchronizer */}
       <SeoHeadManager currentPath={currentPath} language={language} />
 
-      {/* Royal Header */}
-      <Navbar
-        currentPath={currentPath}
-        onNavigate={navigateTo}
-        onOpenSearch={() => setSearchModalOpen(true)}
-      />
+      {/* Global Header for /test-page and inner routes (HomePage '/' renders its own Royal Maroon Header & Navigation) */}
+      {currentPath !== '/' && (
+        <Navbar
+          currentPath={currentPath}
+          onNavigate={navigateTo}
+          onOpenSearch={() => setSearchModalOpen(true)}
+        />
+      )}
 
       {/* Main Page Content with Repeating Print Footer Spacer on Every Page */}
       <table className="print-document-frame">
@@ -323,7 +452,18 @@ function AppContent() {
             <td className="print-document-td">
               <main className="flex-1">
                 <ErrorBoundary key={currentPath} onReset={() => navigateTo('/')}>
-                  {renderCurrentPage()}
+                  <Suspense
+                    fallback={
+                      <div className="min-h-[55vh] flex flex-col items-center justify-center p-8 text-center bg-[#F5EBD9]">
+                        <div className="w-12 h-12 rounded-full border-4 border-[#0B1B3D]/20 border-t-[#D4AF37] animate-spin mb-4" />
+                        <p className="font-serif font-bold text-[#0B1B3D] text-base">
+                          Loading Royal Heritage Archive…
+                        </p>
+                      </div>
+                    }
+                  >
+                    {renderCurrentPage()}
+                  </Suspense>
                 </ErrorBoundary>
               </main>
             </td>
@@ -341,15 +481,19 @@ function AppContent() {
       {/* Repeating Author Footer on Every Printed / Exported PDF Page */}
       <PrintRepeatingAuthorFooter />
 
-      {/* Royal Footer */}
-      <Footer onNavigate={navigateTo} />
+      {/* Global Footer for /test-page and inner routes (HomePage '/' renders its own Royal Maroon Footer) */}
+      {currentPath !== '/' && <Footer onNavigate={navigateTo} />}
 
-      {/* Global Search Modal */}
-      <GlobalSearchModal
-        isOpen={searchModalOpen}
-        onClose={() => setSearchModalOpen(false)}
-        onNavigate={navigateTo}
-      />
+      {/* Global Search Modal (Lazy-loaded on demand) */}
+      {searchModalOpen && (
+        <Suspense fallback={null}>
+          <GlobalSearchModal
+            isOpen={searchModalOpen}
+            onClose={() => setSearchModalOpen(false)}
+            onNavigate={navigateTo}
+          />
+        </Suspense>
+      )}
 
       {/* Universal Floating Home, Close & 8-Language Toggle Dock on Every Page */}
       <FloatingPageDock

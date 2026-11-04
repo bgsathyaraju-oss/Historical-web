@@ -78,9 +78,9 @@
   /* ========================================================================
      5. NAVIGATION, MENUS, DROPDOWNS & FLOATING DOCK (SCREEN ONLY)
      ======================================================================== */
-  header.sticky,
-  nav[aria-label*="Main"],
-  aside[aria-label*="Navigation"] {
+  header.sticky:not(.model4-navy-scope),
+  nav[aria-label*="Main"]:not(.model4-navy-scope),
+  aside[aria-label*="Navigation"]:not(.model4-navy-scope) {
     background-color: var(--menu-bg) !important;
     background-image: none !important;
     color: var(--primary-text) !important;
@@ -948,3 +948,307 @@
     flex-shrink: 0 !important;
   }
 }
+
+/* ==========================================================================
+   11. PREMIUM ROYAL HERITAGE MODEL 4 — DEEP ROYAL NAVY & ANTIQUE GOLD SYSTEM
+   Screen-only rules for Model 4 Header, Hero, Historical Resources Section,
+   Footer, and Portal-Wide Royal Page Header Banners.
+   ========================================================================== */
+@media screen {
+  /* 11A. Deep Royal Navy Containers (.model4-navy-scope, .model4-navy-panel) */
+  .model4-navy-scope,
+  header.model4-navy-scope,
+  footer.model4-navy-scope,
+  section.model4-navy-scope,
+  div.model4-navy-scope {
+    background: linear-gradient(180deg, #0D2046 0%, #081530 100%) !important;
+    color: #FFFCF5 !important;
+    border-color: #C89D32 !important;
+  }
+
+  .model4-navy-bar {
+    background: linear-gradient(90deg, #071229 0%, #0E234D 50%, #071229 100%) !important;
+    color: #F5E1A4 !important;
+    border-color: rgba(200, 157, 50, 0.45) !important;
+  }
+
+  .model4-navy-subpanel,
+  .model4-navy-scope .model4-navy-subpanel {
+    background: linear-gradient(145deg, #132C5C 0%, #0A1938 100%) !important;
+    color: #FFFCF5 !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.65) !important;
+    box-shadow: 0 10px 26px rgba(5, 13, 31, 0.45), inset 0 1px 0 rgba(245, 225, 164, 0.18) !important;
+  }
+
+  .model4-navy-subpanel:hover,
+  .model4-navy-scope .model4-navy-subpanel:hover {
+    background: linear-gradient(145deg, #183670 0%, #0E224A 100%) !important;
+    border-color: #F5E1A4 !important;
+    box-shadow: 0 14px 32px rgba(5, 13, 31, 0.6), 0 0 18px rgba(212, 175, 55, 0.25) !important;
+  }
+
+  .model4-navy-dropdown,
+  .model4-navy-scope .model4-navy-dropdown {
+    background: linear-gradient(180deg, #0F244D 0%, #091734 100%) !important;
+    color: #FFFCF5 !important;
+    border: 2px solid #D4AF37 !important;
+    box-shadow: 0 18px 42px rgba(4, 10, 24, 0.65) !important;
+  }
+
+  .model4-navy-pill,
+  .model4-navy-scope .model4-navy-pill {
+    background: rgba(19, 44, 92, 0.92) !important;
+    color: #FFFCF5 !important;
+    -webkit-text-fill-color: #FFFCF5 !important;
+    border: 1px solid rgba(212, 175, 55, 0.65) !important;
+  }
+
+  .model4-navy-pill:hover,
+  .model4-navy-scope .model4-navy-pill:hover {
+    background: rgba(29, 62, 125, 0.98) !important;
+    color: #F5E1A4 !important;
+    -webkit-text-fill-color: #F5E1A4 !important;
+    border-color: #F5E1A4 !important;
+  }
+
+  /* Typography inside .model4-navy-scope */
+  .model4-navy-scope .model4-text-ivory,
+  .model4-navy-scope h1.model4-text-ivory,
+  .model4-navy-scope h2.model4-text-ivory,
+  .model4-navy-scope h3.model4-text-ivory,
+  .model4-navy-scope h4.model4-text-ivory,
+  .model4-navy-scope p.model4-text-ivory,
+  .model4-navy-scope span.model4-text-ivory,
+  .model4-text-ivory {
+    color: #FFFCF5 !important;
+    -webkit-text-fill-color: #FFFCF5 !important;
+  }
+
+  .model4-navy-scope .model4-text-gold,
+  .model4-navy-scope h1.model4-text-gold,
+  .model4-navy-scope h2.model4-text-gold,
+  .model4-navy-scope h3.model4-text-gold,
+  .model4-navy-scope h4.model4-text-gold,
+  .model4-navy-scope p.model4-text-gold,
+  .model4-navy-scope span.model4-text-gold,
+  .model4-text-gold {
+    color: #F5E1A4 !important;
+    -webkit-text-fill-color: #F5E1A4 !important;
+  }
+
+  .model4-navy-scope .model4-text-muted,
+  .model4-text-muted {
+    color: #CBD8F0 !important;
+    -webkit-text-fill-color: #CBD8F0 !important;
+  }
+
+  /* Antique Gold CTA Button (.model4-btn-gold) */
+  .model4-btn-gold,
+  button.model4-btn-gold,
+  a.model4-btn-gold,
+  .model4-navy-scope .model4-btn-gold {
+    background: linear-gradient(135deg, #E2BE57 0%, #B8871E 100%) !important;
+    color: #071229 !important;
+    -webkit-text-fill-color: #071229 !important;
+    border: 1.5px solid #FCE8A6 !important;
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+    font-weight: 800 !important;
+  }
+
+  .model4-btn-gold *,
+  button.model4-btn-gold *,
+  a.model4-btn-gold *,
+  .model4-navy-scope .model4-btn-gold * {
+    color: #071229 !important;
+    -webkit-text-fill-color: #071229 !important;
+  }
+
+  .model4-btn-gold:hover,
+  button.model4-btn-gold:hover,
+  a.model4-btn-gold:hover,
+  .model4-navy-scope .model4-btn-gold:hover {
+    background: linear-gradient(135deg, #F0CF6B 0%, #C89627 100%) !important;
+    color: #071229 !important;
+    -webkit-text-fill-color: #071229 !important;
+    border-color: #FFFFFF !important;
+    transform: translateY(-1px);
+  }
+
+  /* Royal Maroon & Gold Button (.model4-btn-maroon) */
+  .model4-btn-maroon,
+  button.model4-btn-maroon,
+  a.model4-btn-maroon,
+  .model4-navy-scope .model4-btn-maroon {
+    background: linear-gradient(135deg, #8B2631 0%, #631820 100%) !important;
+    color: #FFFCF5 !important;
+    -webkit-text-fill-color: #FFFCF5 !important;
+    border: 1.5px solid #D4AF37 !important;
+    box-shadow: 0 4px 14px rgba(118, 45, 53, 0.35) !important;
+  }
+
+  .model4-btn-maroon *,
+  button.model4-btn-maroon *,
+  a.model4-btn-maroon *,
+  .model4-navy-scope .model4-btn-maroon * {
+    color: #FFFCF5 !important;
+    -webkit-text-fill-color: #FFFCF5 !important;
+  }
+
+  .model4-btn-maroon:hover,
+  button.model4-btn-maroon:hover,
+  a.model4-btn-maroon:hover,
+  .model4-navy-scope .model4-btn-maroon:hover {
+    background: linear-gradient(135deg, #A12D3A 0%, #762D35 100%) !important;
+    border-color: #F5E1A4 !important;
+  }
+
+  /* Hero Image Scrim Overlay (.model4-hero-scrim) */
+  div.inset-0.model4-hero-scrim,
+  .model4-navy-scope div.inset-0.model4-hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(7, 18, 41, 0.52) 0%,
+      rgba(9, 23, 52, 0.65) 45%,
+      rgba(7, 18, 41, 0.94) 100%
+    ) !important;
+  }
+
+  div.inset-0.model4-card-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(7, 18, 41, 0.08) 0%,
+      rgba(7, 18, 41, 0.38) 55%,
+      rgba(7, 18, 41, 0.90) 100%
+    ) !important;
+  }
+
+  /* 11B. Global Portal-Wide Page Header Banner & Card Consistency (All 38 Pages) */
+  main > div:not(.w-full) > div.border-b:first-child,
+  main > div:not(.w-full) > header.border-b:first-child {
+    background: linear-gradient(180deg, #FFFCF5 0%, #F7ECDA 100%) !important;
+    border: 1.5px solid #C89D32 !important;
+    border-top: 5px solid #0B1B3D !important;
+    border-radius: 20px !important;
+    padding: 1.5rem 1.5rem !important;
+    box-shadow: 0 10px 28px rgba(11, 27, 61, 0.09), inset 0 1px 0 rgba(212, 175, 55, 0.35) !important;
+    position: relative;
+  }
+
+  /* Full-width page hero banners (e.g., KingsQueensPage, CommunityProminentPersonsPage, CommunityHeritagePage) */
+  main > div.min-h-screen > div.border-b:first-child,
+  main > div.min-h-screen > div.border-b-2:first-child {
+    background: linear-gradient(180deg, #FFFDF8 0%, #F3E5CE 100%) !important;
+    border-top: 4px solid #0B1B3D !important;
+    border-bottom: 2px solid #C89D32 !important;
+    box-shadow: 0 8px 24px rgba(11, 27, 61, 0.08) !important;
+  }
+
+  /* =========================================================================
+     12. ROYAL MAROON + ANTIQUE GOLD + IVORY HIGH-CONTRAST OVERRIDES
+         Prevents global dark-brown text rules (#54351F / #292521) from ever
+         applying inside the Royal Maroon Header, Hero Banner, Category Headers,
+         or Footer.
+     ========================================================================= */
+  header.royal-header-scope,
+  header.sticky.royal-header-scope {
+    background-color: #3E0A12 !important;
+    color: #FFFDF7 !important;
+    border-bottom: none !important;
+  }
+
+  .royal-maroon-banner,
+  div.royal-maroon-banner,
+  section.royal-maroon-banner,
+  footer.royal-maroon-banner {
+    background-color: #3E0A12 !important;
+    color: #FFFDF7 !important;
+  }
+
+  .royal-gold-bar,
+  div.royal-gold-bar {
+    background: linear-gradient(90deg, #C89623 0%, #E8C564 50%, #C28E1C 100%) !important;
+    border-bottom: 2px solid #5C101B !important;
+  }
+
+  /* High-Contrast Bright Antique Gold Typography */
+  .royal-text-gold,
+  h1.royal-text-gold,
+  h2.royal-text-gold,
+  h3.royal-text-gold,
+  h4.royal-text-gold,
+  p.royal-text-gold,
+  span.royal-text-gold,
+  div.royal-text-gold,
+  .royal-maroon-banner .royal-text-gold {
+    color: #FFE596 !important;
+    -webkit-text-fill-color: #FFE596 !important;
+  }
+
+  /* High-Contrast Crisp Ivory Typography */
+  .royal-text-ivory,
+  h1.royal-text-ivory,
+  h2.royal-text-ivory,
+  h3.royal-text-ivory,
+  h4.royal-text-ivory,
+  p.royal-text-ivory,
+  span.royal-text-ivory,
+  div.royal-text-ivory,
+  .royal-maroon-banner .royal-text-ivory {
+    color: #FFFDF7 !important;
+    -webkit-text-fill-color: #FFFDF7 !important;
+  }
+
+  /* High-Contrast Warm Ivory Cream Description Typography */
+  .royal-text-cream,
+  p.royal-text-cream,
+  span.royal-text-cream,
+  div.royal-text-cream,
+  .royal-maroon-banner .royal-text-cream {
+    color: #FFF5E1 !important;
+    -webkit-text-fill-color: #FFF5E1 !important;
+  }
+
+  /* Royal Buttons inside Header, Yellow Bar & Hero */
+  button.royal-btn-maroon,
+  a.royal-btn-maroon {
+    background: linear-gradient(180deg, #4E0D17 0%, #33070E 100%) !important;
+    color: #FFE596 !important;
+    -webkit-text-fill-color: #FFE596 !important;
+    border: 1px solid rgba(255, 235, 179, 0.75) !important;
+  }
+
+  button.royal-btn-maroon *,
+  a.royal-btn-maroon * {
+    color: #FFE596 !important;
+    -webkit-text-fill-color: #FFE596 !important;
+  }
+
+  button.royal-btn-ivory,
+  a.royal-btn-ivory {
+    background: linear-gradient(180deg, #FFFDF7 0%, #F7E8C6 100%) !important;
+    color: #3E0A12 !important;
+    -webkit-text-fill-color: #3E0A12 !important;
+    border: 1px solid #5C101B !important;
+  }
+
+  button.royal-btn-ivory *,
+  a.royal-btn-ivory * {
+    color: #3E0A12 !important;
+    -webkit-text-fill-color: #3E0A12 !important;
+  }
+
+  button.royal-btn-gold,
+  a.royal-btn-gold {
+    background: linear-gradient(135deg, #F5E1A4 0%, #D4AF37 55%, #B8861B 100%) !important;
+    color: #2B050A !important;
+    -webkit-text-fill-color: #2B050A !important;
+    border: 1.5px solid #FFF5D1 !important;
+  }
+
+  button.royal-btn-gold *,
+  a.royal-btn-gold * {
+    color: #2B050A !important;
+    -webkit-text-fill-color: #2B050A !important;
+  }
+}
+

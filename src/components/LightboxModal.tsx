@@ -2,6 +2,7 @@ import React from 'react';
 import { X, ShieldCheck, MapPin, Calendar, User } from 'lucide-react';
 import { GalleryItem, LanguageCode } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { ArchivalImage } from './ArchivalImage';
 
 interface LightboxModalProps {
   item: GalleryItem | null;
@@ -116,9 +117,14 @@ export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose }) =
         <div className="overflow-y-auto flex-1 p-5 space-y-4 bg-[#FFFCF5]">
           {/* Main Visual Image */}
           <div className="relative w-full rounded-xl overflow-hidden bg-[#EFE3D0] border border-[#D8C3A2] flex items-center justify-center max-h-[50vh]">
-            <img
+            <ArchivalImage
               src={item.image_url}
               alt={item.alt_text || item.title}
+              variant="full"
+              width={1200}
+              height={800}
+              priority
+              pictureClassName="flex items-center justify-center w-full"
               className="max-h-[50vh] w-auto object-contain mx-auto"
             />
           </div>

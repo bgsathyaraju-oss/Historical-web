@@ -1,49 +1,239 @@
 import React from 'react';
-import { ShieldCheck, BookOpen, Scroll, Compass, Mail, Heart, ExternalLink, Crown, Phone } from 'lucide-react';
+import { ShieldCheck, Phone } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { WhatsAppIcon } from './PublisherCreditCard';
+import { RoyalSunCrest } from './Navbar';
 import { handleWhatsAppLinkClick } from '../utils/androidBridge';
 
 interface FooterProps {
   onNavigate: (path: string) => void;
 }
 
+const FOOTER_EXTRA_UI: Record<
+  string,
+  {
+    brandDesc: string;
+    supportedLangsLabel: string;
+    colDocumentary: string;
+    colEpigraphy: string;
+    colCommunityLegal: string;
+    documents: string;
+    privacy: string;
+    terms: string;
+    copyright: string;
+    disclaimer: string;
+    historicalSources: string;
+    accessibility: string;
+    rights: string;
+    designSystem: string;
+    exportZip: string;
+    fullBadge: string;
+  }
+> = {
+  en: {
+    brandDesc:
+      'Dedicated to empirical epigraphic research, historical geography of Odra Desha, Suryavamsha Gajapathi dynasty inscriptions, royal genealogies, and preserving living cultural traditions across eight supported languages.',
+    supportedLangsLabel: 'Supported Languages:',
+    colDocumentary: 'Historical Documentary',
+    colEpigraphy: 'Epigraphy & Sources',
+    colCommunityLegal: 'Community & Legal',
+    documents: 'Historical Documents & Charters',
+    privacy: 'Privacy Policy',
+    terms: 'Terms of Use',
+    copyright: 'Copyright',
+    disclaimer: 'Disclaimer',
+    historicalSources: 'Historical Sources',
+    accessibility: 'Accessibility Statement',
+    rights: 'All historical records & translations reserved.',
+    designSystem: 'Royal UI Component System',
+    exportZip: 'Export Project (ZIP)',
+    fullBadge: 'Full'
+  },
+  hi: {
+    brandDesc:
+      'अनुभवजन्य शिलालेखीय अनुसंधान, ओड्र देश के ऐतिहासिक भूगोल, सूर्यवंश गजपति राजवंश के शिलालेखों, शाही वंशावलियों और आठ भाषाओं में जीवंत सांस्कृतिक परंपराओं के संरक्षण के लिए समर्पित।',
+    supportedLangsLabel: 'उपलब्ध भाषाएँ:',
+    colDocumentary: 'ऐतिहासिक डॉक्यूमेंट्री',
+    colEpigraphy: 'शिलालेख एवं स्रोत',
+    colCommunityLegal: 'समुदाय एवं विधिक नीतियाँ',
+    documents: 'ऐतिहासिक दस्तावेज एवं ताम्रपत्र',
+    privacy: 'गोपनीयता नीति',
+    terms: 'उपयोग की शर्तें',
+    copyright: 'कॉपीराइट',
+    disclaimer: 'अस्वीकरण (Disclaimer)',
+    historicalSources: 'ऐतिहासिक स्रोत',
+    accessibility: 'सुलभता विवरण',
+    rights: 'सभी ऐतिहासिक अभिलेख एवं अनुवाद सुरक्षित।',
+    designSystem: 'राजकीय UI डिज़ाइन प्रणाली',
+    exportZip: 'प्रोजेक्ट निर्यात (ZIP)',
+    fullBadge: 'संपूर्ण'
+  },
+  te: {
+    brandDesc:
+      'శాసన పరిశోధన, ఓడ్ర దేశ చారిత్రక భూగోళం, సూర్యవంశ గజపతి సామ్రాజ్య శాసనాలు, రాజ వంశావళులు మరియు 8 భాషలలో సజీవ సాంస్కృతిక సంప్రదాయాల పరిరక్షణకు అంకితం చేయబడింది.',
+    supportedLangsLabel: 'అందుబాటులో ఉన్న భాషలు:',
+    colDocumentary: 'చారిత్రక డాక్యుమెంటరీ',
+    colEpigraphy: 'శాసనాలు & ఆధారాలు',
+    colCommunityLegal: 'సమాజం & చట్టపరమైన సమాచారం',
+    documents: 'చారిత్రక పత్రాలు & తాళపత్రాలు',
+    privacy: 'గోప్యతా విధానం',
+    terms: 'వినియోగ నిబంధనలు',
+    copyright: 'కాపీరైట్',
+    disclaimer: 'నిరాకరణ ప్రకటన (Disclaimer)',
+    historicalSources: 'చారిత్రక ఆధారాలు',
+    accessibility: 'యాక్సెసిబిలిటీ ప్రకటన',
+    rights: 'అన్ని చారిత్రక రికార్డులు & అనువాద హక్కులు ప్రత్యేకించబడినవి.',
+    designSystem: 'రాయల్ UI డిజైన్ సిస్టమ్',
+    exportZip: 'ప్రాజెక్ట్ ఎగుమతి (ZIP)',
+    fullBadge: 'పూర్తి'
+  },
+  kn: {
+    brandDesc:
+      'ಶಾಸನ ಸಂಶೋಧನೆ, ಓಡ್ರ ದೇಶದ ಐತಿಹಾಸಿಕ ಭೂಗೋಳ, ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಶಾಸನಗಳು, ರಾಜ ವಂಶಾವಳಿಗಳು ಮತ್ತು 8 ಭಾಷೆಗಳಲ್ಲಿ ಜೀವಂತ ಸಾಂಸ್ಕృతిక ಸಂಪ್ರದಾಯಗಳ ಸಂರಕ್ಷಣೆಗೆ ಸಮರ್ಪಿತವಾಗಿದೆ.',
+    supportedLangsLabel: 'ಬೆಂಬಲಿತ ಭಾಷೆಗಳು:',
+    colDocumentary: 'ಐತಿಹಾಸಿಕ ಸಾಕ್ಷ್ಯಚಿತ್ರ',
+    colEpigraphy: 'ಶಾಸನಗಳು ಮತ್ತು ಆಕರಗಳು',
+    colCommunityLegal: 'ಸಮುದಾಯ ಮತ್ತು ಕಾನೂನು',
+    documents: 'ಐತಿಹಾಸಿಕ ದಾಖಲೆಗಳು ಮತ್ತು ತಾಮ್ರಪತ್ರಗಳು',
+    privacy: 'ಗೌಪ್ಯತಾ ನೀತಿ',
+    terms: 'ಬಳಕೆಯ ನಿಯಮಗಳು',
+    copyright: 'ಹಕ್ಕುಸ್ವಾಮ್ಯ',
+    disclaimer: 'ಹಕ್ಕು ನಿರಾಕರಣೆ (Disclaimer)',
+    historicalSources: 'ಐತಿಹಾಸಿಕ ಆಕರಗಳು',
+    accessibility: 'ಪ್ರವೇಶಸಾಧ್ಯತೆಯ ಹೇಳಿಕೆ',
+    rights: 'ಎಲ್ಲಾ ಐತಿಹಾಸಿಕ ದಾಖಲೆಗಳು ಮತ್ತು ಅನುವಾದಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.',
+    designSystem: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ',
+    exportZip: 'ಪ್ರಾಜೆಕ್ಟ್ ರಫ್ತು (ZIP)',
+    fullBadge: 'ಪೂರ್ಣ'
+  },
+  ta: {
+    brandDesc:
+      'கல்வெட்டு ஆராய்ச்சி, ஒட்ர தேசத்தின் வரலாற்றுப் புவியியல், சூர்யவம்ச கஜபதி பேரரசின் கல்வெட்டுகள், அரச வம்சாவளிகள் மற்றும் 8 மொழிகளில் வாழும் கலாச்சார மரபுகளைப் பாதுகாப்பதற்காக அர்ப்பணிக்கப்பட்டது.',
+    supportedLangsLabel: 'ஆதரிக்கப்படும் மொழிகள்:',
+    colDocumentary: 'வரலாற்று ஆவணப்படம்',
+    colEpigraphy: 'கல்வெட்டுகள் & ஆதாரங்கள்',
+    colCommunityLegal: 'சமூகம் & சட்ட விதிகள்',
+    documents: 'வரலாற்று ஆவணங்கள் & பட்டயங்கள்',
+    privacy: 'தனியுரிமைக் கொள்கை',
+    terms: 'பயன்பாட்டு விதிமுறைகள்',
+    copyright: 'பதிப்புரிமை',
+    disclaimer: 'பொறுப்புத் துறப்பு (Disclaimer)',
+    historicalSources: 'வரலாற்று ஆதாரங்கள்',
+    accessibility: 'அணுகல்தன்மை அறிக்கை',
+    rights: 'அனைத்து வரலாற்று ஆவணங்களும் மொழிபெயர்ப்புகளும் பாதுகாக்கப்பட்டவை.',
+    designSystem: 'அரச UI வடிவமைப்பு அமைப்பு',
+    exportZip: 'திட்ட ஏற்றுமதி (ZIP)',
+    fullBadge: 'முழு'
+  },
+  mr: {
+    brandDesc:
+      'शिलालेख संशोधन, ओड्र देशाचा ऐतिहासिक भूगोल, सूर्यवंश गजपती राजवंशाचे शिलालेख, राजवंशावळी आणि आठ भाषांमध्ये जिवंत सांस्कृतिक परंपरांच्या जतनासाठी समर्पित.',
+    supportedLangsLabel: 'उपलब्ध भाषा:',
+    colDocumentary: 'ऐतिहासिक माहितीपट',
+    colEpigraphy: 'शिलालेख आणि स्रोत',
+    colCommunityLegal: 'समुदाय आणि कायदेशीर माहिती',
+    documents: 'ऐतिहासिक दस्तऐवज आणि ताम्रपट',
+    privacy: 'गोपनीयता धोरण',
+    terms: 'वापराच्या अटी',
+    copyright: 'कॉपीराइट',
+    disclaimer: 'अस्वीकरण (Disclaimer)',
+    historicalSources: 'ऐतिहासिक स्रोत',
+    accessibility: 'सुलभता विधान',
+    rights: 'सर्व ऐतिहासिक नोंदी आणि भाषांतरे राखीव.',
+    designSystem: 'शाही UI डिझाइन प्रणाली',
+    exportZip: 'प्रोजेक्ट निर्यात (ZIP)',
+    fullBadge: 'पूर्ण'
+  },
+  or: {
+    brandDesc:
+      'ଶିଳାଲେଖ ଗବେଷଣା, ଓଡ଼୍ର ଦେଶର ଐତିହାସିକ ଭୂଗୋଳ, ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ରାଜବଂଶର ଶିଳାଲେଖ, ରାଜବଂଶାବଳୀ ଏବଂ ୮ଟି ଭାଷାରେ ଜୀବନ୍ତ ସାଂସ୍କୃତିକ ପରମ୍ପରାର ସଂରକ୍ଷଣ ପାଇଁ ସମର୍ପିତ।',
+    supportedLangsLabel: 'ଉପଲବ୍ଧ ଭାଷା:',
+    colDocumentary: 'ଐତିହାସିକ ଡକ୍ୟୁମେଣ୍ଟାରୀ',
+    colEpigraphy: 'ଶିଳାଲେଖ ଓ ଉତ୍ସ',
+    colCommunityLegal: 'ସମ୍ପ୍ରଦାୟ ଓ ଆଇନଗତ',
+    documents: 'ଐତିହାସିକ ଦଲିଲ ଓ ତାମ୍ରଶାସନ',
+    privacy: 'ଗୋପନୀୟତା ନୀତି',
+    terms: 'ବ୍ୟବହାର ସର୍ତ୍ତାବଳୀ',
+    copyright: 'କପିରାଇଟ୍',
+    disclaimer: 'ଅସ୍ୱୀକରଣ (Disclaimer)',
+    historicalSources: 'ଐତିହାସିକ ଉତ୍ସ',
+    accessibility: 'ସୁଗମ୍ୟତା ବିବରଣୀ',
+    rights: 'ସମସ୍ତ ଐତିହାସିକ ଅଭିଲେଖ ଓ ଅନୁବାଦ ସଂରକ୍ଷିତ।',
+    designSystem: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍',
+    exportZip: 'ପ୍ରୋଜେକ୍ଟ ରପ୍ତାନି (ZIP)',
+    fullBadge: 'ସମ୍ପୂର୍ଣ୍ଣ'
+  },
+  bn: {
+    brandDesc:
+      'শিলালিপি গবেষণা, ওড্র দেশের ঐতিহাসিক ভূগোল, সূর্যবংশী গজপতি রাজবংশের শিলালিপি, রাজবংশাবলী এবং আটটি ভাষায় জীবন্ত সাংস্কৃতিক ঐতিহ্য সংরক্ষণে নিবেদিত।',
+    supportedLangsLabel: 'সমর্থিত ভাষা:',
+    colDocumentary: 'ঐতিহাসিক প্রামাণ্যচিত্র',
+    colEpigraphy: 'শিলালিপি ও উৎস',
+    colCommunityLegal: 'সম্প্রদায় ও আইনি তথ্য',
+    documents: 'ঐতিহাসিক দলিল ও তাম্রশাসন',
+    privacy: 'গোপনীয়তা নীতি',
+    terms: 'ব্যবহারের শর্তাবলী',
+    copyright: 'কপিরাইট',
+    disclaimer: 'দাবিত্যাগ (Disclaimer)',
+    historicalSources: 'ঐতিহাসিক উৎস',
+    accessibility: 'অ্যাক্সেসিবিলিটি বিবৃতি',
+    rights: 'সকল ঐতিহাসিক নথি ও অনুবাদ সংরক্ষিত।',
+    designSystem: 'রাজকীয় UI ডিজাইন সিস্টেম',
+    exportZip: 'প্রজেক্ট এক্সপোর্ট (ZIP)',
+    fullBadge: 'সম্পূর্ণ'
+  }
+};
+
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
-  const { t } = useLanguage();
-  const whatsappGreeting = t.publisher?.whatsappGreeting || 'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
+  const { t, language } = useLanguage();
+  const fUi = FOOTER_EXTRA_UI[language] || FOOTER_EXTRA_UI.en;
+  const whatsappGreeting =
+    t.publisher?.whatsappGreeting ||
+    'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   return (
-    <footer className="w-full bg-[#FFF9EF] border-t-2 border-[#A87924] text-[#292521]">
+    <footer className="model4-navy-scope w-full border-t-2 border-[#D4AF37]">
       {/* Research, Documentation & Compilation by Dr.G Sathyanarayana Raju */}
-      <div className="bg-[#F5EBD9] border-b border-[#A87924]/50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="model4-navy-bar border-b border-[#D4AF37]/40 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-5">
-            <div className="relative shrink-0">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-md ring-2 ring-[#762D35]">
+            {/* Clickable Circular Profile Photograph with Gold Border & Attached WhatsApp Badge */}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
+              className="relative shrink-0 group cursor-pointer"
+              title={t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)'}
+              aria-label={t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)'}
+            >
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[3px] border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.45)] ring-2 ring-[#762D35]">
                 <img
                   src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
                   alt={t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
-                  className="w-full h-full object-cover object-top"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <div className="absolute -bottom-1 -right-1 bg-[#762D35] text-white p-1 rounded-full border border-[#A87924]">
-                <Crown className="w-3.5 h-3.5 text-white" />
-              </div>
-            </div>
+              <span className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[#25D366] text-white border-2 border-[#D4AF37] flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                <WhatsAppIcon className="w-3.5 h-3.5 fill-current" />
+              </span>
+            </a>
 
             <div className="space-y-1">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-[#76501F]">
-                {t.publisher?.designedAndPublishedBy || 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
+              <div className="text-[11px] font-bold uppercase tracking-widest model4-text-gold">
+                {t.publisher?.designedAndPublishedBy ||
+                  'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
               </div>
-              <h3 className="font-royal-heading font-black text-xl text-[#54351F]">
+              <h3 className="font-royal-heading font-black text-xl model4-text-ivory">
                 {t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
               </h3>
-              <p className="text-xs sm:text-sm font-semibold text-[#292521]">
+              <p className="text-xs sm:text-sm font-semibold model4-text-gold">
                 {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}
               </p>
-              <p className="text-xs text-[#76501F] font-medium">
-                {t.publisher?.organization || 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'}
+              <p className="text-xs model4-text-muted font-medium">
+                {t.publisher?.organization ||
+                  'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'}
               </p>
             </div>
           </div>
@@ -54,7 +244,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#762D35] hover:bg-[#5e2229] text-white shadow-sm transition-all cursor-pointer"
+              className="model4-btn-maroon inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
             >
               <WhatsAppIcon className="w-4 h-4 fill-current" />
               <span>{t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)'}</span>
@@ -62,9 +252,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
             <a
               href="tel:+919480112897"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] transition-all"
+              className="model4-navy-pill inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
             >
-              <Phone className="w-3.5 h-3.5 text-[#762D35]" />
+              <Phone className="w-3.5 h-3.5 text-[#F5E1A4]" />
               <span>+91 9480112897</span>
             </a>
           </div>
@@ -72,16 +262,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       </div>
 
       {/* Methodological Integrity Banner */}
-      <div className="bg-[#FFFCF5] border-b border-[#A87924]/40 py-6 px-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 text-xs sm:text-sm text-[#292521]">
-          <div className="p-2.5 rounded-xl bg-[#FFF9EF] border border-[#A87924] shrink-0">
-            <ShieldCheck className="w-6 h-6 text-[#762D35]" />
+      <div className="border-b border-[#D4AF37]/30 py-6 px-4 bg-[#081530]/80">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 text-xs sm:text-sm">
+          <div className="p-2.5 rounded-xl model4-navy-subpanel shrink-0">
+            <ShieldCheck className="w-6 h-6 text-[#F5E1A4]" />
           </div>
           <div className="space-y-1 text-center md:text-left">
-            <span className="font-bold text-[#54351F] uppercase tracking-wider text-xs">
+            <span className="font-bold model4-text-gold uppercase tracking-wider text-xs block">
               {t.evidenceNotice.title}
             </span>
-            <p className="text-[#292521] text-xs leading-relaxed">
+            <p className="model4-text-muted text-xs leading-relaxed">
               {t.evidenceNotice.description}
             </p>
           </div>
@@ -94,77 +284,72 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Brand & Project Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#762D35] border border-[#A87924] p-1 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-full h-full fill-[#FFFCF5]">
-                  <circle cx="50" cy="50" r="24" fill="#A87924" />
-                  <path d="M50 8 L54 30 L50 25 L46 30 Z M50 92 L54 70 L50 75 L46 70 Z M8 50 L30 54 L25 50 L30 46 Z M92 50 L70 54 L75 50 L70 46 Z" fill="#FFFCF5" />
-                </svg>
-              </div>
+              <RoyalSunCrest className="w-11 h-11" />
               <div>
-                <h3 className="font-royal-heading font-bold text-base text-[#54351F]">
-                  SURYAVAMSHA ODIYARAJU KSHATRIYA
+                <h3 className="font-royal-heading font-bold text-base model4-text-gold">
+                  {t.siteTitle}
                 </h3>
-                <p className="text-[11px] text-[#76501F] font-semibold tracking-wider">
-                  HISTORICAL DOCUMENTARY & COMMUNITY ARCHIVE
+                <p className="text-[11px] model4-text-ivory font-semibold tracking-wider uppercase">
+                  {t.siteSubtitle}
                 </p>
               </div>
             </div>
-            <p className="text-xs text-[#292521] leading-relaxed pr-4">
-              Dedicated to empirical epigraphic research, historical geography of Odra Desha, Gajapathi dynasty inscriptions, royal genealogies, and preserving living cultural traditions across eight supported languages.
+            <p className="text-xs model4-text-muted leading-relaxed pr-4">
+              {fUi.brandDesc}
             </p>
-            <div className="pt-2 text-xs text-[#292521]">
-              <span className="font-bold text-[#54351F]">Supported Languages:</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
+            <div className="pt-2 text-xs model4-text-muted">
+              <span className="font-bold model4-text-gold">{fUi.supportedLangsLabel}</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
             </div>
           </div>
 
           {/* Historical Documentary */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#d4af37] uppercase tracking-wider font-royal-heading">
-              Historical Documentary
+            <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
+              {fUi.colDocumentary}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button onClick={() => onNavigate('/documentary')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/documentary')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.documentary}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/odra-desha')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/odra-desha')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.odraDesha}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/kalinga-war')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('/kalinga-war')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
                   {t.nav.kalingaWar || 'The Kalinga War (261 BCE)'}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/gajapathi-kings')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/gajapathi-kings')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.gajapathiKings}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/dynasties')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/dynasties')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.dynasties}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/maps')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/maps')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.maps}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/timeline')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/timeline')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.timeline}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/community-prominent-persons')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('/community-prominent-persons')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
                   {t.nav.communityProminentPersons || 'Community Prominent Persons'}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/community-heritage')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('/community-heritage')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
                   {t.nav.communityHeritage || 'Community Heritage'}
                 </button>
               </li>
@@ -173,37 +358,42 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
           {/* Epigraphy & Archaeology */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#d4af37] uppercase tracking-wider font-royal-heading">
-              Epigraphy & Sources
+            <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
+              {fUi.colEpigraphy}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button onClick={() => onNavigate('/inscriptions')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/inscriptions')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.inscriptions}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/temples-monuments')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/kings-queens')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                  {t.nav.documentedFigures}
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavigate('/temples-monuments')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.temples}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/documents')} className="hover:text-[#e8c872] transition-colors">
-                  Digitized Documents & Grants
+                <button onClick={() => onNavigate('/documents')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                  {fUi.documents}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/genealogy')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/genealogy')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.genealogy}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/gallery')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/gallery')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.gallery}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/references')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/references')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.references}
                 </button>
               </li>
@@ -212,97 +402,114 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
           {/* Community & Legal */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-[#d4af37] uppercase tracking-wider font-royal-heading">
-              Community & Legal
+            <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
+              {fUi.colCommunityLegal}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button onClick={() => onNavigate('/community-heritage')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer">
+                <button onClick={() => onNavigate('/community-heritage')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
                   {t.nav.communityHeritage || 'Community Heritage'}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/community-surnames')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer text-left">
+                <button onClick={() => onNavigate('/community-surnames')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer text-left">
                   {t.nav.communitySurnames || 'Community Surnames [South-Indian-Oad-Community]'}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/community-surnames-north-indian-oad-community')} className="hover:text-[#e8c872] text-[#fae29c] font-semibold transition-colors cursor-pointer text-left">
+                <button onClick={() => onNavigate('/community-surnames-north-indian-oad-community')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer text-left">
                   {t.nav.communitySurnamesNorth || 'Community Surnames [North-Indian-Oad-Community]'}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/directory')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/directory')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.directory}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/events')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/events')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.events}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/submit-research')} className="hover:text-[#e8c872] transition-colors">
+                <button onClick={() => onNavigate('/submit-research')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
                   {t.nav.submitResearch}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/privacy')} className="hover:text-[#e8c872] transition-colors">
-                  Privacy Policy & Data Rights
+                <button onClick={() => onNavigate('/privacy')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                  {fUi.privacy}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/terms')} className="hover:text-[#e8c872] transition-colors">
-                  Terms and Conditions
+                <button onClick={() => onNavigate('/terms')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                  {fUi.terms}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/copyright')} className="hover:text-[#e8c872] transition-colors">
-                  Copyright & Image Permissions
+                <button onClick={() => onNavigate('/copyright')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                  {fUi.copyright}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/accessibility')} className="hover:text-[#e8c872] transition-colors">
-                  Accessibility Statement
+                <button onClick={() => onNavigate('/accessibility')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                  {fUi.accessibility}
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('/design-system')} className="hover:text-[#e8c872] text-[#c99738] font-medium transition-colors">
-                  Royal UI Component System
+                <button onClick={() => onNavigate('/design-system')} className="model4-text-gold font-medium hover:underline transition-colors cursor-pointer">
+                  {fUi.designSystem}
                 </button>
               </li>
               <li>
                 <a
                   href="/api/export/project-zip"
                   download="suryavamsha-odiyaraju-kshatriya-portal.zip"
-                  className="hover:text-[#e8c872] text-[#fcedc7] font-semibold transition-colors flex items-center gap-1"
+                  className="model4-text-gold font-semibold hover:underline transition-colors flex items-center gap-1.5"
                 >
-                  <span>Export Project (ZIP)</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#580014] border border-[#d4af37]/40 text-[#fcedc7]">Full</span>
+                  <span>{fUi.exportZip}</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#762D35] border border-[#D4AF37] model4-text-ivory">
+                    {fUi.fullBadge}
+                  </span>
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-6 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
+        {/* Bottom Bar with Copyright, Disclaimer & Historical Sources */}
+        <div className="mt-12 pt-6 border-t border-[#D4AF37]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs model4-text-muted">
           <div>
-            © {new Date().getFullYear()} Suryavamsha Odiyaraju Kshatriya Historical Documentation Project. All rights reserved.
+            © {new Date().getFullYear()} {t.siteTitle} • {fUi.rights}
           </div>
-          <div className="flex items-center gap-4 text-stone-400">
-            <button onClick={() => onNavigate('/about')} className="hover:underline">About</button>
+          <div className="flex flex-wrap items-center justify-center gap-3 model4-text-muted">
+            <button onClick={() => onNavigate('/copyright')} className="hover:underline model4-text-gold font-semibold cursor-pointer">
+              {fUi.copyright}
+            </button>
             <span>•</span>
-            <button onClick={() => onNavigate('/design-system')} className="hover:underline text-[#c99738]">Design System</button>
+            <button onClick={() => onNavigate('/terms')} className="hover:underline model4-text-gold font-semibold cursor-pointer">
+              {fUi.disclaimer}
+            </button>
             <span>•</span>
-            <button onClick={() => onNavigate('/contact')} className="hover:underline">Contact</button>
+            <button onClick={() => onNavigate('/references')} className="hover:underline model4-text-gold font-semibold cursor-pointer">
+              {fUi.historicalSources}
+            </button>
             <span>•</span>
-            <button onClick={() => onNavigate('/privacy')} className="hover:underline">Privacy</button>
+            <button onClick={() => onNavigate('/about')} className="hover:underline model4-text-ivory cursor-pointer">
+              {t.nav.about}
+            </button>
             <span>•</span>
-            <button onClick={() => onNavigate('/accessibility')} className="hover:underline">Accessibility</button>
+            <button onClick={() => onNavigate('/contact')} className="hover:underline model4-text-ivory cursor-pointer">
+              {t.nav.contact}
+            </button>
+            <span>•</span>
+            <button onClick={() => onNavigate('/privacy')} className="hover:underline model4-text-ivory cursor-pointer">
+              {fUi.privacy}
+            </button>
           </div>
         </div>
       </div>
     </footer>
   );
 };
+

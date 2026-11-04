@@ -91,6 +91,12 @@ import {
   matchReference70Terms,
   getRelated70TermsForHeritageItem
 } from '../data/communityReference70Registry';
+import {
+  DUP_SYNONYM_TO_CANONICAL_DIR_MAP,
+  CONSOLIDATED_SHORT_SYNONYM_IDS,
+  MONO_SECTION_TO_CANONICAL_ARTICLE_MAP,
+  HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP
+} from '../data/canonicalArticleMap';
 
 interface CommunityHeritagePageProps {
   onNavigate: (path: string) => void;
@@ -321,20 +327,20 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const DESIGNATION_TO_ARTICLE_ID: Record<string, string> = {
-    'Oad-Rajputh': 'syn_oad_rajputh',
-    'Oad': 'syn_od_oad_odra',
+    'Oad-Rajputh': 'comm_dir_02_od_rajputh',
+    'Oad': 'comm_dir_01_od',
     'Od-Rajput': 'comm_dir_02_od_rajputh',
     'Od-Rajputh': 'comm_dir_02_od_rajputh',
     'OD-Community': 'comm_dir_01_od',
     'Od': 'comm_dir_01_od',
-    'Oad Patel (Artisan Title)': 'syn_oad_rajputh',
-    'Waddar': 'syn_waddar_vaddar',
-    'Wadar': 'syn_waddar_vaddar',
+    'Oad Patel (Artisan Title)': 'comm_dir_02_od_rajputh',
+    'Waddar': 'comm_dir_15_voddar',
+    'Wadar': 'comm_dir_15_voddar',
     'Vaddar': 'comm_dir_15_voddar',
     'Voddar': 'comm_dir_15_voddar',
     'Woddar': 'comm_dir_15_voddar',
-    'Vadar': 'syn_waddar_vaddar',
-    'Od-Kshatriya': 'syn_od_kshatriya',
+    'Vadar': 'comm_dir_15_voddar',
+    'Od-Kshatriya': 'comm_dir_03_odra_kshatriya',
     'Odra-Kshatriya': 'comm_dir_03_odra_kshatriya',
     'Odra-Kshtriya': 'comm_dir_03_odra_kshatriya',
     'Odisha-Kshatriya': 'syn_odisha_kshatriya',
@@ -355,8 +361,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     'Vadiyarajulu': 'comm_dir_12_vaddirajulu',
     'Odiyaraju': 'syn_odiyaraju_karnataka',
     'Odiyarajulu': 'syn_odiyaraju_karnataka',
-    'Oddar': 'syn_oddar',
-    'Odar': 'syn_oddar',
+    'Oddar': 'comm_dir_16_oddaru',
+    'Odar': 'comm_dir_16_oddaru',
     'Oddaru': 'comm_dir_16_oddaru',
     'Oddaru / Odra communities': 'comm_dir_16_oddaru',
     'Odan': 'comm_dir_08_odan',
@@ -391,6 +397,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     'Gajapathis': 'comm_dir_14_gajapathulu',
     'Gajapathulu': 'comm_dir_14_gajapathulu',
     'Gajapathi RauthRai': 'comm_dir_14_gajapathulu',
+    'Vadde-GajapathiRajulu': 'comm_dir_14_gajapathulu',
     'paikas': 'comm_dir_07_od_paika',
     'Od-Paika': 'comm_dir_07_od_paika',
     'Od-Khandayaths': 'comm_dir_05_od_khandayath',
@@ -408,8 +415,6 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     geo_rajasthan_sindh_punjab: [
       'comm_dir_02_od_rajputh',
       'comm_dir_01_od',
-      'syn_oad_rajputh',
-      'syn_od_oad_odra',
       'syn_sagaravamshi',
       'fig_maharshi_bhagiratha',
       'mono_part_6_geographical_map'
@@ -417,26 +422,22 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     geo_gujarat: [
       'comm_dir_02_od_rajputh',
       'comm_dir_01_od',
-      'syn_oad_rajputh',
-      'fig_mata_jasma_devi',
+      'fig_goddess_jasma',
       'mono_part_4_jasma_siddharama',
       'mono_part_6_geographical_map'
     ],
     geo_maharashtra: [
       'comm_dir_15_voddar',
-      'syn_waddar_vaddar',
-      'syn_od_kshatriya',
-      'fig_siddharameshwara',
+      'comm_dir_03_odra_kshatriya',
+      'fig_shivayogi_siddharama',
       'mono_part_4_jasma_siddharama',
       'mono_part_6_geographical_map'
     ],
     geo_karnataka: [
       'comm_dir_15_voddar',
-      'syn_waddar_vaddar',
       'syn_odiyaraju_karnataka',
       'syn_odde_vadde',
-      'fig_siddharameshwara',
-      'fig_prince_balavaddiraju',
+      'fig_shivayogi_siddharama',
       'mono_part_6_geographical_map'
     ],
     geo_andhra_telangana: [
@@ -447,14 +448,12 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       'comm_dir_11_vaddeelu',
       'comm_dir_12_vaddirajulu',
       'comm_dir_13_vadderarajulu',
-      'syn_vadde_gajapathirajulu',
-      'fig_kapilendra_deva',
+      'comm_dir_14_gajapathulu',
       'mono_part_5_gajapathi_diaspora'
     ],
     geo_tamil_nadu: [
       'comm_dir_08_odan',
       'comm_dir_16_oddaru',
-      'syn_oddar',
       'syn_ottar',
       'syn_odda_nayakkar_tn',
       'syn_odde_vadde',
@@ -468,11 +467,9 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       'comm_dir_06_oda_chassa',
       'comm_dir_07_od_paika',
       'comm_dir_14_gajapathulu',
-      'syn_od_kshatriya',
       'syn_odisha_kshatriya',
       'syn_suryavamshi',
       'fig_king_kharavela',
-      'fig_kapilendra_deva',
       'mono_part_2_kharavela'
     ]
   };
@@ -518,6 +515,14 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const openSynonymModal = (item: CommunitySynonym) => {
+    const canonicalDirId = DUP_SYNONYM_TO_CANONICAL_DIR_MAP[item.id];
+    if (canonicalDirId) {
+      const canonicalDirEntry = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === canonicalDirId);
+      if (canonicalDirEntry) {
+        openCommunityDirModal(canonicalDirEntry);
+        return;
+      }
+    }
     recordScrollBeforeOpen();
     setSelectedFigure(null);
     setSelectedModalRef({ type: 'synonym', id: item.id });
@@ -539,6 +544,11 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const openFigureModal = (fig: HistoricalFigureSummary) => {
+    const canonicalBioId = HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[fig.id];
+    if (canonicalBioId) {
+      onNavigate(`/kings-queens?figure=${encodeURIComponent(canonicalBioId)}`);
+      return;
+    }
     recordScrollBeforeOpen();
     setSelectedModalRef(null);
     setSelectedFigure(fig);
@@ -554,6 +564,11 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
   };
 
   const openMonographModal = (secId: string) => {
+    const canonicalArticleId = MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[secId];
+    if (canonicalArticleId) {
+      onNavigate(`/documentary?article=${encodeURIComponent(canonicalArticleId)}`);
+      return;
+    }
     recordScrollBeforeOpen();
     setSelectedFigure(null);
     setSelectedModalRef({ type: 'monograph', id: secId });
@@ -595,7 +610,18 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     }
   }, [selectedModalRef, selectedFigure]);
 
-  const handleNavigateRelatedId = (targetId: string) => {
+  const handleNavigateRelatedId = (rawTargetId: string) => {
+    const targetId = DUP_SYNONYM_TO_CANONICAL_DIR_MAP[rawTargetId] || rawTargetId;
+
+    if (MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[targetId]) {
+      onNavigate(`/documentary?article=${encodeURIComponent(MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[targetId])}`);
+      return;
+    }
+    if (HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[targetId]) {
+      onNavigate(`/kings-queens?figure=${encodeURIComponent(HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[targetId])}`);
+      return;
+    }
+
     recordScrollBeforeOpen();
     const commItem = COMMUNITY_DIRECTORY_ITEMS.find(c => c.id === targetId);
     if (commItem) {
@@ -2062,7 +2088,6 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       const tabParam = urlParams.get('tab');
       const regionParam = urlParams.get('region');
       const urlItemId = urlParams.get('id') || urlParams.get('figure') || urlParams.get('article');
-      const targetId = urlItemId || (!tabParam ? explicitItemId : null);
 
       if (regionParam && GEOGRAPHICAL_SPREAD.some(r => r.id === regionParam)) {
         setSelectedRegionId(regionParam);
@@ -2080,25 +2105,25 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         setActiveTab(initialTab);
       }
 
-      if (!targetId) {
+      const rawTargetId = urlItemId || (!tabParam ? explicitItemId : null);
+      if (!rawTargetId) {
         setSelectedFigure(null);
         setSelectedModalRef(null);
         return;
       }
 
-      const foundFig = HISTORICAL_FIGURES.find(f => f.id === targetId);
-      if (foundFig) {
-        setActiveTab('figures');
-        setSelectedModalRef(null);
-        setSelectedFigure(foundFig);
+      // Redirect consolidated short synonyms to their canonical 11-section directory article
+      const targetId = DUP_SYNONYM_TO_CANONICAL_DIR_MAP[rawTargetId] || rawTargetId;
+
+      // Redirect short monograph section IDs to their canonical full documentary article
+      if (MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[targetId]) {
+        onNavigate(`/documentary?article=${encodeURIComponent(MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[targetId])}`);
         return;
       }
 
-      const foundSyn = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
-      if (foundSyn) {
-        setActiveTab('synonyms');
-        setSelectedFigure(null);
-        setSelectedModalRef({ type: 'synonym', id: foundSyn.id });
+      // Redirect short historical figure IDs to their canonical 10-section biography page
+      if (HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[targetId]) {
+        onNavigate(`/kings-queens?figure=${encodeURIComponent(HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP[targetId])}`);
         return;
       }
 
@@ -2107,6 +2132,14 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         setActiveTab('synonyms');
         setSelectedFigure(null);
         setSelectedModalRef({ type: 'community_dir', id: foundComm.id });
+        return;
+      }
+
+      const foundSyn = COMMUNITY_SYNONYMS.find(s => s.id === targetId);
+      if (foundSyn) {
+        setActiveTab('synonyms');
+        setSelectedFigure(null);
+        setSelectedModalRef({ type: 'synonym', id: foundSyn.id });
         return;
       }
 
@@ -2134,7 +2167,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         setSelectedModalRef({ type: 'monograph', id: foundMono.id });
       }
     },
-    [initialTab]
+    [initialTab, onNavigate]
   );
 
   useEffect(() => {
@@ -2241,8 +2274,10 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
     return matchesSearch && matchesNumber;
   });
 
-  // Filtered Synonyms
+  // Filtered Synonyms (Excludes the 6 consolidated short duplicate synonym cards whose
+  // comprehensive 11-section counterparts are already in filteredCommunityDirectory)
   const filteredSynonyms = COMMUNITY_SYNONYMS.filter(s => {
+    if (CONSOLIDATED_SHORT_SYNONYM_IDS.has(s.id)) return false;
     const term = searchTerm.toLowerCase();
     const matchesSearch =
       !term ||

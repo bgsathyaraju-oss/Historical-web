@@ -21,6 +21,7 @@ import {
 } from '../components/ArticleDetailView';
 import { useLanguage } from '../context/LanguageContext';
 import { getAllArticles } from '../data/articlesRepository';
+import { resolveCanonicalArticleId } from '../data/canonicalArticleMap';
 
 const DOC_PAGE_UI: Record<
   LanguageCode,
@@ -232,14 +233,20 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [activeArticleId, setActiveArticleId] = useState<string | null>(() => {
     if (initialArticleId) {
-      const match = initialArticles.find(a => a.id === initialArticleId || a.slug === initialArticleId);
+      const canonical = resolveCanonicalArticleId(initialArticleId);
+      const match = initialArticles.find(
+        a => a.id === canonical || a.slug === canonical || a.id === initialArticleId || a.slug === initialArticleId
+      );
       if (match) return match.id;
     }
     try {
       const params = new URLSearchParams(window.location.search);
       const artParam = params.get('article') || params.get('id');
       if (artParam) {
-        const match = initialArticles.find(a => a.id === artParam || a.slug === artParam);
+        const canonical = resolveCanonicalArticleId(artParam);
+        const match = initialArticles.find(
+          a => a.id === canonical || a.slug === canonical || a.id === artParam || a.slug === artParam
+        );
         if (match) return match.id;
       }
     } catch {
@@ -272,7 +279,10 @@ export const HistoricalDocumentaryPage: React.FC<DocumentaryPageProps> = ({
   // Update active article if URL query param changes
   useEffect(() => {
     if (initialArticleId) {
-      const found = articles.find(a => a.id === initialArticleId || a.slug === initialArticleId);
+      const canonical = resolveCanonicalArticleId(initialArticleId);
+      const found = articles.find(
+        a => a.id === canonical || a.slug === canonical || a.id === initialArticleId || a.slug === initialArticleId
+      );
       if (found) {
         setActiveArticleId(found.id);
         window.scrollTo({ top: 0, behavior: 'smooth' });

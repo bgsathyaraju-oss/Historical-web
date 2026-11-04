@@ -1,5 +1,6 @@
 import type { Article, LanguageCode, SourceReference } from '../types/index.ts';
 import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations.ts';
+import { resolveCanonicalArticleId } from './canonicalArticleMap.ts';
 
 const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
 
@@ -430,7 +431,15 @@ export function getAllArticles(lang: LanguageCode = 'en'): Article[] {
 }
 
 export function getArticleByIdOrSlug(idOrSlug: string, lang: LanguageCode = 'en'): Article | null {
-  const found = CANONICAL_ARTICLES.find(a => a.id === idOrSlug || a.slug === idOrSlug);
+  const canonicalId = resolveCanonicalArticleId(idOrSlug);
+  const found = CANONICAL_ARTICLES.find(
+    a =>
+      a.id === canonicalId ||
+      a.slug === canonicalId ||
+      a.id === idOrSlug ||
+      a.slug === idOrSlug
+  );
   if (!found) return null;
   return getLocalizedArticle(found, lang);
 }
+

@@ -31,6 +31,10 @@ import {
 import { getEnrichedGalleryArticles } from '../data/galleryArticlesEnrichment.ts';
 import { KALINGA_WAR_CONTENT } from '../data/kalingaWarData.ts';
 import { MASTER_70_REFERENCE_REGISTRY } from '../data/communityReference70Registry.ts';
+import {
+  LEGACY_ARTICLE_ID_ALIASES,
+  DUP_SYNONYM_TO_CANONICAL_DIR_MAP
+} from '../data/canonicalArticleMap.ts';
 
 export interface ResolvedSeoMetadata {
   title: string;
@@ -247,14 +251,8 @@ export function resolveItemMetadataById(
   const targetId = (rawItemId || '').trim();
   if (!targetId) return null;
 
-  // 1. Canonical + Extra Research Monographs / Articles (art_* or slug)
-  const ARTICLE_ID_ALIASES: Record<string, string> = {
-    art_kolletikota_gajapathi_forts: 'art_kolletikota_peddintlamma_lake',
-    art_kolletikota_sacred_citadel: 'art_kolletikota_peddintlamma_lake',
-    art_oad_rajputh_history: 'art_oad_rajputh_od_history',
-    art_suryavamsha_lineage: 'art_surya_vamsa_sagara_rama'
-  };
-  const resolvedArticleId = ARTICLE_ID_ALIASES[targetId] || targetId;
+  // 1. Canonical + Extra Research Monographs / Articles (art_* or slug or consolidated mono_part_*)
+  const resolvedArticleId = LEGACY_ARTICLE_ID_ALIASES[targetId] || targetId;
   const allArticles = [...getAllArticles(lang), ...(extraArticles || [])];
   const matchedArticle = allArticles.find(
     a => a.id === resolvedArticleId || a.slug === resolvedArticleId || a.id === targetId || a.slug === targetId
@@ -385,9 +383,13 @@ export function resolveItemMetadataById(
     };
   }
 
-  // 5. Community Heritage 16-Directory Items (comm_dir_01_od .. comm_dir_16_oddaru)
+  // 5. Community Heritage 16-Directory Items (comm_dir_01_od .. comm_dir_16_oddaru, plus consolidated duplicate syn_* IDs)
+  const resolvedDirId = DUP_SYNONYM_TO_CANONICAL_DIR_MAP[targetId] || targetId;
   const matchedDirItem = COMMUNITY_DIRECTORY_ITEMS.find(
-    item => item.id === targetId || item.canonicalName.toLowerCase() === targetId.toLowerCase()
+    item =>
+      item.id === resolvedDirId ||
+      item.id === targetId ||
+      item.canonicalName.toLowerCase() === targetId.toLowerCase()
   );
   if (matchedDirItem) {
     const detailed = COMMUNITY_HERITAGE_DETAILED_ARTICLES.find(a => a.id === matchedDirItem.id);
@@ -1175,11 +1177,25 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     imageAlt: 'Contact the Suryavamsha Historical Documentary Editorial Board',
     section: 'Contact',
     keywords: ['Contact Editorial Board', 'Submit Archival Records', 'Dr.G Sathyanarayana Raju']
+  },
+  '/test-page': {
+    title: lang => {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      return `Original Layout – Test Page | ${t.siteTitle}`;
+    },
+    description: () =>
+      'Complete original Home Page layout and archival content of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.',
+    rawImagePath: CATEGORY_FALLBACK_IMAGES.home,
+    imageAlt: 'Suryavamsha Odiyaraju Kshatriya Original Homepage Layout – Test Page',
+    section: 'Original Layout Archive',
+    keywords: ['Suryavamsha Odiyaraju Kshatriya', 'Original Layout', 'Test Page', 'Historical Archive']
   }
 };
 
 // Route aliases mapping to canonical route keys
 const ROUTE_ALIASES: Record<string, string> = {
+  '/test_page': '/test-page',
+  '/testpage': '/test-page',
   '/heritage': '/community-heritage',
   '/documented-historical-figures': '/kings-queens',
   '/historical-figures': '/kings-queens',

@@ -10,6 +10,68 @@ interface TranslationMatrixBadgeProps {
   className?: string;
 }
 
+const MATRIX_UI: Record<
+  LanguageCode,
+  { coverage: string; offlineReady: string; suggestBtn: string; available: string; needsTr: string }
+> = {
+  en: {
+    coverage: 'Multilingual Archival Coverage (8 Languages)',
+    offlineReady: 'Offline Ready',
+    suggestBtn: 'Suggest Translation',
+    available: 'Translation Available',
+    needsTr: 'Needs Translation'
+  },
+  hi: {
+    coverage: 'बहुभाषी अभिलेखीय कवरेज (8 भाषाएँ)',
+    offlineReady: 'ऑफ़लाइन उपलब्ध',
+    suggestBtn: 'अनुवाद सुझाएँ',
+    available: 'अनुवाद उपलब्ध',
+    needsTr: 'अनुवाद आवश्यक'
+  },
+  te: {
+    coverage: 'బహుభాషా పురావస్తు కవరేజ్ (8 భాషలు)',
+    offlineReady: 'ఆఫ్‌లైన్ సిద్ధం',
+    suggestBtn: 'అనువాదాన్ని సూచించండి',
+    available: 'అనువాదం అందుబాటులో ఉంది',
+    needsTr: 'అనువాదం అవసరం'
+  },
+  kn: {
+    coverage: 'ಬಹುಭಾಷಾ ಪತ್ರಾಗಾರ ವ್ಯಾಪ್ತಿ (8 ಭಾಷೆಗಳು)',
+    offlineReady: 'ಆಫ್‌ಲೈನ್ ಸಿದ್ಧ',
+    suggestBtn: 'ಅನುವಾದವನ್ನು ಸೂಚಿಸಿ',
+    available: 'ಅನುವಾದ ಲಭ್ಯವಿದೆ',
+    needsTr: 'ಅನುವಾದ ಅಗತ್ಯವಿದೆ'
+  },
+  ta: {
+    coverage: 'பன்மொழி ஆவணக் காப்பகம் (8 மொழிகள்)',
+    offlineReady: 'ஆஃப்லைனில் தயார்',
+    suggestBtn: 'மொழிபெயர்ப்பை பரிந்துரைக்கவும்',
+    available: 'மொழிபெயர்ப்பு உள்ளது',
+    needsTr: 'மொழிபெயர்ப்பு தேவை'
+  },
+  mr: {
+    coverage: 'बहुभाषिक अभिलेख व्याप्ती (८ भाषा)',
+    offlineReady: 'ऑफलाइन तयार',
+    suggestBtn: 'भाषांतर सुचवा',
+    available: 'भाषांतर उपलब्ध',
+    needsTr: 'भाषांतर आवश्यक'
+  },
+  or: {
+    coverage: 'ବହୁଭାଷୀ ଅଭିଲେଖ ସଂରକ୍ଷଣ (୮ଟି ଭାଷା)',
+    offlineReady: 'ଅଫଲାଇନ୍ ପ୍ରସ୍ତୁତ',
+    suggestBtn: 'ଅନୁବାଦ ପ୍ରସ୍ତାବ ଦିଅନ୍ତୁ',
+    available: 'ଅନୁବାଦ ଉପଲବ୍ଧ',
+    needsTr: 'ଅନୁବାଦ ଆବଶ୍ୟକ'
+  },
+  bn: {
+    coverage: 'বহুভাষিক আর্কাইভ কভারেজ (৮টি ভাষা)',
+    offlineReady: 'অফলাইনে প্রস্তুত',
+    suggestBtn: 'অনুবাদ প্রস্তাব করুন',
+    available: 'অনুবাদ উপলব্ধ',
+    needsTr: 'অনুবাদ প্রয়োজন'
+  }
+};
+
 export const TranslationMatrixBadge: React.FC<TranslationMatrixBadgeProps> = ({
   article,
   onRefresh,
@@ -17,6 +79,7 @@ export const TranslationMatrixBadge: React.FC<TranslationMatrixBadgeProps> = ({
 }) => {
   const { language, setLanguage, contentTranslations } = useLanguage();
   const [modalOpen, setModalOpen] = useState(false);
+  const ui = MATRIX_UI[language] || MATRIX_UI.en;
 
   // Determine if current language has translation
   const activeTr = article.translations?.[language] || contentTranslations[article.id];
@@ -29,14 +92,14 @@ export const TranslationMatrixBadge: React.FC<TranslationMatrixBadgeProps> = ({
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-[#A87924]" />
             <span className="text-xs font-bold uppercase tracking-wider text-[#54351F]">
-              Multilingual Archival Coverage (8 Languages)
+              {ui.coverage}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-[#EDF7F0] border border-[#2D7A4D] text-[#14532D]">
               <span className="w-1.5 h-1.5 rounded-full bg-[#2D7A4D] animate-pulse" />
-              <span>Offline Ready</span>
+              <span>{ui.offlineReady}</span>
             </span>
 
             <button
@@ -45,7 +108,7 @@ export const TranslationMatrixBadge: React.FC<TranslationMatrixBadgeProps> = ({
               className="inline-flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold bg-[#762D35] hover:bg-[#5e2229] border border-[#A87924] text-white transition-all cursor-pointer shadow-sm"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Suggest Translation</span>
+              <span>{ui.suggestBtn}</span>
             </button>
           </div>
         </div>
@@ -64,7 +127,7 @@ export const TranslationMatrixBadge: React.FC<TranslationMatrixBadgeProps> = ({
                 key={langOpt.code}
                 type="button"
                 onClick={() => setLanguage(langOpt.code)}
-                title={`${langOpt.label} (${hasTr ? 'Translation Available' : 'Needs Translation'})`}
+                title={`${langOpt.label} (${hasTr ? ui.available : ui.needsTr})`}
                 className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer border ${
                   isSelected
                     ? 'bg-[#762D35] text-white border-[#A87924] font-bold shadow-sm'

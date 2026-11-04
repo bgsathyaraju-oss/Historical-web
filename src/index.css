@@ -45,12 +45,26 @@
     --royal-gold: var(--accent-gold);
     --royal-gold-light: var(--surface-bg);
     --royal-gold-dark: var(--link-color);
-    --royal-navy: var(--page-bg);
-    --royal-navy-dark: var(--surface-bg);
+    --royal-navy: #0B1B3D;
+    --royal-navy-dark: #071229;
     --royal-ivory: var(--card-bg);
     --royal-cream: var(--surface-bg);
     --royal-sand: var(--page-bg);
     --royal-slate: var(--card-bg);
+
+    /* Premium Royal Heritage Model 4 Design Tokens */
+    --model4-navy-deep: #0B1B3D;
+    --model4-navy-mid: #10254E;
+    --model4-navy-light: #173369;
+    --model4-navy-darkest: #071229;
+    --model4-gold-primary: #D4AF37;
+    --model4-gold-antique: #C59B27;
+    --model4-gold-light: #F5E1A4;
+    --model4-gold-border: #C89D32;
+    --model4-maroon: #762D35;
+    --model4-maroon-deep: #5C1D24;
+    --model4-ivory: #FFFCF5;
+    --model4-almond: #F5EBD9;
   }
 
   html,
@@ -84,11 +98,51 @@
   }
 }
 
+/* ==========================================================================
+   PREMIUM ROYAL HERITAGE MODEL 4 — ARCHITECTURAL CHROME & COMPONENT SYSTEM
+   ========================================================================== */
+@media screen {
+  .model4-navy-surface {
+    background: linear-gradient(180deg, #0E224A 0%, #091734 100%) !important;
+    color: #FFFCF5 !important;
+    border-color: #C89D32 !important;
+  }
+
+  .model4-navy-card {
+    background: linear-gradient(145deg, #132C5C 0%, #0B1B3D 100%) !important;
+    color: #FFFCF5 !important;
+    border: 1.5px solid rgba(212, 175, 55, 0.65) !important;
+    box-shadow: 0 10px 28px rgba(7, 18, 41, 0.35), inset 0 1px 0 rgba(245, 225, 164, 0.2) !important;
+  }
+
+  .model4-navy-card:hover {
+    border-color: #F5E1A4 !important;
+    box-shadow: 0 14px 34px rgba(7, 18, 41, 0.48), 0 0 16px rgba(212, 175, 55, 0.22) !important;
+  }
+
+  .model4-ivory-card {
+    background: linear-gradient(180deg, #FFFCF5 0%, #FFF8EC 100%) !important;
+    color: #292521 !important;
+    border: 1.5px solid #C89D32 !important;
+    box-shadow: 0 6px 20px rgba(75, 51, 31, 0.10), inset 0 0 0 1px rgba(212, 175, 55, 0.16) !important;
+  }
+
+  .model4-ivory-card:hover {
+    border-color: #A87924 !important;
+    box-shadow: 0 12px 28px rgba(75, 51, 31, 0.16), inset 0 0 0 1px rgba(212, 175, 55, 0.32) !important;
+  }
+
+  .model4-gold-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #C89D32 20%, #F5E1A4 50%, #C89D32 80%, transparent 100%) !important;
+  }
+}
+
 /* Canonical screen rules for .royal-profile-title-box, .royal-card-title-box,
    .article-profile-title, .profile-title-box, and .archival-reference-index-*
    are defined in ./styles/lightAlmondTheme.css */
 
-/* Custom Scrollbar - Light Almond Theme */
+/* Custom Scrollbar - Royal Antique Gold & Navy */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -144,8 +198,15 @@
   display: none;
 }
 
-/* Screen Layout Rules for Print Frame Wrapper (Zero visual change on screen) */
+/* Screen Layout Rules for Print Frame Wrapper & Mobile Viewport Safeguards */
 @media screen {
+  html,
+  body,
+  #root {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
   .print-document-frame,
   .print-document-tbody,
   .print-document-tr,
@@ -154,11 +215,20 @@
     flex-direction: column;
     flex: 1 1 auto;
     width: 100%;
+    max-width: 100%;
     min-width: 0;
     margin: 0;
     padding: 0;
     border: none;
     background: transparent !important;
+    box-sizing: border-box;
+  }
+
+  /* Ensure Indic scripts (Kannada, Telugu, Tamil, Odia, Hindi, Marathi, Bengali) never clip descenders/ottaksharas */
+  .line-clamp-1,
+  .line-clamp-2,
+  .line-clamp-3 {
+    padding-bottom: 0.08em;
   }
 
   .print-document-tfoot,

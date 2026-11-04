@@ -22,6 +22,11 @@ import {
   INSCRIPTION_TRANSLATIONS
 } from '../../server/contentTranslations';
 import { KALINGA_WAR_CONTENT } from '../data/kalingaWarData';
+import {
+  CONSOLIDATED_SHORT_SYNONYM_IDS,
+  PROMINENT_PERSON_TO_CANONICAL_FIGURE_MAP,
+  resolveCanonicalNavigationTarget
+} from '../data/canonicalArticleMap';
 import type { LanguageCode } from '../types';
 
 export interface SearchResultItem {
@@ -109,7 +114,7 @@ export function performClientSearch(
         verification_status: refEntry.requiresVerification
           ? refUi.requiresVerificationBadge
           : refEntry.verificationStatus,
-        link: refEntry.primaryTargetLink,
+        link: resolveCanonicalNavigationTarget(refEntry.primaryTargetLink),
         category: refEntry.classification
       });
     });
@@ -194,9 +199,113 @@ export function performClientSearch(
     }
   }
 
-  // 2. Community Prominent Persons (all 20 historical figures across 32 branches, 45 community labels, and 70-name aliases)
+  // 2. Documented Historical Figures (Canonical 10-Section Sovereign & Progenitor Biographies)
+  const matchedCanonicalFigureIds = new Set<string>();
   if (filterType === 'all' || filterType === 'figures' || filterType === 'community') {
+    DOCUMENTED_FIGURES_REPO.forEach(fig => {
+      const figTrans = FIGURE_TRANSLATIONS[fig.id] || {};
+      const allNames = Object.values(fig.name);
+      const allTitles = Object.values(fig.known_titles).flat();
+      const allDynasties = Object.values(fig.dynasty_name);
+      const allReigns = Object.values(fig.reign_period);
+      const allBios = Object.values(fig.biography);
+      const allSignificances = Object.values(fig.historical_significance);
+
+      const origMatch = matchesAny(
+        ...allNames,
+        ...(fig.alternate_names || []),
+        ...allTitles,
+        ...allDynasties,
+        ...allReigns,
+        ...allBios,
+        ...allSignificances
+      );
+
+      let transMatch = false;
+      let matchedLang: LanguageCode | null = null;
+      for (const [lKey, tData] of Object.entries(figTrans)) {
+        if (!tData) continue;
+        if (
+          matchesAny(
+            tData.name,
+            tData.biography,
+            tData.dynasty_name,
+            tData.summary,
+            tData.historical_significance,
+            ...(tData.known_titles || [])
+          )
+        ) {
+          transMatch = true;
+          matchedLang = lKey as LanguageCode;
+          break;
+        }
+      }
+
+      if (origMatch || transMatch) {
+        matchedCanonicalFigureIds.add(fig.id);
+        const preferredLang = (figTrans[currentLang] ? currentLang : matchedLang) || currentLang;
+        const tObj = figTrans[preferredLang];
+        const displayTitle = tObj?.name || fig.name[currentLang] || fig.name.en;
+        const displayBio = tObj?.biography || fig.biography[currentLang] || fig.biography.en;
+        const displayDynasty = tObj?.dynasty_name || fig.dynasty_name[currentLang] || fig.dynasty_name.en;
+        const displayReign = fig.reign_period[currentLang] || fig.reign_period.en;
+
+        results.push({
+          type: 'Historical Monarch',
+          id: fig.id,
+          title: displayTitle,
+          subtitle: `${displayDynasty} (${displayReign})`,
+          snippet: extractSnippet(displayBio, query, displayBio.substring(0, 160) + '...'),
+          verification_status: fig.evidence_status || 'Documented Epigraphy',
+          link: `/kings-queens?figure=${fig.id}`
+        });
+      }
+    });
+
+    // 3. Foundational Sacred Progenitors (Only emit if not already matched in canonical DOCUMENTED_FIGURES_REPO)
+    HISTORICAL_FIGURES.forEach(fig => {
+      if (matchedCanonicalFigureIds.has(fig.id)) return;
+      const allNames = Object.values(fig.localized_name || {});
+      const allTitles = Object.values(fig.titles || {});
+      const allSummaries = Object.values(fig.summary || {});
+      const allNarratives = Object.values(fig.detailed_narrative || {});
+
+      const isMatch = matchesAny(
+        fig.canonical_name,
+        ...(fig.alternate_names || []),
+        fig.dynasty_lineage,
+        ...(fig.associated_places || []),
+        ...allNames,
+        ...allTitles,
+        ...allSummaries,
+        ...allNarratives
+      );
+
+      if (isMatch) {
+        matchedCanonicalFigureIds.add(fig.id);
+        const name = fig.localized_name?.[currentLang] || fig.canonical_name;
+        const summary = fig.summary?.[currentLang] || fig.summary?.en || '';
+        const narrative = fig.detailed_narrative?.[currentLang] || fig.detailed_narrative?.en || summary;
+
+        results.push({
+          type: 'Historical Monarch',
+          id: fig.id,
+          title: name,
+          subtitle: `${fig.dynasty_lineage} (${fig.reign_or_dates || fig.era})`,
+          snippet: extractSnippet(narrative, query, summary),
+          verification_status: fig.epigraphic_status,
+          link: `/kings-queens?figure=${fig.id}`
+        });
+      }
+    });
+
+    // 4. Community Prominent Persons (Deduplicated against matched canonical Historical Monarch dossiers)
     PROMINENT_PERSONS.forEach(p => {
+      const canonicalFigId = PROMINENT_PERSON_TO_CANONICAL_FIGURE_MAP[p.id];
+      if (canonicalFigId && matchedCanonicalFigureIds.has(canonicalFigId) && filterType !== 'community') {
+        return;
+      }
+
       const extMeta = EXTENDED_PERSON_DIRECTORY_META[p.id];
       const allNames = Object.values(p.name);
       const allTitles = Object.values(p.titles);
@@ -250,104 +359,7 @@ export function performClientSearch(
     });
   }
 
-  // 3. Documented Historical Figures (Gajapathi Rulers, Kings & Queens)
-  if (filterType === 'all' || filterType === 'figures') {
-    DOCUMENTED_FIGURES_REPO.forEach(fig => {
-      const figTrans = FIGURE_TRANSLATIONS[fig.id] || {};
-      const allNames = Object.values(fig.name);
-      const allTitles = Object.values(fig.known_titles).flat();
-      const allDynasties = Object.values(fig.dynasty_name);
-      const allReigns = Object.values(fig.reign_period);
-      const allBios = Object.values(fig.biography);
-      const allSignificances = Object.values(fig.historical_significance);
-
-      const origMatch = matchesAny(
-        ...allNames,
-        ...(fig.alternate_names || []),
-        ...allTitles,
-        ...allDynasties,
-        ...allReigns,
-        ...allBios,
-        ...allSignificances
-      );
-
-      let transMatch = false;
-      let matchedLang: LanguageCode | null = null;
-      for (const [lKey, tData] of Object.entries(figTrans)) {
-        if (!tData) continue;
-        if (
-          matchesAny(
-            tData.name,
-            tData.biography,
-            tData.dynasty_name,
-            tData.summary,
-            tData.historical_significance,
-            ...(tData.known_titles || [])
-          )
-        ) {
-          transMatch = true;
-          matchedLang = lKey as LanguageCode;
-          break;
-        }
-      }
-
-      if (origMatch || transMatch) {
-        const preferredLang = (figTrans[currentLang] ? currentLang : matchedLang) || currentLang;
-        const tObj = figTrans[preferredLang];
-        const displayTitle = tObj?.name || fig.name[currentLang] || fig.name.en;
-        const displayBio = tObj?.biography || fig.biography[currentLang] || fig.biography.en;
-        const displayDynasty = tObj?.dynasty_name || fig.dynasty_name[currentLang] || fig.dynasty_name.en;
-        const displayReign = fig.reign_period[currentLang] || fig.reign_period.en;
-
-        results.push({
-          type: 'Historical Monarch',
-          id: fig.id,
-          title: displayTitle,
-          subtitle: `${displayDynasty} (${displayReign})`,
-          snippet: extractSnippet(displayBio, query, displayBio.substring(0, 160) + '...'),
-          verification_status: fig.evidence_status || 'Documented Epigraphy',
-          link: `/kings-queens?figure=${fig.id}`
-        });
-      }
-    });
-
-    // 4. Foundational Sacred Progenitors
-    HISTORICAL_FIGURES.forEach(fig => {
-      const allNames = Object.values(fig.localized_name || {});
-      const allTitles = Object.values(fig.titles || {});
-      const allSummaries = Object.values(fig.summary || {});
-      const allNarratives = Object.values(fig.detailed_narrative || {});
-
-      const isMatch = matchesAny(
-        fig.canonical_name,
-        ...(fig.alternate_names || []),
-        fig.dynasty_lineage,
-        ...(fig.associated_places || []),
-        ...allNames,
-        ...allTitles,
-        ...allSummaries,
-        ...allNarratives
-      );
-
-      if (isMatch) {
-        const name = fig.localized_name?.[currentLang] || fig.canonical_name;
-        const summary = fig.summary?.[currentLang] || fig.summary?.en || '';
-        const narrative = fig.detailed_narrative?.[currentLang] || fig.detailed_narrative?.en || summary;
-
-        results.push({
-          type: 'Royal Progenitor',
-          id: fig.id,
-          title: name,
-          subtitle: `${fig.dynasty_lineage} (${fig.reign_or_dates || fig.era})`,
-          snippet: extractSnippet(narrative, query, summary),
-          verification_status: fig.epigraphic_status,
-          link: `/historical-persons?figure=${fig.id}`
-        });
-      }
-    });
-  }
-
-  // 5. Community Directory (16 Items), Synonyms (15 Items) & Professional Heritage Categories (9 Items)
+  // 5. Community Directory (16 Canonical Items), Preserved Distinct Synonyms & Professional Heritage Categories (9 Items)
   if (filterType === 'all' || filterType === 'community' || filterType === 'articles') {
     COMMUNITY_DIRECTORY_ITEMS.forEach(entry => {
       const detailed = COMMUNITY_HERITAGE_DETAILED_ARTICLES.find(a => a.id === entry.id);
@@ -389,9 +401,12 @@ export function performClientSearch(
     });
 
     COMMUNITY_SYNONYMS.forEach(syn => {
+      // Skip consolidated short duplicate synonyms (already indexed above via COMMUNITY_DIRECTORY_ITEMS)
+      if (CONSOLIDATED_SHORT_SYNONYM_IDS.has(syn.id)) return;
+
       const allScripts = Object.values(syn.native_scripts || {});
       const allRoles = Object.values(syn.historical_role || {});
-      
+
       const isMatch =
         matchedHeritageIds.has(syn.id) ||
         matchesAny(

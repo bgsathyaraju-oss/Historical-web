@@ -199,10 +199,10 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
     const reg = regionalItems.find(r => r.id === selectedId);
     if (!reg) return null;
     const regionImgMap: Record<string, string> = {
-      'region-odra': `${base}barabati_fort_gateway.jpg`,
-      'region-utkala': `${base}puri_jagannatha_temple.jpg`,
-      'region-kalinga': `${base}simhachalam_temple.jpg`,
-      'region-trikalinga': `${base}odra_kalinga_map.jpg`
+      'region-odra': `${base}heritage_odra_desha.jpg`,
+      'region-utkala': `${base}heritage_utkala_kingdom.jpg`,
+      'region-kalinga': `${base}heritage_kalinga_empire.jpg`,
+      'region-trikalinga': `${base}heritage_trikalinga_region.jpg`
     };
     return {
       id: reg.id,
@@ -221,18 +221,30 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       {/* Hero Header */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#FFF9EF] via-[#FFFCF5] to-[#EFE3D0] border border-[#D8C3A2] p-8 sm:p-12 shadow-md">
-        <div className="space-y-4 max-w-3xl relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE3D0] text-[#762D35] text-xs font-semibold border border-[#A87924]/40">
-            <Compass className="w-3.5 h-3.5 text-[#A87924]" />
-            <span>{t.odraDesha.badge}</span>
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#081530] via-[#0B1B3D] to-[#132C5E] border-2 border-[#D4AF37] p-8 sm:p-12 shadow-xl text-[#FFFCF5]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#132C5E] text-[#F5E1A4] text-xs font-semibold border border-[#D4AF37]/70">
+              <Compass className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>{t.odraDesha.badge}</span>
+            </div>
+            <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#FFF7DF] leading-tight">
+              {t.odraDesha.title}
+            </h1>
+            <p className="text-sm sm:text-base text-[#E5DEC9] font-royal-serif leading-relaxed">
+              {t.odraDesha.subtitle}
+            </p>
           </div>
-          <h1 className="font-royal-heading font-extrabold text-3xl sm:text-5xl text-[#54351F] leading-tight">
-            {t.odraDesha.title}
-          </h1>
-          <p className="text-sm sm:text-base text-[#292521] font-royal-serif leading-relaxed">
-            {t.odraDesha.subtitle}
-          </p>
+          <div className="lg:col-span-5">
+            <div className="rounded-2xl overflow-hidden border-2 border-[#D4AF37] shadow-lg aspect-[16/10] bg-[#07132B]">
+              <img
+                src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/heritage_odra_desha.jpg`}
+                alt={t.odraDesha.title}
+                loading="eager"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -252,10 +264,10 @@ export const OdraDeshaPage: React.FC<OdraDeshaPageProps> = ({ onNavigate }) => {
             const Icon = reg.icon;
             const base = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/`;
             const regionImgMap: Record<string, string> = {
-              'region-odra': `${base}barabati_fort_gateway.jpg`,
-              'region-utkala': `${base}puri_jagannatha_temple.jpg`,
-              'region-kalinga': `${base}simhachalam_temple.jpg`,
-              'region-trikalinga': `${base}odra_kalinga_map.jpg`
+              'region-odra': `${base}heritage_odra_desha.jpg`,
+              'region-utkala': `${base}heritage_utkala_kingdom.jpg`,
+              'region-kalinga': `${base}heritage_kalinga_empire.jpg`,
+              'region-trikalinga': `${base}heritage_trikalinga_region.jpg`
             };
             const thumbUrl = regionImgMap[reg.id] || `${base}odra_kalinga_map.jpg`;
             return (

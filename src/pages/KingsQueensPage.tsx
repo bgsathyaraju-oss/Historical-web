@@ -536,20 +536,20 @@ const FIGURE_TO_GENEALOGY_MAP: Record<string, string> = {
 
 // Mapping between figure IDs and related canonical article IDs
 const FIGURE_TO_ARTICLES_MAP: Record<string, string[]> = {
-  fig_kapilendra_deva: ['art_gajapathi_kapilendra', 'art_epigraphic_tradition_odra', 'art_odra_desha_history'],
-  fig_purushottama_deva: ['art_gajapathi_kapilendra', 'art_genealogy_methodology', 'art_epigraphic_tradition_odra'],
-  fig_prataparudra_deva: ['art_gajapathi_kapilendra', 'art_epigraphic_tradition_odra', 'art_genealogy_methodology'],
-  fig_hamvira_deva: ['art_gajapathi_kapilendra', 'art_odra_migration_south', 'art_epigraphic_tradition_odra'],
-  fig_mukunda_deva: ['art_odra_desha_history', 'art_odra_migration_south'],
-  fig_anantavarman_chodaganga: ['art_odra_desha_history', 'art_epigraphic_tradition_odra'],
-  fig_langula_narasimha_deva: ['art_epigraphic_tradition_odra', 'art_odra_desha_history'],
-  fig_king_kharavela: ['art_epigraphic_tradition_odra', 'art_odra_desha_history'],
-  fig_samrat_sagara: ['art_genealogy_methodology', 'art_odra_migration_south'],
-  fig_maharshi_bhagiratha: ['art_genealogy_methodology', 'art_odra_migration_south'],
-  fig_sri_rama: ['art_genealogy_methodology', 'art_gajapathi_kapilendra'],
-  fig_goddess_jasma: ['art_odra_migration_south', 'art_genealogy_methodology'],
-  fig_shivayogi_siddharama: ['art_odra_migration_south', 'art_epigraphic_tradition_odra'],
-  fig_kolletikota_peddintlamma: ['art_odra_desha_history', 'art_odra_migration_south']
+  fig_kapilendra_deva: ['art_gajapathi_kapilendra', 'art_epigraphic_evolution_odra', 'art_odra_desha_history'],
+  fig_purushottama_deva: ['art_gajapathi_kapilendra', 'art_genealogy_methodology', 'art_epigraphic_evolution_odra'],
+  fig_prataparudra_deva: ['art_gajapathi_kapilendra', 'art_epigraphic_evolution_odra', 'art_genealogy_methodology'],
+  fig_hamvira_deva: ['art_gajapathi_kapilendra', 'art_oad_rajputh_od_history', 'art_epigraphic_evolution_odra'],
+  fig_mukunda_deva: ['art_odra_desha_history', 'art_oad_rajputh_od_history'],
+  fig_anantavarman_chodaganga: ['art_odra_desha_history', 'art_epigraphic_evolution_odra'],
+  fig_langula_narasimha_deva: ['art_epigraphic_evolution_odra', 'art_odra_desha_history'],
+  fig_king_kharavela: ['art_epigraphic_evolution_odra', 'art_surya_vamsa_sagara_rama', 'art_odra_desha_history'],
+  fig_samrat_sagara: ['art_surya_vamsa_sagara_rama', 'art_genealogy_methodology', 'art_oad_rajputh_od_history'],
+  fig_maharshi_bhagiratha: ['art_surya_vamsa_sagara_rama', 'art_genealogy_methodology', 'art_oad_rajputh_od_history'],
+  fig_sri_rama: ['art_surya_vamsa_sagara_rama', 'art_genealogy_methodology', 'art_gajapathi_kapilendra'],
+  fig_goddess_jasma: ['art_oad_rajputh_od_history', 'art_genealogy_methodology'],
+  fig_shivayogi_siddharama: ['art_oad_rajputh_od_history', 'art_epigraphic_evolution_odra'],
+  fig_kolletikota_peddintlamma: ['art_kolletikota_peddintlamma_lake', 'art_odra_desha_history', 'art_gajapathi_kapilendra']
 };
 
 // Curated hashtags for each historical figure
