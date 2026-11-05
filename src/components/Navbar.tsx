@@ -20,7 +20,9 @@ import {
   Home,
   FileText,
   Layers,
-  Award
+  Award,
+  ShieldCheck,
+  Scale
 } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { useLanguage } from '../context/LanguageContext';
@@ -200,7 +202,12 @@ interface HeaderLocalizedStrings {
   documents: string;
   drawerHeading: string;
   drawerSubheading: string;
-  viewTestPageLabel: string;
+  legalPolicies: string;
+  copyrightLabel: string;
+  termsLabel: string;
+  privacyLabel: string;
+  accessibilityLabel: string;
+  designSystemLabel: string;
 }
 
 const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
@@ -221,7 +228,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'Historical Documents & Charters',
     drawerHeading: 'Royal Archival Directory',
     drawerSubheading: 'Main Categories & Subcategories',
-    viewTestPageLabel: 'View Original Layout – Test Page'
+    legalPolicies: 'Legal, Policies & Standards',
+    copyrightLabel: 'Copyright & Permissions',
+    termsLabel: 'Disclaimer & Terms of Use',
+    privacyLabel: 'Privacy Policy',
+    accessibilityLabel: 'Accessibility Statement',
+    designSystemLabel: 'Royal UI Component System'
   },
   hi: {
     portalMainTitle: 'सूर्यवंश ओडियाराजु क्षत्रिय',
@@ -240,7 +252,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'ऐतिहासिक दस्तावेज एवं ताम्रपत्र',
     drawerHeading: 'शाही अभिलेखीय निर्देशिका',
     drawerSubheading: 'मुख्य श्रेणियाँ एवं उप-श्रेणियाँ',
-    viewTestPageLabel: 'मूल लेआउट देखें – टेस्ट पेज'
+    legalPolicies: 'विधिक नीतियाँ एवं मानक',
+    copyrightLabel: 'कॉपीराइट एवं अनुमति',
+    termsLabel: 'अस्वीकरण एवं उपयोग की शर्तें',
+    privacyLabel: 'गोपनीयता नीति',
+    accessibilityLabel: 'सुलभता विवरण',
+    designSystemLabel: 'राजकीय UI डिज़ाइन प्रणाली'
   },
   te: {
     portalMainTitle: 'సూర్యవంశ ఒడియరాజు క్షత్రియ',
@@ -259,7 +276,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'చారిత్రక పత్రాలు & తాళపత్రాలు',
     drawerHeading: 'రాజ చారిత్రక డైరెక్టరీ',
     drawerSubheading: 'ప్రధాన విభాగాలు & ఉప విభాగాలు',
-    viewTestPageLabel: 'పాత లేఅవుట్ చూడండి – టెస్ట్ పేజీ'
+    legalPolicies: 'చట్టపరమైన నిబంధనలు & ప్రమాణాలు',
+    copyrightLabel: 'కాపీరైట్ & అనుమతులు',
+    termsLabel: 'నిరాకరణ & వినియోగ నిబంధనలు',
+    privacyLabel: 'గోప్యతా విధానం',
+    accessibilityLabel: 'యాక్సెసిబిలిటీ ప్రకటన',
+    designSystemLabel: 'రాయల్ UI డిజైన్ సిస్టమ్'
   },
   kn: {
     portalMainTitle: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ',
@@ -278,7 +300,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'ಐತಿಹಾಸಿಕ ದಾಖಲೆಗಳು ಮತ್ತು ತಾಮ್ರಪತ್ರಗಳು',
     drawerHeading: 'ರಾಜ ಪರಂಪರೆಯ ನಿರ್ದೇಶಿಕೆ',
     drawerSubheading: 'ಮುಖ್ಯ ವಿಭಾಗಗಳು ಮತ್ತು ಉಪ-ವಿಭಾಗಗಳು',
-    viewTestPageLabel: 'ಮೂಲ ವಿನ್ಯಾಸ ನೋಡಿ – ಟೆಸ್ಟ್ ಪೇಜ್'
+    legalPolicies: 'ಕಾನೂನು ನೀತಿಗಳು ಮತ್ತು ಮಾನದಂಡಗಳು',
+    copyrightLabel: 'ಹಕ್ಕುಸ್ವಾಮ್ಯ ಮತ್ತು ಅನುಮತಿಗಳು',
+    termsLabel: 'ಹಕ್ಕು ನಿರಾಕರಣೆ ಮತ್ತು ಬಳಕೆಯ ನಿಯಮಗಳು',
+    privacyLabel: 'ಗೌಪ್ಯತಾ ನೀತಿ',
+    accessibilityLabel: 'ಪ್ರವೇಶಸಾಧ್ಯತೆಯ ಹೇಳಿಕೆ',
+    designSystemLabel: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ'
   },
   ta: {
     portalMainTitle: 'சூரியவம்ச ஒடியராஜு சத்திரிய',
@@ -297,7 +324,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'வரலாற்று ஆவணங்கள் & பட்டயங்கள்',
     drawerHeading: 'அரச ஆவணக் காப்பகப் பட்டியல்',
     drawerSubheading: 'முதன்மை மற்றும் துணைப் பிரிவுகள்',
-    viewTestPageLabel: 'அசல் வடிவமைப்பு – சோதனைப் பக்கம்'
+    legalPolicies: 'சட்டக் கொள்கைகள் & தரநிலைகள்',
+    copyrightLabel: 'பதிப்புரிமை & அனுமதிகள்',
+    termsLabel: 'பொறுப்புத் துறப்பு & பயன்பாட்டு விதிகள்',
+    privacyLabel: 'தனியுரிமைக் கொள்கை',
+    accessibilityLabel: 'அணுகல்தன்மை அறிக்கை',
+    designSystemLabel: 'அரச UI வடிவமைப்பு அமைப்பு'
   },
   mr: {
     portalMainTitle: 'सूर्यवंश ओडियाराजु क्षत्रिय',
@@ -316,7 +348,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'ऐतिहासिक दस्तऐवज आणि ताम्रपट',
     drawerHeading: 'शाही अभिलेख निर्देशिका',
     drawerSubheading: 'मुख्य विभाग आणि उपविभाग',
-    viewTestPageLabel: 'मूळ लेआउट पहा – टेस्ट पेज'
+    legalPolicies: 'कायदेशीर धोरणे आणि मानके',
+    copyrightLabel: 'कॉपीराइट आणि परवानग्या',
+    termsLabel: 'अस्वीकरण आणि वापराच्या अटी',
+    privacyLabel: 'गोपनीयता धोरण',
+    accessibilityLabel: 'सुलभता विधान',
+    designSystemLabel: 'शाही UI डिझाइन प्रणाली'
   },
   or: {
     portalMainTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ',
@@ -335,7 +372,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'ଐତିହାସିକ ଦଲିଲ ଓ ତାମ୍ରଶାସନ',
     drawerHeading: 'ରାଜକୀୟ ଅଭିଲେଖ ନିର୍ଦ୍ଦେଶିକା',
     drawerSubheading: 'ମୁଖ୍ୟ ବିଭାଗ ଓ ଉପ-ବିଭାଗ',
-    viewTestPageLabel: 'ମୂଳ ଲେଆଉଟ୍ ଦେଖନ୍ତୁ – ଟେଷ୍ଟ ପେଜ୍'
+    legalPolicies: 'ଆଇନଗତ ନୀତି ଓ ମାନକ',
+    copyrightLabel: 'କପିରାଇଟ୍ ଓ ଅନୁମତି',
+    termsLabel: 'ଅସ୍ୱୀକରଣ ଓ ବ୍ୟବହାର ସର୍ତ୍ତାବଳୀ',
+    privacyLabel: 'ଗୋପନୀୟତା ନୀତି',
+    accessibilityLabel: 'ସୁଗମ୍ୟତା ବିବରଣୀ',
+    designSystemLabel: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍'
   },
   bn: {
     portalMainTitle: 'সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয়',
@@ -354,7 +396,12 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     documents: 'ঐতিহাসিক দলিল ও তাম্রশাসন',
     drawerHeading: 'রাজকীয় আর্কাইভ নির্দেশিকা',
     drawerSubheading: 'প্রধান বিভাগ ও উপ-বিভাগ',
-    viewTestPageLabel: 'মূল লেআউট দেখুন – টেস্ট পেজ'
+    legalPolicies: 'আইনি নীতিমালা ও মানক',
+    copyrightLabel: 'কপিরাইট ও অনুমতি',
+    termsLabel: 'দাবিত্যাগ ও ব্যবহারের শর্তাবলী',
+    privacyLabel: 'গোপনীয়তা নীতি',
+    accessibilityLabel: 'অ্যাক্সেসিবিলিটি বিবৃতি',
+    designSystemLabel: 'রাজকীয় UI ডিজাইন সিস্টেম'
   }
 };
 
@@ -612,10 +659,39 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
           path: '/contact',
           label: t.nav.contact || 'Contact',
           icon: Users
+        }
+      ]
+    },
+    {
+      id: 'legal-policies',
+      path: '/copyright',
+      label: navUi.legalPolicies,
+      iconWebp: ASSET_WEBP('logo-sun-emblem.webp'),
+      icon: Scale,
+      subItems: [
+        {
+          path: '/copyright',
+          label: navUi.copyrightLabel,
+          icon: ShieldCheck
         },
         {
-          path: '/test-page',
-          label: navUi.viewTestPageLabel,
+          path: '/terms',
+          label: navUi.termsLabel,
+          icon: FileText
+        },
+        {
+          path: '/privacy',
+          label: navUi.privacyLabel,
+          icon: Shield
+        },
+        {
+          path: '/accessibility',
+          label: navUi.accessibilityLabel,
+          icon: Award
+        },
+        {
+          path: '/design-system',
+          label: navUi.designSystemLabel,
           icon: Layers
         }
       ]

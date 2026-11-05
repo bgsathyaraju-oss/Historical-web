@@ -1,0 +1,1999 @@
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  BookOpen,
+  Calendar,
+  User,
+  Share2,
+  Copy,
+  Check,
+  ArrowLeft,
+  ChevronRight,
+  ChevronLeft,
+  List,
+  Sparkles,
+  ExternalLink,
+  ShieldCheck,
+  Printer,
+  Download,
+  Home,
+  X,
+  Crown,
+  Scroll,
+  Landmark,
+  FileText,
+  Clock,
+  CheckCircle2,
+  Tag,
+  Hash
+} from 'lucide-react';
+import { Article, SourceReference, LanguageCode } from '../types';
+import { EvidenceBadge } from './EvidenceBadge';
+import { TranslationMatrixBadge } from './TranslationMatrixBadge';
+import { PublisherCreditCard } from './PublisherCreditCard';
+import { useLanguage, SUPPORTED_LANGUAGES } from '../context/LanguageContext';
+import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
+import {
+  downloadArticleAsPdf,
+  triggerArticlePrintWithTitle,
+  generateArticlePdfFilename,
+  setActiveArticleDocumentTitle,
+  PDF_EXPORT_UI_LABELS,
+  hasAppInventorBridge,
+  isAndroidWebViewEnvironment,
+  sendUrlToAppInventorBridge,
+  copyTextCrossPlatform,
+  triggerCrossPlatformShare,
+  handleWhatsAppLinkClick,
+  handleExternalBrowserUrlClick
+} from '../utils/pdfExport';
+import { getAllDocumentedFigures } from '../data/documentedFiguresRepository';
+import {
+  getCanonicalInscriptions,
+  getCanonicalDocuments,
+  getCanonicalMonuments,
+  getCanonicalTimelineEvents
+} from '../data/archivalSeedData';
+
+export interface ArticleDetailViewProps {
+  article: Article;
+  onBack?: () => void;
+  onNavigate?: (path: string) => void;
+  onSelectArticle?: (article: Article) => void;
+  onTagClick?: (tag: string) => void;
+  allArticles?: Article[];
+  showLanguageSwitcher?: boolean;
+  basePath?: string;
+}
+
+interface TocItem {
+  id: string;
+  title: string;
+}
+
+export interface MonographEnrichment {
+  historicalPeriod: Record<LanguageCode, string>;
+  subjectCategories: string[];
+  figureIds: string[];
+  inscriptionIds: string[];
+  documentIds: string[];
+  timelineIds: string[];
+}
+
+export const MONOGRAPH_ENRICHMENT_MAP: Record<string, MonographEnrichment> = {
+  art_odra_desha_history: {
+    historicalPeriod: {
+      en: 'Classical Antiquity to 16th Century CE (c. 3rd Century BCE – 1568 CE)',
+      hi: 'शास्त्रीय प्राचीन काल से 16वीं शताब्दी ई. (लगभग तीसरी शताब्दी ई.पू. – 1568 ई.)',
+      te: 'ప్రాచీన కాలం నుండి 16వ శతాబ్దం వరకు (క్రీ.పూ. 3వ శతాబ్దం – క్రీ.శ. 1568)',
+      kn: 'ಪ್ರಾಚೀನ ಕಾಲದಿಂದ 16ನೇ ಶತಮಾನದವರೆಗೆ (ಕ್ರಿ.ಪೂ. 3ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568)',
+      ta: 'பண்டைய காலம் முதல் 16-ஆம் நூற்றாண்டு வரை (பொ.ஊ.மு. 3-ஆம் நூற்றாண்டு – பொ.ஊ. 1568)',
+      mr: 'प्राचीन काळापासून १६ व्या शतकापर्यंत (इ.स.पू. ३ रे शतक – इ.स. १५६८)',
+      or: 'ପ୍ରାଚୀନ କାଳରୁ ୧୬ଶ ଶତାବ୍ଦୀ (ଖ୍ରୀ.ପୂ. ୩ୟ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮)',
+      bn: 'প্রাচীন কাল থেকে ১৬শ শতাব্দী (খ্রি.পূ. ৩য় শতাব্দী – ১৫৬৮ খ্রি.)'
+    },
+    subjectCategories: ['Odra Desha & Regional History', 'Historical Geography', 'Epigraphy & Territorial Borders'],
+    figureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_kapilendra_deva', 'fig_mukunda_deva'],
+    inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_korni_copper_plates', 'insc_veligalani_1458'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji'],
+    timelineIds: ['evt_01', 'evt_02', 'evt_03', 'evt_04']
+  },
+  art_gajapathi_kapilendra: {
+    historicalPeriod: {
+      en: 'Imperial Suryavamsha Gajapathi Era (1434 – 1466 CE)',
+      hi: 'साम्राज्यिक सूर्यवंश गजपति युग (1434 – 1466 ई.)',
+      te: 'సూర్యవంశ గజపతి సామ్రాజ్య యుగం (క్రీ.శ. 1434 – 1466)',
+      kn: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯ ಯುಗ (ಕ್ರಿ.ಶ. 1434 – 1466)',
+      ta: 'சூர்யவம்ச கஜபதி பேரரசு காலம் (பொ.ஊ. 1434 – 1466)',
+      mr: 'सूर्यवंश गजपती साम्राज्य काळ (इ.स. १४३४ – १४६६)',
+      or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟ ଯୁଗ (୧୪୩୪ – ୧୪୬୬ ଖ୍ରୀ.ଅ.)',
+      bn: 'সূর্যবংশী গজপতি সাম্রাজ্য যুগ (১৪৩৪ – ১৪৬৬ খ্রি.)'
+    },
+    subjectCategories: ['Gajapathi Kingdom & Empire', 'Military Campaigns & Fortresses', 'Suryavamsha Epigraphy'],
+    figureIds: ['fig_kapilendra_deva', 'fig_hamvira_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva'],
+    inscriptionIds: ['insc_veligalani_1458', 'insc_lingaraja_1452', 'insc_simhachalam_1459', 'insc_srirangam_1464'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_03', 'evt_04', 'evt_05', 'evt_06', 'evt_07']
+  },
+  art_genealogy_methodology: {
+    historicalPeriod: {
+      en: 'Ancient Solar Lineage to Post-Medieval Vamsavalis (Vedic Era – 19th Century CE)',
+      hi: 'प्राचीन सूर्यवंश से मध्यकालीन वंशावली तक (वैदिक काल – 19वीं शताब्दी ई.)',
+      te: 'ప్రాచీన సూర్యవంశం నుండి ఆధునిక వంశావళి పరిశోధన వరకు (వేద కాలం – 19వ శతాబ్దం)',
+      kn: 'ಪ್ರಾಚೀನ ಸೂರ್ಯವಂಶದಿಂದ ವಂಶಾವಳಿ ಸಂಶೋಧನೆಯವರೆಗೆ (ವೇದ ಕಾಲ – 19ನೇ ಶತಮಾನ)',
+      ta: 'பண்டைய சூர்யவம்சம் முதல் வம்சாவளி ஆய்வு வரை (வேத காலம் – 19-ஆம் நூற்றாண்டு)',
+      mr: 'प्राचीन सूर्यवंशापासून वंशावळ संशोधनापर्यंत (वैदिक काळ – १९ वे शतक)',
+      or: 'ପ୍ରାଚୀନ ସୂର୍ଯ୍ୟବଂଶରୁ ବଂଶାବଳୀ ଗବେଷଣା ପର୍ଯ୍ୟନ୍ତ (ବୈଦିକ କାଳ – ୧୯ଶ ଶତାବ୍ଦୀ)',
+      bn: 'প্রাচীন সূর্যবংশ থেকে বংশাবলী গবেষণা পর্যন্ত (বৈদিক কাল – ১৯শ শতাব্দী)'
+    },
+    subjectCategories: ['Dynasties and Genealogy', 'Historiographical Methodology', 'Primary Epigraphy vs. Vamsavalis'],
+    figureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva', 'fig_samrat_sagara'],
+    inscriptionIds: ['insc_veligalani_1458', 'insc_lingaraja_1452', 'insc_simhachalam_prataparudra'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_03', 'evt_05', 'evt_08', 'evt_09']
+  },
+  art_oad_rajputh_od_history: {
+    historicalPeriod: {
+      en: 'Classical Antiquity to Modern Diaspora (c. 2nd Century BCE – Present)',
+      hi: 'प्राचीन काल से आधुनिक विस्तार तक (लगभग दूसरी शताब्दी ई.पू. – वर्तमान)',
+      te: 'ప్రాచీన కాలం నుండి ఆధునిక విస్తరణ వరకు (క్రీ.పూ. 2వ శతాబ్దం – నేటి వరకు)',
+      kn: 'ಪ್ರಾಚೀನ ಕಾಲದಿಂದ ಆಧುನಿಕ ವಿಸ್ತರಣೆಯವರೆಗೆ (ಕ್ರಿ.ಪೂ. 2ನೇ ಶತಮಾನ – ಪ್ರಸ್ತುತ)',
+      ta: 'பண்டைய காலம் முதல் தற்காலம் வரை (பொ.ஊ.மு. 2-ஆம் நூற்றாண்டு – நிகழ்காலம்)',
+      mr: 'प्राचीन काळापासून आधुनिक विस्तारापर्यंत (इ.स.पू. २ रे शतक – वर्तमान)',
+      or: 'ପ୍ରାଚୀନ କାଳରୁ ଆଧୁନିକ ଯୁଗ ପର୍ଯ୍ୟନ୍ତ (ଖ୍ରୀ.ପୂ. ୨ୟ ଶତାବ୍ଦୀ – ବର୍ତ୍ତମାନ)',
+      bn: 'প্রাচীন কাল থেকে আধুনিক যুগ পর্যন্ত (খ্রি.পূ. ২য় শতাব্দী – বর্তমান)'
+    },
+    subjectCategories: ['Culture & Heritage', 'Oad-Rajput & Od-Kshatriya Lineage', 'Regional Synonyms & Hydraulic Engineering'],
+    figureIds: ['fig_samrat_sagara', 'fig_maharshi_bhagiratha', 'fig_king_kharavela', 'fig_goddess_jasma', 'fig_shivayogi_siddharama'],
+    inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_veligalani_1458', 'insc_srirangam_1464'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji'],
+    timelineIds: ['evt_01', 'evt_04', 'evt_06', 'evt_07']
+  },
+  art_surya_vamsa_sagara_rama: {
+    historicalPeriod: {
+      en: 'Treta Yuga Epic Antiquity to 1st Century BCE (Ikshvaku Solar Lineage & Kharavela Era)',
+      hi: 'त्रेता युग पौराणिक काल से प्रथम शताब्दी ई.पू. (इक्ष्वाकु सूर्यवंश एवं खारवेल युग)',
+      te: 'త్రేతాయుగ పురాణ కాలం నుండి క్రీ.పూ. 1వ శతాబ్దం వరకు (ఇక్ష్వాకు సూర్యవంశం & ఖారవేలుని యుగం)',
+      kn: 'ತ್ರೇತಾಯುಗದ ಪುರಾಣ ಕಾಲದಿಂದ ಕ್ರಿ.ಪೂ. 1ನೇ ಶತಮಾನದವರೆಗೆ (ಇಕ್ಷ್ವಾಕು ಸೂರ್ಯವಂಶ ಮತ್ತು ಖಾರವೇಲ ಯುಗ)',
+      ta: 'திரேதா யுக புராண காலம் முதல் பொ.ஊ.மு. 1-ஆம் நூற்றாண்டு வரை (இக்ஷ்வாகு சூர்யவம்சம் & காரவேலர் காலம்)',
+      mr: 'त्रेतायुग पौराणिक काळापासून इ.स.पू. १ ल्या शतकापर्यंत (इक्ष्वाकू सूर्यवंश आणि खारवेल युग)',
+      or: 'ତ୍ରେତୟା ଯୁଗ ପୌରାଣିକ କାଳରୁ ଖ୍ରୀ.ପୂ. ୧ମ ଶତାବ୍ଦୀ (ଇକ୍ଷ୍ୱାକୁ ସୂର୍ଯ୍ୟବଂଶ ଓ ଖାରବେଳ ଯୁଗ)',
+      bn: 'ত্রেতাযুগ পৌরাণিক কাল থেকে খ্রি.পূ. ১ম শতাব্দী (ইক্ষ্বাকু সূর্যবংশ ও খারবেল যুগ)'
+    },
+    subjectCategories: ['Kings and Queens', 'Suryavamsha Progenitors', 'Sacred & Epigraphic Continuity'],
+    figureIds: ['fig_samrat_sagara', 'fig_maharshi_bhagiratha', 'fig_sri_rama', 'fig_king_kharavela'],
+    inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_veligalani_1458'],
+    documentIds: ['doc_veligalani_grant'],
+    timelineIds: ['evt_01', 'evt_03', 'evt_05']
+  },
+  art_kolletikota_peddintlamma_lake: {
+    historicalPeriod: {
+      en: 'Medieval Gajapathi Garrison Era to Living Tradition (c. 11th – 16th Century CE & Present)',
+      hi: 'मध्यकालीन गजपति दुर्ग काल से जीवंत परंपरा तक (11वीं – 16वीं शताब्दी ई. एवं वर्तमान)',
+      te: 'మధ్యయుగ గజపతి జలదుర్గ కాలం నుండి నేటి సజీవ సంప్రదాయం వరకు (11వ – 16వ శతాబ్దం & వర్తమానం)',
+      kn: 'ಮಧ್ಯಕಾಲೀನ ಗಜಪತಿ ಜಲದುರ್ಗ ಕಾಲದಿಂದ ಜೀವಂತ ಸಂಪ್ರದಾಯದವರೆಗೆ (11ನೇ – 16ನೇ ಶತಮಾನ ಮತ್ತು ಪ್ರಸ್ತುತ)',
+      ta: 'இடைக்கால கஜபதி நீர்க்கோட்டை காலம் முதல் வாழும் மரபு வரை (11 – 16-ஆம் நூற்றாண்டு & நிகழ்காலம்)',
+      mr: 'मध्ययुगीन गजपती जलदुर्ग काळापासून जिवंत परंपरेपर्यंत (११ वे – १६ वे शतक आणि वर्तमान)',
+      or: 'ମଧ୍ୟଯୁଗୀୟ ଗଜପତି ଜଳଦୁର୍ଗ କାଳରୁ ଜୀବନ୍ତ ପରମ୍ପରା ପର୍ଯ୍ୟନ୍ତ (୧୧ଶ – ୧୬ଶ ଶତାବ୍ଦୀ ଓ ବର୍ତ୍ତମାନ)',
+      bn: 'মধ্যযুগীয় গজপতি জলদুর্গ কাল থেকে জীবন্ত ঐতিহ্য পর্যন্ত (১১শ – ১৬শ শতাব্দী ও বর্তমান)'
+    },
+    subjectCategories: ['Culture & Heritage', 'Kolletikota Aquatic Citadel (Jala Durga)', 'Sri Peddintlamma Thalli'],
+    figureIds: ['fig_kolletikota_peddintlamma', 'fig_kapilendra_deva', 'fig_hamvira_deva', 'fig_prataparudra_deva'],
+    inscriptionIds: ['insc_veligalani_1458', 'insc_potavaram_1489', 'insc_kondapalli_1519'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji'],
+    timelineIds: ['evt_04', 'evt_06', 'evt_08', 'evt_09']
+  },
+  art_epigraphic_evolution_odra: {
+    historicalPeriod: {
+      en: 'Two Millennia of Paleography & Royal Charters (c. 3rd Century BCE – 16th Century CE)',
+      hi: 'दो सहस्राब्दियों का पुरालेख एवं राजपत्र इतिहास (लगभग तीसरी शताब्दी ई.पू. – 16वीं शताब्दी ई.)',
+      te: 'రెండు సహస్రాబ్దాల శాసన & లిపి పరిణామ చరిత్ర (క్రీ.పూ. 3వ శతాబ్దం – క్రీ.శ. 16వ శతాబ్దం)',
+      kn: 'ಎರಡು ಸಹಸ್ರಮಾನಗಳ ಶಾಸನ ಮತ್ತು ಲಿಪಿ ವಿಕಾಸ (ಕ್ರಿ.ಪೂ. 3ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 16ನೇ ಶತಮಾನ)',
+      ta: 'இரண்டாயிரம் ஆண்டுகால கல்வெட்டு மற்றும் எழுத்துமுறை வரலாறு (பொ.ஊ.மு. 3-ஆம் நூற்றாண்டு – பொ.ஊ. 16-ஆம் நூற்றாண்டு)',
+      mr: 'दोन सहस्रकांचा शिलालेख आणि लिपी विकास (इ.स.पू. ३ रे शतक – इ.स. १६ वे शतक)',
+      or: 'ଦୁଇ ସହସ୍ରାବ୍ଦର ଶିଳାଲେଖ ଓ ଲିପି ବିବର୍ତ୍ତନ (ଖ୍ରୀ.ପୂ. ୩ୟ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୬ଶ ଶତାବ୍ଦୀ)',
+      bn: 'দুই সহস্রাব্দের শিলালিপি ও লিপি বিবর্তন (খ্রি.পূ. ৩য় শতাব্দী – ১৬শ শতাব্দী)'
+    },
+    subjectCategories: ['Inscriptions and Archaeological Evidence', 'Brahmi, Sanskrit & Odia Paleography', 'Royal Copper-Plate Grants'],
+    figureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
+    inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_korni_copper_plates', 'insc_kendupatna_plates', 'insc_veligalani_1458', 'insc_lingaraja_1452'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_01', 'evt_02', 'evt_03', 'evt_05', 'evt_06', 'evt_09']
+  }
+};
+
+export function getMonographPeriod(article: Article, lang: LanguageCode): string {
+  const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
+  if (enrichment) {
+    return enrichment.historicalPeriod[lang] || enrichment.historicalPeriod.en;
+  }
+  return article.publication_date || 'Classical & Medieval Era';
+}
+
+export function getMonographCategories(
+  article: Article,
+  localizedPrimaryCategory: string,
+  translateFn?: (text: string) => string,
+  getMetaFn?: (type: 'category' | 'evidence' | 'status' | 'source_type', val: string) => string
+): string[] {
+  const localize = (raw: string) => {
+    if (getMetaFn) {
+      const meta = getMetaFn('category', raw);
+      if (meta && meta !== raw) return meta;
+    }
+    return translateFn ? translateFn(raw) : raw;
+  };
+  const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
+  if (enrichment) {
+    return Array.from(
+      new Set([localizedPrimaryCategory, ...enrichment.subjectCategories.slice(1).map(localize)])
+    );
+  }
+  return Array.from(
+    new Set([localizedPrimaryCategory, ...(article.tags || []).slice(0, 2).map(localize)])
+  );
+}
+
+const ARTICLE_DETAIL_UI: Record<
+  LanguageCode,
+  {
+    intro: string;
+    backToList: string;
+    returnHome: string;
+    printBtn: string;
+    copyLink: string;
+    linkCopied: string;
+    share: string;
+    closeBtn: string;
+    authorLabel: string;
+    publishedLabel: string;
+    periodLabel: string;
+    statusLabel: string;
+    artifactLabel: string;
+    execIntroHeading: string;
+    tocHeading: (count: number) => string;
+    chaptersHeading: string;
+    chapterLabel: (num: number) => string;
+    copyDirectLink: string;
+    copyTitleAndLink: string;
+    shareWhatsApp: string;
+    inspectChronology: string;
+    documentedMonarchsSub: string;
+    associatedKingdomsSub: string;
+    imperialDynastyBadge: string;
+    gajapathiKingdomTitle: string;
+    sovereignTerritoryBadge: string;
+    ancientOdraTitle: string;
+    royalSuccessionBadge: string;
+    dynasticGenealogyTitle: string;
+    corroboratingInscriptionsSub: (count: number) => string;
+    archivalManuscriptLabel: string;
+    archaeologicalMonumentLabel: string;
+    epistemicHeading: string;
+    epistemicVerifiedTitle: string;
+    epistemicVerifiedDesc: string;
+    epistemicTradTitle: string;
+    epistemicTradDesc: string;
+    epistemicScholarTitle: string;
+    epistemicScholarDesc: string;
+    chronologyHeading: string;
+    kingdomsPersonalitiesHeading: string;
+    inscriptionsEvidenceHeading: string;
+    conclusionHeading: string;
+    conclusionDesc: string;
+    sourcesHeading: (count: number) => string;
+    sourcesNote: string;
+    verifiedSource: string;
+    relatedHeading: string;
+    relatedKingdomsHeading: string;
+    keywordsHeading: string;
+    hashtagsHeading: string;
+    prevMonograph: string;
+    nextMonograph: string;
+    readArticleBtn: string;
+    articleIdLabel: string;
+    returnToTop: string;
+  }
+> = {
+  en: {
+    intro: 'Introduction & Historical Context',
+    backToList: 'Back to Monographs',
+    returnHome: 'Home',
+    printBtn: 'Print Monograph',
+    copyLink: 'Copy Link',
+    linkCopied: 'Link Copied!',
+    share: 'Share',
+    closeBtn: 'Close',
+    authorLabel: 'Author / Research Authority:',
+    publishedLabel: 'Archival Publication Date:',
+    periodLabel: 'Historical Period Covered:',
+    statusLabel: 'Verification Status:',
+    artifactLabel: 'Corroborated Historical Artifact / Location:',
+    execIntroHeading: 'Short Introduction & Historical Scope',
+    tocHeading: count => `Complete Monograph Chapters & Sections (${count})`,
+    chaptersHeading: 'Complete Monograph Chapters & Detailed Historical Analysis',
+    chapterLabel: num => `Chapter ${num}`,
+    copyDirectLink: 'Copy Direct Monograph Link',
+    copyTitleAndLink: 'Copy Title & Link',
+    shareWhatsApp: 'Share via WhatsApp',
+    inspectChronology: 'Inspect Chronology Record',
+    documentedMonarchsSub: 'Documented Monarchs, Emperors & Sacred Guardians Involved',
+    associatedKingdomsSub: 'Associated Kingdoms, Dynasties & Territorial Realms',
+    imperialDynastyBadge: 'Imperial Dynasty',
+    gajapathiKingdomTitle: 'Suryavamsha Gajapathi Kingdom & Empire',
+    sovereignTerritoryBadge: 'Sovereign Territory',
+    ancientOdraTitle: 'Ancient Odra Desha, Utkala & Kalinga',
+    royalSuccessionBadge: 'Royal Succession',
+    dynasticGenealogyTitle: 'Suryavamsha & Odra Dynastic Genealogy',
+    corroboratingInscriptionsSub: count => `Corroborating Stone Inscriptions & Copper-Plate Charters (${count})`,
+    archivalManuscriptLabel: 'Archival Manuscript',
+    archaeologicalMonumentLabel: 'Archaeological Monument',
+    epistemicHeading: 'Epistemic Distinction: Verified Evidence, Traditional Accounts & Scholarly Analysis',
+    epistemicVerifiedTitle: '1. Verified Epigraphic & Archaeological Evidence',
+    epistemicVerifiedDesc: 'Corroborated directly by dated copper-plate charters, lithic temple edicts, and surveyed fortification remains.',
+    epistemicTradTitle: '2. Traditional Chronicles & Community Accounts',
+    epistemicTradDesc: 'Preserved in Puranic genealogies, royal Vamsavalis, Madala Panji annals, local Kaifiyats, and living community traditions.',
+    epistemicScholarTitle: '3. Scholarly Historiographical Interpretations',
+    epistemicScholarDesc: 'Evaluated through peer-reviewed critical editions (Epigraphia Indica, ASI, and university monographs) without conflating myth and epigraphy.',
+    chronologyHeading: 'Chronological Events & Historical Timeline',
+    kingdomsPersonalitiesHeading: 'Kingdoms, Dynasties & Historical Personalities Involved',
+    inscriptionsEvidenceHeading: 'Available Inscriptions, Archaeological Records & Documentary Evidence',
+    conclusionHeading: 'Historical Analysis & Conclusions',
+    conclusionDesc: 'The primary epigraphic, literary, and archaeological records synthesized in this monograph demonstrate the historical continuity of Odra Desha, the imperial administration of the Suryavamsha Gajapathi monarchs, and the enduring heritage of the community across eastern, northern, western, and southern India.',
+    sourcesHeading: count => `Source References & Scholarly Citations (${count})`,
+    sourcesNote: 'Cataloged with primary epigraphic and bibliographic provenance',
+    verifiedSource: 'Verified Source',
+    relatedHeading: 'Related Historical Monographs & Articles',
+    relatedKingdomsHeading: 'Related Kingdoms, Dynasties & Archival Portals',
+    keywordsHeading: 'Relevant Keywords & Subject Index',
+    hashtagsHeading: 'Research Hashtags',
+    prevMonograph: 'Previous Historical Monograph',
+    nextMonograph: 'Next Historical Monograph',
+    readArticleBtn: 'Read Complete Monograph',
+    articleIdLabel: 'Monograph ID:',
+    returnToTop: '↑ Return to Top'
+  },
+  hi: {
+    intro: 'परिचय एवं ऐतिहासिक संदर्भ',
+    backToList: 'मोनोग्राफ सूची पर वापस जाएँ',
+    returnHome: 'मुख्य पृष्ठ',
+    printBtn: 'प्रिंट करें',
+    copyLink: 'लिंक कॉपी करें',
+    linkCopied: 'लिंक कॉपी हो गया!',
+    share: 'साझा करें',
+    closeBtn: 'बंद करें',
+    authorLabel: 'लेखक / अनुसंधान प्राधिकरण:',
+    publishedLabel: 'प्रकाशन तिथि:',
+    periodLabel: 'ऐतिहासिक कालखंड:',
+    statusLabel: 'सत्यापन स्थिति:',
+    artifactLabel: 'प्रमाणित ऐतिहासिक कलाकृति / स्थान:',
+    execIntroHeading: 'संक्षिप्त परिचय एवं ऐतिहासिक परिधि',
+    tocHeading: count => `संपूर्ण अध्याय एवं अनुभाग (${count})`,
+    chaptersHeading: 'संपूर्ण मोनोग्राफ अध्याय एवं विस्तृत ऐतिहासिक व्याख्या',
+    chapterLabel: num => `अध्याय ${num}`,
+    copyDirectLink: 'प्रत्यक्ष मोनोग्राफ लिंक कॉपी करें',
+    copyTitleAndLink: 'शीर्षक एवं लिंक कॉपी करें',
+    shareWhatsApp: 'व्हाट्सएप द्वारा साझा करें',
+    inspectChronology: 'कालक्रम अभिलेख देखें',
+    documentedMonarchsSub: 'संबद्ध प्रमाणित सम्राट, शासक एवं संरक्षक विभूतियाँ',
+    associatedKingdomsSub: 'संबद्ध साम्राज्य, राजवंश एवं ऐतिहासिक क्षेत्र',
+    imperialDynastyBadge: 'साम्राज्यिक राजवंश',
+    gajapathiKingdomTitle: 'सूर्यवंश गजपति राज्य एवं साम्राज्य',
+    sovereignTerritoryBadge: 'सार्वभौम क्षेत्र',
+    ancientOdraTitle: 'प्राचीन ओड्र देश, उत्कल एवं कलिंग',
+    royalSuccessionBadge: 'राजकीय उत्तराधिकार',
+    dynasticGenealogyTitle: 'सूर्यवंश एवं ओड्र राजवंशीय वंशावली',
+    corroboratingInscriptionsSub: count => `पुष्टिकारक पाषाण शिलालेख एवं ताम्रपत्र राजपत्र (${count})`,
+    archivalManuscriptLabel: 'अभिलेखीय पांडुलिपि',
+    archaeologicalMonumentLabel: 'पुरातात्विक स्मारक',
+    epistemicHeading: 'साक्ष्य वर्गीकरण: प्रमाणित साक्ष्य, पारंपरिक आख्यान एवं विद्वत विश्लेषण',
+    epistemicVerifiedTitle: '1. प्रमाणित शिलालेख एवं पुरातात्विक साक्ष्य',
+    epistemicVerifiedDesc: 'तिथियुक्त ताम्रपत्रों, मंदिर शिलालेखों और पुरातात्विक स्मारकों द्वारा प्रत्यक्ष रूप से पुष्ट।',
+    epistemicTradTitle: '2. पारंपरिक वृत्तांत एवं सामुदायिक विरासत',
+    epistemicTradDesc: 'पौराणिक वंशावलियों, राजवंशीय वंशावली, मादला पंजी और कैफियतों में संरक्षित।',
+    epistemicScholarTitle: '3. विद्वानों की ऐतिहासिक व्याख्याएँ',
+    epistemicScholarDesc: 'आधुनिक समीक्षात्मक संस्करणों (एपिग्राफिया इंडिका, एएसआई) के माध्यम से विश्लेषित।',
+    chronologyHeading: 'कालानुक्रमिक घटनाएँ एवं ऐतिहासिक समयरेखा',
+    kingdomsPersonalitiesHeading: 'संबद्ध साम्राज्य, राजवंश एवं ऐतिहासिक विभूतियाँ',
+    inscriptionsEvidenceHeading: 'उपलब्ध शिलालेख, पुरातात्विक अभिलेख एवं दस्तावेजी साक्ष्य',
+    conclusionHeading: 'ऐतिहासिक विश्लेषण एवं निष्कर्ष',
+    conclusionDesc: 'इस शोध-प्रबंध में संकलित प्राथमिक शिलालेख, साहित्यिक और पुरातात्विक प्रमाण ओड्र देश की ऐतिहासिक निरंतरता, सूर्यवंशी गजपति सम्राटों के प्रशासन और सामुदायिक विरासत को प्रमाणित करते हैं।',
+    sourcesHeading: count => `स्रोत संदर्भ एवं विद्वत उद्धरण (${count})`,
+    sourcesNote: 'सभी स्रोत अभिलेखीय प्राधिकरण द्वारा सूचीबद्ध',
+    verifiedSource: 'सत्यापित स्रोत',
+    relatedHeading: 'संबंधित ऐतिहासिक मोनोग्राफ एवं लेख',
+    relatedKingdomsHeading: 'संबंधित साम्राज्य, राजवंश एवं अभिलेख पोर्टल',
+    keywordsHeading: 'प्रासंगिक कीवर्ड एवं विषय',
+    hashtagsHeading: 'अनुसंधान हैशटैग',
+    prevMonograph: 'पिछला ऐतिहासिक मोनोग्राफ',
+    nextMonograph: 'अगला ऐतिहासिक मोनोग्राफ',
+    readArticleBtn: 'संपूर्ण मोनोग्राफ पढ़ें',
+    articleIdLabel: 'मोनोग्राफ क्रमांक:',
+    returnToTop: '↑ शीर्ष पर लौटें'
+  },
+  te: {
+    intro: 'పరిచయం & చారిత్రక సందర్భం',
+    backToList: 'మోనోగ్రాఫ్ జాబితాకు తిరిగి వెళ్ళండి',
+    returnHome: 'హోమ్',
+    printBtn: 'ప్రింట్',
+    copyLink: 'లింక్ కాపీ చేయండి',
+    linkCopied: 'లింక్ కాపీ చేయబడింది!',
+    share: 'షేర్',
+    closeBtn: 'మూసివేయండి',
+    authorLabel: 'రచయిత / పరిశోధనా సంస్థ:',
+    publishedLabel: 'ప్రచురణ తేదీ:',
+    periodLabel: 'చారిత్రక కాలం:',
+    statusLabel: 'పరిశోధన స్థితి:',
+    artifactLabel: 'ధృవీకరించబడిన చారిత్రక ప్రదేశం / ఆధారం:',
+    execIntroHeading: 'సంక్షిప్త పరిచయం & చారిత్రక పరిధి',
+    tocHeading: count => `పూర్తి అధ్యాయాలు & విభాగాలు (${count})`,
+    chaptersHeading: 'పూర్తి మోనోగ్రాఫ్ అధ్యాయాలు & సమగ్ర చారిత్రక వివరణ',
+    chapterLabel: num => `అధ్యాయం ${num}`,
+    copyDirectLink: 'నేరుగా మోనోగ్రాఫ్ లింక్ కాపీ చేయండి',
+    copyTitleAndLink: 'శీర్షిక & లింక్ కాపీ చేయండి',
+    shareWhatsApp: 'వాట్సాప్ ద్వారా షేర్ చేయండి',
+    inspectChronology: 'కాలక్రమ రికార్డును చూడండి',
+    documentedMonarchsSub: 'సంబంధిత చారిత్రక చక్రవర్తులు, రాజులు & ఆరాధ్యమూర్తులు',
+    associatedKingdomsSub: 'సంబంధిత రాజ్యాలు, రాజవంశాలు & చారిత్రక ప్రాంతాలు',
+    imperialDynastyBadge: 'సామ్రాజ్య రాజవంశం',
+    gajapathiKingdomTitle: 'సూర్యవంశ గజపతి రాజ్యం & సామ్రాజ్యం',
+    sovereignTerritoryBadge: 'సార్వభౌమ భూభాగం',
+    ancientOdraTitle: 'ప్రాచీన ఓడ్ర దేశం, ఉత్కళ & కళింగ',
+    royalSuccessionBadge: 'రాజవంశ వారసత్వం',
+    dynasticGenealogyTitle: 'సూర్యవంశ & ఓడ్ర రాజవంశ వంశావళి',
+    corroboratingInscriptionsSub: count => `ధృవీకరించే శిలాశాసనాలు & తామ్రపత్ర శాసనాలు (${count})`,
+    archivalManuscriptLabel: 'పురావస్తు తాళపత్ర గ్రంథం',
+    archaeologicalMonumentLabel: 'పురావస్తు స్మారక చిహ్నం',
+    epistemicHeading: 'ఆధారాల విశ్లేషణ: ధృవీకరించబడిన సాక్ష్యాలు, సాంప్రదాయ కథనాలు & పరిశోధన',
+    epistemicVerifiedTitle: '1. ధృవీకరించబడిన శాసన & పురావస్తు ఆధారాలు',
+    epistemicVerifiedDesc: 'తామ్రపత్ర శాసనాలు, ఆలయ శిలాశాసనాలు మరియు కోటల పురావస్తు ఆధారాలతో నిర్ధారించబడినవి.',
+    epistemicTradTitle: '2. సాంప్రదాయ వంశావళులు & సామాజిక కథనాలు',
+    epistemicTradDesc: 'పురాణ వంశావళులు, మాదలా పంజీ, కైఫియత్తులు మరియు తరతరాల సామాజిక వారసత్వంలో భద్రపరచబడినవి.',
+    epistemicScholarTitle: '3. చరిత్రకారుల పరిశోధనా విశ్లేషణలు',
+    epistemicScholarDesc: 'ఆధునిక పురావస్తు పరిశోధనలు (Epigraphia Indica, ASI) ఆధారంగా విశ్లేషించబడినవి.',
+    chronologyHeading: 'కాలక్రమ సంఘటనలు & చారిత్రక కాలరేఖ',
+    kingdomsPersonalitiesHeading: 'సంబంధిత రాజ్యాలు, రాజవంశాలు & చారిత్రక వ్యక్తులు',
+    inscriptionsEvidenceHeading: 'అందుబాటులో ఉన్న శాసనాలు, పురావస్తు రికార్డులు & పత్ర ఆధారాలు',
+    conclusionHeading: 'చారిత్రక విశ్లేషణ & ముగింపు',
+    conclusionDesc: 'ఈ మోనోగ్రాఫ్‌లో పొందుపరిచిన ప్రాథమిక శాసన, సాహిత్య మరియు పురావస్తు ఆధారాలు ఓడ్ర దేశ చారిత్రక కొనసాగింపును, సూర్యవంశ గజపతి సామ్రాజ్య వైభవాన్ని మరియు సమాజ వారసత్వాన్ని చాటిచెబుతున్నాయి.',
+    sourcesHeading: count => `మూల ఆధారాలు & పరిశోధనా సూచనలు (${count})`,
+    sourcesNote: 'పురావస్తు ప్రమాణాల ప్రకారం జాబితా చేయబడిన ఆధారాలు',
+    verifiedSource: 'ధృవీకరించబడిన ఆధారం',
+    relatedHeading: 'సంబంధిత చారిత్రక మోనోగ్రాఫ్‌లు & వ్యాసాలు',
+    relatedKingdomsHeading: 'సంబంధిత రాజ్యాలు, రాజవంశాలు & చారిత్రక విభాగాలు',
+    keywordsHeading: 'సంబంధిత కీవర్డ్‌లు',
+    hashtagsHeading: 'పరిశోధనా హ్యాష్‌ట్యాగ్‌లు',
+    prevMonograph: 'మునుపటి చారిత్రక మోనోగ్రాఫ్',
+    nextMonograph: 'తదుపరి చారిత్రక మోనోగ్రాఫ్',
+    readArticleBtn: 'పూర్తి మోనోగ్రాఫ్ చదవండి',
+    articleIdLabel: 'మోనోగ్రాఫ్ సంఖ్య:',
+    returnToTop: '↑ పైకి వెళ్ళండి'
+  },
+  kn: {
+    intro: 'ಪರಿಚಯ ಮತ್ತು ಐತಿಹಾಸಿಕ ಸಂದರ್ಭ',
+    backToList: 'ಮೊನೊಗ್ರಾಫ್ ಪಟ್ಟಿಗೆ ಹಿಂತಿರುಗಿ',
+    returnHome: 'ಮುಖಪುಟ',
+    printBtn: 'ಮುದ್ರಿಸಿ',
+    copyLink: 'ಲಿಂಕ್ ನಕಲಿಸಿ',
+    linkCopied: 'ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
+    share: 'ಹಂಚಿಕೊಳ್ಳಿ',
+    closeBtn: 'ಮುಚ್ಚಿ',
+    authorLabel: 'ಲೇಖಕರು / ಸಂಶೋಧನಾ ಪ್ರಾಧಿಕಾರ:',
+    publishedLabel: 'ಪ್ರಕಟಣೆ ದಿನಾಂಕ:',
+    periodLabel: 'ಐತಿಹಾಸಿಕ ಕಾಲಘಟ್ಟ:',
+    statusLabel: 'ಪರಿಶೀಲನಾ ಸ್ಥಿತಿ:',
+    artifactLabel: 'ದೃಢೀಕೃತ ಐತಿಹಾಸಿಕ ಸ್ಥಳ / ಸ್ಮಾರಕ:',
+    execIntroHeading: 'ಸಂಕ್ಷಿಪ್ತ ಪರಿಚಯ ಮತ್ತು ಐತಿಹಾಸಿಕ ವ್ಯಾಪ್ತಿ',
+    tocHeading: count => `ಸಂಪೂರ್ಣ ಅಧ್ಯಾಯಗಳು ಮತ್ತು ವಿಭಾಗಗಳು (${count})`,
+    chaptersHeading: 'ಸಂಪೂರ್ಣ ಮೊನೊಗ್ರಾಫ್ ಅಧ್ಯಾಯಗಳು ಮತ್ತು ವಿವರವಾದ ಐತಿಹಾಸಿಕ ವಿಶ್ಲೇಷಣೆ',
+    chapterLabel: num => `ಅಧ್ಯಾಯ ${num}`,
+    copyDirectLink: 'ನೇರ ಮೊನೊಗ್ರಾಫ್ ಲಿಂಕ್ ನಕಲಿಸಿ',
+    copyTitleAndLink: 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಿ',
+    shareWhatsApp: 'ವಾಟ್ಸಾಪ್ ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ',
+    inspectChronology: 'ಕಾಲಾನುಕ್ರಮ ದಾಖಲೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
+    documentedMonarchsSub: 'ಸಂಬಂಧಿತ ಐತಿಹಾಸಿಕ ಸಾಮ್ರಾಟರು, ಅರಸರು ಮತ್ತು ಆರಾಧ್ಯ ದೈವಗಳು',
+    associatedKingdomsSub: 'ಸಂಬಂಧಿತ ಸಾಮ್ರಾಜ್ಯಗಳು, ರಾಜವಂಶಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಪ್ರದೇಶಗಳು',
+    imperialDynastyBadge: 'ಸಾಮ್ರಾಜ್ಯಶಾಹಿ ರಾಜವಂಶ',
+    gajapathiKingdomTitle: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ರಾಜ್ಯ ಮತ್ತು ಸಾಮ್ರಾಜ್ಯ',
+    sovereignTerritoryBadge: 'ಸಾರ್ವಭೌಮ ಪ್ರದೇಶ',
+    ancientOdraTitle: 'ಪ್ರಾಚೀನ ಓಡ್ರ ದೇಶ, ಉತ್ಕಲ ಮತ್ತು ಕಳಿಂಗ',
+    royalSuccessionBadge: 'ರಾಜವಂಶದ ಉತ್ತರಾಧಿಕಾರ',
+    dynasticGenealogyTitle: 'ಸೂರ್ಯವಂಶ ಮತ್ತು ಓಡ್ರ ರಾಜವಂಶದ ವಂಶಾವಳಿ',
+    corroboratingInscriptionsSub: count => `ದೃಢೀಕರಿಸುವ ಶಿಲಾಶಾಸನಗಳು ಮತ್ತು ತಾಮ್ರಪತ್ರ ಶಾಸನಗಳು (${count})`,
+    archivalManuscriptLabel: 'ಪತ್ರಾಗಾರ ಹಸ್ತಪ್ರತಿ',
+    archaeologicalMonumentLabel: 'ಪುರಾತತ್ವ ಸ್ಮಾರಕ',
+    epistemicHeading: 'ಸಾಕ್ಷ್ಯ ವರ್ಗೀಕರಣ: ದೃಢೀಕೃತ ಸಾಕ್ಷ್ಯ, ಸಂಪ್ರದಾಯ ಮತ್ತು ವಿದ್ವತ್ ವಿಶ್ಲೇಷಣೆ',
+    epistemicVerifiedTitle: '1. ದೃಢೀಕೃತ ಶಾಸನ ಮತ್ತು ಪುರಾತತ್ವ ಸಾಕ್ಷ್ಯ',
+    epistemicVerifiedDesc: 'ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ಶಾಸನಗಳು ಮತ್ತು ಪುರಾತತ್ವ ಸ್ಮಾರಕಗಳಿಂದ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ.',
+    epistemicTradTitle: '2. ಸಾಂಪ್ರದಾಯಿಕ ವಂಶಾವಳಿ ಮತ್ತು ಸಮುದಾಯ ಖಾತೆಗಳು',
+    epistemicTradDesc: 'ಪುರಾಣ ವಂಶಾವಳಿಗಳು, ಮಾದಲಾ ಪಂಜಿ, ಕೈಫಿಯತ್ತುಗಳು ಮತ್ತು ಸಮುದಾಯ ಪರಂಪರೆಯಲ್ಲಿ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ.',
+    epistemicScholarTitle: '3. ವಿದ್ವಾಂಸರ ಐತಿಹಾಸಿಕ ವಿಶ್ಲೇಷಣೆಗಳು',
+    epistemicScholarDesc: 'ಆಧುನಿಕ ಶಾಸನ ಸಂಶೋಧನೆಗಳ (Epigraphia Indica, ASI) ಮೂಲಕ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ.',
+    chronologyHeading: 'ಕಾಲಾನುಕ್ರಮದ ಘಟನೆಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಕಾಲರೇಖೆ',
+    kingdomsPersonalitiesHeading: 'ಸಂಬಂಧಿತ ಸಾಮ್ರಾಜ್ಯಗಳು, ರಾಜವಂಶಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು',
+    inscriptionsEvidenceHeading: 'ಲಭ್ಯವಿರುವ ಶಾಸನಗಳು, ಪುರಾತತ್ವ ದಾಖಲೆಗಳು ಮತ್ತು ಸಾಕ್ಷ್ಯಾಧಾರಗಳು',
+    conclusionHeading: 'ಐತಿಹಾಸಿಕ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ತೀರ್ಮಾನ',
+    conclusionDesc: 'ಈ ಮೊನೊಗ್ರಾಫ್‌ನಲ್ಲಿ ಸಂಗ್ರಹಿಸಲಾದ ಶಾಸನ, ಸಾಹಿತ್ಯ ಮತ್ತು ಪುರಾತತ್ವ ಆಧಾರಗಳು ಓಡ್ರ ದೇಶದ ಐತಿಹಾಸಿಕ ನಿರಂತರತೆ ಮತ್ತು ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಹಿರಿಮೆಯನ್ನು ಸಾಬೀತುಪಡಿಸುತ್ತವೆ.',
+    sourcesHeading: count => `ಮೂಲ ಆಧಾರಗಳು ಮತ್ತು ವಿದ್ವತ್ ಉಲ್ಲೇಖಗಳು (${count})`,
+    sourcesNote: 'ಪತ್ರಾಗಾರ ಪ್ರಾಧಿಕಾರದಿಂದ ಪಟ್ಟಿ ಮಾಡಲಾದ ಆಕರಗಳು',
+    verifiedSource: 'ದೃಢೀಕೃತ ಆಕರ',
+    relatedHeading: 'ಸಂಬಂಧಿತ ಐತಿಹಾಸಿಕ ಮೊನೊಗ್ರಾಫ್‌ಗಳು ಮತ್ತು ಲೇಖನಗಳು',
+    relatedKingdomsHeading: 'ಸಂಬಂಧಿತ ಸಾಮ್ರಾಜ್ಯಗಳು ಮತ್ತು ರಾಜವಂಶಗಳು',
+    keywordsHeading: 'ಸಂಬಂಧಿತ ಕೀವರ್ಡ್‌ಗಳು',
+    hashtagsHeading: 'ಸಂಶೋಧನಾ ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು',
+    prevMonograph: 'ಹಿಂದಿನ ಐತಿಹಾಸಿಕ ಮೊನೊಗ್ರಾಫ್',
+    nextMonograph: 'ಮುಂದಿನ ಐತಿಹಾಸಿಕ ಮೊನೊಗ್ರಾಫ್',
+    readArticleBtn: 'ಪೂರ್ಣ ಮೊನೊಗ್ರಾಫ್ ಓದಿ',
+    articleIdLabel: 'ಮೊನೊಗ್ರಾಫ್ ಸಂಖ್ಯೆ:',
+    returnToTop: '↑ ಮೇಲಕ್ಕೆ ಹಿಂತಿರುಗಿ'
+  },
+  ta: {
+    intro: 'அறிமுகம் & வரலாற்றுப் பின்னணி',
+    backToList: 'ஆய்வுக் கட்டுரைப் பட்டியலுக்குத் திரும்பு',
+    returnHome: 'முகப்பு',
+    printBtn: 'அச்சிடு',
+    copyLink: 'இணைப்பை நகலெடு',
+    linkCopied: 'நகலெடுக்கப்பட்டது!',
+    share: 'பகிர்',
+    closeBtn: 'மூடு',
+    authorLabel: 'ஆசிரியர் / ஆராய்ச்சி குழு:',
+    publishedLabel: 'வெளியீடு:',
+    periodLabel: 'வரலாற்றுக் காலம்:',
+    statusLabel: 'ஆய்வு நிலை:',
+    artifactLabel: 'சரிபார்க்கப்பட்ட வரலாற்றுச் சின்னம் / இடம்:',
+    execIntroHeading: 'சுருக்கமான அறிமுகம் மற்றும் வரலாற்று எல்லை',
+    tocHeading: count => `முழு அத்தியாயங்கள் மற்றும் பிரிவுகள் (${count})`,
+    chaptersHeading: 'முழு ஆய்வுக் கட்டுரை அத்தியாயங்கள் மற்றும் விரிவான வரலாற்று விளக்கம்',
+    chapterLabel: num => `அத்தியாயம் ${num}`,
+    copyDirectLink: 'நேரடி கட்டுரை இணைப்பை நகலெடு',
+    copyTitleAndLink: 'தலைப்பு மற்றும் இணைப்பை நகலெடு',
+    shareWhatsApp: 'வாட்ஸ்அப் மூலம் பகிர்',
+    inspectChronology: 'காலவரிசைப் பதிவைப் பார்க்க',
+    documentedMonarchsSub: 'தொடர்புடைய பேரரசர்கள், மன்னர்கள் மற்றும் குலதெய்வ ஆளுமைகள்',
+    associatedKingdomsSub: 'தொடர்புடைய பேரரசுகள், அரச வம்சங்கள் மற்றும் வரலாற்றுப் பகுதிகள்',
+    imperialDynastyBadge: 'பேரரசு வம்சம்',
+    gajapathiKingdomTitle: 'சூர்யவம்ச கஜபதி அரசு மற்றும் பேரரசு',
+    sovereignTerritoryBadge: 'இறையாண்மைப் பகுதி',
+    ancientOdraTitle: 'பண்டைய ஒட்ர தேசம், உத்கலம் மற்றும் கலிங்கம்',
+    royalSuccessionBadge: 'அரச வம்ச மரபு',
+    dynasticGenealogyTitle: 'சூர்யவம்ச மற்றும் ஒட்ர அரச வம்சாவளி',
+    corroboratingInscriptionsSub: count => `உறுதிப்படுத்தும் கல்வெட்டுகள் மற்றும் செப்பேட்டுச் சாசனங்கள் (${count})`,
+    archivalManuscriptLabel: 'ஆவணக் காப்பக ஓலைச்சுவடி',
+    archaeologicalMonumentLabel: 'தொல்லியல் நினைவுச்சின்னம்',
+    epistemicHeading: 'சான்று வகைப்பாடு: கல்வெட்டுச் சான்றுகள், மரபு மற்றும் அறிஞர் ஆய்வு',
+    epistemicVerifiedTitle: '1. உறுதிப்படுத்தப்பட்ட கல்வெட்டு & தொல்லியல் சான்றுகள்',
+    epistemicVerifiedDesc: 'செப்பேடுகள், கோயில் கல்வெட்டுகள் மற்றும் தொல்லியல் சின்னங்களால் உறுதிப்படுத்தப்பட்டவை.',
+    epistemicTradTitle: '2. பாரம்பரிய வம்சாவளி மற்றும் சமூக வரலாறுகள்',
+    epistemicTradDesc: 'புராண வம்சாவளிகள், மாதளா பஞ்சி, கைஃபியத்துகள் மற்றும் சமூக மரபில் பாதுகாக்கப்பட்டவை.',
+    epistemicScholarTitle: '3. அறிஞர்களின் வரலாற்று ஆய்வுகள்',
+    epistemicScholarDesc: 'நவீன கல்வெட்டு ஆய்வுகள் (Epigraphia Indica, ASI) மூலம் பகுப்பாய்வு செய்யப்பட்டவை.',
+    chronologyHeading: 'காலவரிசை நிகழ்வுகள் மற்றும் வரலாற்றுக் காலக்கோடு',
+    kingdomsPersonalitiesHeading: 'தொடர்புடைய பேரரசுகள், அரச வம்சங்கள் மற்றும் வரலாற்று ஆளுமைகள்',
+    inscriptionsEvidenceHeading: 'கல்வெட்டுகள், தொல்லியல் பதிவுகள் மற்றும் ஆவணச் சான்றுகள்',
+    conclusionHeading: 'வரலாற்றுப் பகுப்பாய்வு மற்றும் முடிவுரை',
+    conclusionDesc: 'இத்தொகுப்பில் உள்ள கல்வெட்டு, இலக்கிய மற்றும் தொல்லியல் ஆவணங்கள் ஒட்ர தேசத்தின் வரலாற்றுத் தொடர்ச்சியையும் சூர்யவம்ச கஜபதி பேரரசின் சிறப்பையும் எடுத்துக்காட்டுகின்றன.',
+    sourcesHeading: count => `முதன்மை ஆதாரங்கள் மற்றும் மேற்கோள்கள் (${count})`,
+    sourcesNote: 'ஆவணக் காப்பகத்தால் பட்டியலிடப்பட்ட ஆதாரங்கள்',
+    verifiedSource: 'சரிபார்க்கப்பட்ட ஆதாரம்',
+    relatedHeading: 'தொடர்புடைய வரலாற்று ஆய்வுக் கட்டுரைகள்',
+    relatedKingdomsHeading: 'தொடர்புடைய பேரரசுகள் மற்றும் அரச வம்சங்கள்',
+    keywordsHeading: 'முக்கிய வார்த்தைகள்',
+    hashtagsHeading: 'ஆராய்ச்சி ஹேஷ்டேக்குகள்',
+    prevMonograph: 'முந்தைய ஆய்வுக் கட்டுரை',
+    nextMonograph: 'அடுத்த ஆய்வுக் கட்டுரை',
+    readArticleBtn: 'முழு கட்டுரையைப் படிக்க',
+    articleIdLabel: 'கட்டுரை எண்:',
+    returnToTop: '↑ மேலே செல்ல'
+  },
+  mr: {
+    intro: 'परिचय आणि ऐतिहासिक संदर्भ',
+    backToList: 'मोनोग्राफ यादीकडे परत जा',
+    returnHome: 'मुख्य पृष्ठ',
+    printBtn: 'प्रिंट करा',
+    copyLink: 'लिंक कॉपी करा',
+    linkCopied: 'लिंक कॉपी झाली!',
+    share: 'शेअर करा',
+    closeBtn: 'बंद करा',
+    authorLabel: 'लेखक / संशोधन प्राधिकरण:',
+    publishedLabel: 'प्रकाशन तारीख:',
+    periodLabel: 'ऐतिहासिक कालखंड:',
+    statusLabel: 'परीक्षण स्थिती:',
+    artifactLabel: 'प्रमाणित ऐतिहासिक वास्तू / ठिकाण:',
+    execIntroHeading: 'संक्षिप्त प्रस्तावना आणि ऐतिहासिक व्याप्ती',
+    tocHeading: count => `संपूर्ण प्रकरणे आणि विभाग (${count})`,
+    chaptersHeading: 'संपूर्ण मोनोग्राफ प्रकरणे आणि सविस्तर ऐतिहासिक विश्लेषण',
+    chapterLabel: num => `प्रकरण ${num}`,
+    copyDirectLink: 'थेट मोनोग्राफ लिंक कॉपी करा',
+    copyTitleAndLink: 'शीर्षक आणि लिंक कॉपी करा',
+    shareWhatsApp: 'व्हॉट्सॲपद्वारे शेअर करा',
+    inspectChronology: 'कालानुक्रम नोंद पहा',
+    documentedMonarchsSub: 'संबंधित ऐतिहासिक सम्राट, राजे आणि आराध्य विभूती',
+    associatedKingdomsSub: 'संबंधित साम्राज्ये, राजवंश आणि ऐतिहासिक प्रदेश',
+    imperialDynastyBadge: 'साम्राज्यिक राजवंश',
+    gajapathiKingdomTitle: 'सूर्यवंश गजपती राज्य आणि साम्राज्य',
+    sovereignTerritoryBadge: 'सार्वभौम प्रदेश',
+    ancientOdraTitle: 'प्राचीन ओड्र देश, उत्कल आणि कलिंग',
+    royalSuccessionBadge: 'राजकीय उत्तराधिकार',
+    dynasticGenealogyTitle: 'सूर्यवंश आणि ओड्र राजवंश वंशावळ',
+    corroboratingInscriptionsSub: count => `पुष्टी देणारे शिलालेख आणि ताम्रपट (${count})`,
+    archivalManuscriptLabel: 'अभिलेखीय हस्तलिखित',
+    archaeologicalMonumentLabel: 'पुरातत्त्वीय स्मारक',
+    epistemicHeading: 'पुरावा वर्गीकरण: प्रमाणित पुरावे, परंपरा आणि संशोधन विश्लेषण',
+    epistemicVerifiedTitle: '१. प्रमाणित शिलालेख आणि पुरातत्त्वीय पुरावे',
+    epistemicVerifiedDesc: 'ताम्रपट, मंदिर शिलालेख आणि किल्ल्यांच्या पुरातत्त्वीय अवशेषांद्वारे पुष्टी केलेले.',
+    epistemicTradTitle: '२. पारंपारिक वंशावळी आणि सामुदायिक आख्यायिका',
+    epistemicTradDesc: 'पौराणिक वंशावळी, मादला पंजी, कैफियत आणि सामुदायिक वारशात जतन केलेले.',
+    epistemicScholarTitle: '३. विद्वानांचे ऐतिहासिक विश्लेषण',
+    epistemicScholarDesc: 'आधुनिक शिलालेख संशोधनाद्वारे (Epigraphia Indica, ASI) विश्लेषित.',
+    chronologyHeading: 'कालानुक्रमिक घटना आणि ऐतिहासिक कालरेषा',
+    kingdomsPersonalitiesHeading: 'संबंधित साम्राज्ये, राजवंश आणि ऐतिहासिक विभूती',
+    inscriptionsEvidenceHeading: 'उपलब्ध शिलालेख, पुरातत्त्वीय नोंदी आणि दस्तऐवजी पुरावे',
+    conclusionHeading: 'ऐतिहासिक विश्लेषण आणि निष्कर्ष',
+    conclusionDesc: 'या मोनोग्राफमध्ये संकलित केलेले शिलालेख, साहित्यिक आणि पुरातत्त्वीय पुरावे ओड्र देशाचे ऐतिहासिक सातत्य आणि सूर्यवंशी गजपती साम्राज्याचे वैभव सिद्ध करतात.',
+    sourcesHeading: count => `स्रोत संदर्भ आणि उद्धरणे (${count})`,
+    sourcesNote: 'अभिलेख प्राधिकरणाद्वारे सूचीबद्ध स्रोत',
+    verifiedSource: 'प्रमाणित स्रोत',
+    relatedHeading: 'संबंधित ऐतिहासिक मोनोग्राफ आणि शोधनिबंध',
+    relatedKingdomsHeading: 'संबंधित साम्राज्ये आणि राजवंश',
+    keywordsHeading: 'संबंधित कीवर्ड',
+    hashtagsHeading: 'संशोधन हॅशटॅग',
+    prevMonograph: 'मागील ऐतिहासिक मोनोग्राफ',
+    nextMonograph: 'पुढील ऐतिहासिक मोनोग्राफ',
+    readArticleBtn: 'संपूर्ण मोनोग्राफ वाचा',
+    articleIdLabel: 'मोनोग्राफ क्रमांक:',
+    returnToTop: '↑ वर जा'
+  },
+  or: {
+    intro: 'ପରିଚୟ ଓ ଐତିହାସିକ ପ୍ରସଙ୍ଗ',
+    backToList: 'ମୋନୋଗ୍ରାଫ୍ ତାଲିକାକୁ ଫେରନ୍ତୁ',
+    returnHome: 'ମୁଖ୍ୟ ପୃଷ୍ଠା',
+    printBtn: 'ପ୍ରିଣ୍ଟ କରନ୍ତୁ',
+    copyLink: 'ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    linkCopied: 'ଲିଙ୍କ୍ କପି ହୋଇଛି!',
+    share: 'ସେୟାର କରନ୍ତୁ',
+    closeBtn: 'ବନ୍ଦ କରନ୍ତୁ',
+    authorLabel: 'ଲେଖକ / ଗବେଷଣା ପରିଷଦ:',
+    publishedLabel: 'ପ୍ରକାଶନ ତାରିଖ:',
+    periodLabel: 'ଐତିହାସିକ କାଳଖଣ୍ଡ:',
+    statusLabel: 'ସମୀକ୍ଷା ସ୍ଥିତି:',
+    artifactLabel: 'ପ୍ରମାଣିତ ଐତିହାସିକ କীর୍ତ୍ତି / ସ୍ଥାନ:',
+    execIntroHeading: 'ସଂକ୍ଷିପ୍ତ ପରିଚୟ ଓ ଐତିହାସିକ ପରିସର',
+    tocHeading: count => `ସମ୍ପୂର୍ଣ୍ଣ ଅଧ୍ୟାୟ ଓ ବିଭାଗ (${count})`,
+    chaptersHeading: 'ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍ ଅଧ୍ୟାୟ ଓ ବିସ୍ତୃତ ଐତିହାସିକ ବ୍ୟାଖ୍ୟା',
+    chapterLabel: num => `ଅଧ୍ୟାୟ ${num}`,
+    copyDirectLink: 'ସିଧାସଳଖ ମୋନୋଗ୍ରାଫ୍ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    copyTitleAndLink: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    shareWhatsApp: 'ହ୍ୱାଟ୍ସଆପ୍ ମାଧ୍ୟମରେ ସେୟାର କରନ୍ତୁ',
+    inspectChronology: 'କାଳାନୁକ୍ରମ ଅଭିଲେଖ ଦେଖନ୍ତୁ',
+    documentedMonarchsSub: 'ସମ୍ପୃକ୍ତ ପ୍ରମାଣିତ ସମ୍ରାଟ, ରାଜା ଓ ଆରାଧ୍ୟ ବିଭୂତି',
+    associatedKingdomsSub: 'ସମ୍ପୃକ୍ତ ସାମ୍ରାଜ୍ୟ, ରାଜବଂଶ ଓ ଐତିହାସିକ କ୍ଷେତ୍ର',
+    imperialDynastyBadge: 'ସାମ୍ରାଜ୍ୟିକ ରାଜବଂଶ',
+    gajapathiKingdomTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଗଜପତି ରାଜ୍ୟ ଓ ସାମ୍ରାଜ୍ୟ',
+    sovereignTerritoryBadge: 'ସାର୍ବଭୌମ କ୍ଷେତ୍ର',
+    ancientOdraTitle: 'ପ୍ରାଚୀନ ଓଡ଼୍ର ଦେଶ, ଉତ୍କଳ ଓ କଳିଙ୍ଗ',
+    royalSuccessionBadge: 'ରାଜକୀୟ ଉତ୍ତରାଧିକାର',
+    dynasticGenealogyTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଓ ଓଡ଼୍ର ରାଜବଂଶ ବଂଶାବଳୀ',
+    corroboratingInscriptionsSub: count => `ପ୍ରମାଣିତ ପ୍ରସ୍ତର ଶିଳାଲେଖ ଓ ତାମ୍ରଶାସନ (${count})`,
+    archivalManuscriptLabel: 'ଅଭିଲେଖୀୟ ତାଳପତ୍ର ପୋଥି',
+    archaeologicalMonumentLabel: 'ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସ୍ମାରକୀ',
+    epistemicHeading: 'ପ୍ରମାଣ ବର୍ଗୀକରଣ: ପ୍ରମାଣିତ ସାକ୍ଷ୍ୟ, ପରମ୍ପରା ଓ ଗବେଷଣା ବିଶ୍ଳେଷଣ',
+    epistemicVerifiedTitle: '୧. ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସାକ୍ଷ୍ୟ',
+    epistemicVerifiedDesc: 'ତାମ୍ରଶାସନ, ମନ୍ଦିର ଶିଳାଲେଖ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସ୍ମାରକୀ ଦ୍ୱାରା ପ୍ରମାଣିତ।',
+    epistemicTradTitle: '୨. ପାରମ୍ପରିକ ବଂଶାବଳୀ ଓ ସାମୁଦାୟିକ ବିବରଣୀ',
+    epistemicTradDesc: 'ପୌରାଣିକ ବଂଶାବଳୀ, ମାଦଳା ପାଞ୍ଜି ଓ ସାମୁଦାୟିକ ଐତିହ୍ୟରେ ସଂରକ୍ଷିତ।',
+    epistemicScholarTitle: '୩. ଐତିହାସିକ ଗବେଷଣା ଓ ବିଶ୍ଳେଷଣ',
+    epistemicScholarDesc: 'ଆଧୁନିକ ଶିଳାଲେଖ ଗବେଷଣା (Epigraphia Indica, ASI) ମାଧ୍ୟମରେ ବିଶ୍ଳେଷିତ।',
+    chronologyHeading: 'କାଳାନୁକ୍ରମିକ ଘଟଣାବଳୀ ଓ ଐତିହାସିକ ସମୟরেଖା',
+    kingdomsPersonalitiesHeading: 'ସମ୍ପୃକ୍ତ ସାମ୍ରାଜ୍ୟ, ରାଜବଂଶ ଓ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
+    inscriptionsEvidenceHeading: 'ଉପଲବ୍ଧ ଶିଳାଲେଖ, ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଅଭିଲେଖ ଓ ଦଲିଲ ପ୍ରମାଣ',
+    conclusionHeading: 'ଐତିହାସିକ ବିଶ୍ଳେଷଣ ଓ ସିଦ୍ଧାନ୍ତ',
+    conclusionDesc: 'ଏହି ମୋନୋଗ୍ରାଫରେ ସଂକଳିତ ପ୍ରାଥମିକ ଶିଳାଲେଖ, ସାହିତ୍ୟିକ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ପ୍ରମାଣ ଓଡ଼୍ର ଦେଶର ଐତିହାସିକ ଧାରା ଏବଂ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟର ଗୌରବକୁ ପ୍ରତିପାଦିତ କରେ।',
+    sourcesHeading: count => `ମୌଳିକ ଉତ୍ସ ଓ ଗବେଷଣା ପ୍ରମାଣ (${count})`,
+    sourcesNote: 'ଅଭିଲେଖ କର୍ତ୍ତୃପକ୍ଷଙ୍କ ଦ୍ୱାରା ତାଲିକାଭୁକ୍ତ ଉତ୍ସ',
+    verifiedSource: 'ପ୍ରମାଣିତ ଉତ୍ସ',
+    relatedHeading: 'ସମ୍ପୃକ୍ତ ଐତିହାସିକ ମୋନୋଗ୍ରାଫ୍ ଓ ପ୍ରବନ୍ଧ',
+    relatedKingdomsHeading: 'ସମ୍ପୃକ୍ତ ସାମ୍ରାଜ୍ୟ ଓ ରାଜବଂଶ',
+    keywordsHeading: 'ସମ୍ପୃକ୍ତ କିୱାର୍ଡ',
+    hashtagsHeading: 'ଗବେଷଣା ହ୍ୟାଶଟ୍ୟାଗ୍',
+    prevMonograph: 'ପୂର୍ବବର୍ତ୍ତୀ ଐତିହାସିକ ମୋନୋଗ୍ରାଫ୍',
+    nextMonograph: 'ପରବର୍ତ୍ତୀ ଐତିହାସିକ ମୋନୋଗ୍ରାଫ୍',
+    readArticleBtn: 'ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍ ପଢ଼ନ୍ତୁ',
+    articleIdLabel: 'ମୋନୋଗ୍ରାଫ୍ କ୍ରମାଙ୍କ:',
+    returnToTop: '↑ ଉପରକୁ ଫେରନ୍ତୁ'
+  },
+  bn: {
+    intro: 'ভূমিকা ও ঐতিহাসিক প্রেক্ষাপট',
+    backToList: 'মনোগ্রাফ তালিকায় ফিরে যান',
+    returnHome: 'হোম পেজ',
+    printBtn: 'প্রিন্ট করুন',
+    copyLink: 'লিঙ্ক কপি করুন',
+    linkCopied: 'লিঙ্ক কপি হয়েছে!',
+    share: 'শেয়ার করুন',
+    closeBtn: 'বন্ধ করুন',
+    authorLabel: 'লেখক / গবেষণা কর্তৃপক্ষ:',
+    publishedLabel: 'প্রকাশের তারিখ:',
+    periodLabel: 'ঐতিহাসিক কালপর্ব:',
+    statusLabel: 'পর্যালোচনা স্থিতি:',
+    artifactLabel: 'প্রমাণিত ঐতিহাসিক নিদর্শন / স্থান:',
+    execIntroHeading: 'সংক্ষিপ্ত ভূমিকা ও ঐতিহাসিক পরিধি',
+    tocHeading: count => `সম্পূর্ণ অধ্যায় ও বিভাগ (${count})`,
+    chaptersHeading: 'সম্পূর্ণ মনোগ্রাফ অধ্যায় ও বিস্তারিত ঐতিহাসিক বিশ্লেষণ',
+    chapterLabel: num => `অধ্যায় ${num}`,
+    copyDirectLink: 'সরাসরি মনোগ্রাফ লিঙ্ক কপি করুন',
+    copyTitleAndLink: 'শিরোনাম ও লিঙ্ক কপি করুন',
+    shareWhatsApp: 'হোয়াটসঅ্যাপের মাধ্যমে শেয়ার করুন',
+    inspectChronology: 'কালানুক্রমিক নথি দেখুন',
+    documentedMonarchsSub: 'সংশ্লিষ্ট প্রামাণ্য সম্রাট, রাজা ও আরাধ্য ব্যক্তিত্ব',
+    associatedKingdomsSub: 'সংশ্লিষ্ট সাম্রাজ্য, রাজবংশ ও ঐতিহাসিক অঞ্চল',
+    imperialDynastyBadge: 'সাম্রাজ্যিক রাজবংশ',
+    gajapathiKingdomTitle: 'সূর্যবংশ গজপতি রাজ্য ও সাম্রাজ্য',
+    sovereignTerritoryBadge: 'সার্বভৌম অঞ্চল',
+    ancientOdraTitle: 'প্রাচীন ওড্র দেশ, উৎকল ও কলিঙ্গ',
+    royalSuccessionBadge: 'রাজকীয় উত্তরাধিকার',
+    dynasticGenealogyTitle: 'সূর্যবংশ ও ওড্র রাজবংশের বংশাবলী',
+    corroboratingInscriptionsSub: count => `প্রমাণবাহী প্রস্তর শিলালিপি ও তাম্রশাসন (${count})`,
+    archivalManuscriptLabel: 'আর্কাইভ পাণ্ডুলিপি',
+    archaeologicalMonumentLabel: 'প্রত্নতাত্ত্বিক স্মৃতিস্তম্ভ',
+    epistemicHeading: 'প্রমাণ শ্রেণীবিন্যাস: প্রমাণিত সাক্ষ্য, ঐতিহ্য ও গবেষণা বিশ্লেষণ',
+    epistemicVerifiedTitle: '১. প্রমাণিত শিলালিপি ও প্রত্নতাত্ত্বিক সাক্ষ্য',
+    epistemicVerifiedDesc: 'তাম্রশাসন, মন্দির শিলালিপি ও প্রত্নতাত্ত্বিক নিদর্শন দ্বারা প্রমাণিত।',
+    epistemicTradTitle: '২. ঐতিহ্যবাহী বংশাবলী ও সম্প্রদায়গত বিবরণী',
+    epistemicTradDesc: 'পৌরাণিক বংশাবলী, মাদলা পাঁজি ও সম্প্রদায়গত ঐতিহ্যে সংরক্ষিত।',
+    epistemicScholarTitle: '৩. ঐতিহাসিক গবেষণা ও বিশ্লেষণ',
+    epistemicScholarDesc: 'আধুনিক লিপিতত্ত্ব গবেষণা (Epigraphia Indica, ASI) দ্বারা বিশ্লেষিত।',
+    chronologyHeading: 'কালানুক্রমিক ঘটনাবলী ও ঐতিহাসিক সময়রেখা',
+    kingdomsPersonalitiesHeading: 'সম্পর্কিত সাম্রাজ্য, রাজবংশ ও ঐতিহাসিক ব্যক্তিত্ব',
+    inscriptionsEvidenceHeading: 'উপলব্ধ শিলালিপি, প্রত্নতাত্ত্বিক নথি ও প্রামাণ্য দলিল',
+    conclusionHeading: 'ঐতিহাসিক বিশ্লেষণ ও উপসংহার',
+    conclusionDesc: 'এই মনোগ্রাফে সংকলিত প্রাথমিক শিলালিপি, সাহিত্যিক ও প্রত্নতাত্ত্বিক প্রমাণসমূহ ওড্র দেশের ঐতিহাসিক ধারাবাহিকতা এবং সূর্যবংশী গজপতি সাম্রাজ্যের গৌরব তুলে ধরে।',
+    sourcesHeading: count => `প্রাথমিক উৎস ও গবেষণা উদ্ধৃতি (${count})`,
+    sourcesNote: 'আর্কাইভ কর্তৃপক্ষ কর্তৃক তালিকাভুক্ত উৎস',
+    verifiedSource: 'যাচাইকৃত উৎস',
+    relatedHeading: 'সংশ্লিষ্ট ঐতিহাসিক মনোগ্রাফ ও প্রবন্ধ',
+    relatedKingdomsHeading: 'সম্পর্কিত সাম্রাজ্য ও রাজবংশ',
+    keywordsHeading: 'প্রাসঙ্গিক কিওয়ার্ড',
+    hashtagsHeading: 'গবেষণা হ্যাশট্যাগ',
+    prevMonograph: 'পূর্ববর্তী ঐতিহাসিক মনোগ্রাফ',
+    nextMonograph: 'পরবর্তী ঐতিহাসিক মনোগ্রাফ',
+    readArticleBtn: 'সম্পূর্ণ মনোগ্রাফ পড়ুন',
+    articleIdLabel: 'মনোগ্রাফ নম্বর:',
+    returnToTop: '↑ উপরে ফিরে যান'
+  }
+};
+
+export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
+  article,
+  onBack,
+  onNavigate,
+  onSelectArticle,
+  onTagClick,
+  allArticles = [],
+  showLanguageSwitcher = true,
+  basePath = '/documentary'
+}) => {
+  const { language, setLanguage, t, getArticleContent, getMetadataLabel, translateText } = useLanguage();
+  const ui = ARTICLE_DETAIL_UI[language] || ARTICLE_DETAIL_UI.en;
+  const [copied, setCopied] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [activeTocId, setActiveTocId] = useState<string>('');
+
+  const { title: displayTitle, summary: displaySummary, content: displayContent } = getArticleContent(article);
+  const localizedTr = language !== 'en' ? (ARTICLE_TRANSLATIONS as Record<string, any>)[article.id]?.[language] : undefined;
+  const displayAuthor = localizedTr?.author_name || article.author_name;
+  const displaySources: SourceReference[] = localizedTr?.sources || article.sources || [];
+  const localizedCat = getMetadataLabel('category', article.category) || article.category;
+  const historicalPeriod = getMonographPeriod(article, language);
+  const subjectCategories = getMonographCategories(article, localizedCat, translateText, getMetadataLabel);
+  const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
+  const autoActionTriggeredRef = useRef<string | null>(null);
+  const langParamInitializedRef = useRef<boolean>(false);
+
+  // Keep document.title synchronized with the active article title so browser Print / Save as PDF always uses the article's title
+  useEffect(() => {
+    setActiveArticleDocumentTitle(displayTitle, articleRef.current);
+    return () => {
+      setActiveArticleDocumentTitle(null);
+    };
+  }, [displayTitle, language]);
+
+  // Support automatic print or PDF download when opened in external Chrome browser with ?autoprint=1 or ?autodownloadpdf=1
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang') as LanguageCode | null;
+      if (!langParamInitializedRef.current) {
+        langParamInitializedRef.current = true;
+        if (
+          langParam &&
+          ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
+          langParam !== language
+        ) {
+          setLanguage(langParam);
+          return;
+        }
+      } else if (langParam && langParam !== language) {
+        try {
+          const updatedParams = new URLSearchParams(window.location.search);
+          updatedParams.set('lang', language);
+          const updatedQuery = updatedParams.toString();
+          const updatedUrl = `${window.location.pathname}${updatedQuery ? `?${updatedQuery}` : ''}${window.location.hash || ''}`;
+          window.history.replaceState({ path: updatedUrl }, '', updatedUrl);
+        } catch {
+          // Ignore
+        }
+      }
+
+      if (params.get('autodownloadpdf') === '1' && !isAndroidWebViewEnvironment()) {
+        const actionKey = `pdf-${article.id}-${language}`;
+        if (autoActionTriggeredRef.current !== actionKey) {
+          autoActionTriggeredRef.current = actionKey;
+          const timer = setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autodownloadpdf');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            handleDownloadPdf();
+          }, 700);
+          return () => clearTimeout(timer);
+        }
+      }
+
+      if (params.get('autoprint') === '1' && !isAndroidWebViewEnvironment()) {
+        const actionKey = `print-${article.id}-${language}`;
+        if (autoActionTriggeredRef.current !== actionKey) {
+          autoActionTriggeredRef.current = actionKey;
+          const timer = setTimeout(() => {
+            try {
+              const cleanParams = new URLSearchParams(window.location.search);
+              cleanParams.delete('autoprint');
+              const newQuery = cleanParams.toString();
+              const cleanUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ''}${window.location.hash || ''}`;
+              window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+            } catch {
+              // Ignore
+            }
+            triggerArticlePrintWithTitle(displayTitle);
+          }, 650);
+          return () => clearTimeout(timer);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, [article.id, displayTitle, language, setLanguage]);
+
+  // Parse complete monograph chapters and sections (never truncating or omitting any line)
+  const contentLines = (displayContent || '').split('\n');
+  const sections: { id: string; title: string; lines: string[] }[] = [];
+  let currentSecTitle = ui.intro;
+  let currentSecLines: string[] = [];
+
+  contentLines.forEach((line, idx) => {
+    const trimmed = line.trim();
+    const prevBlank = idx === 0 || contentLines[idx - 1].trim() === '';
+    const isHeader =
+      prevBlank &&
+      ((trimmed.endsWith(':') && trimmed.length < 120 && !trimmed.includes('http')) ||
+        (/^(\d+|[०-९]+|[౦-౯]+|[೦-೯]+|[୦-୯]+|[০-৯]+)\.\s+\S/.test(trimmed) && trimmed.length < 120) ||
+        /^\#{1,4}\s+\S/.test(trimmed));
+
+    if (isHeader) {
+      if (currentSecLines.some(l => l.trim().length > 0)) {
+        sections.push({
+          id: `sec-${sections.length}`,
+          title: currentSecTitle,
+          lines: currentSecLines
+        });
+        currentSecLines = [];
+      }
+      currentSecTitle = trimmed.replace(/^[\#\d०-९౦-౯೦-೯୦-୯০-৯\.\s]+/, '').replace(/:$/, '');
+    } else {
+      currentSecLines.push(line);
+    }
+  });
+
+  if (currentSecLines.some(l => l.trim().length > 0)) {
+    sections.push({
+      id: `sec-${sections.length}`,
+      title: currentSecTitle,
+      lines: currentSecLines
+    });
+  }
+
+  const tocList: TocItem[] = sections.map(s => ({ id: s.id, title: s.title }));
+
+  // Cross-reference Historical Personalities involved in this Monograph
+  const allFigures = getAllDocumentedFigures(language);
+  const involvedFigures = enrichment
+    ? enrichment.figureIds
+        .map(fid => allFigures.find(f => f.id === fid))
+        .filter((f): f is NonNullable<typeof f> => Boolean(f))
+    : allFigures.slice(0, 4);
+
+  // Cross-reference Corroborating Inscriptions
+  const allInscriptions = getCanonicalInscriptions(language);
+  const involvedInscriptions = enrichment
+    ? enrichment.inscriptionIds
+        .map(iid => allInscriptions.find(i => i.id === iid))
+        .filter((i): i is NonNullable<typeof i> => Boolean(i))
+    : allInscriptions.slice(0, 3);
+
+  // Cross-reference Digitized Archival Documents
+  const allDocuments = getCanonicalDocuments(language);
+  const involvedDocuments = enrichment
+    ? enrichment.documentIds
+        .map(did => allDocuments.find(d => d.id === did))
+        .filter((d): d is NonNullable<typeof d> => Boolean(d))
+    : allDocuments.slice(0, 2);
+
+  // Cross-reference Temples & Monuments
+  const allMonuments = getCanonicalMonuments(language);
+  const involvedMonuments = allMonuments.slice(0, 2);
+
+  // Cross-reference Chronological Timeline Events
+  const allTimelineEvents = getCanonicalTimelineEvents(language);
+  const involvedTimelineEvents = enrichment
+    ? enrichment.timelineIds
+        .map(tid => allTimelineEvents.find(e => e.id === tid))
+        .filter((e): e is NonNullable<typeof e> => Boolean(e))
+    : allTimelineEvents.slice(0, 4);
+
+  // Related Articles (with small thumbnails)
+  const relatedArticles = allArticles
+    .filter(a => a.id !== article.id)
+    .sort((a, b) => {
+      const aMatch = a.category === article.category || a.tags.some(t => article.tags.includes(t)) ? 1 : 0;
+      const bMatch = b.category === article.category || b.tags.some(t => article.tags.includes(t)) ? 1 : 0;
+      return bMatch - aMatch;
+    })
+    .slice(0, 3);
+
+  // Previous / Next Monograph navigation
+  const currentIdx = allArticles.findIndex(a => a.id === article.id);
+  const prevArticle = currentIdx > 0 ? allArticles[currentIdx - 1] : null;
+  const nextArticle = currentIdx >= 0 && currentIdx < allArticles.length - 1 ? allArticles[currentIdx + 1] : null;
+
+  // Keywords & Hashtags
+  const monographKeywords = Array.from(
+    new Set([localizedCat, ...subjectCategories, ...(article.tags || [])])
+  );
+  const monographHashtags = (article.tags || []).map(
+    tag => `#${tag.replace(/[^a-zA-Z0-9]/g, '')}`
+  );
+  if (!monographHashtags.includes('#OdraKshatriyaHeritage')) {
+    monographHashtags.push('#OdraKshatriyaHeritage', '#SuryavamshaMonographs');
+  }
+
+  const getDirectMonographUrl = (autoPrint = false): string => {
+    try {
+      const url = new URL(window.location.origin + basePath);
+      url.searchParams.set('article', article.id);
+      url.searchParams.set('lang', language);
+      if (autoPrint) url.searchParams.set('autoprint', '1');
+      return url.toString();
+    } catch {
+      return `${window.location.origin}${basePath}?article=${encodeURIComponent(article.id)}&lang=${encodeURIComponent(language)}${autoPrint ? '&autoprint=1' : ''}`;
+    }
+  };
+
+  const handleCopyLink = async (includeTitle = false) => {
+    const shareUrl = getDirectMonographUrl(false);
+    const textToCopy = includeTitle ? `${displayTitle} — ${shareUrl}` : shareUrl;
+    await copyTextCrossPlatform(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const articleRef = useRef<HTMLElement | null>(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [pdfDownloadResult, setPdfDownloadResult] = useState<{
+    filename: string;
+    downloadUrl?: string;
+    externalArticleUrl?: string;
+    isAndroidWebView?: boolean;
+  } | null>(null);
+  const pdfUi = PDF_EXPORT_UI_LABELS[language] || PDF_EXPORT_UI_LABELS.en;
+
+  const handleDownloadPdf = async () => {
+    if (isDownloadingPdf) return;
+    setIsDownloadingPdf(true);
+    setPdfDownloadResult(null);
+    try {
+      const result = await downloadArticleAsPdf({
+        articleTitle: displayTitle,
+        language,
+        containerElement: articleRef.current,
+        articleUrl: getDirectMonographUrl(false)
+      });
+      setPdfDownloadResult({
+        filename: result.filename,
+        downloadUrl: result.downloadUrl,
+        externalArticleUrl: result.externalArticleUrl,
+        isAndroidWebView: result.isAndroidWebView
+      });
+    } catch (err) {
+      console.error('Monograph PDF export failed:', err);
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handlePrint = () => {
+    const printUrl = getDirectMonographUrl(true);
+    if (hasAppInventorBridge()) {
+      sendUrlToAppInventorBridge(printUrl);
+      return;
+    }
+    if (isAndroidWebViewEnvironment()) {
+      window.open(printUrl, '_system');
+      return;
+    }
+    triggerArticlePrintWithTitle(displayTitle);
+  };
+
+  const handleShare = async () => {
+    const shareUrl = getDirectMonographUrl(false);
+    const outcome = await triggerCrossPlatformShare({
+      title: displayTitle,
+      text: displaySummary,
+      url: shareUrl
+    });
+    if (outcome === 'fallback') {
+      setShareMenuOpen(prev => !prev);
+    }
+  };
+
+  const scrollToSection = (id: string) => {
+    setActiveTocId(id);
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const fallbackBanner = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_gateway.jpg`;
+
+  return (
+    <article
+      ref={articleRef}
+      className="print-article-container rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] overflow-hidden print:overflow-visible shadow-lg print:shadow-none transition-all text-[#292521]"
+    >
+      {/* TOP NAVIGATION & ACTION TOOLBAR (NON-STICKY TO PREVENT NAVBAR OVERLAP) */}
+      <div className="no-print relative z-20 bg-[#FFF9EF] border-b border-[#D8C3A2] px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{ui.backToList}</span>
+            </button>
+          )}
+
+          {onNavigate && (
+            <button
+              type="button"
+              onClick={() => onNavigate('/')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#FFFCF5] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all cursor-pointer"
+            >
+              <Home className="w-4 h-4 text-[#762D35]" />
+              <span className="hidden sm:inline">{ui.returnHome}</span>
+            </button>
+          )}
+        </div>
+
+        {/* Right Action Controls: 8-Language Selector, Download PDF, Print, Share, Copy Link, Close */}
+        <div className="flex items-center gap-2 flex-wrap ml-auto">
+          {showLanguageSwitcher && (
+            <div className="hidden xl:flex items-center bg-[#F5EBD9] border border-[#A87924] rounded-xl p-1 gap-0.5">
+              {SUPPORTED_LANGUAGES.map(l => (
+                <button
+                  key={l.code}
+                  type="button"
+                  onClick={() => setLanguage(l.code)}
+                  className={`px-2 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                    language === l.code
+                      ? 'bg-[#762D35] text-white shadow-sm'
+                      : 'text-[#54351F] hover:bg-[#FFFCF5]'
+                  }`}
+                  title={l.label}
+                >
+                  {l.nativeName}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={handleDownloadPdf}
+            disabled={isDownloadingPdf}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer disabled:opacity-60 shadow-sm"
+            title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(displayTitle)})`}
+          >
+            <Download className="w-4 h-4 shrink-0" />
+            <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handlePrint}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#FFFCF5] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all cursor-pointer"
+            title={pdfUi.printBtn}
+          >
+            <Printer className="w-4 h-4 text-[#762D35]" />
+            <span className="hidden sm:inline">{pdfUi.printBtn}</span>
+          </button>
+
+          <div className="relative">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] transition-all cursor-pointer shadow-sm"
+              title={ui.share}
+            >
+              <Share2 className="w-4 h-4 text-white" />
+              <span className="hidden sm:inline">{ui.share}</span>
+            </button>
+
+            {shareMenuOpen && (
+              <div className="absolute right-0 mt-2 w-60 rounded-2xl bg-[#FFFCF5] border border-[#A87924] shadow-xl p-2 z-50 text-xs text-[#292521]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCopyLink(false);
+                    setShareMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
+                >
+                  <Copy className="w-4 h-4 text-[#762D35]" />
+                  <span>{ui.copyDirectLink}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleCopyLink(true);
+                    setShareMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
+                >
+                  <FileText className="w-4 h-4 text-[#762D35]" />
+                  <span>{ui.copyTitleAndLink}</span>
+                </button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(
+                    `${displayTitle} — ${getDirectMonographUrl(false)}`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => {
+                    handleWhatsAppLinkClick(e);
+                    setShareMenuOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold text-[#76501F]"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>{ui.shareWhatsApp}</span>
+                </a>
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => handleCopyLink(false)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#FFFCF5] hover:bg-[#F5EBD9] text-[#54351F] border border-[#A87924] transition-all cursor-pointer"
+            title={ui.copyLink}
+          >
+            {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4 text-[#762D35]" />}
+            <span>{copied ? ui.linkCopied : ui.copyLink}</span>
+          </button>
+
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl bg-[#762D35] hover:bg-[#5e2229] border border-[#A87924] text-white text-xs font-bold transition-all cursor-pointer"
+              title={ui.closeBtn}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {pdfDownloadResult && (
+        <div className="no-print mx-5 sm:mx-8 mt-4 p-3 rounded-xl bg-[#FFF9EF] border border-[#A87924] text-xs text-[#292521] flex flex-wrap items-center justify-between gap-2 print:hidden">
+          <span className="font-semibold flex items-center gap-1.5 break-all text-[#54351F]">
+            <Check className="w-4 h-4 text-emerald-700 shrink-0" />
+            <span>{pdfUi.pdfSavedNotice(pdfDownloadResult.filename)}</span>
+          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            {pdfDownloadResult.downloadUrl && (
+              <a
+                href={pdfDownloadResult.downloadUrl}
+                download={pdfDownloadResult.filename}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e =>
+                  handleExternalBrowserUrlClick(e, pdfDownloadResult.downloadUrl || '')
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white font-bold text-xs"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>{pdfUi.directDownloadLinkLabel}</span>
+              </a>
+            )}
+            {pdfDownloadResult.externalArticleUrl && pdfDownloadResult.isAndroidWebView && (
+              <a
+                href={pdfDownloadResult.externalArticleUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-external-chrome="true"
+                onClick={e =>
+                  handleExternalBrowserUrlClick(e, pdfDownloadResult.externalArticleUrl || '')
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] font-bold text-xs"
+              >
+                <ExternalLink className="w-3.5 h-3.5 text-white" />
+                <span>{pdfUi.openInChromePdfBtn}</span>
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* MAIN MONOGRAPH CONTENT CONTAINER */}
+      <div className="p-5 sm:p-8 md:p-10 space-y-10">
+        {/* PRINT-ONLY ARCHIVAL MASTHEAD */}
+        <div className="hidden print:block border-b-2 border-[#A87924] pb-3 mb-4 text-[#292521]">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
+            {t.siteTitle} • {t.siteSubtitle}
+          </p>
+          <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
+            {translateText('Research, Documentation & Compilation by Dr.G Sathyanarayana Raju')}
+          </p>
+          <p className="text-[10px] text-[#76501F] break-all mt-0.5">
+            {getDirectMonographUrl(false)}
+          </p>
+        </div>
+
+        {/* 1. MONOGRAPH HEADER, HISTORICAL PERIOD & SUBJECT CATEGORIES */}
+        <header className="print-article-header space-y-5 border-b border-[#A87924]/50 pb-6">
+          <div className="flex flex-wrap items-center gap-2">
+            {subjectCategories.map((cat, idx) => (
+              <span
+                key={idx}
+                className="text-[11px] font-bold uppercase tracking-wider text-[#54351F] bg-[#FFF9EF] px-3 py-1 rounded-full border border-[#A87924]"
+              >
+                {cat}
+              </span>
+            ))}
+            <EvidenceBadge category={article.evidence_category} size="sm" />
+          </div>
+
+          <h1 className="font-royal-heading font-extrabold text-2xl sm:text-3xl md:text-4xl text-[#54351F] leading-tight tracking-wide">
+            {displayTitle}
+          </h1>
+
+          {/* Historical Period, Author & Verification Metadata Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1 text-xs">
+            <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#762D35]" />
+                <span>{ui.periodLabel}</span>
+              </div>
+              <div className="text-[#292521] font-bold mt-1">{historicalPeriod}</div>
+            </div>
+
+            <div className="royal-profile-title-box p-3.5 rounded-xl bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)]">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[var(--profile-title-box-text)] flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[var(--profile-title-box-text)]" />
+                <span>{ui.authorLabel}</span>
+              </div>
+              <div className="text-[var(--profile-title-box-text)] font-semibold mt-1 break-words">{displayAuthor}</div>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                <span>{ui.statusLabel}</span>
+              </div>
+              <div className="text-emerald-800 font-bold mt-1">
+                {getMetadataLabel('status', article.verification_status) || article.verification_status} ({article.publication_date})
+              </div>
+            </div>
+          </div>
+
+          {showLanguageSwitcher && (
+            <div className="pt-1">
+              <TranslationMatrixBadge article={article} />
+            </div>
+          )}
+        </header>
+
+        {/* 2. FEATURED HISTORICAL IMAGE */}
+        {article.featured_image && (
+          <figure className="print-lead-figure relative rounded-2xl overflow-hidden print:overflow-visible border border-[#A87924] group shadow-md bg-[#FFF9EF]">
+            <div className="print-lead-figure-box">
+              <img
+                src={article.featured_image}
+                alt={displayTitle}
+                loading="eager"
+                onError={e => {
+                  const target = e.currentTarget;
+                  if (!target.dataset.fallback) {
+                    target.dataset.fallback = '1';
+                    target.src = fallbackBanner;
+                  }
+                }}
+                className="print-lead-image w-full h-64 sm:h-80 md:h-[420px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+              />
+            </div>
+            <figcaption className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] p-4 text-xs border-t border-[var(--profile-title-box-border)] break-words">
+              <span className="text-[var(--profile-title-box-text)] font-bold mr-1.5">{ui.artifactLabel}</span>
+              {displayTitle} — <span className="text-[var(--profile-title-box-text)] font-semibold">{historicalPeriod}</span>
+            </figcaption>
+          </figure>
+        )}
+
+        {/* 3. SHORT INTRODUCTION & EXECUTIVE HISTORICAL SCOPE */}
+        <section
+          aria-label="Monograph Introduction"
+          className="p-5 sm:p-6 rounded-2xl bg-[#FFF9EF] border-l-4 border-[#762D35] border-y border-r border-[#A87924] text-[#292521] shadow-sm"
+        >
+          <div className="text-[11px] font-bold uppercase tracking-widest text-[#76501F] mb-2 flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-[#A87924]" />
+            <span>{ui.execIntroHeading}</span>
+          </div>
+          <p className="font-royal-serif text-sm sm:text-base md:text-lg leading-relaxed text-[#292521]">
+            {displaySummary}
+          </p>
+        </section>
+
+        {/* 4. TABLE OF CONTENTS (COMPLETE MONOGRAPH CHAPTERS & SECTIONS) */}
+        {tocList.length > 0 && (
+          <nav aria-label="Table of Contents" className="p-5 sm:p-6 rounded-2xl bg-[#FFF9EF] border border-[#A87924]">
+            <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#54351F] mb-4 flex items-center gap-2">
+              <List className="w-4 h-4 text-[#762D35]" />
+              <span>{ui.tocHeading(tocList.length)}</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              {tocList.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => scrollToSection(item.id)}
+                  className={`text-left p-2.5 rounded-xl transition-all flex items-center gap-2.5 cursor-pointer border ${
+                    activeTocId === item.id
+                      ? 'bg-[#762D35] text-white border-[#A87924]'
+                      : 'bg-[#FFFCF5] text-[#292521] border-[#A87924]/60 hover:border-[#A87924] hover:text-[#54351F] hover:bg-[#F5EBD9]'
+                  }`}
+                >
+                  <span className="w-6 h-6 rounded-full bg-[#F5EBD9] text-[#54351F] text-[11px] font-bold flex items-center justify-center shrink-0 border border-[#A87924]">
+                    {idx + 1}
+                  </span>
+                  <span className="font-semibold line-clamp-1">{item.title}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
+        )}
+
+        {/* 5. COMPLETE MONOGRAPH CHAPTERS & DETAILED HISTORICAL EXPLANATIONS */}
+        <section aria-label="Complete Monograph Chapters" className="space-y-8">
+          <div className="border-b border-[#A87924] pb-3 flex items-center gap-2.5">
+            <BookOpen className="w-5 h-5 text-[#762D35]" />
+            <h2 className="font-royal-heading font-bold text-lg sm:text-2xl text-[#54351F]">
+              {ui.chaptersHeading}
+            </h2>
+          </div>
+
+          {sections.map((sec, sIdx) => (
+            <div
+              key={sec.id}
+              id={sec.id}
+              className="scroll-mt-24 rounded-2xl bg-[#FFFCF5] border border-[#A87924] p-5 sm:p-7 space-y-4 shadow-sm"
+            >
+              <div className="flex items-center gap-3 border-b border-[#A87924]/50 pb-3">
+                <span className="px-2.5 py-1 rounded-lg bg-[#762D35] text-white border border-[#A87924] text-xs font-bold">
+                  {ui.chapterLabel(sIdx + 1)}
+                </span>
+                <h3 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F]">
+                  {sec.title}
+                </h3>
+              </div>
+
+              <div className="space-y-3.5 font-royal-serif text-sm sm:text-base text-[#292521] leading-relaxed">
+                {sec.lines.map((p, pIdx) => {
+                  const trimmed = p.trim();
+                  if (!trimmed) return null;
+                  if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
+                    return (
+                      <li
+                        key={pIdx}
+                        className="ml-5 list-disc text-[#292521] marker:text-[#762D35] pl-1 leading-relaxed"
+                      >
+                        {trimmed.replace(/^[-•]\s*/, '')}
+                      </li>
+                    );
+                  }
+                  return (
+                    <p key={pIdx} className="leading-relaxed text-[#292521]">
+                      {trimmed}
+                    </p>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </section>
+
+        {/* 6. THREE-PILLAR EPISTEMIC DISTINCTION */}
+        <section
+          aria-label="Epistemic Distinction"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-5"
+        >
+          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+            <ShieldCheck className="w-5 h-5 text-[#762D35]" />
+            <span>{ui.epistemicHeading}</span>
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <div className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] space-y-2">
+              <div className="font-bold text-[#54351F] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>{ui.epistemicVerifiedTitle}</span>
+              </div>
+              <p className="text-[#292521] text-xs leading-relaxed">{ui.epistemicVerifiedDesc}</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] space-y-2">
+              <div className="font-bold text-[#54351F] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#A87924] shrink-0" />
+                <span>{ui.epistemicTradTitle}</span>
+              </div>
+              <p className="text-[#292521] text-xs leading-relaxed">{ui.epistemicTradDesc}</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] space-y-2">
+              <div className="font-bold text-[#54351F] flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-[#762D35] shrink-0" />
+                <span>{ui.epistemicScholarTitle}</span>
+              </div>
+              <p className="text-[#292521] text-xs leading-relaxed">{ui.epistemicScholarDesc}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 7. CHRONOLOGICAL EVENTS & HISTORICAL TIMELINE */}
+        {involvedTimelineEvents.length > 0 && (
+          <section
+            aria-label="Chronological Events and Timelines"
+            className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-5"
+          >
+            <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+              <Clock className="w-5 h-5 text-[#762D35]" />
+              <span>{ui.chronologyHeading}</span>
+            </h2>
+
+            <div className="relative pl-6 border-l-2 border-[#A87924] space-y-4">
+              {involvedTimelineEvents.map(ev => (
+                <div
+                  key={ev.id}
+                  onClick={() => onNavigate && onNavigate(`/timeline?id=${ev.id}`)}
+                  className="relative p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group"
+                >
+                  <div className="absolute -left-[31px] top-5 w-3.5 h-3.5 rounded-full bg-[#762D35] border-2 border-[#FFF9EF]" />
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                    <span className="px-2.5 py-0.5 rounded bg-[#762D35] text-white border border-[#A87924] text-[11px] font-bold">
+                      {ev.year_text} • {ev.period}
+                    </span>
+                    <span className="text-[11px] text-[#76501F] font-semibold inline-flex items-center gap-1">
+                      <span>{ui.inspectChronology}</span>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </div>
+                  <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F]">
+                    {ev.title}
+                  </h3>
+                  <p className="text-xs text-[#292521] mt-1 leading-relaxed">{ev.political_development}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 8. KINGDOMS, DYNASTIES & HISTORICAL PERSONALITIES INVOLVED */}
+        <section
+          aria-label="Kingdoms, Dynasties and Personalities Involved"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-6"
+        >
+          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+            <Crown className="w-5 h-5 text-[#762D35]" />
+            <span>{ui.kingdomsPersonalitiesHeading}</span>
+          </h2>
+
+          {/* Historical Personalities Cards */}
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
+              {ui.documentedMonarchsSub}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {involvedFigures.map((fig, idx) => (
+                <div
+                  key={fig.id}
+                  onClick={() => onNavigate && onNavigate(`/kings-queens?figure=${fig.id}`)}
+                  className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
+                >
+                  <img
+                    src={fig.image_url}
+                    alt={fig.name}
+                    className="w-14 h-14 rounded-lg object-cover object-top border border-[#A87924] shrink-0"
+                    onError={e => {
+                      const target = e.currentTarget;
+                      target.onerror = null;
+                      target.src = `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/kapilendra_deva_coronation.jpg`;
+                    }}
+                  />
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="royal-index-box">#{idx + 1}</span>
+                      <span className="text-[10px] font-bold text-[#54351F] break-words">{fig.reign_period}</span>
+                    </div>
+                    <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                      {fig.name}
+                    </h4>
+                    <p className="text-[10px] text-[#54351F] break-words">{fig.dynasty_name}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Kingdoms & Dynasties Cards */}
+          <div className="pt-3 border-t border-[#A87924]/40">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
+              {ui.associatedKingdomsSub}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+              <div
+                onClick={() => onNavigate && onNavigate('/gajapathi-kings')}
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
+              >
+                <img
+                  src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
+                  alt={ui.gajapathiKingdomTitle}
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                />
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#1</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">{ui.imperialDynastyBadge}</span>
+                  </div>
+                  <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                    {ui.gajapathiKingdomTitle}
+                  </h4>
+                </div>
+              </div>
+
+              <div
+                onClick={() => onNavigate && onNavigate('/odra-desha')}
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
+              >
+                <img
+                  src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odra_kalinga_map.jpg`}
+                  alt={ui.ancientOdraTitle}
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                />
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#2</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">{ui.sovereignTerritoryBadge}</span>
+                  </div>
+                  <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                    {ui.ancientOdraTitle}
+                  </h4>
+                </div>
+              </div>
+
+              <div
+                onClick={() => onNavigate && onNavigate('/genealogy')}
+                className="royal-related-link-btn rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3"
+              >
+                <img
+                  src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
+                  alt={ui.dynasticGenealogyTitle}
+                  className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                />
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#3</span>
+                    <span className="text-[10px] font-bold text-[#54351F] uppercase">{ui.royalSuccessionBadge}</span>
+                  </div>
+                  <h4 className="royal-card-title-box text-xs font-royal-heading font-bold text-[#54351F] break-words">
+                    {ui.dynasticGenealogyTitle}
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 9. AVAILABLE INSCRIPTIONS, ARCHAEOLOGICAL RECORDS & DOCUMENTARY EVIDENCE */}
+        <section
+          aria-label="Inscriptions and Documentary Evidence"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-6"
+        >
+          <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5 border-b border-[#A87924]/60 pb-3">
+            <Scroll className="w-5 h-5 text-[#762D35]" />
+            <span>{ui.inscriptionsEvidenceHeading}</span>
+          </h2>
+
+          {/* Inscriptions */}
+          {involvedInscriptions.length > 0 && (
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-[#76501F] mb-3">
+                {ui.corroboratingInscriptionsSub(involvedInscriptions.length)}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {involvedInscriptions.map(insc => (
+                  <div
+                    key={insc.id}
+                    onClick={() => onNavigate && onNavigate(`/inscriptions?id=${insc.id}`)}
+                    className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-start gap-3.5"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-[#FFF9EF] border border-[#A87924] flex items-center justify-center shrink-0">
+                      <Scroll className="w-5 h-5 text-[#762D35]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[11px] font-bold text-[#76501F]">
+                        {insc.era_or_date} • {insc.language}
+                      </div>
+                      <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
+                        {insc.name}
+                      </h4>
+                      <p className="text-xs text-[#292521] mt-1">{insc.historical_context}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Archival Documents & Monuments */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            {involvedDocuments.map(doc => (
+              <div
+                key={doc.id}
+                onClick={() => onNavigate && onNavigate(`/documents?id=${doc.id}`)}
+                className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 hover:border-[#A87924] transition-all cursor-pointer group flex items-start gap-3.5"
+              >
+                <div className="w-10 h-10 rounded-lg bg-[#FFF9EF] border border-[#A87924] flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-[#762D35]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] font-bold uppercase text-[#76501F]">
+                    {ui.archivalManuscriptLabel} • {doc.approximate_date}
+                  </div>
+                  <h4 className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] mt-0.5">
+                    {doc.title}
+                  </h4>
+                  <p className="text-xs text-[#292521] mt-1">{doc.translation_excerpt}</p>
+                </div>
+              </div>
+            ))}
+
+            {involvedMonuments.map((mon, idx) => (
+              <div
+                key={mon.id}
+                onClick={() => onNavigate && onNavigate('/temples-monuments')}
+                className="royal-related-link-btn p-4 rounded-xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex items-start gap-3.5"
+              >
+                {mon.image_url && (
+                  <img
+                    src={mon.image_url}
+                    alt={mon.name}
+                    className="w-14 h-14 rounded-lg object-cover border border-[#A87924] shrink-0"
+                  />
+                )}
+                <div className="min-w-0 flex-1 space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="royal-index-box">#{idx + 1}</span>
+                    <span className="text-[10px] font-bold uppercase text-[#54351F]">
+                      {ui.archaeologicalMonumentLabel} • {mon.century}
+                    </span>
+                  </div>
+                  <h4 className="royal-card-title-box text-xs sm:text-sm font-royal-heading font-bold text-[#54351F]">
+                    {mon.name}
+                  </h4>
+                  <p className="text-xs text-[#54351F]">{mon.historical_significance}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 10. HISTORICAL ANALYSIS & CONCLUSIONS */}
+        <section
+          aria-label="Conclusion and Summary"
+          className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border-2 border-[#A87924] space-y-2.5"
+        >
+          <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-[#762D35]" />
+            <span>{ui.conclusionHeading}</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-[#292521] font-royal-serif leading-relaxed">
+            {ui.conclusionDesc}
+          </p>
+        </section>
+
+        {/* 11. SOURCE REFERENCES & SCHOLARLY CITATIONS */}
+        {displaySources && displaySources.length > 0 && (
+          <section
+            aria-label="Sources and References"
+            className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-4"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#A87924]/60 pb-3">
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
+                {ui.sourcesHeading(displaySources.length)}
+              </h2>
+              <span className="text-[11px] text-[#76501F] font-semibold">{ui.sourcesNote}</span>
+            </div>
+
+            <div className="space-y-3">
+              {displaySources.map((src: SourceReference, i: number) => (
+                <div
+                  key={src.id || i}
+                  className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                >
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="royal-index-box text-[10px] font-bold text-white uppercase bg-[#762D35] px-2.5 py-0.5 rounded border border-[#A87924]">
+                        #{i + 1} • {getMetadataLabel('source_type', src.source_type) || src.source_type}
+                      </span>
+                      <h4 className="font-bold text-[#54351F] text-xs sm:text-sm">{src.title}</h4>
+                    </div>
+                    <p className="text-[#292521] text-xs">
+                      {src.author_or_authority} • {src.publication_or_location} ({src.year_or_era}) —{' '}
+                      <span className="text-[#76501F] italic">{src.citation_details}</span>
+                    </p>
+                  </div>
+                  {src.verified && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-emerald-800 font-bold bg-[#FFF9EF] border border-emerald-700/50 px-2.5 py-1 rounded-full shrink-0">
+                      <Check className="w-3 h-3" /> {ui.verifiedSource}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 12. RELATED MONOGRAPHS, KEYWORDS, HASHTAGS & FOOTER NAVIGATION */}
+        <footer className="print-article-footer space-y-8 pt-6 border-t border-[#A87924]">
+          {/* Related Historical Monographs with Small Thumbnails */}
+          {relatedArticles.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading flex items-center gap-2">
+                <Landmark className="w-4 h-4 text-[#762D35]" />
+                <span>{ui.relatedHeading}</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {relatedArticles.map((rel, idx) => {
+                  const { title: relTitle, summary: relSummary } = getArticleContent(rel);
+                  return (
+                    <div
+                      key={rel.id}
+                      onClick={() => onSelectArticle && onSelectArticle(rel)}
+                      className="royal-related-link-btn rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer group flex flex-col justify-between gap-3"
+                    >
+                      <div className="flex items-start gap-3">
+                        <img
+                          src={rel.featured_image || fallbackBanner}
+                          alt={relTitle}
+                          onError={e => {
+                            const target = e.currentTarget;
+                            if (!target.dataset.fallback) {
+                              target.dataset.fallback = '1';
+                              target.src = fallbackBanner;
+                            }
+                          }}
+                          className="w-16 h-16 rounded-xl object-cover border border-[#A87924] shrink-0"
+                        />
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="royal-index-box">#{idx + 1}</span>
+                            <span className="text-[10px] font-bold text-[#54351F] uppercase break-words">
+                              {getMetadataLabel('category', rel.category) || rel.category}
+                            </span>
+                          </div>
+                          <h4 className="royal-card-title-box font-royal-heading font-bold text-xs sm:text-sm text-[#54351F] break-words">
+                            {relTitle}
+                          </h4>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-[#54351F] break-words">{relSummary}</p>
+                      <div className="no-print text-[11px] text-[#54351F] font-bold flex items-center gap-1">
+                        <span>{ui.readArticleBtn}</span>
+                        <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Keywords & Hashtags */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-[#A87924]/50">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-[#54351F] mb-2.5 flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5 text-[#762D35]" />
+                <span>{ui.keywordsHeading}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {monographKeywords.map((kw, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      if (onTagClick) onTagClick(kw);
+                      else if (onBack) onBack();
+                    }}
+                    className="royal-related-link-btn text-xs font-medium cursor-pointer"
+                  >
+                    {getMetadataLabel('category', kw) || translateText(kw)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-[#54351F] mb-2.5 flex items-center gap-1.5">
+                <Hash className="w-3.5 h-3.5 text-[#762D35]" />
+                <span>{ui.hashtagsHeading}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {monographHashtags.map((ht, idx) => (
+                  <span
+                    key={idx}
+                    className="theme-hashtag px-2.5 py-1 rounded-lg bg-[#FFFCF5] text-[#54351F] border border-[#D8C3A2] text-xs font-semibold"
+                  >
+                    {ht}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Sequential Previous / Next Monograph Navigation */}
+          {(prevArticle || nextArticle) && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#A87924]/50 print:hidden">
+              {prevArticle ? (
+                <button
+                  type="button"
+                  onClick={() => onSelectArticle && onSelectArticle(prevArticle)}
+                  className="flex items-center gap-3 p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924] hover:bg-[#FFF9EF] text-left transition-all cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5 text-[#762D35] shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F]">
+                      {ui.prevMonograph}
+                    </div>
+                    <div className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] truncate">
+                      {getArticleContent(prevArticle).title}
+                    </div>
+                  </div>
+                </button>
+              ) : (
+                <div />
+              )}
+
+              {nextArticle ? (
+                <button
+                  type="button"
+                  onClick={() => onSelectArticle && onSelectArticle(nextArticle)}
+                  className="flex items-center justify-end gap-3 p-3.5 rounded-xl bg-[#FFFCF5] border border-[#A87924] hover:bg-[#FFF9EF] text-right transition-all cursor-pointer"
+                >
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F]">
+                      {ui.nextMonograph}
+                    </div>
+                    <div className="text-xs sm:text-sm font-royal-heading font-bold text-[#54351F] truncate">
+                      {getArticleContent(nextArticle).title}
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-[#762D35] shrink-0" />
+                </button>
+              ) : (
+                <div />
+              )}
+            </div>
+          )}
+
+          {/* Bottom Action Bar: Back, Home, Print, Share, Copy Link & Return to Top */}
+          <div className="pt-4 border-t border-[#A87924] flex flex-wrap items-center justify-between gap-3 text-xs print:hidden">
+            <div className="flex flex-wrap items-center gap-2">
+              {onBack && (
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold transition-all cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>{ui.backToList}</span>
+                </button>
+              )}
+              {onNavigate && (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] font-bold transition-all cursor-pointer"
+                >
+                  <Home className="w-4 h-4 text-[#762D35]" />
+                  <span>{ui.returnHome}</span>
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={isDownloadingPdf}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold transition-all cursor-pointer disabled:opacity-60"
+                title={`${pdfUi.downloadPdfBtn} (${generateArticlePdfFilename(displayTitle)})`}
+              >
+                <Download className="w-4 h-4 shrink-0" />
+                <span>{isDownloadingPdf ? pdfUi.generatingPdfBtn : pdfUi.downloadPdfBtn}</span>
+              </button>
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#FFFCF5] hover:bg-[#FFF9EF] text-[#54351F] border border-[#A87924] font-bold transition-all cursor-pointer"
+              >
+                <Printer className="w-4 h-4 text-[#762D35]" />
+                <span>{pdfUi.printBtn}</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleShare}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white border border-[#A87924] font-bold transition-all cursor-pointer"
+              >
+                <Share2 className="w-4 h-4 text-white" />
+                <span>{ui.share}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleCopyLink(false)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#762D35] hover:bg-[#5e2229] text-white font-bold transition-all cursor-pointer"
+              >
+                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                <span>{copied ? ui.linkCopied : ui.copyLink}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="px-3 py-2.5 text-[#76501F] hover:text-[#54351F] hover:underline font-bold cursor-pointer"
+              >
+                {ui.returnToTop}
+              </button>
+            </div>
+          </div>
+
+          {/* Author Profile & Print/PDF Attribution */}
+          <div className="pt-6 border-t border-[#A87924] print:border-stone-300">
+            <PublisherCreditCard variant="article-profile" />
+          </div>
+        </footer>
+      </div>
+    </article>
+  );
+};

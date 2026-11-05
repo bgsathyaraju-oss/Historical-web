@@ -1008,7 +1008,7 @@ const PersonPortraitThumbnail: React.FC<{
           <img
             src={imageUrl}
             alt={altText}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain object-center p-0.5"
             onError={() => setImgFailed(true)}
           />
         ) : (

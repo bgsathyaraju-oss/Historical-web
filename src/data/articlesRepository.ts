@@ -410,6 +410,8 @@ export function getLocalizedArticle(article: Article, lang: LanguageCode): Artic
       original_title: tr.title || article.original_title,
       summary: tr.summary || article.summary,
       original_content: tr.content || article.original_content,
+      author_name: tr.author_name || article.author_name,
+      sources: tr.sources || article.sources,
       translations: {
         ...(article.translations || ({} as any)),
         [l]: {

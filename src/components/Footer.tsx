@@ -89,7 +89,7 @@ const FOOTER_EXTRA_UI: Record<
   },
   kn: {
     brandDesc:
-      'ಶಾಸನ ಸಂಶೋಧನೆ, ಓಡ್ರ ದೇಶದ ಐತಿಹಾಸಿಕ ಭೂಗೋಳ, ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಶಾಸನಗಳು, ರಾಜ ವಂಶಾವಳಿಗಳು ಮತ್ತು 8 ಭಾಷೆಗಳಲ್ಲಿ ಜೀವಂತ ಸಾಂಸ್ಕృతిక ಸಂಪ್ರದಾಯಗಳ ಸಂರಕ್ಷಣೆಗೆ ಸಮರ್ಪಿತವಾಗಿದೆ.',
+      'ಶಾಸನ ಸಂಶೋಧನೆ, ಓಡ್ರ ದೇಶದ ಐತಿಹಾಸಿಕ ಭೂಗೋಳ, ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಶಾಸನಗಳು, ರಾಜ ವಂಶಾವಳಿಗಳು ಮತ್ತು 8 ಭಾಷೆಗಳಲ್ಲಿ ಜೀವಂತ ಸಾಂಸ್ಕೃತಿಕ ಸಂಪ್ರದಾಯಗಳ ಸಂರಕ್ಷಣೆಗೆ ಸಮರ್ಪಿತವಾಗಿದೆ.',
     supportedLangsLabel: 'ಬೆಂಬಲಿತ ಭಾಷೆಗಳು:',
     colDocumentary: 'ಐತಿಹಾಸಿಕ ಸಾಕ್ಷ್ಯಚಿತ್ರ',
     colEpigraphy: 'ಶಾಸನಗಳು ಮತ್ತು ಆಕರಗಳು',
@@ -278,13 +278,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand & Project Info */}
-          <div className="lg:col-span-2 space-y-4">
+      {/* Main Footer Summary & Essential Legal/Action Panel */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Brand & Project Summary */}
+          <div className="lg:col-span-3 space-y-4">
             <div className="flex items-center gap-3">
-              <RoyalSunCrest className="w-11 h-11" />
+              <RoyalSunCrest className="w-11 h-11 shrink-0" />
               <div>
                 <h3 className="font-royal-heading font-bold text-base model4-text-gold">
                   {t.siteTitle}
@@ -294,186 +294,92 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 </p>
               </div>
             </div>
-            <p className="text-xs model4-text-muted leading-relaxed pr-4">
+            <p className="text-xs model4-text-muted leading-relaxed pr-2 sm:pr-6">
               {fUi.brandDesc}
             </p>
-            <div className="pt-2 text-xs model4-text-muted">
+            <div className="pt-1 text-xs model4-text-muted">
               <span className="font-bold model4-text-gold">{fUi.supportedLangsLabel}</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
             </div>
           </div>
 
-          {/* Historical Documentary */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
-              {fUi.colDocumentary}
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button onClick={() => onNavigate('/documentary')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.documentary}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/odra-desha')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.odraDesha}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/kalinga-war')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
-                  {t.nav.kalingaWar || 'The Kalinga War (261 BCE)'}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/gajapathi-kings')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.gajapathiKings}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/dynasties')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.dynasties}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/maps')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.maps}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/timeline')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.timeline}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/community-prominent-persons')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
-                  {t.nav.communityProminentPersons || 'Community Prominent Persons'}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/community-heritage')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
-                  {t.nav.communityHeritage || 'Community Heritage'}
-                </button>
-              </li>
-            </ul>
-          </div>
+          {/* Consolidated Essential Legal, Standards & Archival Actions */}
+          <div className="lg:col-span-2 space-y-3.5">
+            <div className="rounded-xl model4-navy-subpanel border border-[#D4AF37]/50 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
+                  {fUi.colCommunityLegal}
+                </h4>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#5C121D] border border-[#D4AF37]/60 model4-text-gold font-semibold">
+                  Verified Archival Records
+                </span>
+              </div>
 
-          {/* Epigraphy & Archaeology */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
-              {fUi.colEpigraphy}
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button onClick={() => onNavigate('/inscriptions')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.inscriptions}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/kings-queens')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.documentedFigures}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/temples-monuments')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.temples}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/documents')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {fUi.documents}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/genealogy')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.genealogy}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/gallery')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.gallery}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/references')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.references}
-                </button>
-              </li>
-            </ul>
-          </div>
-
-          {/* Community & Legal */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
-              {fUi.colCommunityLegal}
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button onClick={() => onNavigate('/community-heritage')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer">
-                  {t.nav.communityHeritage || 'Community Heritage'}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/community-surnames')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer text-left">
-                  {t.nav.communitySurnames || 'Community Surnames [South-Indian-Oad-Community]'}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/community-surnames-north-indian-oad-community')} className="model4-text-gold font-semibold hover:underline transition-colors cursor-pointer text-left">
-                  {t.nav.communitySurnamesNorth || 'Community Surnames [North-Indian-Oad-Community]'}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/directory')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.directory}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/events')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.events}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/submit-research')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {t.nav.submitResearch}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/privacy')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {fUi.privacy}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/terms')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
-                  {fUi.terms}
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/copyright')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+              {/* Essential Primary Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/copyright')}
+                  className="model4-btn-maroon px-3 py-1.5 rounded-lg text-xs font-semibold hover:brightness-110 cursor-pointer"
+                >
                   {fUi.copyright}
                 </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/accessibility')} className="model4-text-ivory hover:underline transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/terms')}
+                  className="model4-btn-maroon px-3 py-1.5 rounded-lg text-xs font-semibold hover:brightness-110 cursor-pointer"
+                >
+                  {fUi.disclaimer}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/references')}
+                  className="model4-btn-maroon px-3 py-1.5 rounded-lg text-xs font-semibold hover:brightness-110 cursor-pointer"
+                >
+                  {fUi.historicalSources}
+                </button>
+              </div>
+
+              {/* Secondary Legal & Standard Links */}
+              <div className="pt-2 border-t border-[#D4AF37]/25 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/privacy')}
+                  className="model4-text-ivory hover:underline cursor-pointer"
+                >
+                  {fUi.privacy}
+                </button>
+                <span className="text-[#D4AF37]/50">•</span>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/accessibility')}
+                  className="model4-text-ivory hover:underline cursor-pointer"
+                >
                   {fUi.accessibility}
                 </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('/design-system')} className="model4-text-gold font-medium hover:underline transition-colors cursor-pointer">
+                <span className="text-[#D4AF37]/50">•</span>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/design-system')}
+                  className="model4-text-gold font-medium hover:underline cursor-pointer"
+                >
                   {fUi.designSystem}
                 </button>
-              </li>
-              <li>
+              </div>
+
+              {/* Full Archive Export ZIP */}
+              <div className="pt-2 border-t border-[#D4AF37]/25 flex items-center justify-between">
                 <a
                   href="/api/export/project-zip"
                   download="suryavamsha-odiyaraju-kshatriya-portal.zip"
-                  className="model4-text-gold font-semibold hover:underline transition-colors flex items-center gap-1.5"
+                  className="model4-text-gold font-semibold hover:underline text-xs flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{fUi.exportZip}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#762D35] border border-[#D4AF37] model4-text-ivory">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#762D35] border border-[#D4AF37] model4-text-ivory">
                     {fUi.fullBadge}
                   </span>
                 </a>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
 

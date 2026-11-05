@@ -1125,7 +1125,7 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     },
     description: () =>
       'Biographical records of Samrat Sagara, Maharshi Bhagiratha, Emperor Kharavela, Virangana Jasma Devi, Shivayogi Siddharameshwara, and Sri Peddintlamma Thalli.',
-    rawImagePath: '/assets/archive/samrat_sagara_surya.jpg',
+    rawImagePath: '/assets/01_samrat_sagara.webp',
     imageAlt: 'Samrat Sagara & Solar Dynasty Historical Persons',
     section: 'Historical Persons',
     keywords: ['Samrat Sagara', 'Maharshi Bhagiratha', 'Emperor Kharavela', 'Jasma Devi', 'Siddharameshwara']
@@ -1178,18 +1178,6 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     section: 'Contact',
     keywords: ['Contact Editorial Board', 'Submit Archival Records', 'Dr.G Sathyanarayana Raju']
   },
-  '/test-page': {
-    title: lang => {
-      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
-      return `Original Layout – Test Page | ${t.siteTitle}`;
-    },
-    description: () =>
-      'Complete original Home Page layout and archival content of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.',
-    rawImagePath: CATEGORY_FALLBACK_IMAGES.home,
-    imageAlt: 'Suryavamsha Odiyaraju Kshatriya Original Homepage Layout – Test Page',
-    section: 'Original Layout Archive',
-    keywords: ['Suryavamsha Odiyaraju Kshatriya', 'Original Layout', 'Test Page', 'Historical Archive']
-  },
   '/copyright': {
     title: lang => {
       const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
@@ -1230,8 +1218,9 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
 
 // Route aliases mapping to canonical route keys
 const ROUTE_ALIASES: Record<string, string> = {
-  '/test_page': '/test-page',
-  '/testpage': '/test-page',
+  '/test-page': '/',
+  '/test_page': '/',
+  '/testpage': '/',
   '/disclaimer': '/terms',
   '/historical-sources': '/references',
   '/heritage': '/community-heritage',

@@ -409,7 +409,7 @@ const HISTORICAL_RECORDS_UI: Record<LanguageCode, HistoricalRecordsUiLabels> = {
     scholarlyInterpretationBadge: 'ವಿದ್ವತ್ಪೂರ್ಣ ಇತಿಹಾಸ ವಿಶ್ಲೇಷಣೆ',
     epistemicBannerTitle: 'ಪುರಾವೆ ವರ್ಗೀಕರಣ ಮತ್ತು ಐತಿಹಾಸಿಕ ಪರಿಶೀಲನಾ ಮಾನದಂಡ',
     epistemicBannerDesc:
-      'ಈ ಪುಟದ ಪ್ರತಿಯೊಂದು ದಾಖಲೆಯು (1) ದೃಢೀಕೃತ ಶಾಸನ, ತಾಮ್ರಪಟ ಮತ್ತು ಪುರಾತತ್ತ್ವ ಪುರಾವೆ, (2) ಸಾಂಪ್ರದಾಯಿಕ ದೇವಾಲಯ ವೃತ್ತಾಂತ ಮತ್ತು ವಂಶಾವಳಿಗಳು, ಹಾಗೂ (3) ವಿದ್ವಾಂಸರ ಐತಿಹಾಸಿಕ ವಿಶ್ಲೇಷಣೆಯನ್ನು ಸ್ಪಷ್ಟವಾಗಿ 구분ಿಸುತ್ತದೆ.',
+      'ಈ ಪುಟದ ಪ್ರತಿಯೊಂದು ದಾಖಲೆಯು (1) ದೃಢೀಕೃತ ಶಾಸನ, ತಾಮ್ರಪಟ ಮತ್ತು ಪುರಾತತ್ತ್ವ ಪುರಾವೆ, (2) ಸಾಂಪ್ರದಾಯಿಕ ದೇವಾಲಯ ವೃತ್ತಾಂತ ಮತ್ತು ವಂಶಾವಳಿಗಳು, ಹಾಗೂ (3) ವಿದ್ವಾಂಸರ ಐತಿಹಾಸಿಕ ವಿಶ್ಲೇಷಣೆಯನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ವಿಂಗಡಿಸುತ್ತದೆ.',
     readFullArticleBtn: 'ಸಂಪೂರ್ಣ ಐತಿಹಾಸಿಕ ದಾಖಲೆ ಓದಿ',
     sourcesCountSuffix: 'ಆಕರಗಳು',
     eventsCountSuffix: 'ಕಾಲಾನುಕ್ರಮ ಘಟನೆಗಳು',
@@ -583,7 +583,7 @@ const HISTORICAL_RECORDS_UI: Record<LanguageCode, HistoricalRecordsUiLabels> = {
     allEpistemicFilter: 'ସମସ୍ତ ପ୍ରମାଣ ଶ୍ରେଣୀ',
     verifiedEvidenceBadge: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସାକ୍ଷ୍ୟ',
     traditionalAccountBadge: 'ପାରମ୍ପରିକ ଇତିବୃତ୍ତ ଓ ବଂଶାବଳୀ ବିବରଣୀ',
-    scholarlyInterpretationBadge: 'ଐତିହାସିକ ଗବେଷଣା ଓ ବିশ্ଳେଷଣ',
+    scholarlyInterpretationBadge: 'ଐତିହାସିକ ଗବେଷଣା ଓ ବିଶ୍ଳେଷଣ',
     epistemicBannerTitle: 'ପ୍ରମାଣ ବର୍ଗୀକରଣ ଓ ଐତିହାସିକ ସତ୍ୟାପନ ମାନଦଣ୍ଡ',
     epistemicBannerDesc:
       'ଏହି ପୃଷ୍ଠାର ପ୍ରତ୍ୟେକ ଐତିହାସିକ ଅଭିଲେଖ (୧) ପ୍ରମାଣିତ ଶିଳାଲେଖ, ତାମ୍ରଶାସନ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସାକ୍ଷ୍ୟ, (୨) ପାରମ୍ପରିକ ମନ୍ଦିର ଇତିବୃତ୍ତ (ମାଦଳା ପାଞ୍ଜି) ଓ ବଂଶାବଳୀ, ଏବଂ (୩) ଗବେଷକମାନଙ୍କର ଐତିହାସିକ ବିଶ୍ଳେଷଣ ମଧ୍ୟରେ ସ୍ପଷ୍ଟ ପାର୍ଥକ୍ୟ ଦର୍ଶାଏ।',
@@ -602,7 +602,7 @@ const HISTORICAL_RECORDS_UI: Record<LanguageCode, HistoricalRecordsUiLabels> = {
     copyTitleAndLinkButton: 'ଶୀର୍ଷକ ଓ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
     whatsappShareButton: 'WhatsApp ରେ ସେୟାର୍ କରନ୍ତୁ',
     copiedFeedback: 'କ୍ଲିପବୋର୍ଡରେ କପି ହେଲା!',
-    printFallbackTitle: 'ଆଣ୍ଡ୍ରଏଡ୍ ଆପ୍ / ୱେବ୍-ভিଉଅର୍ ପ୍ରିଣ୍ଟ ମୋଡ୍',
+    printFallbackTitle: 'ଆଣ୍ଡ୍ରଏଡ୍ ଆପ୍ / ୱେବ୍-ଭିଉଅର୍ ପ୍ରିଣ୍ଟ ମୋଡ୍',
     printFallbackDesc: 'ପ୍ରିଣ୍ଟ କିମ୍ବା PDF ଭାବେ ସେଭ୍ କରିବାକୁ ବାହ୍ୟ ବ୍ରାଉଜରରେ ଖୋଲନ୍ତୁ:',
     openExternalPrintButton: 'ବାହ୍ୟ ବ୍ରାଉଜରରେ ଖୋଲି ପ୍ରିଣ୍ଟ କରନ୍ତୁ',
     copyPrintUrlButton: 'ପ୍ରିଣ୍ଟ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
@@ -616,7 +616,7 @@ const HISTORICAL_RECORDS_UI: Record<LanguageCode, HistoricalRecordsUiLabels> = {
     scholarlyInterpretationsTitle: '୩. ଗବେଷକମାନଙ୍କର ଐତିହାସିକ ବିଶ୍ଳେଷଣ ଓ ପରିସର',
     chronologicalTimelineHeading: 'ସମ୍ପର୍କିତ ଐତିହାସିକ ଘଟଣାବଳୀର କାଳକ୍ରମ',
     chronologicalTimelineSub: 'ଉତ୍ସ ପ୍ରମାଣ ବ୍ୟାଜ୍ ସହିତ କାଳକ୍ରମିକ ଭାବେ ସଜ୍ଜିତ ଐତିହାସିକ ଘଟଣାକ୍ରମ।',
-    inscriptionsArchaeologyHeading: 'ସহାୟକ ଶିଳାଲେଖ, ତାମ୍ରଶାସନ, ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଓ ଦଲିଲ ପ୍ରମାଣ',
+    inscriptionsArchaeologyHeading: 'ସହାୟକ ଶିଳାଲେଖ, ତାମ୍ରଶାସନ, ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଓ ଦଲିଲ ପ୍ରମାଣ',
     inscriptionsArchaeologySub: 'ମୌଳିକ ଭୌତିକ ପ୍ରମାଣ, ଶିଳାଲେଖ, ତାମ୍ରଫଳକ ଓ ଐତିହାସିକ ଦୁର୍ଗ।',
     sourceReferencesHeading: 'ପ୍ରାଥମିକ ଉତ୍ସ ସନ୍ଦର୍ଭ ଓ ଗବେଷଣା ଉଦ୍ଧୃତି',
     sourceReferencesSub: 'ପ୍ରକାଶିତ ଶିଳାଲେଖ ଖଣ୍ଡ, ଅଭିଲେଖାଗାର ତାଲିକା ଓ ଗବେଷଣା ଗ୍ରନ୍ଥ।',
@@ -630,7 +630,7 @@ const HISTORICAL_RECORDS_UI: Record<LanguageCode, HistoricalRecordsUiLabels> = {
     dateEraLabel: 'କାଳକ୍ରମିକ ସମୟ / ଯୁଗ'
   },
   bn: {
-    allRecordsTab: 'সকল ঐতিহাসিক अभिलेख (কালানুক্রমিক)',
+    allRecordsTab: 'সকল ঐতিহাসিক অভিলেখ (কালানুক্রমিক)',
     inscriptionsTab: 'শিলালিপি ও তাম্রশাসন',
     documentsTab: 'পাণ্ডুলিপি ও রাজকীয় ইতিবৃত্ত',
     timelineTab: 'কালানুক্রমিক ঐতিহাসিক ঘটনা',
@@ -857,7 +857,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
         'Requires Further Research': 'अधिक शिलालेखीय आणि ऐतिहासिक संशोधनाची आवश्यकता'
       },
       or: {
-        'Verified Supported': 'ଯାଞ୍ଚকৃত ଶିଳାଲେଖ ଓ ଅଭିଲେଖୀୟ ପ୍ରମାଣ ଦ୍ୱାରା ସମର୍ଥିତ',
+        'Verified Supported': 'ଯାଞ୍ଚକୃତ ଶିଳାଲେଖ ଓ ଅଭିଲେଖୀୟ ପ୍ରମାଣ ଦ୍ୱାରା ସମର୍ଥିତ',
         'Contested Interpretation': 'ଐତିହାସିକ ଓ କାଳାନୁକ୍ରମିକ ବ୍ୟାଖ୍ୟା ବିତର୍କିତ',
         'Requires Further Research': 'ଅଧିକ ଶିଳାଲେଖ ଓ ଐତିହାସିକ ଗବେଷଣା ଆବଶ୍ୟକ'
       },
@@ -1340,7 +1340,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
         authorBodyLabel: 'రచయిత / సంకలన సంస్థ',
         approxDateLabel: 'సుమారు కాలం',
         origLanguageLabel: 'మూల భాష',
-        custodialCollectionLabel: 'সংరక్షణ సేకరణ / మ్యూజియం',
+        custodialCollectionLabel: 'సంరక్షణ సేకరణ / మ్యూజియం',
         provenanceCustodyLabel: 'మూల ఆధారం & సంరక్షణ',
         copyrightLicenseLabel: 'కాపీరైట్ & లైసెన్స్',
         docVerifiedText: (loc, prov) => `భౌతిక తాళపత్ర గ్రంథ సముదాయం ${loc} వద్ద భద్రపరచబడింది. ${prov}`,
@@ -1773,7 +1773,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
         approxDateLabel: 'ଆନୁମାନିକ କାଳ',
         origLanguageLabel: 'ମୂଳ ଭାଷା',
         custodialCollectionLabel: 'ସଂରକ୍ଷକ ସଂଗ୍ରହାଳୟ / ସଂଗ୍ରହ',
-        provenanceCustodyLabel: 'ଉତ୍পତ୍ତି ଓ ଅଭିରକ୍ଷା',
+        provenanceCustodyLabel: 'ଉତ୍ପତ୍ତି ଓ ଅଭିରକ୍ଷା',
         copyrightLicenseLabel: 'କପିରାଇଟ୍ ଓ ଲାଇସେନ୍ସ',
         docVerifiedText: (loc, prov) => `ଭୌତିକ ପୋଥି ସଂଗ୍ରହ ${loc} ଠାରେ ସଂରକ୍ଷିତ। ${prov}`,
         docTraditionalFallback:
@@ -1782,8 +1782,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
         corroboratingMonumentsLabel: 'ସମର୍ଥନକାରୀ ସ୍ମାରକୀ ଓ ଶିଳାଲେଖ',
         primarySourcesLabel: 'ପ୍ରାଥମିକ ଉତ୍ସ',
         evTraditionalFallback:
-          'ଆଞ୍ଚଳିକ ମନ୍ଦିର ଇତିବୃତ୍ତ (ମାଦଳା ପାଞ୍ଜି), ସ୍ଥାନୀୟ କୈଫିୟତ ଏବଂ ଓଡ୍ର ଓ ଦাক্ষିଣାତ୍ୟ ବସତିଗୁଡ଼ିକର ସାମୁଦାୟିକ ବଂଶାବଳୀ ସ୍ମୃତିରେ ସଂରକ୍ଷିତ।',
-        medievalCitadelSuffix: 'ମଧ୍ୟযୁଗୀୟ ଦୁର୍ଗ',
+          'ଆଞ୍ଚଳିକ ମନ୍ଦିର ଇତିବୃତ୍ତ (ମାଦଳା ପାଞ୍ଜି), ସ୍ଥାନୀୟ କୈଫିୟତ ଏବଂ ଓଡ୍ର ଓ ଦାକ୍ଷିଣାତ୍ୟ ବସତିଗୁଡ଼ିକର ସାମୁଦାୟିକ ବଂଶାବଳୀ ସ୍ମୃତିରେ ସଂରକ୍ଷିତ।',
+        medievalCitadelSuffix: 'ମଧ୍ୟଯୁଗୀୟ ଦୁର୍ଗ',
         regionSuffix: 'ଅଞ୍ଚଳ',
         gajapathiAdminAuthority: 'ସୂର୍ଯ୍ୟବଂଶ ଗଜପତି ଓ ଓଡ୍ର-କଳିଙ୍ଗ ପ୍ରଶାସନ',
         asiStateEpigraphyAttr: 'ଭାରତୀୟ ପ୍ରତ୍ନତତ୍ତ୍ୱ ସର୍ବେକ୍ଷଣ (ASI) ଓ ରାଜ୍ୟ ଶିଳାଲେଖ ରିପୋର୍ଟ',
@@ -1846,7 +1846,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           {
             title: 'ଓଡ୍ର ଦେଶ, କଳିଙ୍ଗ ଓ ଉତ୍କଳର ଐତିହାସିକ ଭୂଗୋଳ',
             period: 'ପ୍ରାଚୀନରୁ ପ୍ରାରମ୍ଭିକ ଆଧୁନିକ କାଳ • ମହାନଦୀରୁ ଗୋଦାବରୀ',
-            badge: 'ଐତିହାସିକ ରାଜ୍ୟ ଓ ଭୂখଣ୍ଡ',
+            badge: 'ଐତିହାସିକ ରାଜ୍ୟ ଓ ଭୂଖଣ୍ଡ',
             imageUrl: '/assets/gallery/udayagiri_caves.svg',
             route: '/odra-desha'
           },
@@ -2643,7 +2643,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           or: [
             'ଏପିଗ୍ରାଫିଆ ଇଣ୍ଡିକା, ଖଣ୍ଡ XXXIII (୧୯୫୯–୧୯୬୦), ପୃଷ୍ଠା ୨୭୫–୨୯୨: "କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ବେଲିଗଲନି ତାମ୍ରଫଳକ ଦାନ (ଶକ ୧୩୮୦)", ସମ୍ପାଦକ: ଡ. ଡି.ସି. ସରକାର।',
             'ସାଉଥ୍ ଇଣ୍ଡିଆନ୍ ଇନସ୍କ୍ରିପସନ୍ସ (SII), ଖଣ୍ଡ IV, V ଓ VI: ଦ୍ରାକ୍ଷାରାମ, ସିଂହାଚଳମ ଏବଂ ଶ୍ରୀକୂର୍ମମର ଶିଳାଲେଖ।',
-            'ଏପିଗ୍ରାଫିଆ କର୍ଣ୍ଣାଟିକା, ଖଣ୍ଡ VII: ମାলেବେନ୍ନୁର ଠାରେ ରାଜକୁମାର ବୀରଭଦ୍ର ଦେବଙ୍କ ସମ୍ପର୍କିତ ଶିଳାଲେଖ।',
+            'ଏପିଗ୍ରାଫିଆ କର୍ଣ୍ଣାଟିକା, ଖଣ୍ଡ VII: ମାଲେବେନ୍ନୁର ଠାରେ ରାଜକୁମାର ବୀରଭଦ୍ର ଦେବଙ୍କ ସମ୍ପର୍କିତ ଶିଳାଲେଖ।',
             'ଇନସ୍କ୍ରିପସନ୍ସ ଅଫ୍ ଓଡ଼ିଶା, ଖଣ୍ଡ V (ଭାଗ I ଓ II), ସମ୍ପାଦକ: ଏସ୍.ଏନ୍. ରାଜଗୁରୁ, ଓଡ଼ିଶା ରାଜ୍ୟ ସଂଗ୍ରହାଳୟ, ଭୁବନେଶ୍ୱର।'
           ],
           bn: [
@@ -2776,7 +2776,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           ],
           te: [
             'మాదళ పాంజి (ప్రాచీ సంచిక), సంపాదకులు: ప్రొ. ఎ.బి. మొహంతి, ఉత్కళ్ విశ్వవిద్యాలయం, కటక్.',
-            'మెకెంజీ తాళపత్ర ప్రతులు (తీర ఆంధ్ర మరియు రాయలసీమ స్థానిక కైఫియత్‌లు), గవర్నమెంట్ ఓరియంటల్ మాన్యుస్క్రిప్ట్స్ లైব্রరీ (GOML), చెన్నై.',
+            'మెకెంజీ తాళపత్ర ప్రతులు (తీర ఆంధ్ర మరియు రాయలసీమ స్థానిక కైఫియత్‌లు), గవర్నమెంట్ ఓరియంటల్ మాన్యుస్క్రిప్ట్స్ లైబ్రరీ (GOML), చెన్నై.',
             'డిస్క్రిప్టివ్ కేటలాగ్ ఆఫ్ సంస్కృత మాన్యుస్క్రిప్ట్స్ ఆఫ్ ఒరిస్సా, సంపాదకులు: కె.ఎన్. మహాపాత్ర, రాష్ట్ర పురాతన పత్ర భాండాగారం, భువనేశ్వర్.'
           ],
           kn: [
@@ -2796,7 +2796,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
           ],
           or: [
             'ମାଦଳା ପାଞ୍ଜି (ପ୍ରାଚୀ ସଂସ୍କରଣ), ସମ୍ପାଦକ: ପ୍ରଫେସର ଏ.ବି. ମହାନ୍ତି, ଉତ୍କଳ ବିଶ୍ୱବିଦ୍ୟାଳୟ, କଟକ।',
-            'ମାକେଞ୍ଜି ପୋଥିସମୂହ (ଉପକୂଳ ଆନ୍ଧ୍ର ଓ ରାୟలସୀମାର ସ୍ଥାନୀୟ କୈଫିୟତ), ସରକାରୀ ପ୍ରାଚ୍ୟ ପୋଥି ଗ୍ରନ୍ଥାଗାର (GOML), ଚେନ୍ନାଇ।',
+            'ମାକେଞ୍ଜି ପୋଥିସମୂହ (ଉପକୂଳ ଆନ୍ଧ୍ର ଓ ରାୟଲସୀମାର ସ୍ଥାନୀୟ କୈଫିୟତ), ସରକାରୀ ପ୍ରାଚ୍ୟ ପୋଥି ଗ୍ରନ୍ଥାଗାର (GOML), ଚେନ୍ନାଇ।',
             'ଓଡ଼ିଶାର ସଂସ୍କୃତ ପୋଥିସମୂହର ବର୍ଣ୍ଣନାତ୍ମକ ତାଲିକା, ସମ୍ପାଦକ: କେ.ଏନ୍. ମହାପାତ୍ର, ରାଜ୍ୟ ଅଭିଲେଖାଗାର, ଭୁବନେଶ୍ୱର।'
           ],
           bn: [

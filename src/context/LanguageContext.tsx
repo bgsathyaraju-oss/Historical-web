@@ -40,7 +40,7 @@ export const LANGUAGE_SCRIPT_MAP: Record<LanguageCode, ScriptName> = {
 };
 
 export const SCRIPT_REGEX_MAP: Record<ScriptName, RegExp> = {
-  Devanagari: /[\u0900-\u097F]/,
+  Devanagari: /[\u0900-\u0963\u0966-\u097F]/,
   Telugu: /[\u0C00-\u0C7F]/,
   Kannada: /[\u0C80-\u0CFF]/,
   Tamil: /[\u0B80-\u0BFF]/,

@@ -25,6 +25,14 @@ import {
   DOCUMENT_TRANSLATIONS,
   GALLERY_TRANSLATIONS
 } from './multilingualSeedTranslations.ts';
+import {
+  TIMELINE_METADATA_ENRICHMENTS,
+  GALLERY_METADATA_ENRICHMENTS,
+  DOCUMENT_METADATA_ENRICHMENTS,
+  GENEALOGY_SOURCES_TRANSLATIONS,
+  REVIEWED_STATUS_BY_LANG,
+  CLAIM_STATUS_BY_LANG
+} from './phase3MetadataTranslations.ts';
 
 export const CANONICAL_GENEALOGY: GenealogyNode[] = [
   {
@@ -687,15 +695,16 @@ export function getCanonicalGenealogy(lang: LanguageCode = 'en'): GenealogyNode[
   if (lang === 'en') return CANONICAL_GENEALOGY;
   return CANONICAL_GENEALOGY.map(node => {
     const tr = GENEALOGY_NODE_TRANSLATIONS[node.id]?.[lang];
-    if (!tr) return node;
+    const srcTr = GENEALOGY_SOURCES_TRANSLATIONS[node.id]?.[lang];
+    if (!tr && !srcTr) return node;
     return {
       ...node,
-      name: tr.name || node.name,
-      titles: tr.titles || node.titles,
-      reign: tr.reign || node.reign,
-      spouse: tr.spouse || node.spouse,
-      notes: tr.notes || node.notes,
-      sources: tr.sources || node.sources
+      name: tr?.name || node.name,
+      titles: tr?.titles || node.titles,
+      reign: tr?.reign || node.reign,
+      spouse: tr?.spouse || node.spouse,
+      notes: tr?.notes || node.notes,
+      sources: srcTr || tr?.sources || node.sources
     };
   });
 }
@@ -704,11 +713,13 @@ export function getCanonicalClaims(lang: LanguageCode = 'en'): HistoricalClaim[]
   if (lang === 'en') return CANONICAL_CLAIMS;
   return CANONICAL_CLAIMS.map(claim => {
     const tr = CLAIM_TRANSLATIONS[claim.id]?.[lang];
-    if (!tr) return claim;
+    const localizedStatus = (CLAIM_STATUS_BY_LANG[claim.status]?.[lang] as any) || claim.status;
+    if (!tr) return { ...claim, status: localizedStatus };
     return {
       ...claim,
       topic: tr.topic || claim.topic,
       claim_statement: tr.claim_statement || claim.claim_statement,
+      status: (tr.status as any) || localizedStatus,
       supporting_evidence: tr.supporting_evidence || claim.supporting_evidence,
       contradictory_evidence: tr.contradictory_evidence || claim.contradictory_evidence,
       source_reliability_notes: tr.source_reliability_notes || claim.source_reliability_notes,
@@ -721,17 +732,18 @@ export function getCanonicalTimelineEvents(lang: LanguageCode = 'en'): Historica
   if (lang === 'en') return CANONICAL_TIMELINE_EVENTS;
   return CANONICAL_TIMELINE_EVENTS.map(ev => {
     const tr = TIMELINE_EVENT_TRANSLATIONS[ev.id]?.[lang];
-    if (!tr) return ev;
+    const meta = TIMELINE_METADATA_ENRICHMENTS[ev.id]?.[lang];
+    if (!tr && !meta) return ev;
     return {
       ...ev,
-      period: tr.period || ev.period,
-      year_text: tr.year_text || ev.year_text,
-      title: tr.title || ev.title,
-      rulers_involved: tr.rulers_involved || ev.rulers_involved,
-      political_development: tr.political_development || ev.political_development,
-      monuments_inscriptions: tr.monuments_inscriptions || ev.monuments_inscriptions,
-      primary_sources: tr.primary_sources || ev.primary_sources,
-      uncertainty_notes: tr.uncertainty_notes || ev.uncertainty_notes
+      period: tr?.period || ev.period,
+      year_text: meta?.year_text || tr?.year_text || ev.year_text,
+      title: tr?.title || ev.title,
+      rulers_involved: tr?.rulers_involved || ev.rulers_involved,
+      political_development: tr?.political_development || ev.political_development,
+      monuments_inscriptions: tr?.monuments_inscriptions || ev.monuments_inscriptions,
+      primary_sources: meta?.primary_sources || tr?.primary_sources || ev.primary_sources,
+      uncertainty_notes: tr?.uncertainty_notes || ev.uncertainty_notes
     };
   });
 }
@@ -758,18 +770,21 @@ export function getCanonicalDocuments(lang: LanguageCode = 'en'): HistoricalDocu
   if (lang === 'en') return CANONICAL_DOCUMENTS;
   return CANONICAL_DOCUMENTS.map(doc => {
     const tr = DOCUMENT_TRANSLATIONS[doc.id]?.[lang];
-    if (!tr) return doc;
+    const meta = DOCUMENT_METADATA_ENRICHMENTS[doc.id]?.[lang];
+    if (!tr && !meta) return doc;
     return {
       ...doc,
-      title: tr.title || doc.title,
-      original_language: tr.original_language || doc.original_language,
-      approximate_date: tr.approximate_date || doc.approximate_date,
-      author_authority: tr.author_authority || doc.author_authority,
-      current_location: tr.current_location || doc.current_location,
-      source_provenance: tr.source_provenance || doc.source_provenance,
-      digitization_info: tr.digitization_info || doc.digitization_info,
-      translation_excerpt: tr.translation_excerpt || doc.translation_excerpt,
-      research_notes: tr.research_notes || doc.research_notes
+      title: tr?.title || doc.title,
+      original_language: tr?.original_language || doc.original_language,
+      approximate_date: tr?.approximate_date || doc.approximate_date,
+      author_authority: tr?.author_authority || doc.author_authority,
+      current_location: tr?.current_location || doc.current_location,
+      source_provenance: tr?.source_provenance || doc.source_provenance,
+      copyright_license: meta?.copyright_license || tr?.copyright_license || doc.copyright_license,
+      verification_status: (meta?.verification_status as any) || (tr?.verification_status as any) || doc.verification_status,
+      digitization_info: tr?.digitization_info || doc.digitization_info,
+      translation_excerpt: tr?.translation_excerpt || doc.translation_excerpt,
+      research_notes: tr?.research_notes || doc.research_notes
     };
   });
 }
@@ -778,13 +793,19 @@ export function getCanonicalGallery(lang: LanguageCode = 'en'): GalleryItem[] {
   if (lang === 'en') return CANONICAL_GALLERY;
   return CANONICAL_GALLERY.map(item => {
     const tr = GALLERY_TRANSLATIONS[item.id]?.[lang];
-    if (!tr) return item;
+    const meta = GALLERY_METADATA_ENRICHMENTS[item.id]?.[lang];
+    if (!tr && !meta) return item;
     return {
       ...item,
-      title: tr.title || item.title,
-      period: tr.period || item.period,
-      location: tr.location || item.location,
-      description: tr.description || item.description
+      title: tr?.title || item.title,
+      period: meta?.period || tr?.period || item.period,
+      location: meta?.location || tr?.location || item.location,
+      creator_photographer: meta?.creator_photographer || tr?.creator_photographer || item.creator_photographer,
+      source: meta?.source || tr?.source || item.source,
+      copyright_license: meta?.copyright_license || tr?.copyright_license || item.copyright_license,
+      verification_status: (meta?.verification_status as any) || (tr?.verification_status as any) || item.verification_status,
+      alt_text: meta?.alt_text || tr?.alt_text || item.alt_text,
+      description: tr?.description || item.description
     };
   });
 }
@@ -793,7 +814,8 @@ export function getCanonicalInscriptions(lang: LanguageCode = 'en'): Inscription
   if (lang === 'en') return CANONICAL_INSCRIPTIONS;
   return CANONICAL_INSCRIPTIONS.map(insc => {
     const tr = INSCRIPTION_TRANSLATIONS[insc.id]?.[lang];
-    if (!tr) return insc;
+    const localizedStatus = (REVIEWED_STATUS_BY_LANG[lang] as any) || insc.verification_status;
+    if (!tr) return { ...insc, verification_status: localizedStatus };
     return {
       ...insc,
       name: tr.name || insc.name,
@@ -805,7 +827,8 @@ export function getCanonicalInscriptions(lang: LanguageCode = 'en'): Inscription
       era_or_date: tr.era_or_date || insc.era_or_date,
       historical_context: tr.summary || insc.historical_context,
       english_translation: tr.english_translation || tr.summary || insc.english_translation,
-      scholarly_references: tr.scholarly_references || insc.scholarly_references
+      scholarly_references: tr.scholarly_references || insc.scholarly_references,
+      verification_status: localizedStatus
     };
   });
 }

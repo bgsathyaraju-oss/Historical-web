@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TempleMonument } from '../types';
+import { TempleMonument, LanguageCode } from '../types';
 import { Landmark, MapPin, Calendar, ShieldCheck, BookOpen, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
@@ -9,8 +9,86 @@ interface TemplesMonumentsPageProps {
   onNavigate?: (path: string) => void;
 }
 
+const MONUMENTS_MODAL_UI: Record<
+  LanguageCode,
+  {
+    verificationStatus: string;
+    locationStateLabel: string;
+    periodLabel: string;
+    significanceLabel: string;
+    sourceTypeLabel: string;
+    detailsBtn: string;
+  }
+> = {
+  en: {
+    verificationStatus: 'Documented Architectural Monument',
+    locationStateLabel: 'Location & State',
+    periodLabel: 'Historical Period',
+    significanceLabel: 'Historical & Architectural Significance',
+    sourceTypeLabel: 'Architectural & Epigraphic Source',
+    detailsBtn: 'Details'
+  },
+  hi: {
+    verificationStatus: 'प्रमाणित स्थापत्य स्मारक',
+    locationStateLabel: 'स्थान एवं राज्य',
+    periodLabel: 'ऐतिहासिक काल',
+    significanceLabel: 'ऐतिहासिक एवं स्थापत्य महत्त्व',
+    sourceTypeLabel: 'स्थापत्य एवं अभिलेखीय स्रोत',
+    detailsBtn: 'विवरण'
+  },
+  te: {
+    verificationStatus: 'ధృవీకరించబడిన వాస్తుశిల్ప స్మారకం',
+    locationStateLabel: 'ప్రదేశం & రాష్ట్రం',
+    periodLabel: 'చారిత్రక కాలం',
+    significanceLabel: 'చారిత్రక & వాస్తుశిల్ప ప్రాముఖ్యత',
+    sourceTypeLabel: 'వాస్తుశిల్ప & శాసన ఆధారం',
+    detailsBtn: 'వివరాలు'
+  },
+  kn: {
+    verificationStatus: 'ದಾಖಲಿತ ವಾಸ್ತುಶಿಲ್ಪ ಸ್ಮಾರಕ',
+    locationStateLabel: 'ಸ್ಥಳ ಮತ್ತು ರಾಜ್ಯ',
+    periodLabel: 'ಐತಿಹಾಸಿಕ ಕಾಲ',
+    significanceLabel: 'ಐತಿಹಾಸಿಕ ಮತ್ತು ವಾಸ್ತುಶಿಲ್ಪದ ಮಹತ್ವ',
+    sourceTypeLabel: 'ವಾಸ್ತುಶಿಲ್ಪ ಮತ್ತು ಶಾಸನ ಆಕರ',
+    detailsBtn: 'ವಿವರಗಳು'
+  },
+  ta: {
+    verificationStatus: 'ஆவணப்படுத்தப்பட்ட கட்டிடக்கலை நினைவுச்சின்னம்',
+    locationStateLabel: 'இடம் மற்றும் மாநிலம்',
+    periodLabel: 'வரலாற்று காலம்',
+    significanceLabel: 'வரலாற்று மற்றும் கட்டிடக்கலை முக்கியத்துவம்',
+    sourceTypeLabel: 'கட்டிடக்கலை மற்றும் கல்வெட்டு ஆதாரம்',
+    detailsBtn: 'விவரங்கள்'
+  },
+  mr: {
+    verificationStatus: 'दस्तऐवजीकृत स्थापत्य स्मारक',
+    locationStateLabel: 'ठिकाण आणि राज्य',
+    periodLabel: 'ऐतिहासिक काळ',
+    significanceLabel: 'ऐतिहासिक आणि स्थापत्य महत्त्व',
+    sourceTypeLabel: 'स्थापत्य आणि शिलालेखीय स्रोत',
+    detailsBtn: 'तपशील'
+  },
+  or: {
+    verificationStatus: 'ପ୍ରମାଣିତ ସ୍ଥାପତ୍ୟ ସ୍ମାରକୀ',
+    locationStateLabel: 'ସ୍ଥାନ ଓ ରାଜ୍ୟ',
+    periodLabel: 'ଐତିହାସିକ ସମୟ',
+    significanceLabel: 'ଐତିହାସିକ ଓ ସ୍ଥାପତ୍ୟ ମହତ୍ତ୍ୱ',
+    sourceTypeLabel: 'ସ୍ଥାପତ୍ୟ ଓ ଶିଳାଲେଖ ଉତ୍ସ',
+    detailsBtn: 'ବିବରଣୀ'
+  },
+  bn: {
+    verificationStatus: 'নথিভুক্ত স্থাপত্য স্মৃতিস্তম্ভ',
+    locationStateLabel: 'স্থান ও রাজ্য',
+    periodLabel: 'ঐতিহাসিক সময়কাল',
+    significanceLabel: 'ঐতিহাসিক ও স্থাপত্য গুরুত্ব',
+    sourceTypeLabel: 'স্থাপত্য ও শিলালিপি উৎস',
+    detailsBtn: 'বিস্তারিত'
+  }
+};
+
 export const TemplesMonumentsPage: React.FC<TemplesMonumentsPageProps> = ({ onNavigate }) => {
   const { t, language } = useLanguage();
+  const ui = MONUMENTS_MODAL_UI[language] || MONUMENTS_MODAL_UI.en;
   const [monuments, setMonuments] = useState<TempleMonument[]>(() => getCanonicalMonuments(language));
   const [selectedMonument, setSelectedMonument] = useState<TempleMonument | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,20 +116,20 @@ export const TemplesMonumentsPage: React.FC<TemplesMonumentsPageProps> = ({ onNa
       title: mon.name,
       subtitle: `${mon.location}, ${mon.state}`,
       badge: mon.century,
-      verificationStatus: 'Documented Architectural Monument',
+      verificationStatus: ui.verificationStatus,
       imageUrl: mon.image_url,
       imageLayout: 'banner',
       metadata: [
-        { label: 'Location & State', value: `${mon.location}, ${mon.state}` },
+        { label: ui.locationStateLabel, value: `${mon.location}, ${mon.state}` },
         { label: t.monuments.patronLabel || 'Patron Ruler / Authority', value: mon.patron_ruler },
         { label: t.monuments.styleLabel || 'Architectural Style', value: mon.architectural_style },
-        { label: 'Historical Period', value: mon.century }
+        { label: ui.periodLabel, value: mon.century }
       ],
       fullText: mon.historical_significance,
-      fullTextLabel: 'Historical & Architectural Significance',
+      fullTextLabel: ui.significanceLabel,
       sources: (mon.sources || []).map(src => ({
         title: src,
-        type: 'Architectural & Epigraphic Source'
+        type: ui.sourceTypeLabel
       }))
     };
   };
@@ -127,7 +205,7 @@ export const TemplesMonumentsPage: React.FC<TemplesMonumentsPageProps> = ({ onNa
               <div className="pt-3 border-t border-[#D8C3A2] text-[11px] text-[#6B5948] flex items-center justify-between gap-2">
                 <span className="truncate"><span className="font-medium text-[#54351F]">{t.monuments.sourcesLabel}:</span> {mon.sources.join('; ')}</span>
                 <span className="text-[#76501F] font-semibold shrink-0 flex items-center gap-1">
-                  <span>Details</span>
+                  <span>{ui.detailsBtn}</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </span>
               </div>

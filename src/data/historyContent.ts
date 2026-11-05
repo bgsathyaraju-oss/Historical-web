@@ -100,7 +100,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Treta Yuga / Vedic Puranic Antiquity',
     reign_or_dates: 'Primordial Epic Era',
     epigraphic_status: 'Traditional Lineage Record',
-    image_url: ARCHIVE_IMG('samrat_sagara_surya.jpg'),
+    image_url: '/assets/01_samrat_sagara.webp',
     titles: {
       en: 'Chakravartin Emperor of Ayodhya • Primordial Excavator of the Ocean (Sagara) • Suryavamshi Progenitor',
       hi: 'अयोध्या के चक्रवर्ती सम्राट • महासागर के आद्य खनक • सूर्यवंशी क्षत्रिय आदि-पुरुष',
@@ -162,7 +162,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Treta Yuga Antiquity',
     reign_or_dates: 'Puranic Antiquity',
     epigraphic_status: 'Traditional Lineage Record',
-    image_url: ARCHIVE_IMG('maharshi_bhagiratha_penance.jpg'),
+    image_url: '/assets/02_maharshi_bhagiratha_ganga_avatarana.webp',
     titles: {
       en: 'Rajarshi of Ayodhya • Bringer of the Sacred Ganga • Patron of Water Engineering & Perseverance',
       hi: 'अयोध्या के राजर्षि • मां गंगा के भू-अवतारी • जल-अभियांत्रिकी एवं अडिग संकल्प के आदि प्रतीक',
@@ -224,7 +224,7 @@ export const HISTORICAL_FIGURES: HistoricalFigureSummary[] = [
     era: 'Treta Yuga',
     reign_or_dates: 'Epic Antiquity',
     epigraphic_status: 'Traditional Lineage Record',
-    image_url: ARCHIVE_IMG('sri_rama_sculpture.jpg'),
+    image_url: '/assets/03_maryada_purushottama_sri_rama.webp',
     titles: {
       en: 'Maryada Purushottama • Supreme Exemplar of Kshatriya Dharma • Ikshvaku Kula Tilaka',
       hi: 'मर्यादा पुरुषोत्तम • क्षत्रिय धर्म के परम आदर्श • इक्ष्वाकु कुल तिलक • अयोध्याधिपति',

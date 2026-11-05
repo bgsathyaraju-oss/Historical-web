@@ -2766,6 +2766,20 @@
       "image_url": "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&auto=format&fit=crop&q=80",
       "alt_text": "Historical cartographic map showing the extent of Odra Desha from Ganges to Kaveri",
       "description": "Cartographic reconstruction delineating corroborated epigraphic findspots of Kapilendra Deva."
+    },
+    {
+      "id": "gal_kolletikota",
+      "title": "Kolletikota Water Citadel & Kolleti Sarasu (Kolleru Lake Wetland)",
+      "category": "forts",
+      "period": "Medieval Era (c. 15th Century CE to Present)",
+      "location": "Kolletikota, Eluru District, Andhra Pradesh",
+      "creator_photographer": "Andhra Coastal Heritage Documentation Survey",
+      "source": "Kolleru Archaeological Wetland Survey Archive",
+      "copyright_license": "CC BY-SA 4.0",
+      "verification_status": "Reviewed",
+      "image_url": "/assets/archive/kolletikota_island_panorama.jpg",
+      "alt_text": "Vast freshwater lake expanses of Kolleti Sarasu surrounding the fortified island sanctuary of Kolletikota",
+      "description": "The ancient water citadel (Jala Durga) and sacred abode of Sri Peddintlamma Thalli amidst the serene waters of Kolleru."
     }
   ],
   "claims": [
@@ -2864,16 +2878,7 @@
         }
       ],
       "original_content": "The historical designation Odra Desha (also recorded in Sanskrit epigraphs as Audra, and in medieval Chinese pilgrimage chronicles as Wu-T'u) represents one of the foundational territorial components of eastern India. While modern popular discourse sometimes conflates Odra, Kalinga, Utkala, and Kosala as synonymous, rigorous historical examination reveals distinct geopolitical, linguistic, and dynastic trajectories that gradually coalesced under imperial Ganga and Gajapathi hegemony.\n\nAncient Epigraphic References:\nEarly epigraphic mentions of the Odras appear in the accounts of Pliny (referring to the Oretes), classical Buddhist texts, and later Puranic rosters. In the 7th century CE, the Chinese pilgrim Xuanzang visited the kingdom of Wu-T'u, describing it as an agrarian land with deep Buddhist and Brahmanical institutions, possessing a coastline with the thriving port of Charitra (Che-li-ta-lo).\n\nTerritorial Boundaries:\nIn its core historical definition, Odra Desha encompassed the fertile deltaic and riverine basin of the Mahanadi, Kathajodi, Brahmani, and Baitarani rivers, flanked by the Eastern Ghats to the west and the Bay of Bengal to the east. To the north lay Utkala (stretching toward the Subarnarekha and lower Bengal), while to the south lay Kalinga, centered along the coastal strip between the Rishikulya and the Godavari.\n\nThe Rise to Imperial Prominence:\nUnder the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cuttack), situated at the bifurcation of the Mahanadi and Kathajodi rivers in the heart of Odra Desha, served as the supreme capital of an empire extending across peninsular India. Royal inscriptions of Kapilendra Deva emphasize his suzerainty over the \"Odra-rajya\", demonstrating that by the late medieval era, Odra had become the political core of the realm.",
-      "translations": {
-        "bn": {
-          "title": "ওড্র দেশের রাজকীয় ইতিহাস ও ভূগোল (অনুবাদ পরীক্ষা)",
-          "content": "গবেষণামূলক বিশ্লেষণ অনুসারে ওড্র দেশ প্রাচ্য ভারতের অন্যতম প্রধান সার্বভৌম অঞ্চল ছিল।",
-          "summary": "প্রাচীন ওড্র দেশের ঐতিহাসিক বিশ্লেষণ এবং সীমানা পর্যালোচনা।",
-          "status": "pending",
-          "translator_name": "সূর্যবংশ গবেষক পরিষদ",
-          "last_updated": "2026-11-03T10:46:25.144Z"
-        }
-      }
+      "translations": {}
     },
     {
       "id": "art_gajapathi_kapilendra",

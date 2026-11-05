@@ -1,4 +1,4 @@
-import { LanguageCode, LanguageOption, Article } from '../types';
+import { LanguageCode, LanguageOption, Article, SourceReference } from '../types';
 import { SUPPORTED_LANGUAGES } from '../i18n/translations';
 import { getAllArticles, getArticleByIdOrSlug } from '../data/articlesRepository';
 
@@ -6,6 +6,8 @@ export interface ContentTranslationMap {
   title: string;
   summary: string;
   content: string;
+  author_name?: string;
+  sources?: SourceReference[];
   status?: string;
   translator_name?: string;
   last_updated?: string;
@@ -34,7 +36,7 @@ interface CacheEntry<T> {
 }
 
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes TTL for stale-while-revalidate
-const STORAGE_PREFIX = 'suryavamsha_tr_';
+const STORAGE_PREFIX = 'suryavamsha_tr_v2_';
 
 function safeStorageGet(key: string): string | null {
   if (typeof window === 'undefined') return null;

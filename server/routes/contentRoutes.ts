@@ -16,6 +16,14 @@ import {
   DOCUMENT_TRANSLATIONS,
   GALLERY_TRANSLATIONS
 } from '../../src/data/multilingualSeedTranslations.ts';
+import {
+  TIMELINE_METADATA_ENRICHMENTS,
+  GALLERY_METADATA_ENRICHMENTS,
+  DOCUMENT_METADATA_ENRICHMENTS,
+  GENEALOGY_SOURCES_TRANSLATIONS,
+  REVIEWED_STATUS_BY_LANG,
+  CLAIM_STATUS_BY_LANG
+} from '../../src/data/phase3MetadataTranslations.ts';
 
 export const contentRouter = Router();
 
@@ -49,10 +57,13 @@ contentRouter.get('/articles', (req: Request, res: Response) => {
   const mapped = list.map(a => {
     const builtinTr = (ARTICLE_TRANSLATIONS as Record<string, any>)[a.id]?.[langCode];
     const userTr = (a.translations as Record<string, any> | undefined)?.[langCode];
-    if (langCode !== 'en' && (userTr || builtinTr)) {
-      const tr = userTr || builtinTr!;
+    const effectiveUserTr = userTr && userTr.status !== 'pending' ? userTr : undefined;
+    if (langCode !== 'en' && (effectiveUserTr || builtinTr || userTr)) {
+      const tr = effectiveUserTr || builtinTr || userTr!;
       return {
         ...a,
+        author_name: tr.author_name || builtinTr?.author_name || a.author_name,
+        sources: tr.sources || builtinTr?.sources || a.sources,
         display_title: tr.title,
         display_content: tr.content,
         display_summary: tr.summary,
@@ -86,22 +97,34 @@ contentRouter.get('/articles/:idOrSlug', (req: Request, res: Response) => {
   let displayTitle = article.original_title;
   let displayContent = article.original_content;
   let displaySummary = article.summary;
+  let displayAuthor = article.author_name;
+  let displaySources = article.sources;
   let translationStatus = undefined;
   let hasTranslation = true;
 
   if (lang !== 'en') {
     const builtinTr = (ARTICLE_TRANSLATIONS as Record<string, any>)[article.id]?.[lang];
     const userTr = (article.translations as Record<string, any> | undefined)?.[lang];
-    if (userTr) {
-      displayTitle = userTr.title;
-      displayContent = userTr.content;
-      displaySummary = userTr.summary;
-      translationStatus = userTr.status;
+    const effectiveUserTr = userTr && userTr.status !== 'pending' ? userTr : undefined;
+    if (effectiveUserTr) {
+      displayTitle = effectiveUserTr.title;
+      displayContent = effectiveUserTr.content;
+      displaySummary = effectiveUserTr.summary;
+      displayAuthor = effectiveUserTr.author_name || builtinTr?.author_name || article.author_name;
+      displaySources = effectiveUserTr.sources || builtinTr?.sources || article.sources;
+      translationStatus = effectiveUserTr.status;
     } else if (builtinTr) {
       displayTitle = builtinTr.title;
       displayContent = builtinTr.content;
       displaySummary = builtinTr.summary;
+      displayAuthor = builtinTr.author_name || article.author_name;
+      displaySources = builtinTr.sources || article.sources;
       translationStatus = 'reviewed';
+    } else if (userTr) {
+      displayTitle = userTr.title;
+      displayContent = userTr.content;
+      displaySummary = userTr.summary;
+      translationStatus = userTr.status;
     } else {
       hasTranslation = false;
     }
@@ -110,6 +133,8 @@ contentRouter.get('/articles/:idOrSlug', (req: Request, res: Response) => {
   return res.json({
     article: {
       ...article,
+      author_name: displayAuthor,
+      sources: displaySources,
       display_title: displayTitle,
       display_content: displayContent,
       display_summary: displaySummary,
@@ -124,7 +149,7 @@ contentRouter.get('/translations/:lang', (req: Request, res: Response) => {
   const db = getDb();
   const lang = req.params.lang as LanguageCode;
 
-  const translations: Record<string, { title: string; summary: string; content: string; status?: string; translator_name?: string }> = {};
+  const translations: Record<string, { title: string; summary: string; content: string; author_name?: string; sources?: any[]; status?: string; translator_name?: string }> = {};
 
   // 1. Collect from ARTICLE_TRANSLATIONS
   for (const [articleId, langMap] of Object.entries(ARTICLE_TRANSLATIONS as Record<string, any>)) {
@@ -133,19 +158,23 @@ contentRouter.get('/translations/:lang', (req: Request, res: Response) => {
         title: langMap[lang].title,
         summary: langMap[lang].summary,
         content: langMap[lang].content,
+        author_name: langMap[lang].author_name,
+        sources: langMap[lang].sources,
         status: 'reviewed'
       };
     }
   }
 
-  // 2. Overlay with any article-level translations from db
+  // 2. Overlay with any reviewed/published article-level translations from db
   for (const article of db.articles) {
     const userTr = (article.translations as Record<string, any> | undefined)?.[lang];
-    if (userTr) {
+    if (userTr && (userTr.status !== 'pending' || !translations[article.id])) {
       translations[article.id] = {
         title: userTr.title,
         summary: userTr.summary,
         content: userTr.content,
+        author_name: userTr.author_name || translations[article.id]?.author_name,
+        sources: userTr.sources || translations[article.id]?.sources,
         status: userTr.status,
         translator_name: userTr.translator_name
       };
@@ -279,15 +308,16 @@ contentRouter.get('/genealogy', (req: Request, res: Response) => {
   const langCode = (req.query.lang as LanguageCode) || 'en';
   const mapped = db.genealogy.map(node => {
     const tr = GENEALOGY_NODE_TRANSLATIONS[node.id]?.[langCode];
-    if (langCode !== 'en' && tr) {
+    const srcTr = GENEALOGY_SOURCES_TRANSLATIONS[node.id]?.[langCode];
+    if (langCode !== 'en' && (tr || srcTr)) {
       return {
         ...node,
-        name: tr.name || node.name,
-        titles: tr.titles || node.titles,
-        reign: tr.reign || node.reign,
-        spouse: tr.spouse || node.spouse,
-        notes: tr.notes || node.notes,
-        sources: tr.sources || node.sources
+        name: tr?.name || node.name,
+        titles: tr?.titles || node.titles,
+        reign: tr?.reign || node.reign,
+        spouse: tr?.spouse || node.spouse,
+        notes: tr?.notes || node.notes,
+        sources: srcTr || tr?.sources || node.sources
       };
     }
     return node;
@@ -301,17 +331,18 @@ contentRouter.get('/timeline', (req: Request, res: Response) => {
   const langCode = (req.query.lang as LanguageCode) || 'en';
   const sorted = [...db.events_timeline].sort((a, b) => a.sort_year - b.sort_year).map(ev => {
     const tr = TIMELINE_EVENT_TRANSLATIONS[ev.id]?.[langCode];
-    if (langCode !== 'en' && tr) {
+    const meta = TIMELINE_METADATA_ENRICHMENTS[ev.id]?.[langCode];
+    if (langCode !== 'en' && (tr || meta)) {
       return {
         ...ev,
-        period: tr.period || ev.period,
-        year_text: tr.year_text || ev.year_text,
-        title: tr.title || ev.title,
-        rulers_involved: tr.rulers_involved || ev.rulers_involved,
-        political_development: tr.political_development || ev.political_development,
-        monuments_inscriptions: tr.monuments_inscriptions || ev.monuments_inscriptions,
-        primary_sources: tr.primary_sources || ev.primary_sources,
-        uncertainty_notes: tr.uncertainty_notes || ev.uncertainty_notes
+        period: tr?.period || ev.period,
+        year_text: meta?.year_text || tr?.year_text || ev.year_text,
+        title: tr?.title || ev.title,
+        rulers_involved: tr?.rulers_involved || ev.rulers_involved,
+        political_development: tr?.political_development || ev.political_development,
+        monuments_inscriptions: tr?.monuments_inscriptions || ev.monuments_inscriptions,
+        primary_sources: meta?.primary_sources || tr?.primary_sources || ev.primary_sources,
+        uncertainty_notes: tr?.uncertainty_notes || ev.uncertainty_notes
       };
     }
     return ev;
@@ -362,6 +393,7 @@ contentRouter.get('/inscriptions', (req: Request, res: Response) => {
 
   const mapped = list.map(i => {
     const tr = (INSCRIPTION_TRANSLATIONS as Record<string, any>)[i.id]?.[langCode];
+    const localizedStatus = (REVIEWED_STATUS_BY_LANG[langCode as LanguageCode] as any) || i.verification_status;
     if (langCode !== 'en' && tr) {
       return {
         ...i,
@@ -374,7 +406,8 @@ contentRouter.get('/inscriptions', (req: Request, res: Response) => {
         era_or_date: tr.era_or_date || i.era_or_date,
         historical_context: tr.summary || i.historical_context,
         english_translation: tr.english_translation || tr.summary || i.english_translation,
-        scholarly_references: tr.scholarly_references || i.scholarly_references
+        scholarly_references: tr.scholarly_references || i.scholarly_references,
+        verification_status: localizedStatus
       };
     }
     return i;
@@ -414,18 +447,21 @@ contentRouter.get('/documents', (req: Request, res: Response) => {
   const langCode = (req.query.lang as LanguageCode) || 'en';
   const mapped = db.documents.map(doc => {
     const tr = DOCUMENT_TRANSLATIONS[doc.id]?.[langCode];
-    if (langCode !== 'en' && tr) {
+    const meta = DOCUMENT_METADATA_ENRICHMENTS[doc.id]?.[langCode];
+    if (langCode !== 'en' && (tr || meta)) {
       return {
         ...doc,
-        title: tr.title || doc.title,
-        original_language: tr.original_language || doc.original_language,
-        approximate_date: tr.approximate_date || doc.approximate_date,
-        author_authority: tr.author_authority || doc.author_authority,
-        current_location: tr.current_location || doc.current_location,
-        source_provenance: tr.source_provenance || doc.source_provenance,
-        digitization_info: tr.digitization_info || doc.digitization_info,
-        translation_excerpt: tr.translation_excerpt || doc.translation_excerpt,
-        research_notes: tr.research_notes || doc.research_notes
+        title: tr?.title || doc.title,
+        original_language: tr?.original_language || doc.original_language,
+        approximate_date: tr?.approximate_date || doc.approximate_date,
+        author_authority: tr?.author_authority || doc.author_authority,
+        current_location: tr?.current_location || doc.current_location,
+        source_provenance: tr?.source_provenance || doc.source_provenance,
+        copyright_license: meta?.copyright_license || tr?.copyright_license || doc.copyright_license,
+        verification_status: (meta?.verification_status as any) || (tr?.verification_status as any) || doc.verification_status,
+        digitization_info: tr?.digitization_info || doc.digitization_info,
+        translation_excerpt: tr?.translation_excerpt || doc.translation_excerpt,
+        research_notes: tr?.research_notes || doc.research_notes
       };
     }
     return doc;
@@ -444,13 +480,19 @@ contentRouter.get('/gallery', (req: Request, res: Response) => {
   }
   const mapped = list.map(item => {
     const tr = GALLERY_TRANSLATIONS[item.id]?.[langCode];
-    if (langCode !== 'en' && tr) {
+    const meta = GALLERY_METADATA_ENRICHMENTS[item.id]?.[langCode];
+    if (langCode !== 'en' && (tr || meta)) {
       return {
         ...item,
-        title: tr.title || item.title,
-        period: tr.period || item.period,
-        location: tr.location || item.location,
-        description: tr.description || item.description
+        title: tr?.title || item.title,
+        period: meta?.period || tr?.period || item.period,
+        location: meta?.location || tr?.location || item.location,
+        creator_photographer: meta?.creator_photographer || tr?.creator_photographer || item.creator_photographer,
+        source: meta?.source || tr?.source || item.source,
+        copyright_license: meta?.copyright_license || tr?.copyright_license || item.copyright_license,
+        verification_status: (meta?.verification_status as any) || (tr?.verification_status as any) || item.verification_status,
+        alt_text: meta?.alt_text || tr?.alt_text || item.alt_text,
+        description: tr?.description || item.description
       };
     }
     return item;
@@ -464,11 +506,13 @@ contentRouter.get('/claims', (req: Request, res: Response) => {
   const langCode = (req.query.lang as LanguageCode) || 'en';
   const mapped = db.claims.map(claim => {
     const tr = CLAIM_TRANSLATIONS[claim.id]?.[langCode];
+    const localizedStatus = (CLAIM_STATUS_BY_LANG[claim.status]?.[langCode] as any) || claim.status;
     if (langCode !== 'en' && tr) {
       return {
         ...claim,
         topic: tr.topic || claim.topic,
         claim_statement: tr.claim_statement || claim.claim_statement,
+        status: (tr.status as any) || localizedStatus,
         supporting_evidence: tr.supporting_evidence || claim.supporting_evidence,
         contradictory_evidence: tr.contradictory_evidence || claim.contradictory_evidence,
         source_reliability_notes: tr.source_reliability_notes || claim.source_reliability_notes,

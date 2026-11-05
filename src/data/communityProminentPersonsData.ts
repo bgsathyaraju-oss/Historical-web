@@ -1406,7 +1406,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Vishnu Purana, Book IV, Chapter 4',
       'Imperial Gazetteer of India, Vol. XVIII'
     ],
-    imageUrl: ARCHIVE_IMG('maharshi_bhagiratha_penance.jpg')
+    imageUrl: '/assets/02_maharshi_bhagiratha_ganga_avatarana.webp'
   },
 
   // 9. Samrat Sagara
@@ -1512,7 +1512,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Mahabharata, Vana Parva, Sagara-Charita',
       'Harivamsha Purana, Harivamsha Parva, Chapter 14'
     ],
-    imageUrl: ARCHIVE_IMG('samrat_sagara_surya.jpg')
+    imageUrl: '/assets/01_samrat_sagara.webp'
   },
 
   // 10. Mata Jasma Devi (Jasma Odan)
@@ -3025,7 +3025,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Kalidasa, "Raghuvamsham" (Classical Sanskrit Mahakavya chronicling Dilipa, Raghu, Aja, Dasharatha, and Rama)',
       'Suryavamsha Gajapathi Praśastis (15th–16th Century CE Odisha & Andhra inscriptions invoking the Solar Dynasty / Suryavamsha)'
     ],
-    imageUrl: ARCHIVE_IMG('sri_rama_sculpture.jpg')
+    imageUrl: '/assets/03_maryada_purushottama_sri_rama.webp'
   },
   {
     id: 'raja_od_odra_nareshudu',

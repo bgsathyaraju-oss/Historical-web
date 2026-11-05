@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HistoricalLocation } from '../types';
+import { HistoricalLocation, LanguageCode } from '../types';
 import { Compass, MapPin, Landmark, ShieldCheck, Info, ExternalLink, Layers, Navigation, ArrowRight } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
 import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
@@ -14,8 +14,292 @@ interface HistoricalMapsPageProps {
   onNavigate: (path: string) => void;
 }
 
+const MAPS_MODAL_UI: Record<
+  LanguageCode,
+  {
+    ancientNameLabel: string;
+    historicalRegionLabel: string;
+    modernDistrictStateLabel: string;
+    frontierBadgeSuffix: string;
+    verificationStatusSite: string;
+    geographySignificanceLabel: string;
+    archaeologicalFindingsHeading: string;
+    inscriptionsHeading: string;
+    statesTerritoriesLabel: string;
+    migrationEpochLabel: string;
+    keyCitiesLabel: string;
+    verificationStatusCorridor: string;
+    regionalOverviewLabel: string;
+    citadelsFortsHeading: string;
+    sacredCentersHeading: string;
+    communitySynonymsHeading: string;
+    bannerTitle: string;
+    bannerSubtitle: string;
+    bannerBadge: string;
+    bannerVerification: string;
+    northernFrontierLabel: string;
+    northernFrontierVal: string;
+    imperialCoreLabel: string;
+    imperialCoreVal: string;
+    southernFrontierLabel: string;
+    southernFrontierVal: string;
+    bannerFullText: string;
+    bannerFullTextLabel: string;
+  }
+> = {
+  en: {
+    ancientNameLabel: 'Ancient Nomenclature',
+    historicalRegionLabel: 'Historical Region',
+    modernDistrictStateLabel: 'Modern District & State',
+    frontierBadgeSuffix: 'Frontier & Citadel',
+    verificationStatusSite: 'Archaeological & Epigraphic Site',
+    geographySignificanceLabel: 'Historical Geography & Strategic Significance',
+    archaeologicalFindingsHeading: 'Archaeological Survey & Structural Findings',
+    inscriptionsHeading: 'Corroborating Inscriptions Discovered at Site',
+    statesTerritoriesLabel: 'States & Territories',
+    migrationEpochLabel: 'Migration Epoch & Corridor',
+    keyCitiesLabel: 'Key Cities & Districts',
+    verificationStatusCorridor: 'Documented Historical Corridor',
+    regionalOverviewLabel: 'Regional Overview & Historical Trajectory',
+    citadelsFortsHeading: 'Historical Citadels, Forts & Hydraulic Landmarks',
+    sacredCentersHeading: 'Key Sacred Centers & Kshetrams',
+    communitySynonymsHeading: 'Predominant Community Synonyms & Sub-Castes',
+    bannerTitle: 'Territorial Extent of Suryavamsha Gajapathi Empire (c. 1465 CE)',
+    bannerSubtitle: 'Ganges to Kaveri Hegemony (Zenith under Emperor Kapilendra Deva)',
+    bannerBadge: 'Corroborated Cartographic Reconstruction',
+    bannerVerification: 'Epigraphic Boundary Model',
+    northernFrontierLabel: 'Northern Frontier',
+    northernFrontierVal: 'Hooghly / Mandaran (Lower Bengal)',
+    imperialCoreLabel: 'Imperial Core',
+    imperialCoreVal: 'Varanasi Kataka (Cuttack) & Srikshetra Puri',
+    southernFrontierLabel: 'Southern Frontier',
+    southernFrontierVal: 'Srirangam & Tiruchirappalli (Kaveri Basin)',
+    bannerFullText:
+      'Based on the corroborated findspots of the Veligalani copper-plate grant (1458 CE), Lingaraja temple proclamations (1452 CE), Draksharama and Simhachalam pillar inscriptions, Kondavidu and Udayagiri fortress bastions, and Kumara Hamvira Deva’s Srirangam donations (1464 CE), the Suryavamsha Gajapathi Empire at its zenith extended from the Bhagirathi-Hooghly in the north to the Kaveri River in the south.',
+    bannerFullTextLabel: 'Cartographic Methodology & Epigraphic Findspot Synthesis'
+  },
+  hi: {
+    ancientNameLabel: 'प्राचीन नामकरण',
+    historicalRegionLabel: 'ऐतिहासिक क्षेत्र',
+    modernDistrictStateLabel: 'आधुनिक जिला एवं राज्य',
+    frontierBadgeSuffix: 'सीमांत एवं दुर्ग',
+    verificationStatusSite: 'पुरातात्विक एवं अभिलेखीय स्थल',
+    geographySignificanceLabel: 'ऐतिहासिक भूगोल एवं सामरिक महत्त्व',
+    archaeologicalFindingsHeading: 'पुरातात्विक सर्वेक्षण एवं संरचनात्मक साक्ष्य',
+    inscriptionsHeading: 'स्थल पर प्राप्त पुष्टिकारक शिलालेख',
+    statesTerritoriesLabel: 'राज्य एवं क्षेत्र',
+    migrationEpochLabel: 'प्रवास युग एवं गलियारा',
+    keyCitiesLabel: 'प्रमुख नगर एवं जिले',
+    verificationStatusCorridor: 'प्रमाणित ऐतिहासिक गलियारा',
+    regionalOverviewLabel: 'क्षेत्रीय अवलोकन एवं ऐतिहासिक विकासक्रम',
+    citadelsFortsHeading: 'ऐतिहासिक दुर्ग, किले एवं जल-संरचनाएं',
+    sacredCentersHeading: 'प्रमुख पवित्र केंद्र एवं क्षेत्रम',
+    communitySynonymsHeading: 'प्रमुख सामुदायिक पर्याय एवं उप-शाखाएं',
+    bannerTitle: 'सूर्यवंश गजपति साम्राज्य का क्षेत्रीय विस्तार (लगभग १४६५ ईस्वी)',
+    bannerSubtitle: 'गंगा से कावेरी तक आधिपत्य (सम्राट कपिलेन्द्र देव के अधीन उत्कर्ष)',
+    bannerBadge: 'सत्यापित मानचित्रीय पुनर्निर्माण',
+    bannerVerification: 'अभिलेखीय सीमा प्रतिमान',
+    northernFrontierLabel: 'उत्तरी सीमांत',
+    northernFrontierVal: 'हुगली / मंदारन (निम्न बंगाल)',
+    imperialCoreLabel: 'साम्राज्यिक केंद्र',
+    imperialCoreVal: 'वाराणसी कटक एवं श्रीक्षेत्र पुरी',
+    southernFrontierLabel: 'दक्षिणी सीमांत',
+    southernFrontierVal: 'श्रीरंगम एवं तिरुचिरापल्ली (कावेरी बेसिन)',
+    bannerFullText:
+      'वेलिगलानि ताम्रपत्र अनुदान (१४५८ ईस्वी), लिंगराज मंदिर उद्घोषणाओं (१४५२ ईस्वी), द्राक्षाराम तथा सिंहाचलम स्तंभ अभिलेखों, कोंडवीडु एवं उदयगिरि दुर्ग प्राचीरों और कुमार हम्वीर देव के श्रीरंगम दान-अभिलेख (१४६४ ईस्वी) के सत्यापित प्राप्ति-स्थलों के आधार पर सूर्यवंश गजपति साम्राज्य अपने चरमोत्कर्ष पर उत्तर में भागीरथी-हुगली से लेकर दक्षिण में कावेरी नदी तक विस्तृत था।',
+    bannerFullTextLabel: 'मानचित्रीय कार्यप्रणाली एवं अभिलेखीय प्राप्ति-स्थल संश्लेषण'
+  },
+  te: {
+    ancientNameLabel: 'ప్రాచీన నామధేయం',
+    historicalRegionLabel: 'చారిత్రక ప్రాంతం',
+    modernDistrictStateLabel: 'ఆధునిక జిల్లా & రాష్ట్రం',
+    frontierBadgeSuffix: 'సరిహద్దు & దుర్గం',
+    verificationStatusSite: 'పురావస్తు & శాసన ప్రదేశం',
+    geographySignificanceLabel: 'చారిత్రక భూగోళం & వ్యూహాత్మక ప్రాముఖ్యత',
+    archaeologicalFindingsHeading: 'పురావస్తు సర్వే & నిర్మాణ ఆధారాలు',
+    inscriptionsHeading: 'ఈ ప్రదేశంలో లభించిన ధృవీకరణ శాసనాలు',
+    statesTerritoriesLabel: 'రాష్ట్రాలు & ప్రాంతాలు',
+    migrationEpochLabel: 'వలస యుగం & మార్గం',
+    keyCitiesLabel: 'ప్రధాన నగరాలు & జిల్లాలు',
+    verificationStatusCorridor: 'ధృవీకరించబడిన చారిత్రక మార్గం',
+    regionalOverviewLabel: 'ప్రాంతీయ అవలోకనం & చారిత్రక ప్రస్థానం',
+    citadelsFortsHeading: 'చారిత్రక దుర్గాలు, కోటలు & జల నిర్మాణాలు',
+    sacredCentersHeading: 'ప్రధాన పవిత్ర కేంద్రాలు & క్షేత్రాలు',
+    communitySynonymsHeading: 'ప్రధాన సామాజిక పర్యాయపదాలు & ఉప-శాఖలు',
+    bannerTitle: 'సూర్యవంశ గజపతి సామ్రాజ్య భౌగోళిక విస్తరణ (సుమారు క్రీ.శ. 1465)',
+    bannerSubtitle: 'గంగ నుండి కావేరి వరకు ఆధిపత్యం (చక్రవర్తి కపిలేంద్ర దేవుని స్వర్ణయుగం)',
+    bannerBadge: 'శాసన ఆధారిత పట పునర్నిర్మాణం',
+    bannerVerification: 'శాసన సరిహద్దు నమూనా',
+    northernFrontierLabel: 'ఉత్తర సరిహద్దు',
+    northernFrontierVal: 'హుగ్లీ / మందారన్ (దిగువ బెంగాల్)',
+    imperialCoreLabel: 'సామ్రాజ్య కేంద్రం',
+    imperialCoreVal: 'వారణాసి కటకం (కటక్) & శ్రీక్షేత్ర పూరీ',
+    southernFrontierLabel: 'దక్షిణ సరిహద్దు',
+    southernFrontierVal: 'శ్రీరంగం & తిరుచిరాపల్లి (కావేరి లోయ)',
+    bannerFullText:
+      'వెలిగలాని తామ్రశాసనం (క్రీ.శ. 1458), లింగరాజ ఆలయ శాసనాలు (క్రీ.శ. 1452), ద్రాక్షారామ మరియు సింహాచలం స్తంభ శాసనాలు, కొండవీడు మరియు ఉదయగిరి కోట బురుజులు, కుమార హంవీర దేవుని శ్రీరంగం దానాలు (క్రీ.శ. 1464) ఆధారంగా సూర్యవంశ గజపతి సామ్రాజ్యం ఉత్తరాన భాగీరథీ-హుగ్లీ నుండి దక్షిణాన కావేరి నది వరకు విస్తరించింది.',
+    bannerFullTextLabel: 'పట నిర్మాణ పద్ధతి & శాసన ఆధారాల సమన్వయం'
+  },
+  kn: {
+    ancientNameLabel: 'ಪ್ರಾಚೀನ ಹೆಸರು',
+    historicalRegionLabel: 'ಐತಿಹಾಸಿಕ ಪ್ರದೇಶ',
+    modernDistrictStateLabel: 'ಆಧುನಿಕ ಜಿಲ್ಲೆ ಮತ್ತು ರಾಜ್ಯ',
+    frontierBadgeSuffix: 'ಗಡಿ ಮತ್ತು ಕೋಟೆ',
+    verificationStatusSite: 'ಪುರಾತತ್ವ ಮತ್ತು ಶಾಸನ ತಾಣ',
+    geographySignificanceLabel: 'ಐತಿಹಾಸಿಕ ಭೂಗೋಳ ಮತ್ತು ಆಯಕಟ್ಟಿನ ಮಹತ್ವ',
+    archaeologicalFindingsHeading: 'ಪುರಾತತ್ವ ಸಮೀಕ್ಷೆ ಮತ್ತು ರಚನಾತ್ಮಕ ಸಂಶೋಧನೆಗಳು',
+    inscriptionsHeading: 'ಈ ತಾಣದಲ್ಲಿ ದೊರೆತ ದೃಢೀಕರಣ ಶಾಸನಗಳು',
+    statesTerritoriesLabel: 'ರಾಜ್ಯಗಳು ಮತ್ತು ಪ್ರದೇಶಗಳು',
+    migrationEpochLabel: 'ವಲಸೆ ಯುಗ ಮತ್ತು ಮಾರ್ಗ',
+    keyCitiesLabel: 'ಪ್ರಮುಖ ನಗರಗಳು ಮತ್ತು ಜಿಲ್ಲೆಗಳು',
+    verificationStatusCorridor: 'ದಾಖಲಿತ ಐತಿಹಾಸಿಕ ಮಾರ್ಗ',
+    regionalOverviewLabel: 'ಪ್ರಾದೇಶಿಕ ಅವಲೋಕನ ಮತ್ತು ಐತಿಹಾಸಿಕ ಪಥ',
+    citadelsFortsHeading: 'ಐತಿಹಾಸಿಕ ಕೋಟೆಗಳು, ದುರ್ಗಗಳು ಮತ್ತು ಜಲ ನಿರ್ಮಾಣಗಳು',
+    sacredCentersHeading: 'ಪ್ರಮುಖ ಪವಿತ್ರ ಕೇಂದ್ರಗಳು ಮತ್ತು ಕ್ಷೇತ್ರಗಳು',
+    communitySynonymsHeading: 'ಪ್ರಮುಖ ಸಮುದಾಯ ಪರ್ಯಾಯ ನಾಮಗಳು ಮತ್ತು ಉಪ-ಪಂಗಡಗಳು',
+    bannerTitle: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಭೌಗೋಳಿಕ ವಿಸ್ತಾರ (ಸು. ಸಾಮಾನ್ಯ ಶಕ 1465)',
+    bannerSubtitle: 'ಗಂಗೆಯಿಂದ ಕಾವೇರಿಯವರೆಗೆ ಸಾರ್ವಭೌಮತ್ವ (ಸಾಮ್ರಾಟ್ ಕಪಿಲೇಂದ್ರ ದೇವನ ಕಾಲದ ಉತ್ತುಂಗ)',
+    bannerBadge: 'ಶಾಸನಾಧಾರಿತ ನಕ್ಷೆಯ ಪುನರ್ನಿರ್ಮಾಣ',
+    bannerVerification: 'ಶಾಸನ ಗಡಿ ಮಾದರಿ',
+    northernFrontierLabel: 'ಉತ್ತರ ಗಡಿ',
+    northernFrontierVal: 'ಹೂಗ್ಲಿ / ಮಂದಾರನ್ (ಕೆಳ ಬಂಗಾಳ)',
+    imperialCoreLabel: 'ಸಾಮ್ರಾಜ್ಯದ ಕೇಂದ್ರ',
+    imperialCoreVal: 'ವಾರಣಾಸಿ ಕಟಕ (ಕಟಕ್) ಮತ್ತು ಶ್ರೀಕ್ಷೇತ್ರ ಪುರಿ',
+    southernFrontierLabel: 'ದಕ್ಷಿಣ ಗಡಿ',
+    southernFrontierVal: 'ಶ್ರೀರಂಗಂ ಮತ್ತು ತಿರುಚಿರಾಪಳ್ಳಿ (ಕಾವೇರಿ ಕಣಿವೆ)',
+    bannerFullText:
+      'ವೆಲಿಗಲಾನಿ ತಾಮ್ರಶಾಸನ (ಸಾ.ಶ. 1458), ಲಿಂಗರಾಜ ದೇವಾಲಯದ ಘೋಷಣೆಗಳು (ಸಾ.ಶ. 1452), ದ್ರಾಕ್ಷಾರಾಮ ಮತ್ತು ಸಿಂಹಾಚಲಂ ಸ್ತಂಭ ಶಾಸನಗಳು, ಕೊಂಡವೀಡು ಮತ್ತು ಉದಯಗಿರಿ ಕೋಟೆ ಕೊತ್ತಲಗಳು ಹಾಗೂ ಕುಮಾರ ಹಂವೀರ ದೇವನ ಶ್ರೀರಂಗಂ ದಾನ ಶಾಸನಗಳ (ಸಾ.ಶ. 1464) ಆಧಾರದ ಮೇಲೆ ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯವು ಉತ್ತರದ ಭಾಗೀರಥಿ-ಹೂಗ್ಲಿಯಿಂದ ದಕ್ಷಿಣದ ಕಾವೇರಿ ನದಿಯವರೆಗೆ ವಿಸ್ತರಿಸಿತ್ತು.',
+    bannerFullTextLabel: 'ನಕ್ಷೆ ವಿಧಾನ ಮತ್ತು ಶಾಸನ ದೊರೆತ ಸ್ಥಳಗಳ ಸಮನ್ವಯ'
+  },
+  ta: {
+    ancientNameLabel: 'பண்டைய பெயர்',
+    historicalRegionLabel: 'வரலாற்றுப் பகுதி',
+    modernDistrictStateLabel: 'நவீன மாவட்டம் மற்றும் மாநிலம்',
+    frontierBadgeSuffix: 'எல்லை மற்றும் கோட்டை',
+    verificationStatusSite: 'தொல்லியல் மற்றும் கல்வெட்டுத் தளம்',
+    geographySignificanceLabel: 'வரலாற்றுப் புவியியல் மற்றும் மூலோபாய முக்கியத்துவம்',
+    archaeologicalFindingsHeading: 'தொல்லியல் ஆய்வு மற்றும் கட்டுமானக் கண்டுபிடிப்புகள்',
+    inscriptionsHeading: 'இவ்விடத்தில் கண்டெடுக்கப்பட்ட கல்வெட்டு சான்றுகள்',
+    statesTerritoriesLabel: 'மாநிலங்கள் மற்றும் பிரதேசங்கள்',
+    migrationEpochLabel: 'இடப்பெயர்வு சகாப்தம் மற்றும் பாதை',
+    keyCitiesLabel: 'முக்கிய நகரங்கள் மற்றும் மாவட்டங்கள்',
+    verificationStatusCorridor: 'ஆவணப்படுத்தப்பட்ட வரலாற்றுப் பாதை',
+    regionalOverviewLabel: 'பிராந்தியக் கண்ணோட்டம் மற்றும் வரலாற்றுப் போக்கு',
+    citadelsFortsHeading: 'வரலாற்றுக் கோட்டைகள், அரண்கள் மற்றும் நீரியல் சின்னங்கள்',
+    sacredCentersHeading: 'முக்கிய புனிதத் தலங்கள் மற்றும் சேத்திரங்கள்',
+    communitySynonymsHeading: 'முக்கிய சமூகப் பெயர்கள் மற்றும் உட்பிரிவுகள்',
+    bannerTitle: 'சூரியவம்ச கஜபதி பேரரசின் நிலப்பரப்பு விரிவாக்கம் (கி.பி. 1465)',
+    bannerSubtitle: 'கங்கை முதல் காவிரி வரை மேலாதிக்கம் (பேரரசர் கபிலேந்திர தேவரின் உச்சக்கட்டம்)',
+    bannerBadge: 'கல்வெட்டு ஆதார வரைபட மீள்கட்டமைப்பு',
+    bannerVerification: 'கல்வெட்டு எல்லை மாதிரி',
+    northernFrontierLabel: 'வடக்கு எல்லை',
+    northernFrontierVal: 'ஹூக்ளி / மந்தாரன் (கீழ் வங்காளம்)',
+    imperialCoreLabel: 'பேரரசின் மையம்',
+    imperialCoreVal: 'வாரணாசி கட்டக் மற்றும் ஸ்ரீஷேத்திர புரி',
+    southernFrontierLabel: 'தெற்கு எல்லை',
+    southernFrontierVal: 'ஸ்ரீரங்கம் மற்றும் திருச்சிராப்பள்ளி (காவிரிப் படுகை)',
+    bannerFullText:
+      'வெலிகலானி செப்பேடு (கி.பி. 1458), லிங்கராஜ கோயில் கல்வெட்டுகள் (கி.பி. 1452), திராட்சாராமம் மற்றும் சிம்மாச்சலம் தூண் கல்வெட்டுகள், கொண்டவீடு மற்றும் உதயகிரி கோட்டைகள் மற்றும் குமார ஹம்வீர தேவரின் ஸ்ரீரங்கம் கொடைக் கல்வெட்டு (கி.பி. 1464) ஆகியவற்றின் அடிப்படையில் சூரியவம்ச கஜபதி பேரரசு வடக்கே பாகீரதி-ஹூக்ளி முதல் தெற்கே காவிரி ஆறு வரை பரவியிருந்தது.',
+    bannerFullTextLabel: 'வரைபட முறைமை மற்றும் கல்வெட்டு இடங்களின் தொகுப்பு'
+  },
+  mr: {
+    ancientNameLabel: 'प्राचीन नाव',
+    historicalRegionLabel: 'ऐतिहासिक प्रदेश',
+    modernDistrictStateLabel: 'आधुनिक जिल्हा आणि राज्य',
+    frontierBadgeSuffix: 'सीमा आणि दुर्ग',
+    verificationStatusSite: 'पुरातत्त्वीय आणि शिलालेखीय स्थळ',
+    geographySignificanceLabel: 'ऐतिहासिक भूगोल आणि सामरिक महत्त्व',
+    archaeologicalFindingsHeading: 'पुरातत्त्वीय सर्वेक्षण आणि स्थापत्य निष्कर्ष',
+    inscriptionsHeading: 'स्थळावर सापडलेले पुष्टीकारक शिलालेख',
+    statesTerritoriesLabel: 'राज्ये आणि प्रदेश',
+    migrationEpochLabel: 'स्थलांतर युग आणि मार्ग',
+    keyCitiesLabel: 'प्रमुख शहरे आणि जिल्हे',
+    verificationStatusCorridor: 'दस्तऐवजीकृत ऐतिहासिक मार्ग',
+    regionalOverviewLabel: 'प्रादेशिक आढावा आणि ऐतिहासिक वाटचाल',
+    citadelsFortsHeading: 'ऐतिहासिक किल्ले, दुर्ग आणि जल-स्थापत्य',
+    sacredCentersHeading: 'प्रमुख पवित्र केंद्रे आणि क्षेत्रे',
+    communitySynonymsHeading: 'प्रमुख समुदाय पर्यायी नावे आणि पोटशाखा',
+    bannerTitle: 'सूर्यवंश गजपती साम्राज्याचा प्रादेशिक विस्तार (इ.स. १४६५)',
+    bannerSubtitle: 'गंगा ते कावेरी अधिपत्य (सम्राट कपिलेन्द्र देव यांच्या काळातील उत्कर्ष)',
+    bannerBadge: 'सत्यापित नकाशाशास्त्रीय पुनर्रचना',
+    bannerVerification: 'शिलालेखीय सीमा प्रारूप',
+    northernFrontierLabel: 'उत्तरेकडील सीमा',
+    northernFrontierVal: 'हुगळी / मंदारन (दक्षिण बंगाल)',
+    imperialCoreLabel: 'साम्राज्याचे केंद्र',
+    imperialCoreVal: 'वाराणसी कटक आणि श्रीक्षेत्र पुरी',
+    southernFrontierLabel: 'दक्षिणेकडील सीमा',
+    southernFrontierVal: 'श्रीरंगम आणि तिरुचिरापल्ली (कावेरी खोरे)',
+    bannerFullText:
+      'वेलिगलानी ताम्रपट (इ.स. १४५८), लिंगराज मंदिर शिलालेख (इ.स. १४५२), द्राक्षाराम आणि सिंहाचलम स्तंभलेख, कोंडवीडू आणि उदयगिरी किल्ले आणि कुमार हम्वीर देव यांच्या श्रीरंगम दानलेखाच्या (इ.स. १४६४) आधारे सूर्यवंश गजपती साम्राज्य उत्तरेस भागीरथी-हुगळीपासून दक्षिणेस कावेरी नदीपर्यंत पसरलेले होते.',
+    bannerFullTextLabel: 'नकाशाशास्त्रीय कार्यपद्धती आणि शिलालेखीय प्राप्तीस्थळ संकलन'
+  },
+  or: {
+    ancientNameLabel: 'ପ୍ରାଚୀନ ନାମକରଣ',
+    historicalRegionLabel: 'ଐତିହାସିକ ଅଞ୍ଚଳ',
+    modernDistrictStateLabel: 'ଆଧୁନିକ ଜିଲ୍ଲା ଓ ରାଜ୍ୟ',
+    frontierBadgeSuffix: 'ସୀମାନ୍ତ ଓ ଦୁର୍ଗ',
+    verificationStatusSite: 'ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଓ ଶିଳାଲେଖ ସ୍ଥଳ',
+    geographySignificanceLabel: 'ଐତିହାସିକ ଭୂଗୋଳ ଓ ସାମରିକ ମହତ୍ତ୍ୱ',
+    archaeologicalFindingsHeading: 'ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସର୍ବେକ୍ଷଣ ଓ ସ୍ଥାପତ୍ୟ ନିଦର୍ଶନ',
+    inscriptionsHeading: 'ଏହି ସ୍ଥଳରୁ ମିଳିଥିବା ପ୍ରମାଣିତ ଶିଳାଲେଖ',
+    statesTerritoriesLabel: 'ରାଜ୍ୟ ଓ ଅଞ୍ଚଳ',
+    migrationEpochLabel: 'ପ୍ରବାସ ଯୁଗ ଓ ମାର୍ଗ',
+    keyCitiesLabel: 'ପ୍ରମୁଖ ସହର ଓ ଜିଲ୍ଲା',
+    verificationStatusCorridor: 'ପ୍ରମାଣିତ ଐତିହାସିକ ମାର୍ଗ',
+    regionalOverviewLabel: 'ଆଞ୍ଚଳିକ ସମୀକ୍ଷା ଓ ଐତିହାସିକ ଗତିପଥ',
+    citadelsFortsHeading: 'ଐତିହାସିକ ଦୁର୍ଗ, ଗଡ଼ ଓ ଜଳ-ସ୍ଥାପତ୍ୟ',
+    sacredCentersHeading: 'ପ୍ରମୁଖ ପବିତ୍ର କେନ୍ଦ୍ର ଓ କ୍ଷେତ୍ର',
+    communitySynonymsHeading: 'ପ୍ରମୁଖ ସାମାଜିକ ପର୍ଯ୍ୟାୟ ଓ ଉପ-ଶାଖା',
+    bannerTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଗଜପତି ସାମ୍ରାଜ୍ୟର ଭୌଗୋଳିକ ବିସ୍ତାର (ପ୍ରାୟ ୧୪୬୫ ଖ୍ରୀଷ୍ଟାବ୍ଦ)',
+    bannerSubtitle: 'ଗଙ୍ଗାରୁ କାବେରୀ ପର୍ଯ୍ୟନ୍ତ ଆଧିପତ୍ୟ (ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ଶାସନର ଶୀର୍ଷକାଳ)',
+    bannerBadge: 'ପ୍ରମାଣିତ ମାନଚିତ୍ର ପୁନର୍നിର୍ମାଣ',
+    bannerVerification: 'ଶିଳାଲେଖ ସୀମା ମଡେଲ',
+    northernFrontierLabel: 'ଉତ୍ତର ସୀମାନ୍ତ',
+    northernFrontierVal: 'ହୁଗୁଳି / ମନ୍ଦାରନ (ନିମ୍ନ ବଙ୍ଗ)',
+    imperialCoreLabel: 'ସାମ୍ରାଜ୍ୟର କେନ୍ଦ୍ର',
+    imperialCoreVal: 'ବାରାଣସୀ କଟକ ଓ ଶ୍ରୀକ୍ଷେତ୍ର ପୁରୀ',
+    southernFrontierLabel: 'ଦକ୍ଷିଣ ସୀମାନ୍ତ',
+    southernFrontierVal: 'ଶ୍ରୀରଙ୍ଗମ ଓ ତିରୁଚିରାପଲ୍ଲୀ (କାବେରୀ ଉପତ୍ୟକା)',
+    bannerFullText:
+      'ବେଲିଗଲାନି ତାମ୍ରପତ୍ର (୧୪୫୮ ଖ୍ରୀଷ୍ଟାବ୍ଦ), ଲିଙ୍ଗରାଜ ମନ୍ଦିର ଶିଳାଲେଖ (୧୪୫୨ ଖ୍ରୀଷ୍ଟାବ୍ଦ), ଦ୍ରାକ୍ଷାରାମ ଓ ସିଂହାଚଳମ ସ୍ତମ୍ଭ ଲେଖ, କୋଣ୍ଡାଭିଡୁ ଓ ଉଦୟଗିରି ଦୁର୍ଗ ଏବଂ କୁମାର ହମ୍ବୀର ଦେବଙ୍କ ଶ୍ରୀରଙ୍ଗମ ଦାନ ଅଭିଲେଖ (୧୪୬୪ ଖ୍ରୀଷ୍ଟାବ୍ଦ) ଆଧାରରେ ସୂର୍ଯ୍ୟବଂଶ ଗଜପତି ସାମ୍ରାଜ୍ୟ ଉତ୍ତରରେ ଭାଗୀରଥୀ-ହୁଗୁଳିରୁ ଦକ୍ଷିଣରେ କାବେରୀ ନଦୀ ପର୍ଯ୍ୟନ୍ତ ବିସ୍ତୃତ ଥିଲା।',
+    bannerFullTextLabel: 'ମାନଚିତ୍ର ପ୍ରଣାଳୀ ଓ ଶିଳାଲେଖ ପ୍ରାପ୍ତିସ୍ଥଳ ସମନ୍ୱୟ'
+  },
+  bn: {
+    ancientNameLabel: 'প্রাচীন নামকরণ',
+    historicalRegionLabel: 'ঐতিহাসিক অঞ্চল',
+    modernDistrictStateLabel: 'আধুনিক জেলা ও রাজ্য',
+    frontierBadgeSuffix: 'সীমান্ত ও দুর্গ',
+    verificationStatusSite: 'প্রত্নতাত্ত্বিক ও শিলালিপি স্থল',
+    geographySignificanceLabel: 'ঐতিহাসিক ভূগোল ও কৌশলগত গুরুত্ব',
+    archaeologicalFindingsHeading: 'প্রত্নতাত্ত্বিক জরিপ ও স্থাপত্য নিদর্শন',
+    inscriptionsHeading: 'স্থলে প্রাপ্ত প্রামাণ্য শিলালিপি',
+    statesTerritoriesLabel: 'রাজ্য ও অঞ্চলসমূহ',
+    migrationEpochLabel: 'অভিবাসন যুগ ও করিডোর',
+    keyCitiesLabel: 'প্রধান শহর ও জেলা',
+    verificationStatusCorridor: 'নথিভুক্ত ঐতিহাসিক করিডোর',
+    regionalOverviewLabel: 'আঞ্চলিক পর্যালোচনা ও ঐতিহাসিক গতিপথ',
+    citadelsFortsHeading: 'ঐতিহাসিক দুর্গ, গড় ও জল-স্থাপত্য',
+    sacredCentersHeading: 'প্রধান পবিত্র কেন্দ্র ও ক্ষেত্রসমূহ',
+    communitySynonymsHeading: 'প্রধান সম্প্রদায়গত সমার্থক নাম ও উপ-শাখা',
+    bannerTitle: 'সূর্যবংশ গজপতি সাম্রাজ্যের ভৌগোলিক বিস্তার (আনুমানিক ১৪৬৫ খ্রিস্টাব্দ)',
+    bannerSubtitle: 'গঙ্গা থেকে কাবেরী পর্যন্ত আধিপত্য (সম্রাট কপিলেন্দ্র দেবের আমলে শীর্ষবিন্দু)',
+    bannerBadge: 'প্রামাণ্য মানচিত্র পুনর্গঠন',
+    bannerVerification: 'শিলালিপিভিত্তিক সীমানা মডেল',
+    northernFrontierLabel: 'উত্তর সীমান্ত',
+    northernFrontierVal: 'হুগলি / মান্দারন (নিম্ন বঙ্গ)',
+    imperialCoreLabel: 'সাম্রাজ্যের কেন্দ্র',
+    imperialCoreVal: 'বারাণসী কটক ও শ্রীক্ষেত্র পুরী',
+    southernFrontierLabel: 'দক্ষিণ সীমান্ত',
+    southernFrontierVal: 'শ্রীরঙ্গম ও তিরুচিরাপল্লী (কাবেরী অববাহিকা)',
+    bannerFullText:
+      'ভেলিগলানি তাম্রশাসন (১৪৫৮ খ্রিস্টাব্দ), লিঙ্গরাজ মন্দিরের ঘোষণা (১৪৫২ খ্রিস্টাব্দ), দ্রাক্ষারাম ও সিংহাচলম স্তম্ভলিপি, কোন্ডাভিড়ু ও উদয়গিরি দুর্গপ্রাচীর এবং কুমার হম্বীর দেবের শ্রীরঙ্গম দানলিপি (১৪৬৪ খ্রিস্টাব্দ) অনুসারে সূর্যবংশ গজপতি সাম্রাজ্য উত্তরে ভাগীরথী-হুগলি থেকে দক্ষিণে কাবেরী নদী পর্যন্ত বিস্তৃত ছিল।',
+    bannerFullTextLabel: 'মানচিত্র পদ্ধতি ও শিলালিপি প্রাপ্তিস্থান সংশ্লেষণ'
+  }
+};
+
 export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNavigate }) => {
   const { language, translateText } = useLanguage();
+  const ui = MAPS_MODAL_UI[language] || MAPS_MODAL_UI.en;
   const [locations, setLocations] = useState<HistoricalLocation[]>(() => getCanonicalLocations(language));
   const [activeView, setActiveView] = useState<'cartography' | 'corridors'>('cartography');
   const [activeRegion, setActiveRegion] = useState<string>('All');
@@ -48,27 +332,27 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
   const buildLocationModalItem = (loc: HistoricalLocation): ContentDetailItem => ({
     id: loc.id,
     title: loc.name,
-    subtitle: `Ancient Name: ${loc.ancient_name} • ${loc.modern_district}, ${loc.modern_state}`,
-    badge: `${loc.region} Frontier & Citadel`,
-    verificationStatus: 'Archaeological & Epigraphic Site',
+    subtitle: `${ui.ancientNameLabel}: ${loc.ancient_name} • ${loc.modern_district}, ${loc.modern_state}`,
+    badge: `${loc.region} • ${ui.frontierBadgeSuffix}`,
+    verificationStatus: ui.verificationStatusSite,
     imageUrl: loc.image_url,
     imageLayout: 'banner',
     metadata: [
-      { label: 'Ancient Nomenclature', value: loc.ancient_name },
-      { label: 'Historical Region', value: loc.region },
-      { label: 'Modern District & State', value: `${loc.modern_district}, ${loc.modern_state}` }
+      { label: ui.ancientNameLabel, value: loc.ancient_name },
+      { label: ui.historicalRegionLabel, value: loc.region },
+      { label: ui.modernDistrictStateLabel, value: `${loc.modern_district}, ${loc.modern_state}` }
     ],
     fullText: loc.summary,
-    fullTextLabel: 'Historical Geography & Strategic Significance',
+    fullTextLabel: ui.geographySignificanceLabel,
     sections: [
       {
-        heading: 'Archaeological Survey & Structural Findings',
+        heading: ui.archaeologicalFindingsHeading,
         type: 'text',
         content: loc.archaeological_findings
       },
       ...(loc.inscriptions_found && loc.inscriptions_found.length > 0
         ? [{
-            heading: 'Corroborating Inscriptions Discovered at Site',
+            heading: ui.inscriptionsHeading,
             type: 'list' as const,
             items: loc.inscriptions_found
           }]
@@ -92,31 +376,31 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
     return {
       id: reg.id,
       title: localizedTitle,
-      subtitle: `States & Territories: ${reg.states_and_territories.join(', ')}`,
-      badge: `Epoch: ${reg.migration_epoch_and_corridor}`,
-      verificationStatus: 'Documented Historical Corridor',
+      subtitle: `${ui.statesTerritoriesLabel}: ${reg.states_and_territories.join(', ')}`,
+      badge: `${ui.migrationEpochLabel}: ${reg.migration_epoch_and_corridor}`,
+      verificationStatus: ui.verificationStatusCorridor,
       imageUrl: corridorImageMap[reg.id] || `${base}odra_kalinga_map.jpg`,
       imageLayout: 'banner',
       metadata: [
-        { label: 'States & Territories', value: reg.states_and_territories.join(', ') },
-        { label: 'Migration Epoch & Corridor', value: reg.migration_epoch_and_corridor },
-        { label: 'Key Cities & Districts', value: reg.prominent_cities_districts.join(', ') }
+        { label: ui.statesTerritoriesLabel, value: reg.states_and_territories.join(', ') },
+        { label: ui.migrationEpochLabel, value: reg.migration_epoch_and_corridor },
+        { label: ui.keyCitiesLabel, value: reg.prominent_cities_districts.join(', ') }
       ],
       fullText: overview,
-      fullTextLabel: 'Regional Overview & Historical Trajectory',
+      fullTextLabel: ui.regionalOverviewLabel,
       sections: [
         {
-          heading: 'Historical Citadels, Forts & Hydraulic Landmarks',
+          heading: ui.citadelsFortsHeading,
           type: 'list',
           items: reg.historical_forts_and_landmarks
         },
         {
-          heading: 'Key Sacred Centers & Kshetrams',
+          heading: ui.sacredCentersHeading,
           type: 'list',
           items: reg.sacred_centers
         },
         {
-          heading: 'Predominant Community Synonyms & Sub-Castes',
+          heading: ui.communitySynonymsHeading,
           type: 'tags',
           items: reg.predominant_community_synonyms
         }
@@ -126,20 +410,19 @@ export const HistoricalMapsPage: React.FC<HistoricalMapsPageProps> = ({ onNaviga
 
   const buildBannerModalItem = (): ContentDetailItem => ({
     id: 'map_1465_zenith',
-    title: 'Territorial Extent of Suryavamsha Gajapathi Empire (c. 1465 CE)',
-    subtitle: 'Ganges to Kaveri Hegemony (Zenith under Emperor Kapilendra Deva)',
-    badge: 'Corroborated Cartographic Reconstruction',
-    verificationStatus: 'Epigraphic Boundary Model',
+    title: ui.bannerTitle,
+    subtitle: ui.bannerSubtitle,
+    badge: ui.bannerBadge,
+    verificationStatus: ui.bannerVerification,
     imageUrl: `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`,
     imageLayout: 'banner',
     metadata: [
-      { label: 'Northern Frontier', value: 'Hooghly / Mandaran (Lower Bengal)' },
-      { label: 'Imperial Core', value: 'Varanasi Kataka (Cuttack) & Srikshetra Puri' },
-      { label: 'Southern Frontier', value: 'Srirangam & Tiruchirappalli (Kaveri Basin)' }
+      { label: ui.northernFrontierLabel, value: ui.northernFrontierVal },
+      { label: ui.imperialCoreLabel, value: ui.imperialCoreVal },
+      { label: ui.southernFrontierLabel, value: ui.southernFrontierVal }
     ],
-    fullText:
-      'Based on the corroborated findspots of the Veligalani copper-plate grant (1458 CE), Lingaraja temple proclamations (1452 CE), Draksharama and Simhachalam pillar inscriptions, Kondavidu and Udayagiri fortress bastions, and Kumara Hamvira Deva’s Srirangam donations (1464 CE), the Suryavamsha Gajapathi Empire at its zenith extended from the Bhagirathi-Hooghly in the north to the Kaveri River in the south.',
-    fullTextLabel: 'Cartographic Methodology & Epigraphic Findspot Synthesis',
+    fullText: ui.bannerFullText,
+    fullTextLabel: ui.bannerFullTextLabel,
     sources: [
       { title: 'Epigraphia Indica, Vol. XXXIII (Veligalani Plates of Kapilendra Deva)', author: 'Dr. D.C. Sircar', year: '1458 CE', type: 'Primary Inscription' },
       { title: 'Annual Report on Indian Epigraphy (Srirangam Inscription of Hamvira Deva)', author: 'Archaeological Survey of India', year: '1464 CE', type: 'Primary Inscription' },

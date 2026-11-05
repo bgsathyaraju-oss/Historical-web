@@ -1221,11 +1221,11 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-start">
               {/* Portrait Frame */}
               <div className="lg:col-span-4 space-y-2.5 max-w-sm mx-auto lg:max-w-none w-full">
-                <div className="relative rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-lg bg-[#FFFCF5] aspect-[4/5]">
+                <div className="relative rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-lg bg-[#FFFCF5] dark:bg-[#1A0A0E] aspect-[4/5] flex items-center justify-center">
                   <img
                     src={activeFigure.image_url}
                     alt={activeFigure.name}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-contain object-center"
                     onError={e => {
                       const target = e.currentTarget;
                       target.onerror = null;

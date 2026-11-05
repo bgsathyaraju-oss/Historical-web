@@ -65,7 +65,7 @@ export const ARCHIVE_IMG = (file: string) =>
   `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
 
 export const ROYAL_HERO_BANNER_IMG = `${(import.meta as any).env?.BASE_URL || '/'}assets/royal-hero-banner.png`;
-export const ROYAL_HERO_BANNER_AISTUDIO_IMG = `${(import.meta as any).env?.BASE_URL || '/'}assets/aistudio/royal-hero-banner_5f3b132e.png`;
+export const ROYAL_HERO_BANNER_AISTUDIO_IMG = `${(import.meta as any).env?.BASE_URL || '/'}assets/royal-hero-banner.png`;
 
 // Shared in-memory cache to avoid duplicate API requests across HomePage and TestPage
 export const HOMEPAGE_API_CACHE: Partial<

@@ -87,20 +87,27 @@ const LIGHTBOX_UI: Record<
 };
 
 export const LightboxModal: React.FC<LightboxModalProps> = ({ item, onClose }) => {
-  const { language } = useLanguage();
+  const { language, getMetadataLabel, translateText } = useLanguage();
   const ui = LIGHTBOX_UI[language] || LIGHTBOX_UI.en;
 
   if (!item) return null;
+
+  const localizedCategory = getMetadataLabel('category', item.category) || translateText(item.category, item.category);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292521]/70 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="relative w-full max-w-4xl bg-[#FFFCF5] border-2 border-[#A87924] rounded-2xl shadow-[0_14px_45px_rgba(75,51,31,0.25)] overflow-hidden flex flex-col max-h-[90vh] text-[#292521]">
         {/* Header Bar */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-[#D8C3A2] bg-[#F1E4D0]">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#54351F] px-2.5 py-0.5 rounded bg-[#FFFCF5] border border-[#D8C3A2]">
-              {item.category}
+              {localizedCategory}
             </span>
+            {item.verification_status && (
+              <span className="text-[11px] font-semibold text-[#762D35] px-2.5 py-0.5 rounded bg-[#FFF9EF] border border-[#A87924]/50">
+                {item.verification_status}
+              </span>
+            )}
             <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F] truncate max-w-md">
               {item.title}
             </h3>

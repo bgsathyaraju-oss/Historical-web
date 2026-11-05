@@ -15,55 +15,64 @@ const TIMELINE_VIEWER_UI: Record<
     epochLabel: string;
     devLabel: string;
     viewDossierBtn: string;
+    verificationStatus: string;
   }
 > = {
   en: {
     dateLabel: 'Chronological Date',
     epochLabel: 'Historical Epoch',
     devLabel: 'Political & Historical Development',
-    viewDossierBtn: 'View Complete Chronological Dossier'
+    viewDossierBtn: 'View Complete Chronological Dossier',
+    verificationStatus: 'Documented Chronological Record'
   },
   hi: {
     dateLabel: 'कालानुक्रमिक तिथि',
     epochLabel: 'ऐतिहासिक युग',
     devLabel: 'राजनीतिक एवं ऐतिहासिक विकास',
-    viewDossierBtn: 'संपूर्ण कालानुक्रमिक विवरण देखें'
+    viewDossierBtn: 'संपूर्ण कालानुक्रमिक विवरण देखें',
+    verificationStatus: 'प्रमाणित कालानुक्रमिक अभिलेख'
   },
   te: {
     dateLabel: 'చారిత్రక తేదీ / కాలం',
     epochLabel: 'చారిత్రక యుగం',
     devLabel: 'రాజకీయ & చారిత్రక పరిణామం',
-    viewDossierBtn: 'పూర్తి చారిత్రక వివరాలు చూడండి'
+    viewDossierBtn: 'పూర్తి చారిత్రక వివరాలు చూడండి',
+    verificationStatus: 'ధృవీకరించబడిన చారిత్రక కాలక్రమ రికార్డు'
   },
   kn: {
     dateLabel: 'ಕಾಲಾನುಕ್ರಮ ದಿನಾಂಕ',
     epochLabel: 'ಐತಿಹಾಸಿಕ ಯುಗ',
     devLabel: 'ರಾಜಕೀಯ ಮತ್ತು ಐತಿಹಾಸಿಕ ಬೆಳವಣಿಗೆ',
-    viewDossierBtn: 'ಸಂಪೂರ್ಣ ಕಾಲಾನುಕ್ರಮ ವಿವರ ನೋಡಿ'
+    viewDossierBtn: 'ಸಂಪೂರ್ಣ ಕಾಲಾನುಕ್ರಮ ವಿವರ ನೋಡಿ',
+    verificationStatus: 'ದಾಖಲಿತ ಕಾಲಾನುಕ್ರಮ ದಾಖಲೆ'
   },
   ta: {
     dateLabel: 'காலவரிசைத் தேதி',
     epochLabel: 'வரலாற்று சகாப்தம்',
     devLabel: 'அரசியல் மற்றும் வரலாற்று வளர்ச்சி',
-    viewDossierBtn: 'முழு காலவரிசை ஆவணம் காண்க'
+    viewDossierBtn: 'முழு காலவரிசை ஆவணம் காண்க',
+    verificationStatus: 'ஆவணப்படுத்தப்பட்ட காலவரிசைப் பதிவு'
   },
   mr: {
     dateLabel: 'कालानुक्रमिक तारीख',
     epochLabel: 'ऐतिहासिक युग',
     devLabel: 'राजकीय आणि ऐतिहासिक घडामोडी',
-    viewDossierBtn: 'संपूर्ण कालानुक्रमिक तपशील पहा'
+    viewDossierBtn: 'संपूर्ण कालानुक्रमिक तपशील पहा',
+    verificationStatus: 'दस्तऐवजीकृत कालानुक्रमिक नोंद'
   },
   or: {
     dateLabel: 'କାଳକ୍ରମିକ ସମୟ',
     epochLabel: 'ଐତିହାସିକ ଯୁଗ',
     devLabel: 'ରାଜନୈତିକ ଓ ଐତିହାସିକ ଘଟଣାକ୍ରମ',
-    viewDossierBtn: 'ସମ୍ପୂର୍ଣ୍ଣ କାଳକ୍ରମିକ ବିବରଣୀ ଦେଖନ୍ତୁ'
+    viewDossierBtn: 'ସମ୍ପୂର୍ଣ୍ଣ କାଳକ୍ରମିକ ବିବରଣୀ ଦେଖନ୍ତୁ',
+    verificationStatus: 'ପ୍ରମାଣିତ କାଳକ୍ରମିକ ଅଭିଲେଖ'
   },
   bn: {
     dateLabel: 'কালানুক্রমিক তারিখ',
     epochLabel: 'ঐতিহাসিক যুগ',
     devLabel: 'রাজনৈতিক ও ঐতিহাসিক বিকাশ',
-    viewDossierBtn: 'সম্পূর্ণ কালানুক্রমিক বিবরণ দেখুন'
+    viewDossierBtn: 'সম্পূর্ণ কালানুক্রমিক বিবরণ দেখুন',
+    verificationStatus: 'নথিভুক্ত কালানুক্রমিক রেকর্ড'
   }
 };
 
@@ -86,12 +95,22 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
     const eventImgMap: Record<string, string> = {
       ev_kalinga_war_261bce: `${base}kalinga_war_daya_river.jpg`,
       ev_kharavela_1st_bce: `${base}hathigumpha_inscription.jpg`,
+      ev_jasma_devi_1120: `${base}jasma_devi_sahasralinga.jpg`,
+      ev_siddharameshwara_1150: `${base}shivayogi_siddharama_solapur.jpg`,
       ev_konark_1250: `${base}konark_sun_temple_structure.jpg`,
+      ev_1434: `${base}kapilendra_deva_portrait.jpg`,
       ev_kapilendra_coronation_1435: `${base}kapilendra_deva_portrait.jpg`,
+      ev_1448: `${base}kondavidu_fort_hills.jpg`,
+      ev_kolletikota_gajapathi_garrison: `${base}kolleru_lake_fortress.jpg`,
+      ev_1458: `${base}copper_plate_charter.jpg`,
       ev_veligalani_1458: `${base}copper_plate_charter.jpg`,
+      ev_1464: `${base}srirangam_temple.jpg`,
       ev_srirangam_1464: `${base}srirangam_temple.jpg`,
       ev_purushottama_1467: `${base}purushottama_deva.jpg`,
+      ev_1489: `${base}purushottama_deva.jpg`,
       ev_prataparudra_1497: `${base}prataparudra_deva.jpg`,
+      ev_1515: `${base}simhachalam_temple_architecture.jpg`,
+      ev_1568: `${base}mukunda_deva_barabati.jpg`,
       ev_mukunda_1559: `${base}mukunda_deva_barabati.jpg`
     };
     return eventImgMap[item.id] || `${base}barabati_fort_gateway.jpg`;
@@ -118,7 +137,7 @@ export const TimelineViewer: React.FC<TimelineViewerProps> = ({ events }) => {
       title: item.title,
       subtitle: `${t.timeline.rulerLabel}: ${item.rulers_involved}`,
       badge: `${item.year_text} • ${item.period}`,
-      verificationStatus: 'Documented Chronological Record',
+      verificationStatus: ui.verificationStatus,
       imageUrl: getEventImage(item),
       imageLayout: 'banner',
       metadata: [

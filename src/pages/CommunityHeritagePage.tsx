@@ -743,8 +743,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       const mono = SYNONYM_COMPREHENSIVE_MONOGRAPHS[synItem.id];
       const synImgMap: Record<string, string> = {
         syn_suryavamshi: `${base}surya_konark_sculpture.jpg`,
-        syn_sagaravamshi: `${base}samrat_sagara_surya.jpg`,
-        syn_raghuvamshi: `${base}sri_rama_sculpture.jpg`,
+        syn_sagaravamshi: '/assets/01_samrat_sagara.webp',
+        syn_raghuvamshi: '/assets/03_maryada_purushottama_sri_rama.webp',
         syn_od_oad_odra: `${base}hathigumpha_inscription.jpg`,
         syn_odisha_kshatriya: `${base}barabati_fort_gateway.jpg`,
         syn_odiyaraju_karnataka: `${base}balavaddiraju_hero_stone.jpg`,
@@ -1501,8 +1501,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
       const epistemicText = item.epistemic_note[language] || item.epistemic_note.en;
       const synImgMap: Record<string, string> = {
         syn_suryavamshi: `${base}surya_konark_sculpture.jpg`,
-        syn_sagaravamshi: `${base}samrat_sagara_surya.jpg`,
-        syn_raghuvamshi: `${base}sri_rama_sculpture.jpg`,
+        syn_sagaravamshi: '/assets/01_samrat_sagara.webp',
+        syn_raghuvamshi: '/assets/03_maryada_purushottama_sri_rama.webp',
         syn_od_oad_odra: `${base}hathigumpha_inscription.jpg`,
         syn_odisha_kshatriya: `${base}barabati_fort_gateway.jpg`,
         syn_odiyaraju_karnataka: `${base}balavaddiraju_hero_stone.jpg`,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, Suspense, lazy } from 'react';
 import {
   Crown,
   Scroll,
@@ -14,7 +14,6 @@ import {
   Award,
   Globe2,
   ChevronRight,
-  Layers,
   Search,
   Menu,
   X,
@@ -24,12 +23,15 @@ import {
   Phone,
   Home,
   CheckCircle2,
+  Download,
   Image as ImageIcon
 } from 'lucide-react';
 import {
   SiteStatistics,
   Article,
   HistoricalEvent,
+  HistoricalFigure,
+  GalleryItem,
   LanguageCode
 } from '../types';
 import { ArchivalImage } from '../components/ArchivalImage';
@@ -40,8 +42,10 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { handleWhatsAppLinkClick } from '../utils/androidBridge';
 import { getAllArticles } from '../data/articlesRepository';
+import { getAllDocumentedFigures } from '../data/documentedFiguresRepository';
 import {
   getCanonicalTimelineEvents,
+  getCanonicalGallery,
   CANONICAL_STATISTICS
 } from '../data/archivalSeedData';
 import {
@@ -50,7 +54,11 @@ import {
   HOME_UI,
   ArticleChronologicalCategoryKey,
   HomepageCuratedArticleItem
-} from './TestPage';
+} from '../data/homepageShared';
+
+const LightboxModal = lazy(() =>
+  import('../components/LightboxModal').then(m => ({ default: m.LightboxModal }))
+);
 
 interface HomePageProps {
   onNavigate: (path: string) => void;
@@ -100,7 +108,6 @@ export const ROYAL_HOMEPAGE_ASSETS = {
 
 interface RoyalHeritageI18n {
   headerBadge: string;
-  viewTestPageBtn: string;
   searchLabel: string;
   heroSuperBadge: string;
   heroTitle: string;
@@ -167,7 +174,6 @@ interface RoyalHeritageI18n {
 const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   en: {
     headerBadge: 'Suryavamsha Ikshvaku • Odra Desha • Gajapathi Royal Heritage',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'Search Archive',
     heroSuperBadge: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary',
     heroTitle: 'The Sovereign Legacy of Odra Desha, Kalinga & the Suryavamsha Gajapathis',
@@ -356,7 +362,6 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   },
   hi: {
     headerBadge: 'सूर्यवंश इक्ष्वाकु • ओड्र देश • गजपति शाही विरासत',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'अभिलेखागार खोजें',
     heroSuperBadge: 'सूर्यवंश ओडियाराजु क्षत्रिय ऐतिहासिक डॉक्यूमेंट्री',
     heroTitle: 'ओड्र देश, कलिंग और सूर्यवंशी गजपति साम्राज्य की गौरवशाली विरासत',
@@ -545,14 +550,13 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   },
   te: {
     headerBadge: 'సూర్యవంశ ఇక్ష్వాకు • ఓడ్ర దేశం • గజపతి రాజ వారసత్వం',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'ఆర్కైవ్ వెతకండి',
     heroSuperBadge: 'సూర్యవంశ ఒడియరాజు క్షత్రియ చారిత్రక డాక్యుమెంటరీ',
     heroTitle: 'ఓడ్ర దేశం, కళింగ & సూర్యవంశ గజపతి సామ్రాజ్య సార్వభౌమ వారసత్వం',
     heroSubtitle:
       '2,500+ సంవత్సరాల సూర్యవంశ చక్రవర్తులు, శిలాశాసనాలు, తామ్రపత్రాలు & అఖిల భారత క్షత్రియ చరిత్ర',
     heroDescription:
-      'ప్రాథమిక శిలాశాసనాలు, రాజ వంశావళులు, ఆలయ వాస్తుশিল্পం మరియు ఒడియరాజు / ఓడ్ర-క్షత్రియ / ఓడ్-రాజ్‌పుత్ సమాజ వారసత్వాన్ని 8 భారతీయ భాషలలో భద్రపరిచే చారిత్రక పోర్టల్.',
+      'ప్రాథమిక శిలాశాసనాలు, రాజ వంశావళులు, ఆలయ వాస్తుశిల్పం మరియు ఒడియరాజు / ఓడ్ర-క్షత్రియ / ఓడ్-రాజ్‌పుత్ సమాజ వారసత్వాన్ని 8 భారతీయ భాషలలో భద్రపరిచే చారిత్రక పోర్టల్.',
     exploreHistoryBtn: 'చరిత్రను అన్వేషించండి',
     communityHeritageBtn: 'సామాజిక వారసత్వం',
     whyVisitKicker: 'చారిత్రక లక్ష్యం & పరిశోధనా ఉద్దేశ్యం',
@@ -729,12 +733,11 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
     footerCommunityTitle: 'సమాజం & ఇంటిపేర్లు',
     footerContactTitle: 'సంప్రదింపు & ఆధారాలు',
     footerBrandSummary:
-      'శాసన పరిశోధన, ఓడ్ర దేశ చారిత్రక భూగోళం, సూర్యవంశ గజపతి సామ్రాజ్య శాసనాలు, రాజ వంశావళులు మరియు 8 భాషలలో సజీవ సాంస్ಕృతిక సంప్రదాయాల పరిరక్షణకు అంకితం చేయబడింది.',
+      'శాసన పరిశోధన, ఓడ్ర దేశ చారిత్రక భూగోళం, సూర్యవంశ గజపతి సామ్రాజ్య శాసనాలు, రాజ వంశావళులు మరియు 8 భాషలలో సజీవ సాంస్కృతిక సంప్రదాయాల పరిరక్షణకు అంకితం చేయబడింది.',
     footerRights: 'అన్ని చారిత్రక రికార్డులు & అనువాద హక్కులు ప్రత్యేకించబడినవి.'
   },
   kn: {
     headerBadge: 'ಸೂರ್ಯವಂಶ ಇಕ್ಷ್ವಾಕು • ಓಡ್ರ ದೇಶ • ಗಜಪತಿ ರಾಜ ಪರಂಪರೆ',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'ಪತ್ರಾಗಾರ ಹುಡುಕಿ',
     heroSuperBadge: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಐತಿಹಾಸಿಕ ಸಾಕ್ಷ್ಯಚಿತ್ರ',
     heroTitle: 'ಓಡ್ರ ದೇಶ, ಕಳಿಂಗ ಮತ್ತು ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಸಾರ್ವಭೌಮ ಪರಂಪರೆ',
@@ -805,7 +808,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
       {
         id: 'cat-historical-personages',
         title: 'ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು',
-        subtitle: 'ಸಾಮ್ರಾಟರು • ಮಹಾರಾಣಿಯರು • ಸೇనానిಗಳು • ರಾಜಗುರುಗಳು',
+        subtitle: 'ಸಾಮ್ರಾಟರು • ಮಹಾರಾಣಿಯರು • ಸೇನಾನಿಗಳು • ರಾಜಗುರುಗಳು',
         description:
           'ಸಾಮ್ರಾಟ್ ಖಾರವೇಲ, ಕಪಿಲೇಂದ್ರ ದೇವ, ಪುರುಷೋತ್ತಮ ದೇವ, ಪ್ರತಾಪರುದ್ರ ದೇವ, ಬಕ್ಸಿ ಜಗಬಂಧು ಮತ್ತು 20+ ಗಣ್ಯರ ಜೀವನ ಚರಿತ್ರೆ.',
         iconWebp: ASSET_WEBP('icon-personages.webp'),
@@ -840,7 +843,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
         title: 'ಗ್ಯಾಲರಿ ಮತ್ತು ಪತ್ರಾಗಾರ',
         subtitle: 'ಶಾಸನಗಳು • ಕೋಟೆಗಳು • ದೇವಾಲಯಗಳು • ತಾಮ್ರಪತ್ರಗಳು',
         description:
-          'ಕೋణಾರ್ಕ್ ಸೂರ್ಯ ದೇವಾಲಯ, ಪುರಿ ಜಗನ್ನಾಥ, ಬಾರಾಬತಿ ಕೋಟೆ, ಉದಯಗಿರಿ ಗುಹೆಗಳು ಮತ್ತು ತಾಳೆಗರಿ ಹಸ್ತಪ್ರತಿಗಳ ದೃಶ್ಯ ಸಂಗ್ರಹಾಲಯ.',
+          'ಕೋಣಾರ್ಕ್ ಸೂರ್ಯ ದೇವಾಲಯ, ಪುರಿ ಜಗನ್ನಾಥ, ಬಾರಾಬತಿ ಕೋಟೆ, ಉದಯಗಿರಿ ಗುಹೆಗಳು ಮತ್ತು ತಾಳೆಗರಿ ಹಸ್ತಪ್ರತಿಗಳ ದೃಶ್ಯ ಸಂಗ್ರಹಾಲಯ.',
         iconWebp: ASSET_WEBP('icon-gallery.webp'),
         bannerWebp: ASSET_WEBP('banner-sculpture-heritage.webp'),
         path: '/gallery',
@@ -878,7 +881,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
       },
       {
         id: 'hl-south-surnames',
-        era: 'ದక్కನ್ ಮತ್ತು ಕರಾವಳಿ ಆಂಧ್ರ',
+        era: 'ದಕ್ಕನ್ ಮತ್ತು ಕರಾವಳಿ ಆಂಧ್ರ',
         title: 'ದಕ್ಷಿಣ ಭಾರತೀಯ ಒಡಿಯರಾಜು ಉಪನಾಮಗಳು ಮತ್ತು ಗೋತ್ರಗಳು',
         subtitle: 'ರಾಜು • ವರ್ಮ • ಗಜಪತಿ • ಸೂರ್ಯವಂಶ ಕುಲಗಳು',
         description:
@@ -923,12 +926,11 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   },
   ta: {
     headerBadge: 'சூரியவம்ச இக்ஷ்வாகு • ஒட்ர தேசம் • கஜபதி அரச பாரம்பரியம்',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'ஆவணகம் தேடுக',
     heroSuperBadge: 'சூரியவம்ச ஒடியராஜு சத்திரிய வரலாற்று ஆவணப்படம்',
     heroTitle: 'ஒட்ர தேசம், கலிங்கம் & சூரியவம்ச கஜபதி பேரரசின் அரச பாரம்பரியம்',
     heroSubtitle:
-      '2,500+ ஆண்டுகால சூரியवंशப் பேரரசர்கள், கல்வெட்டுகள், செப்பேடுகள் & அகில இந்திய சத்திரிய வரலாறு',
+      '2,500+ ஆண்டுகால சூரியவம்சப் பேரரசர்கள், கல்வெட்டுகள், செப்பேடுகள் & அகில இந்திய சத்திரிய வரலாறு',
     heroDescription:
       'முதன்மைக் கல்வெட்டுகள், அரச வம்சாவளிகள், கோயில் கட்டிடக்கலை மற்றும் ஒடியராஜு / ஒட்ர-சத்திரிய / ஓட்-ராஜ்புத் சமூகத்தின் பாரம்பரியத்தை 8 இந்திய மொழிகளில் பாதுகாக்கும் வரலாற்றுத் தளம்.',
     exploreHistoryBtn: 'வரலாற்றை ஆராய்க',
@@ -1069,7 +1071,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
         id: 'hl-south-surnames',
         era: 'தக்காணம் & ஆந்திரா',
         title: 'தென்னிந்திய ஒடியராஜு குலப்பெயர்கள் & கோத்திரங்கள்',
-        subtitle: 'ராஜு • வர்மா • கஜபதி • சூரியवंशக் குலங்கள்',
+        subtitle: 'ராஜு • வர்மா • கஜபதி • சூரியவம்சக் குலங்கள்',
         description:
           'ஆந்திரா, தெலுங்கானா, கர்நாடகா மற்றும் தமிழ்நாட்டில் உள்ள அரச குலப்பெயர்கள் மற்றும் கோத்திரங்களின் தொகுப்பு.',
         bannerWebp: ASSET_WEBP('banner-fort-heritage.webp'),
@@ -1112,7 +1114,6 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   },
   mr: {
     headerBadge: 'सूर्यवंश इक्ष्वाकू • ओड्र देश • गजपती शाही वारसा',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'अभिलेखागार शोधा',
     heroSuperBadge: 'सूर्यवंश ओडियाराजु क्षत्रिय ऐतिहासिक माहितीपट',
     heroTitle: 'ओड्र देश, कलिंग आणि सूर्यवंशी गजपती साम्राज्याचा सार्वभौम वारसा',
@@ -1301,7 +1302,6 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   },
   or: {
     headerBadge: 'ସୂର୍ଯ୍ୟବଂଶ ଇକ୍ଷ୍ୱାକୁ • ଓଡ଼୍ର ଦେଶ • ଗଜପତି ରାଜକୀୟ ଐତିହ୍ୟ',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'ଅଭିଲେଖାଗାର ଖୋଜନ୍ତୁ',
     heroSuperBadge: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହାସିକ ଡକ୍ୟୁମେଣ୍ଟାରୀ',
     heroTitle: 'ଓଡ଼୍ର ଦେଶ, କଳିଙ୍ଗ ଓ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟର ସାର୍ବଭୌମ ଐତିହ୍ୟ',
@@ -1312,7 +1312,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
     exploreHistoryBtn: 'ଇତିହାସ ଅନ୍ୱେଷଣ କରନ୍ତୁ',
     communityHeritageBtn: 'ସାମୁଦାୟିକ ଐତିହ୍ୟ',
     whyVisitKicker: 'ଅଭିଲେଖାଗାର ଲକ୍ଷ୍ୟ ଓ ଗବେଷଣା ଉଦ୍ଦେଶ୍ୟ',
-    whyVisitTitle: 'ଆମ ୱେବସାଇଟ୍ କାହିଁକି পরিଦର୍ଶନ କରିବେ',
+    whyVisitTitle: 'ଆମ ୱେବସାଇଟ୍ କାହିଁକି ପରିଦର୍ଶନ କରିବେ',
     whyVisitSubtitle:
       'ଏହି ପୋର୍ଟାଲର ପ୍ରତ୍ୟେକ ଐତିହାସିକ ତଥ୍ୟ ଧଉଳି, ହାତୀଗୁମ୍ଫା, ଲିଙ୍ଗରାଜ ଏବଂ ବେଲିଗଲନି ଭଳି ପ୍ରାଥମିକ ଶିଳାଲେଖ ଓ ତାମ୍ରଶାସନ ଉପରେ ଆଧାରିତ।',
     whyPillars: [
@@ -1321,7 +1321,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
         iconWebp: ASSET_WEBP('icon-inscriptions.webp'),
         title: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ତାମ୍ରଶାସନ ପ୍ରମାଣ',
         description:
-          'ଧଉଳି (ଖ୍ରୀ.ପୂ. ୨୬୧), ହାତୀଗୁମ୍ଫା, ଲିଙ୍ଗରାଜ (୧୪୫୨ ଖ୍ରୀ.ଅ.) ଏବଂ ବେଲିଗଲନି ତାମ୍ରଶାସନର (୧୪୫୮ ଖ୍ରୀ.ଅ.) ମୂଳ ଉদ্ধୃତି।',
+          'ଧଉଳି (ଖ୍ରୀ.ପୂ. ୨୬୧), ହାତୀଗୁମ୍ଫା, ଲିଙ୍ଗରାଜ (୧୪୫୨ ଖ୍ରୀ.ଅ.) ଏବଂ ବେଲିଗଲନି ତାମ୍ରଶାସନର (୧୪୫୮ ଖ୍ରୀ.ଅ.) ମୂଳ ଉଦ୍ଧୃତି।',
         path: '/inscriptions',
         cta: 'ଶିଳାଲେଖ ଦେଖନ୍ତୁ'
       },
@@ -1354,7 +1354,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
       }
     ],
     fiveCategoriesKicker: 'ରାଜକୀୟ ଅଭିଲେଖ ବିଭାଗ',
-    fiveCategoriesTitle: 'ଆମ ରାଜକୀୟ ଐତିହ୍ୟର ପାଞ୍ଚটি ପ୍ରମୁଖ ସ୍ତମ୍ଭ',
+    fiveCategoriesTitle: 'ଆମ ରାଜକୀୟ ଐତିହ୍ୟର ପାଞ୍ଚଟି ପ୍ରମୁଖ ସ୍ତମ୍ଭ',
     fiveCategoriesSubtitle:
       'ସାମୁଦାୟିକ ଐତିହ୍ୟ, ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ, ରାଜବଂଶ, ଐତିହାସିକ ମୋନୋଗ୍ରାଫ୍ ଏବଂ ଗ୍ୟାଲେରୀ ଅଭିଲେଖାଗାରକୁ ସିଧାସଳଖ ଦେଖନ୍ତୁ।',
     fiveCategories: [
@@ -1414,7 +1414,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
         cta: 'ଗ୍ୟାଲେରୀ ଓ ଅଭିଲେଖାଗାର ଖୋଲନ୍ତୁ'
       }
     ],
-    featuredArticlesKicker: 'নির্বাচিত ଐତିହାସିକ ଗବେଷଣା',
+    featuredArticlesKicker: 'ନିର୍ବାଚିତ ଐତିହାସିକ ଗବେଷଣା',
     featuredArticlesTitle: 'ପ୍ରମୁଖ ଐତିହାସିକ ପ୍ରବନ୍ଧ',
     featuredArticlesSubtitle:
       'ପ୍ରାଥମିକ ଶିଳାଲେଖ ପ୍ରମାଣ ଏବଂ ୮ଟି ଭାଷାର ଅନୁବାଦ ସହିତ ପ୍ରମାଣିତ ଐତିହାସିକ ଗବେଷଣା ପ୍ରବନ୍ଧ।',
@@ -1422,7 +1422,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
     showAllArticlesBtn: count => `ସମସ୍ତ ${count} ଐତିହାସିକ ପ୍ରବନ୍ଧ ଦେଖନ୍ତୁ`,
     showFeaturedSixBtn: 'ପ୍ରମୁଖ ୬ଟି ପ୍ରବନ୍ଧ ଦେଖନ୍ତୁ',
     timelineKicker: '୨,୫୦୦+ ବର୍ଷର ପ୍ରମାଣିତ ଇତିହାସ',
-    timelineTitle: 'ଐତିହାସିକ ସମୟরেଖା (Timeline) ଝଲକ',
+    timelineTitle: 'ଐତିହାସିକ ସମୟରେଖା (Timeline) ଝଲକ',
     timelineSubtitle:
       'ପ୍ରାଚୀନ ଓଡ଼୍ର-କଳିଙ୍ଗ ଓ କଳିଙ୍ଗ ଯୁଦ୍ଧରୁ (ଖ୍ରୀ.ପୂ. ୨୬୧) ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟର ଉତ୍କର୍ଷ ପର୍ଯ୍ୟନ୍ତ ପ୍ରମୁଖ ଘଟଣାବଳୀ।',
     openFullTimelineBtn: 'ସମ୍ପୂର୍ଣ୍ଣ ଇଣ୍ଟରାକ୍ଟିଭ୍ ସମୟରେଖା ଦେଖନ୍ତୁ',
@@ -1445,7 +1445,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
       },
       {
         id: 'hl-south-surnames',
-        era: 'ଦাক্ষିଣାତ୍ୟ ଓ ଉପକୂଳ ଆନ୍ଧ୍ର',
+        era: 'ଦାକ୍ଷିଣାତ୍ୟ ଓ ଉପକୂଳ ଆନ୍ଧ୍ର',
         title: 'ଦକ୍ଷିଣ ଭାରତୀୟ ଓଡ଼ିଆରାଜୁ ସାଙ୍ଗିଆ ଓ ଗୋତ୍ର',
         subtitle: 'ରାଜୁ • ବର୍ମା • ଗଜପତି • ସୂର୍ଯ୍ୟବଂଶୀ କୁଳ',
         description:
@@ -1471,7 +1471,7 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
         id: 'hl-prominent-persons',
         era: 'ସମ୍ରାଟ ଓ ମହାପୁରୁଷ',
         title: '୨୦+ ସମ୍ପ୍ରଦାୟର ପ୍ରମୁଖ ବ୍ୟକ୍ତିତ୍ୱ',
-        subtitle: 'ସମ୍ରାଟ • ସ୍ୱାଧୀନତା ସଂଗ୍ରାମୀ • ଶିବଯୋଗୀ • ନେତୃবৃନ୍ଦ',
+        subtitle: 'ସମ୍ରାଟ • ସ୍ୱାଧୀନତା ସଂଗ୍ରାମୀ • ଶିବଯୋଗୀ • ନେତୃବୃନ୍ଦ',
         description:
           'ମହର୍ଷି ଭଗୀରଥ, ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବ, ଶିବଯୋଗୀ ସିଦ୍ଧରାମେଶ୍ୱର, ବକ୍ସି ଜଗବନ୍ଧୁ ଓ ଜୟୀ ରାଜଗୁରୁଙ୍କ ଜୀବନୀ।',
         bannerWebp: ASSET_WEBP('thumb-kapilendra-deva.webp'),
@@ -1490,7 +1490,6 @@ const ROYAL_HOME_I18N: Record<LanguageCode, RoyalHeritageI18n> = {
   },
   bn: {
     headerBadge: 'সূর্যবংশ ইক্ষ্বাকু • ওড্র দেশ • গজপতি রাজকীয় ঐতিহ্য',
-    viewTestPageBtn: 'View Original Layout – Test Page',
     searchLabel: 'আর্কাইভ খুঁজুন',
     heroSuperBadge: 'সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয় ঐতিহাসিক প্রামাণ্যচিত্র',
     heroTitle: 'ওড্র দেশ, কলিঙ্গ ও সূর্যবংশীয় গজপতি সাম্রাজ্যের সার্বভৌম ঐতিহ্য',
@@ -1698,6 +1697,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   const [selectedArticleCategory, setSelectedArticleCategory] =
     useState<ArticleChronologicalCategoryKey>('all');
   const [showAllArticles, setShowAllArticles] = useState(false);
+  const [showAllTimelineEvents, setShowAllTimelineEvents] = useState(false);
+  const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
+
+  const canonicalGalleryItems = useMemo<GalleryItem[]>(
+    () => getCanonicalGallery(language),
+    [language]
+  );
 
   const isAdminOrEditor =
     user &&
@@ -1771,6 +1777,284 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
     };
   }, [findRawArticle, getArticleContent]);
 
+  const [showAllPersonages, setShowAllPersonages] = useState(false);
+
+  const documentedFigures = useMemo<HistoricalFigure[]>(
+    () => getAllDocumentedFigures(language),
+    [language]
+  );
+
+  const chronologicalPersonages = useMemo<HistoricalFigure[]>(() => {
+    const chronologicalIdOrder = [
+      'fig_samrat_sagara',
+      'fig_maharshi_bhagiratha',
+      'fig_sri_rama',
+      'fig_king_kharavela',
+      'fig_anantavarman_chodaganga',
+      'fig_goddess_jasma',
+      'fig_shivayogi_siddharama',
+      'fig_langula_narasimha_deva',
+      'fig_kapilendra_deva',
+      'fig_hamvira_deva',
+      'fig_purushottama_deva',
+      'fig_prataparudra_deva',
+      'fig_mukunda_deva',
+      'fig_baxi_jagabandhu'
+    ];
+    const orderMap = new Map<string, number>();
+    chronologicalIdOrder.forEach((id, index) => orderMap.set(id, index));
+
+    return [...documentedFigures].sort((a, b) => {
+      const idxA = orderMap.has(a.id) ? orderMap.get(a.id)! : 999;
+      const idxB = orderMap.has(b.id) ? orderMap.get(b.id)! : 999;
+      return idxA - idxB;
+    });
+  }, [documentedFigures]);
+
+  const displayedPersonages = useMemo(
+    () => (showAllPersonages ? chronologicalPersonages : chronologicalPersonages.slice(0, 8)),
+    [chronologicalPersonages, showAllPersonages]
+  );
+
+ 
+  const secondaryHeroShowcases = useMemo(
+    () => [
+      {
+        id: 'slide-kanchi-white-horse',
+        image: ARCHIVE_IMG('purushottama_deva_kanchi_expedition.jpg'),
+        badge: translateText('Royal Cavalry & Sacred Chivalry'),
+        era: '1466 – 1497 CE',
+        sourceTypeBadge: translateText('Traditional Pattachitra & Temple Epigraphy'),
+        title: translateText('Emperor Purushottama Deva & The Historic Kanchi-Kaveri Expedition'),
+        subtitle: translateText('Royal White Steeds & Sacred Temple Traditions'),
+        caption: translateText(
+          'Documented in Draksharama and Potavaram epigraphs and immortalized in the Kanchi-Kaveri royal chronicle.'
+        ),
+        link: '/kings-queens?figure=fig_purushottama_deva'
+      },
+      {
+        id: 'slide-konark-puri-temples',
+        image: ARCHIVE_IMG('konark_sun_temple_structure.jpg'),
+        badge: translateText('Sacred Solar Architecture'),
+        era: '12th – 16th Century CE',
+        sourceTypeBadge: translateText('Verified Archaeological Photograph'),
+        title: translateText('Konark Sun Chariot & Sri Jagannatha Temple of Puri'),
+        subtitle: translateText('Monumental Stone Engineering & Imperial Patronage'),
+        caption: translateText(
+          'Colossal stone temples, chariot wheels, and royal inscriptions testifying to centuries of Suryavamsha devotion.'
+        ),
+        link: '/temples-monuments'
+      },
+      {
+        id: 'slide-barabati-fortress',
+        image: ARCHIVE_IMG('barabati_fort_gateway.jpg'),
+        badge: translateText('Impregnable Citadels & Jala-Durgas'),
+        era: '1st Century BCE – 1568 CE',
+        sourceTypeBadge: translateText('Verified Site Photography & Fort Archive'),
+        title: translateText('Barabati Fort, Kondavidu & Kolletikota Island Fortress'),
+        subtitle: translateText('Kshatriya Garrison Architecture & Defense'),
+        caption: translateText(
+          'From Varanasi Kataka (Barabati) to Kondavidu, Udayagiri, and Kolletikota amidst Kolleti Sarasu.'
+        ),
+        link: '/odra-desha'
+      }
+    ],
+    [translateText]
+  );
+
+ 
+  const heritageJourneyCards = useMemo(
+    () => [
+      {
+        id: 'journey-odra',
+        step: '01',
+        title: translateText('Odra Desha (Odra Kingdom)'),
+        era: translateText('Ancient Era – 16th Century CE'),
+        provenanceBadge: translateText('Archival Forts & Copper Charters'),
+        subtitle: translateText('Heartland of the Mahanadi-Brahmani Delta & Barabati Citadel'),
+        description: translateText(
+          'Recorded in classical Sanskrit texts, Xuanzang’s 7th-century chronicle (Wu-T’u), and Bhauma-Kara & Somavamshi copper-plate charters as the foundational homeland of the Odra people.'
+        ),
+        image: ARCHIVE_IMG('heritage_odra_desha.jpg'),
+        path: '/odra-desha',
+        highlights: [
+          translateText('Mahanadi & Baitarani Riverine Heartland'),
+          translateText('Varanasi Kataka (Barabati Fort) Capital'),
+          translateText('Bhauma-Kara & Somavamshi Copper Grants')
+        ]
+      },
+      {
+        id: 'journey-kalinga',
+        step: '02',
+        title: translateText('Kalinga (Imperial Kalinga)'),
+        era: translateText('261 BCE – 1st Century BCE'),
+        provenanceBadge: translateText('Verified Rock Edicts & Cave Reliefs'),
+        subtitle: translateText('Unbroken Martial Resistance & Emperor Kharavela’s Hathigumpha Edict'),
+        description: translateText(
+          'From the heroic defense at Dhauli in the Kalinga War (261 BCE) to Mahameghavahana Emperor Kharavela’s pan-Indian campaigns and royal canal engineering at Kalinganagari.'
+        ),
+        image: ARCHIVE_IMG('heritage_kalinga_empire.jpg'),
+        path: '/kalinga-war',
+        highlights: [
+          translateText('261 BCE Kalinga War & Dhauli Elephant Edict'),
+          translateText('Emperor Kharavela’s 17-Line Hathigumpha Edict'),
+          translateText('Udayagiri-Khandagiri Royal Rock Complexes')
+        ]
+      },
+      {
+        id: 'journey-utkala',
+        step: '03',
+        title: translateText('Utkala & Suryavamsha Gajapathi'),
+        era: translateText('12th – 16th Century CE'),
+        provenanceBadge: translateText('Verified Temple Architecture & Sculpture'),
+        subtitle: translateText('Sacred Solar Architecture & Imperial Zenith at Puri and Konark'),
+        description: translateText(
+          'Sacred cultural heartland encompassing Sri Jagannatha Temple at Puri and the Konark Sun Chariot, elevated by Emperor Kapilendra Deva into the sovereign center of the Suryavamsha Gajapathi Empire.'
+        ),
+        image: ARCHIVE_IMG('heritage_utkala_kingdom.jpg'),
+        path: '/gajapathi-kings',
+        highlights: [
+          translateText('Sri Jagannatha Temple & Konark Sun Chariot'),
+          translateText('Kapilendra, Purushottama & Prataparudra Deva'),
+          translateText('Veligalani (1458) & Lingaraja (1452) Edicts')
+        ]
+      },
+      {
+        id: 'journey-trikalinga',
+        step: '04',
+        title: translateText('Trikalinga & Southern Citadels'),
+        era: translateText('11th – 16th Century CE'),
+        provenanceBadge: translateText('Verified Hill Forts & Temple Epigraphy'),
+        subtitle: translateText('Unification of Utkala, Kalinga, Kongoda & Deccan Fortresses'),
+        description: translateText(
+          'Under Trikalingadhipati Chodaganga Deva and Gajapathi viceroys Kumara Hamvira Deva and Virabhadra Deva, royal garrisons anchored Simhachalam, Rajahmundry, Kondavidu, Udayagiri, and Kolletikota.'
+        ),
+        image: ARCHIVE_IMG('heritage_trikalinga_region.jpg'),
+        path: '/community-heritage',
+        highlights: [
+          translateText('Trikalingadhipati Imperial Consolidation'),
+          translateText('Simhachalam, Kondavidu & Kolletikota Garrisons'),
+          translateText('Pan-Indian Odiyaraju & Odra-Kshatriya Diaspora')
+        ]
+      }
+    ],
+    [translateText]
+  );
+
+ 
+  const resourceCards = useMemo(
+    () => [
+      {
+        id: 'res-maps',
+        title: translateText('Historical Maps & Imperial Borders'),
+        badge: translateText('Cartographic Archive'),
+        description: translateText(
+          'Interactive territorial maps of Odra Desha, Kalinga, Trikalinga, and the 1465 CE Suryavamsha Gajapathi Empire from the Ganga to the Kaveri.'
+        ),
+        image: ARCHIVE_IMG('gajapathi_empire_map_1465.jpg'),
+        icon: MapPin,
+        path: '/maps',
+        cta: translateText('Explore Historical Maps')
+      },
+      {
+        id: 'res-inscriptions',
+        title: translateText('Inscriptions & Copper-Plate Charters'),
+        badge: translateText('Primary Epigraphy'),
+        description: translateText(
+          'Hathigumpha Prakrit rock edict, Veligalani bilingual copper plates (1458 CE), Lingaraja temple proclamation (1452 CE), and Simhachalam grants.'
+        ),
+        image: ARCHIVE_IMG('hathigumpha_inscription.jpg'),
+        icon: Scroll,
+        path: '/inscriptions',
+        cta: translateText('Examine Epigraphs')
+      },
+      {
+        id: 'res-sources',
+        title: translateText('Research Sources & Palm-Leaf Chronicles'),
+        badge: translateText('Bibliographic Vault'),
+        description: translateText(
+          'Digitized palm-leaf manuscripts (Madala Panji, Sarasvati Vilasa), Mackenzie Collection Kaifiyats, and 70+ peer-reviewed historical citations.'
+        ),
+        image: ARCHIVE_IMG('odia_palm_leaf_manuscript.jpg'),
+        icon: FileText,
+        path: '/documents',
+        cta: translateText('Browse Archival Sources')
+      },
+      {
+        id: 'res-pdfs',
+        title: translateText('Direct PDF Monographs & Downloads'),
+        badge: translateText('Multilingual Export'),
+        description: translateText(
+          'Download complete historical documentaries, royal genealogies, and community surname compendiums as formatted PDFs in all 8 languages.'
+        ),
+        image: ARCHIVE_IMG('copper_plate_charter.jpg'),
+        icon: Download,
+        path: '/documentary',
+        cta: translateText('Open PDF Documentary Hub')
+      }
+    ],
+    [translateText]
+  );
+
+ 
+  const royalDynastiesShowcase = useMemo(
+    () => [
+      {
+        id: 'dyn-ikshvaku-suryavamsha',
+        title: translateText('Ikshvaku Suryavamsha Solar Lineage'),
+        era: translateText('Vedic Antiquity & Epic Tradition'),
+        monarchs: translateText('Manu • Ikshvaku • Samrat Sagara • Bhagiratha • Sri Rama'),
+        description: translateText(
+          'Progenitors of the Solar Kshatriya race celebrated for cosmic hydraulic engineering (Sagara-khanana) and righteous sovereignty (Dharma-rajya).'
+        ),
+        image: '/assets/01_samrat_sagara.webp',
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconDynasties,
+        badge: translateText('Classical Sculpture & Tradition'),
+        path: '/genealogy'
+      },
+      {
+        id: 'dyn-mahameghavahana',
+        title: translateText('Mahameghavahana Chedi-Kalinga Dynasty'),
+        era: translateText('1st Century BCE'),
+        monarchs: translateText('Maharaja Mahameghavahana • Kalingadhipati Emperor Kharavela'),
+        description: translateText(
+          'Restorers of Kalinga’s imperial sovereignty after the Mauryan war, documented in the 17-line Hathigumpha Prakrit inscription at Udayagiri.'
+        ),
+        image: ARCHIVE_IMG('emperor_kharavela_udayagiri.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconInscriptions,
+        badge: translateText('Verified Rock Relief'),
+        path: '/kings-queens?figure=fig_king_kharavela'
+      },
+      {
+        id: 'dyn-eastern-ganga',
+        title: translateText('Imperial Eastern Ganga (Trikalingadhipati)'),
+        era: translateText('1078 – 1434 CE'),
+        monarchs: translateText('Anantavarman Chodaganga Deva • Langula Narasimha Deva I'),
+        description: translateText(
+          'Unifiers of Odra, Utkala, and Kalinga under the Trikalingadhipati crown and builders of the Puri Jagannatha and Konark Sun Temples.'
+        ),
+        image: ARCHIVE_IMG('narasimha_deva_konark_sculpture.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconGallery,
+        badge: translateText('British Museum Archival Sculpture'),
+        path: '/kings-queens?figure=fig_langula_narasimha_deva'
+      },
+      {
+        id: 'dyn-suryavamsha-gajapathi',
+        title: translateText('Suryavamsha Gajapathi Imperial Dynasty'),
+        era: translateText('1434 – 1541 CE'),
+        monarchs: translateText('Kapilendra Deva • Purushottama Deva • Prataparudra Deva'),
+        description: translateText(
+          'Supreme Solar monarchs of Odra Desha who ruled from the Hooghly River to Srirangam on the Kaveri, commanding the ninety-million realm.'
+        ),
+        image: ARCHIVE_IMG('royal_dynasties_heritage.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconPersonages,
+        badge: translateText('Royal Court & Epigraphic Archive'),
+        path: '/gajapathi-kings'
+      }
+    ],
+    [translateText]
+  );
+
   // Curated Featured Historical Articles reusing exact canonical IDs & URLs (zero duplicate data)
   // Top 4 featured cards showcase thumb-kapilendra-deva.webp, thumb-odra-kingdom.webp, thumb-trikalinga.webp, and thumb-kalinga-architecture.webp
   const curatedChronologicalArticles = useMemo<
@@ -1778,46 +2062,46 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   >(() => {
     const items: Array<Omit<HomepageCuratedArticleItem, 'rawArticle'> & { iconWebp: string }> = [
       {
-        id: 'art-kapilendra-deva',
+        id: 'art_gajapathi_kapilendra',
         chronologicalOrder: 1,
         categoryKey: 'odra_gajapathi',
         categoryLabel: ui.catOdraGajapathi,
-        eraBadge: translateText('1435 – 1467 CE • Imperial Gajapathi Zenith'),
+        eraBadge: translateText('1434 – 1466 CE • Imperial Gajapathi Zenith'),
         title:
-          findRepoArticle('art-kapilendra-deva')?.title ||
+          findRepoArticle('art_gajapathi_kapilendra')?.title ||
           translateText('Emperor Kapilendra Deva & the Suryavamsha Gajapathi Empire'),
         summary:
-          findRepoArticle('art-kapilendra-deva')?.summary ||
+          findRepoArticle('art_gajapathi_kapilendra')?.summary ||
           translateText(
-            'Chronicles the coronation at Cuttack (1435 CE), the title Gajapathi Gaudesvara Navakoti Karnata Kalavaragesvara, and campaigns to the Kaveri.'
+            'Chronicles the coronation at Cuttack (1434 CE), the title Gajapathi Gaudesvara Navakoti Karnata Kalavaragesvara, and campaigns to the Kaveri.'
           ),
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbKapilendraDeva,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconPersonages,
         evidenceCategory: 'verified_archaeological',
         authorName: 'Dr.G Sathyanarayana Raju',
         citationsCount: 14,
-        targetPath: '/research?article=art-kapilendra-deva'
+        targetPath: '/documentary?article=art_gajapathi_kapilendra'
       },
       {
-        id: 'art-suryavamsha-origins',
+        id: 'art_surya_vamsa_sagara_rama',
         chronologicalOrder: 2,
         categoryKey: 'solar_antiquity',
         categoryLabel: ui.catSolarAntiquity,
-        eraBadge: translateText('Vedic & Purana Era (c. 1500 BCE – 600 BCE)'),
+        eraBadge: translateText('Vedic & Purana Era (c. 1500 BCE – 1st Century BCE)'),
         title:
-          findRepoArticle('art-suryavamsha-origins')?.title ||
+          findRepoArticle('art_surya_vamsa_sagara_rama')?.title ||
           translateText('Odra Kingdom Origins & Suryavamsha Ikshvaku Royal Genealogy'),
         summary:
-          findRepoArticle('art-suryavamsha-origins')?.summary ||
+          findRepoArticle('art_surya_vamsa_sagara_rama')?.summary ||
           translateText(
-            'Traces the solar lineage from Vivasvan, Manu, Ikshvaku, and Maharaja Bhagiratha to the sovereign Odra Kingdom and warrior-builder clans.'
+            'Traces the solar lineage from Vivasvan, Manu, Ikshvaku, Samrat Sagara, and Maharaja Bhagiratha to Emperor Kharavela and the sovereign Odra Kingdom.'
           ),
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbOdraKingdom,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconDynasties,
         evidenceCategory: 'verified_archaeological',
         authorName: 'Dr.G Sathyanarayana Raju',
         citationsCount: 8,
-        targetPath: '/research?article=art-suryavamsha-origins'
+        targetPath: '/documentary?article=art_surya_vamsa_sagara_rama'
       },
       {
         id: 'art-trikalinga-maritime',
@@ -1842,14 +2126,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         categoryKey: 'epigraphy_architecture',
         categoryLabel: ui.catEpigraphyArch,
         eraBadge: translateText('7th – 16th Century CE • Temple & Fort Engineering'),
-        title:
-          findRepoArticle('art-kalinga-architecture')?.title ||
-          translateText('Kalinga Temple Architecture, Konark Sun Chariot & Royal Forts'),
-        summary:
-          findRepoArticle('art-kalinga-architecture')?.summary ||
-          translateText(
-            'Rekha, Pidha, and Khakhara temple styles at Puri, Konark, and Bhubaneswar alongside Barabati, Raichur, and Kondavidu citadels.'
-          ),
+        title: translateText('Kalinga Temple Architecture, Konark Sun Chariot & Royal Forts'),
+        summary: translateText(
+          'Rekha, Pidha, and Khakhara temple styles at Puri, Konark, and Bhubaneswar alongside Barabati, Raichur, and Kondavidu citadels.'
+        ),
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbKalingaArchitecture,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconGallery,
         evidenceCategory: 'verified_archaeological',
@@ -1863,14 +2143,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         categoryKey: 'solar_antiquity',
         categoryLabel: ui.catSolarAntiquity,
         eraBadge: translateText('261 BCE • Dhauli & Jaugada Rock Edicts'),
-        title:
-          findRepoArticle('art-kalinga-war')?.title ||
-          translateText('The Kalinga War (261 BCE) & Martial Resistance of Odra-Kalinga'),
-        summary:
-          findRepoArticle('art-kalinga-war')?.summary ||
-          translateText(
-            'Examines Ashoka’s Major Rock Edict XIII, Dhauli peace edicts, and the sovereign military organization of ancient Kalinga-Odra.'
-          ),
+        title: translateText('The Kalinga War (261 BCE) & Martial Resistance of Odra-Kalinga'),
+        summary: translateText(
+          'Examines Ashoka’s Major Rock Edict XIII, Dhauli peace edicts, and the sovereign military organization of ancient Kalinga-Odra.'
+        ),
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerRoyalBattle,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconMonographs,
         evidenceCategory: 'verified_archaeological',
@@ -1884,14 +2160,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         categoryKey: 'epigraphy_architecture',
         categoryLabel: ui.catEpigraphyArch,
         eraBadge: translateText('1458 CE • Trilingual Copper-Plate Grant'),
-        title:
-          findRepoArticle('art-veligalani-charter')?.title ||
-          translateText('The Veligalani & Lingaraja Epigraphs of Kapilendra Deva'),
-        summary:
-          findRepoArticle('art-veligalani-charter')?.summary ||
-          translateText(
-            'Paleographic study of the 1458 CE Veligalani copper plates in Sanskrit, Odia, and Telugu alongside the 1452 CE Lingaraja temple proclamation.'
-          ),
+        title: translateText('The Veligalani & Lingaraja Epigraphs of Kapilendra Deva'),
+        summary: translateText(
+          'Paleographic study of the 1458 CE Veligalani copper plates in Sanskrit, Odia, and Telugu alongside the 1452 CE Lingaraja temple proclamation.'
+        ),
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerInscriptionStone,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconInscriptions,
         evidenceCategory: 'verified_archaeological',
@@ -1900,16 +2172,39 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         targetPath: '/inscriptions'
       },
       {
-        id: 'art-odra-desha',
+        id: 'art_epigraphic_evolution_odra',
         chronologicalOrder: 7,
+        categoryKey: 'solar_antiquity',
+        categoryLabel: ui.catSolarAntiquity,
+        eraBadge: translateText('1st Century BCE – 16th Century CE • Paleography'),
+        title:
+          findRepoArticle('art_epigraphic_evolution_odra')?.title ||
+          translateText(
+            'Epigraphic Evolution of the Odra Identity: From Ancient Prakrit Edicts to Medieval Gajapathi Copper Plates'
+          ),
+        summary:
+          findRepoArticle('art_epigraphic_evolution_odra')?.summary ||
+          translateText(
+            'A comprehensive epigraphical treatise tracing the evolution of the Odra identity across two millennia—from Emperor Kharavela’s Hathigumpha Prakrit edict to Suryavamsha Gajapathi charters.'
+          ),
+        thumbnail: ARCHIVE_IMG('hathigumpha_inscription.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconInscriptions,
+        evidenceCategory: 'verified_archaeological',
+        authorName: 'Dr.G Sathyanarayana Raju',
+        citationsCount: 9,
+        targetPath: '/documentary?article=art_epigraphic_evolution_odra'
+      },
+      {
+        id: 'art_odra_desha_history',
+        chronologicalOrder: 8,
         categoryKey: 'odra_gajapathi',
         categoryLabel: ui.catOdraGajapathi,
-        eraBadge: translateText('6th Century BCE – 12th Century CE'),
+        eraBadge: translateText('639 CE – 1568 CE • Classical to Medieval Odra'),
         title:
-          findRepoArticle('art-odra-desha')?.title ||
+          findRepoArticle('art_odra_desha_history')?.title ||
           translateText('Historical Geography of Odra Desha & Maritime Boita Trade'),
         summary:
-          findRepoArticle('art-odra-desha')?.summary ||
+          findRepoArticle('art_odra_desha_history')?.summary ||
           translateText(
             'Maps the river valleys of the Mahanadi, Brahmani, Vamsadhara, and Godavari that formed the territorial cradle of Odra Desha.'
           ),
@@ -1918,19 +2213,42 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         evidenceCategory: 'verified_archaeological',
         authorName: 'Dr.G Sathyanarayana Raju',
         citationsCount: 9,
-        targetPath: '/research?article=art-odra-desha'
+        targetPath: '/documentary?article=art_odra_desha_history'
       },
       {
-        id: 'art-odiyaraju-identity',
-        chronologicalOrder: 8,
+        id: 'art_kolletikota_peddintlamma_lake',
+        chronologicalOrder: 9,
+        categoryKey: 'odra_gajapathi',
+        categoryLabel: ui.catOdraGajapathi,
+        eraBadge: translateText('11th – 16th Century CE • Jala-Durga Garrison'),
+        title:
+          findRepoArticle('art_kolletikota_peddintlamma_lake')?.title ||
+          translateText(
+            'Sri Kolletikota Peddintlamma Thalli & Kolleti Sarasu: The Aquatic Fortress (Jala Durga) and Sacred Royal Guardian of Coastal Andhra'
+          ),
+        summary:
+          findRepoArticle('art_kolletikota_peddintlamma_lake')?.summary ||
+          translateText(
+            'A comprehensive historical and cultural documentary on Kolleti Sarasu (Kolleru Lake), the island citadel of Kolletikota, the presiding warrior-mother deity Sri Peddintlamma Thalli, and Gajapathi-Odiyaraju military garrison defenses.'
+          ),
+        thumbnail: ARCHIVE_IMG('kolleru_wetland_sanctuary.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconDynasties,
+        evidenceCategory: 'scholarly_interpretation',
+        authorName: 'Dr.G Sathyanarayana Raju',
+        citationsCount: 8,
+        targetPath: '/documentary?article=art_kolletikota_peddintlamma_lake'
+      },
+      {
+        id: 'art_oad_rajputh_od_history',
+        chronologicalOrder: 10,
         categoryKey: 'community_genealogy',
         categoryLabel: ui.catCommunityGenealogy,
-        eraBadge: translateText('16th – 21st Century CE • Pan-Indian Diaspora'),
+        eraBadge: translateText('2nd Century BCE – Present • Pan-Indian Diaspora'),
         title:
-          findRepoArticle('art-odiyaraju-identity')?.title ||
+          findRepoArticle('art_oad_rajputh_od_history')?.title ||
           translateText('Odiyaraju, Odra-Kshatriya & Oad-Rajput Pan-Indian Identity'),
         summary:
-          findRepoArticle('art-odiyaraju-identity')?.summary ||
+          findRepoArticle('art_oad_rajputh_od_history')?.summary ||
           translateText(
             'Comparative ethno-historical analysis of the 18 regional designations, martial service, and hydraulic engineering heritage across India.'
           ),
@@ -1939,11 +2257,34 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         evidenceCategory: 'scholarly_interpretation',
         authorName: 'Dr.G Sathyanarayana Raju',
         citationsCount: 12,
-        targetPath: '/community-heritage'
+        targetPath: '/documentary?article=art_oad_rajputh_od_history'
+      },
+      {
+        id: 'art_genealogy_methodology',
+        chronologicalOrder: 11,
+        categoryKey: 'community_genealogy',
+        categoryLabel: ui.catCommunityGenealogy,
+        eraBadge: translateText('1458 CE – Present • Historiographical Methodology'),
+        title:
+          findRepoArticle('art_genealogy_methodology')?.title ||
+          translateText(
+            'Methodological Standards: Distinguishing Epigraphic Lineages from Traditional Vamsavalis'
+          ),
+        summary:
+          findRepoArticle('art_genealogy_methodology')?.summary ||
+          translateText(
+            'Why rigorous historiography requires explicit demarcation between primary contemporary epigraphic records and post-medieval oral or traditional family Vamsavali claims.'
+          ),
+        thumbnail: ARCHIVE_IMG('copper_plate_charter.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconArticles,
+        evidenceCategory: 'scholarly_interpretation',
+        authorName: 'Dr.G Sathyanarayana Raju',
+        citationsCount: 7,
+        targetPath: '/documentary?article=art_genealogy_methodology'
       },
       {
         id: 'art-north-indian-oad-rajput',
-        chronologicalOrder: 9,
+        chronologicalOrder: 12,
         categoryKey: 'community_genealogy',
         categoryLabel: ui.catCommunityGenealogy,
         eraBadge: translateText('Medieval – Modern Era • North & West India'),
@@ -1960,18 +2301,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       },
       {
         id: 'art-purushottama-prataparudra',
-        chronologicalOrder: 10,
+        chronologicalOrder: 13,
         categoryKey: 'odra_gajapathi',
         categoryLabel: ui.catOdraGajapathi,
         eraBadge: translateText('1467 – 1540 CE • Cultural & Literary Golden Age'),
-        title:
-          findRepoArticle('art-purushottama-prataparudra')?.title ||
-          translateText('Emperors Purushottama Deva & Prataparudra Deva'),
-        summary:
-          findRepoArticle('art-purushottama-prataparudra')?.summary ||
-          translateText(
-            'Examines the Kanchi-Kaveri tradition, the legal treatise Sarasvati Vilasa, and the patronage of Sanskrit and Odia literature.'
-          ),
+        title: translateText('Emperors Purushottama Deva & Prataparudra Deva'),
+        summary: translateText(
+          'Examines the Kanchi-Kaveri tradition, the legal treatise Sarasvati Vilasa, and the patronage of Sanskrit and Odia literature.'
+        ),
         thumbnail: ARCHIVE_IMG('purushottama_deva_kanchi.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconArticles,
         evidenceCategory: 'scholarly_interpretation',
@@ -1981,7 +2318,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       },
       {
         id: 'art-south-indian-surnames',
-        chronologicalOrder: 11,
+        chronologicalOrder: 14,
         categoryKey: 'community_genealogy',
         categoryLabel: ui.catCommunityGenealogy,
         eraBadge: translateText('15th – 20th Century CE • Deccan & Coastal Andhra'),
@@ -1998,7 +2335,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
       },
       {
         id: 'art-paika-rebellion',
-        chronologicalOrder: 12,
+        chronologicalOrder: 15,
         categoryKey: 'community_genealogy',
         categoryLabel: ui.catCommunityGenealogy,
         eraBadge: translateText('1804 – 1817 CE • Anti-Colonial Martial Uprising'),
@@ -2006,12 +2343,50 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         summary: translateText(
           'Documents the 1804 Khurda uprising and the 1817 Paika Rebellion led by Commander Baxi Jagabandhu Bidyadhar and Royal Preceptor Jayee Rajguru.'
         ),
-        thumbnail: ARCHIVE_IMG('baxi_jagabandhu_portrait.jpg'),
+        thumbnail: ARCHIVE_IMG('baxi_jagabandhu_statue.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconMedia,
         evidenceCategory: 'scholarly_interpretation',
         authorName: 'Dr.G Sathyanarayana Raju',
         citationsCount: 8,
         targetPath: '/community-prominent-persons'
+      },
+      {
+        id: 'curated_palm_leaf_manuscripts',
+        chronologicalOrder: 16,
+        categoryKey: 'epigraphy_architecture',
+        categoryLabel: ui.catEpigraphyArch,
+        eraBadge: translateText('1500 – 1815 CE • Digitized Manuscripts'),
+        title: translateText(
+          'Digitized Palm-Leaf Chronicles & Kaifiyat Records: Madala Panji, Sarasvati Vilasa & Mackenzie Kaifiyats'
+        ),
+        summary: translateText(
+          'Examine primary manuscript sources including the Jagannatha Temple chronicle (Madala Panji), Emperor Prataparudra Deva’s legal treatise Sarasvati Vilasa, and Colonel Colin Mackenzie’s coastal Kaifiyats.'
+        ),
+        thumbnail: ARCHIVE_IMG('odia_palm_leaf_manuscript.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconMonographs,
+        evidenceCategory: 'verified_archaeological',
+        authorName: 'Oriental Manuscripts & Archival Repository',
+        citationsCount: 6,
+        targetPath: '/documents'
+      },
+      {
+        id: 'curated_community_18_designations',
+        chronologicalOrder: 17,
+        categoryKey: 'community_genealogy',
+        categoryLabel: translateText('Community Heritage Encyclopedia'),
+        eraBadge: translateText('Classical Era – Modern Era • 70 Reference Terms'),
+        title: translateText(
+          'Pan-Indian Community Heritage Directory: 18 Core Designations, 9 Ancestral Vocations & Regional Surnames'
+        ),
+        summary: translateText(
+          'Comprehensive 23-section historical encyclopedia documenting Od, Od-Rajputh, Odra-Kshatriya, Odiyaraju, VaddeRajulu, Oddar, and Waddar martial, hydraulic, and architectural legacies across India.'
+        ),
+        thumbnail: ARCHIVE_IMG('jasma_devi_sahasralinga.jpg'),
+        iconWebp: ROYAL_HOMEPAGE_ASSETS.iconCommunity,
+        evidenceCategory: 'scholarly_interpretation',
+        authorName: 'Dr.G Sathyanarayana Raju & Community Archives',
+        citationsCount: 18,
+        targetPath: '/community-heritage'
       }
     ];
 
@@ -2021,15 +2396,49 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
     }));
   }, [findRawArticle, findRepoArticle, translateText, ui]);
 
+  const categoryDefinitions = useMemo(
+    () => [
+      {
+        key: 'solar_antiquity' as const,
+        title: ui.catSolarAntiquity,
+        subtitle: ui.catSolarAntiquitySub,
+        viewAllPath: '/documentary',
+        badge: translateText('Epoch I')
+      },
+      {
+        key: 'odra_gajapathi' as const,
+        title: ui.catOdraGajapathi,
+        subtitle: ui.catOdraGajapathiSub,
+        viewAllPath: '/gajapathi-kings',
+        badge: translateText('Epoch II')
+      },
+      {
+        key: 'community_genealogy' as const,
+        title: ui.catCommunityGenealogy,
+        subtitle: ui.catCommunityGenealogySub,
+        viewAllPath: '/community-heritage',
+        badge: translateText('Epoch III')
+      },
+      {
+        key: 'epigraphy_architecture' as const,
+        title: ui.catEpigraphyArch,
+        subtitle: ui.catEpigraphyArchSub,
+        viewAllPath: '/inscriptions',
+        badge: translateText('Epoch IV')
+      }
+    ],
+    [ui, translateText]
+  );
+
   const categoryTabs = useMemo(
     () => [
-      { key: 'all' as const, label: ui.catAll },
+      { key: 'all' as const, label: `${translateText('All Categories')} (${curatedChronologicalArticles.length})` },
       { key: 'solar_antiquity' as const, label: ui.catSolarAntiquity },
       { key: 'odra_gajapathi' as const, label: ui.catOdraGajapathi },
       { key: 'community_genealogy' as const, label: ui.catCommunityGenealogy },
       { key: 'epigraphy_architecture' as const, label: ui.catEpigraphyArch }
     ],
-    [ui]
+    [ui, translateText, curatedChronologicalArticles.length]
   );
 
   const displayedArticles = useMemo(() => {
@@ -2044,8 +2453,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   }, [curatedChronologicalArticles, selectedArticleCategory, showAllArticles]);
 
   const previewTimelineEvents = useMemo(() => {
-    return timelineEvents.slice(0, 6);
-  }, [timelineEvents]);
+    return showAllTimelineEvents ? timelineEvents : timelineEvents.slice(0, 6);
+  }, [timelineEvents, showAllTimelineEvents]);
 
   const primaryNavItems = useMemo(
     () => [
@@ -2238,19 +2647,59 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                       <Crown className="w-4 h-4 shrink-0" />
                       <span>{rh.communityHeritageBtn}</span>
                     </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleNavClick('/test-page')}
-                      className="royal-btn-maroon min-h-[44px] inline-flex items-center gap-1.5 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl font-serif font-bold text-xs leading-[1.35] transition-colors cursor-pointer"
-                    >
-                      <Layers className="w-4 h-4 shrink-0" />
-                      <span>View Original Layout – Test Page</span>
-                    </button>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* 3B. SECONDARY HERO HISTORICAL SHOWCASE CARDS */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            {secondaryHeroShowcases.map(slide => (
+              <article
+                key={slide.id}
+                onClick={() => handleNavClick(slide.link)}
+                className="group rounded-2xl bg-[#FFFDF8] hover:bg-[#FFF9EB] border-2 border-[#D4AF37] shadow-lg hover:shadow-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer"
+              >
+                <div>
+                  <div className="royal-maroon-banner relative aspect-[16/9] overflow-hidden bg-[#2D060C] border-b border-[#D4AF37]">
+                    <ArchivalImage
+                      src={slide.image}
+                      alt={slide.title}
+                      variant="card"
+                      width={520}
+                      height={292}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#2D060C]/90 via-transparent to-transparent" />
+                    <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded bg-[#2D060C]/90 border border-[#D4AF37]/75 royal-text-gold text-[10px] font-bold uppercase tracking-wider">
+                      {slide.badge}
+                    </span>
+                    <span className="absolute bottom-2 right-2.5 px-2.5 py-0.5 rounded-full bg-[#5C121D]/95 border border-[#D4AF37]/65 royal-text-ivory text-[10px] font-semibold">
+                      {slide.era}
+                    </span>
+                  </div>
+                  <div className="p-4 space-y-1.5">
+                    <div className="text-[10.5px] font-bold uppercase tracking-wider text-[#761824]">
+                      {slide.subtitle}
+                    </div>
+                    <h3 className="font-serif font-bold text-sm sm:text-base text-[#3B0A11] group-hover:text-[#761824] leading-[1.35] break-words">
+                      {slide.title}
+                    </h3>
+                    <p className="text-xs text-[#4A2E20] leading-relaxed break-words">
+                      {slide.caption}
+                    </p>
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 bg-[#F7EBD4] border-t border-[#D4AF37]/45 flex items-center justify-between text-[11px] font-serif font-bold text-[#5C121D]">
+                  <span className="truncate max-w-[75%]">{slide.sourceTypeBadge}</span>
+                  <span className="inline-flex items-center gap-1 text-[#761824] shrink-0">
+                    <span>{ui.readArticleBtn}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] group-hover:translate-x-0.5 transition-transform" />
+                  </span>
+                </div>
+              </article>
+            ))}
           </div>
 
           {/* Ornamental Royal Divider */}
@@ -2351,6 +2800,95 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               ))}
             </div>
           </div>
+
+          {/* 4B. CHRONOLOGICAL HERITAGE JOURNEY ACROSS REALMS */}
+          <div className="pt-6 border-t border-[#D4AF37]/45 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <div className="text-xs font-bold uppercase tracking-widest text-[#761824] leading-[1.4]">
+                  {ui.journeyBadge}
+                </div>
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-serif font-extrabold text-[#3B0A11] leading-[1.3] break-words">
+                  {ui.journeyTitle}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4A2E20] max-w-3xl leading-relaxed break-words">
+                  {ui.journeySub}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleNavClick('/odra-desha')}
+                className="royal-btn-maroon self-start md:self-auto min-h-[42px] inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-serif font-bold leading-[1.35] transition-colors cursor-pointer shrink-0 shadow-sm"
+              >
+                <Landmark className="w-4 h-4 shrink-0" />
+                <span>{t.nav.odraDesha}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 items-stretch">
+              {heritageJourneyCards.map(realm => (
+                <article
+                  key={realm.id}
+                  onClick={() => handleNavClick(realm.path)}
+                  className="group rounded-2xl bg-[#FFFDF8] hover:bg-[#FFF9EB] border-2 border-[#D4AF37] shadow-md hover:shadow-xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer"
+                >
+                  <div>
+                    <div className="royal-maroon-banner relative aspect-[16/10] overflow-hidden bg-[#2D060C] border-b border-[#D4AF37]">
+                      <ArchivalImage
+                        src={realm.image}
+                        alt={realm.title}
+                        variant="card"
+                        width={560}
+                        height={350}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D060C]/90 via-[#2D060C]/25 to-transparent" />
+                      <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-[#2D060C]/90 border border-[#D4AF37] royal-text-gold font-serif font-bold text-xs">
+                        {realm.step}
+                      </div>
+                      <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-[#5C121D]/95 border border-[#D4AF37]/65 royal-text-ivory text-[10px] font-bold">
+                        {realm.era}
+                      </div>
+                      <div className="absolute bottom-2.5 left-3 right-3">
+                        <span className="inline-block px-2 py-0.5 mb-1 rounded bg-[#2D060C]/90 border border-[#D4AF37]/60 royal-text-gold text-[9.5px] font-bold uppercase tracking-wider">
+                          {realm.provenanceBadge}
+                        </span>
+                        <h4 className="royal-text-ivory font-serif font-bold text-base sm:text-lg leading-snug drop-shadow break-words">
+                          {realm.title}
+                        </h4>
+                      </div>
+                    </div>
+
+                    <div className="p-4 sm:p-5 space-y-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-[#761824] leading-[1.35] break-words">
+                        {realm.subtitle}
+                      </p>
+                      <p className="text-xs sm:text-sm text-[#4A2E20] leading-relaxed break-words">
+                        {realm.description}
+                      </p>
+                      <ul className="space-y-1.5 pt-2 border-t border-[#D4AF37]/35">
+                        {realm.highlights.map((h, i) => (
+                          <li
+                            key={i}
+                            className="flex items-start gap-2 text-[11px] font-semibold text-[#3B0A11] leading-[1.35]"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#8C6214] shrink-0 mt-0.5" />
+                            <span className="break-words">{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="px-4 sm:px-5 py-3 bg-[#F7EBD4] border-t border-[#D4AF37]/45 flex items-center justify-between text-xs font-serif font-bold text-[#5C121D]">
+                    <span>{ui.exploreRealmBtn}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] group-hover:translate-x-1 transition-transform shrink-0" />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -2438,6 +2976,196 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               </article>
             ))}
           </div>
+
+          {/* 5B. ROYAL DYNASTIES & SOVEREIGN HOUSES SHOWCASE */}
+          <div className="pt-8 border-t border-[#D4AF37]/40 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <div className="royal-text-gold text-xs font-bold uppercase tracking-widest leading-[1.4]">
+                  {translateText('Sovereign Houses & Imperial Crowns')}
+                </div>
+                <h3 className="royal-text-ivory text-xl sm:text-2xl lg:text-3xl font-serif font-extrabold leading-[1.3] break-words">
+                  {t.nav.gajapathiKings} & {translateText('Royal Dynasties of Odra-Kalinga')}
+                </h3>
+                <p className="royal-text-cream text-xs sm:text-sm max-w-3xl leading-relaxed break-words">
+                  {translateText(
+                    'From the Vedic Ikshvaku Suryavamsha progenitors and Emperor Kharavela’s Chedi-Kalinga house to the Trikalingadhipati Eastern Gangas and the Suryavamsha Gajapathi Emperors.'
+                  )}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleNavClick('/gajapathi-kings')}
+                className="royal-btn-gold self-start md:self-auto min-h-[42px] inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-serif font-extrabold text-xs sm:text-sm leading-[1.35] shadow-md hover:brightness-110 transition-all cursor-pointer shrink-0"
+              >
+                <Crown className="w-4 h-4 shrink-0" />
+                <span>{translateText('Explore Royal Dynasties')}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+              {royalDynastiesShowcase.map(dyn => (
+                <article
+                  key={dyn.id}
+                  onClick={() => handleNavClick(dyn.path)}
+                  className="group rounded-2xl bg-[#FFFDF8] hover:bg-[#FFF9EB] border-2 border-[#D4AF37] shadow-lg hover:shadow-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer"
+                >
+                  <div>
+                    <div className="royal-maroon-banner relative aspect-[16/10] overflow-hidden bg-[#2D060C] border-b border-[#D4AF37]">
+                      <ArchivalImage
+                        src={dyn.image}
+                        alt={dyn.title}
+                        variant="card"
+                        width={520}
+                        height={325}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D060C]/90 via-transparent to-transparent" />
+                      <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded bg-[#2D060C]/90 border border-[#D4AF37]/75 royal-text-gold text-[10px] font-bold uppercase tracking-wider">
+                        {dyn.badge}
+                      </span>
+                      <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center gap-2">
+                        <img
+                          src={dyn.iconWebp}
+                          alt=""
+                          aria-hidden="true"
+                          className="w-6 h-6 rounded object-cover border border-[#D4AF37] shrink-0"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <span className="royal-text-gold text-[10.5px] font-bold leading-[1.35] truncate">
+                          {dyn.era}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-4 sm:p-5 space-y-2">
+                      <h4 className="font-serif font-bold text-base sm:text-lg text-[#3B0A11] group-hover:text-[#761824] leading-[1.35] break-words">
+                        {dyn.title}
+                      </h4>
+                      <p className="text-[11px] font-bold text-[#761824] leading-[1.35] break-words">
+                        {dyn.monarchs}
+                      </p>
+                      <p className="text-xs sm:text-sm text-[#4A2E20] leading-relaxed break-words">
+                        {dyn.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="px-4 sm:px-5 py-3 bg-[#F7EBD4] border-t border-[#D4AF37]/45 flex items-center justify-between text-xs font-serif font-bold text-[#5C121D]">
+                    <span>{ui.exploreRealmBtn}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] group-hover:translate-x-1 transition-transform shrink-0" />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          {/* 5C. FEATURED HISTORICAL PERSONAGES – SOVEREIGN BIOGRAPHIES */}
+          <div className="pt-8 border-t border-[#D4AF37]/40 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <div className="royal-text-gold text-xs font-bold uppercase tracking-widest leading-[1.4]">
+                  {ui.personagesBadge}
+                </div>
+                <h3 className="royal-text-ivory text-xl sm:text-2xl lg:text-3xl font-serif font-extrabold leading-[1.3] break-words">
+                  {ui.personagesTitle}
+                </h3>
+                <p className="royal-text-cream text-xs sm:text-sm max-w-3xl leading-relaxed break-words">
+                  {ui.personagesSub}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleNavClick('/kings-queens')}
+                className="royal-btn-gold self-start md:self-auto min-h-[42px] inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-serif font-extrabold text-xs sm:text-sm leading-[1.35] shadow-md hover:brightness-110 transition-all cursor-pointer shrink-0"
+              >
+                <Users className="w-4 h-4 shrink-0" />
+                <span>{ui.viewAllPersonagesBtn}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+              {displayedPersonages.map(person => (
+                <article
+                  key={person.id}
+                  onClick={() => handleNavClick(`/kings-queens?figure=${encodeURIComponent(person.id)}`)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleNavClick(`/kings-queens?figure=${encodeURIComponent(person.id)}`);
+                    }
+                  }}
+                  className="group rounded-2xl bg-[#FFFDF8] hover:bg-[#FFF9EB] border-2 border-[#D4AF37] shadow-lg hover:shadow-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer"
+                >
+                  <div>
+                    <div className="royal-maroon-banner relative aspect-[4/3] overflow-hidden bg-[#2D060C] border-b border-[#D4AF37]">
+                      <ArchivalImage
+                        src={person.image_url}
+                        alt={person.name}
+                        variant="card"
+                        width={420}
+                        height={315}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D060C]/90 via-transparent to-transparent" />
+                      <span className="absolute top-2.5 left-2.5 right-2.5 w-fit max-w-[90%] px-2.5 py-0.5 rounded bg-[#2D060C]/90 royal-text-gold border border-[#D4AF37]/75 text-[10px] font-bold uppercase tracking-wider leading-[1.35] break-words">
+                        {person.dynasty_name}
+                      </span>
+                      <span className="absolute bottom-2 left-2.5 px-2.5 py-0.5 rounded-full bg-[#5C121D]/95 border border-[#D4AF37]/65 royal-text-ivory text-[10px] font-semibold leading-[1.35]">
+                        {person.reign_period}
+                      </span>
+                    </div>
+
+                    <div className="p-4 space-y-1.5 min-w-0">
+                      <h4 className="font-serif font-bold text-base sm:text-lg text-[#3B0A11] group-hover:text-[#761824] leading-[1.35] break-words">
+                        {person.name}
+                      </h4>
+                      {person.known_titles?.[0] && (
+                        <p className="text-[11px] font-bold text-[#761824] leading-[1.35] break-words">
+                          {person.known_titles[0]}
+                        </p>
+                      )}
+                      <p className="text-xs text-[#4A2E20] leading-relaxed line-clamp-2 break-words">
+                        {person.biography}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="px-4 py-2.5 bg-[#F7EBD4] border-t border-[#D4AF37]/45 flex items-center justify-between gap-2 flex-wrap">
+                    <span className="text-[10px] font-semibold text-[#5C121D] leading-[1.35] break-words">
+                      {getMetadataLabel('status', person.evidence_status) || person.evidence_status}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-serif font-bold leading-[1.4] text-[#761824] group-hover:text-[#3B0A11] shrink-0 ml-auto">
+                      <span>{ui.viewBiographyBtn}</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {chronologicalPersonages.length > 8 && (
+              <div className="pt-2 text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowAllPersonages(prev => !prev)}
+                  className="royal-btn-gold min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-xl font-serif font-extrabold text-xs sm:text-sm leading-[1.35] transition-all cursor-pointer shadow-md"
+                >
+                  <Users className="w-4 h-4 shrink-0" />
+                  <span>
+                    {showAllPersonages
+                      ? ui.showLessPersonagesBtn
+                      : ui.showMorePersonagesBtn(chronologicalPersonages.length)}
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -2492,6 +3220,42 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                 {tab.label}
               </button>
             ))}
+          </div>
+
+          {/* 4 Epoch Category Subtitles & Category CTAs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            {categoryDefinitions
+              .filter(
+                cat => selectedArticleCategory === 'all' || selectedArticleCategory === cat.key
+              )
+              .map(cat => (
+                <div
+                  key={cat.key}
+                  className="rounded-xl bg-[#FFFDF8] border border-[#D4AF37]/65 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm"
+                >
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-[#5C121D] royal-text-gold text-[10px] font-bold uppercase tracking-wider border border-[#D4AF37]/60">
+                        {cat.badge}
+                      </span>
+                      <h3 className="font-serif font-bold text-xs sm:text-sm text-[#3B0A11] leading-[1.35] break-words">
+                        {cat.title}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-[#4A2E20] leading-relaxed break-words">
+                      {cat.subtitle}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick(cat.viewAllPath)}
+                    className="royal-btn-maroon self-start sm:self-center inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-serif font-bold leading-[1.35] shrink-0 cursor-pointer"
+                  >
+                    <span>{ui.viewCategoryBtn}</span>
+                    <ArrowRight className="w-3 h-3 shrink-0" />
+                  </button>
+                </div>
+              ))}
           </div>
 
           {/* Featured Historical Articles Grid */}
@@ -2609,8 +3373,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
             </button>
           </div>
 
-          {/* 6 Chronological Milestone Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          {/* Unified 11 Chronological Milestone Cards (Preserving Complete Descriptions, Monuments, Primary Sources & Notes) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-stretch">
             {previewTimelineEvents.map((ev, index) => (
               <article
                 key={ev.id}
@@ -2620,7 +3384,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between gap-2 text-xs font-bold text-[#761824] border-b border-[#D4AF37]/40 pb-2">
                     <span className="font-serif">
-                      0{index + 1}. {translateText(ev.year_text)}
+                      {String(index + 1).padStart(2, '0')}. {translateText(ev.year_text)}
                     </span>
                     <span className="text-[11px] text-[#8C6214]">{translateText(ev.period)}</span>
                   </div>
@@ -2629,13 +3393,48 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                     {translateText(ev.title)}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-[#4A2E20] leading-relaxed line-clamp-3 break-words">
+                  {ev.rulers_involved && (
+                    <div className="text-[11px] font-bold text-[#761824] leading-[1.35] break-words">
+                      {translateText(ev.rulers_involved)}
+                    </div>
+                  )}
+
+                  <p className="text-xs sm:text-sm text-[#4A2E20] leading-relaxed break-words">
                     {translateText(ev.political_development)}
                   </p>
+
+                  <div className="pt-2 border-t border-[#D4AF37]/30 space-y-1.5 text-[11px] text-[#3B0A11]">
+                    {ev.monuments_inscriptions && (
+                      <div className="leading-[1.4] break-words">
+                        <span className="font-bold text-[#761824]">
+                          {translateText('Monuments & Inscriptions')}:{' '}
+                        </span>
+                        <span>{translateText(ev.monuments_inscriptions)}</span>
+                      </div>
+                    )}
+                    {ev.primary_sources && (
+                      <div className="leading-[1.4] break-words">
+                        <span className="font-bold text-[#761824]">
+                          {translateText('Primary Sources')}:{' '}
+                        </span>
+                        <span>{translateText(ev.primary_sources)}</span>
+                      </div>
+                    )}
+                    {ev.uncertainty_notes && (
+                      <div className="leading-[1.4] text-[#5C4033] italic break-words">
+                        <span className="font-semibold not-italic text-[#8C6214]">
+                          {translateText('Historical Note')}:{' '}
+                        </span>
+                        <span>{translateText(ev.uncertainty_notes)}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="pt-3 mt-3 border-t border-[#D4AF37]/30 flex items-center justify-between text-[11px] font-serif font-bold text-[#5C121D]">
-                  <span className="truncate max-w-[70%]">{translateText(ev.rulers_involved || ev.monuments_inscriptions)}</span>
+                  <span className="truncate max-w-[70%]">
+                    {translateText(ev.rulers_involved || ev.monuments_inscriptions)}
+                  </span>
                   <span className="inline-flex items-center gap-1 shrink-0">
                     <span>{t.nav.timeline}</span>
                     <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] group-hover:translate-x-0.5 transition-transform" />
@@ -2643,6 +3442,96 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                 </div>
               </article>
             ))}
+          </div>
+
+          {timelineEvents.length > 6 && (
+            <div className="pt-2 text-center">
+              <button
+                type="button"
+                onClick={() => setShowAllTimelineEvents(prev => !prev)}
+                className="royal-btn-gold min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-xl font-serif font-extrabold text-xs sm:text-sm leading-[1.35] transition-all cursor-pointer shadow-md"
+              >
+                <Clock className="w-4 h-4 shrink-0" />
+                <span>
+                  {showAllTimelineEvents
+                    ? translateText('Show Featured 6 Chronological Milestones')
+                    : `${translateText('Show All')} ${timelineEvents.length} ${translateText('Chronological Milestones (1st Century BCE – 1568 CE)')}`}
+                </span>
+              </button>
+            </div>
+          )}
+
+          {/* 7B. HISTORICAL RESOURCES & PRIMARY EVIDENCE VAULT */}
+          <div className="pt-8 border-t border-[#D4AF37]/40 space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <div className="royal-text-gold text-xs font-bold uppercase tracking-widest leading-[1.4]">
+                  {ui.resourcesBadge}
+                </div>
+                <h3 className="royal-text-ivory text-xl sm:text-2xl lg:text-3xl font-serif font-extrabold leading-[1.3] break-words">
+                  {ui.resourcesTitle}
+                </h3>
+                <p className="royal-text-cream text-xs sm:text-sm max-w-3xl leading-relaxed break-words">
+                  {ui.resourcesSub}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleNavClick('/references')}
+                className="royal-btn-gold self-start md:self-auto min-h-[42px] inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-serif font-extrabold text-xs sm:text-sm leading-[1.35] shadow-md hover:brightness-110 transition-all cursor-pointer shrink-0"
+              >
+                <Scroll className="w-4 h-4 shrink-0" />
+                <span>{t.nav.references || translateText('Historical Sources')}</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+              {resourceCards.map(res => {
+                const ResIcon = res.icon;
+                return (
+                  <article
+                    key={res.id}
+                    onClick={() => handleNavClick(res.path)}
+                    className="group rounded-2xl bg-[#FFFDF8] hover:bg-[#FFF9EB] border-2 border-[#D4AF37] shadow-lg hover:shadow-2xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer"
+                  >
+                    <div>
+                      <div className="royal-maroon-banner relative aspect-[16/10] overflow-hidden bg-[#2D060C] border-b border-[#D4AF37]">
+                        <ArchivalImage
+                          src={res.image}
+                          alt={res.title}
+                          variant="card"
+                          width={520}
+                          height={325}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#2D060C]/90 via-transparent to-transparent" />
+                        <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded bg-[#2D060C]/90 border border-[#D4AF37]/75 royal-text-gold text-[10px] font-bold uppercase tracking-wider">
+                          {res.badge}
+                        </span>
+                        <div className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-xl bg-[#D4AF37] text-[#2D060C] flex items-center justify-center shadow-md">
+                          <ResIcon className="w-4 h-4" />
+                        </div>
+                      </div>
+
+                      <div className="p-4 sm:p-5 space-y-2">
+                        <h4 className="font-serif font-bold text-base sm:text-lg text-[#3B0A11] group-hover:text-[#761824] leading-[1.35] break-words">
+                          {res.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-[#4A2E20] leading-relaxed break-words">
+                          {res.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="px-4 sm:px-5 py-3 bg-[#F7EBD4] border-t border-[#D4AF37]/45 flex items-center justify-between text-xs font-serif font-bold text-[#5C121D]">
+                      <span>{res.cta}</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] group-hover:translate-x-1 transition-transform shrink-0" />
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -2807,6 +3696,88 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               ))}
             </div>
           </div>
+
+          {/* 8B. AUTHENTICATED ARCHIVAL VISUAL GALLERY SHOWCASE (All 7 Canonical Gallery Items with Provenance, Licenses & LightboxModal) */}
+          <div className="space-y-5 pt-8 border-t border-[#D4AF37]/45">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+              <div className="space-y-1">
+                <div className="text-xs font-bold uppercase tracking-widest text-[#761824] leading-[1.4]">
+                  {ui.galleryBadge}
+                </div>
+                <h3 className="text-xl sm:text-2xl font-serif font-extrabold text-[#3B0A11] leading-[1.3] break-words">
+                  {ui.galleryTitle}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4A2E20] leading-relaxed break-words">
+                  {ui.gallerySub}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleNavClick('/gallery')}
+                className="royal-btn-maroon self-start sm:self-auto min-h-[40px] inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-serif font-bold leading-[1.35] cursor-pointer shrink-0"
+              >
+                <ImageIcon className="w-4 h-4 shrink-0" />
+                <span>{t.home.viewFullGallery}</span>
+                <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+              {canonicalGalleryItems.map(item => (
+                <article
+                  key={item.id}
+                  onClick={() => setSelectedGalleryItem(item)}
+                  className="group rounded-2xl bg-[#FFFDF8] hover:bg-[#FFF9EB] border-2 border-[#D4AF37] shadow-md hover:shadow-xl overflow-hidden flex flex-col justify-between transition-all cursor-pointer"
+                >
+                  <div>
+                    <div className="royal-maroon-banner relative aspect-[16/10] overflow-hidden bg-[#2D060C] border-b border-[#D4AF37]">
+                      <ArchivalImage
+                        src={item.image_url}
+                        alt={item.alt_text || item.title}
+                        variant="card"
+                        width={560}
+                        height={350}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D060C]/90 via-transparent to-transparent" />
+                      <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded bg-[#2D060C]/90 border border-[#D4AF37]/75 royal-text-gold text-[10px] font-bold uppercase tracking-wider">
+                        {getMetadataLabel('category', item.category) || translateText(item.category)}
+                      </span>
+                      <span className="absolute bottom-2.5 left-3 right-3 royal-text-ivory text-xs sm:text-sm font-serif font-bold leading-snug drop-shadow break-words">
+                        {item.title}
+                      </span>
+                    </div>
+
+                    <div className="p-4 space-y-2">
+                      <p className="text-xs text-[#4A2E20] leading-relaxed break-words">
+                        {item.description}
+                      </p>
+                      <div className="pt-2 border-t border-[#D4AF37]/30 space-y-1 text-[10.5px] text-[#3B0A11]">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-bold text-[#761824]">{item.location}</span>
+                          <span className="font-semibold text-[#8C6214]">{item.period}</span>
+                        </div>
+                        <div className="text-[#4A2E20] truncate" title={item.source}>
+                          {item.creator_photographer} · {item.source}
+                        </div>
+                        <div className="text-[10px] text-[#5C4033] font-medium">
+                          {item.copyright_license}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="px-4 py-2.5 bg-[#F7EBD4] border-t border-[#D4AF37]/45 flex items-center justify-between text-[11px] font-serif font-bold text-[#5C121D]">
+                    <span>{item.verification_status}</span>
+                    <span className="inline-flex items-center gap-1 text-[#761824]">
+                      <span>{ui.exploreRealmBtn}</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#B8861B] group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -2922,9 +3893,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
         {/* Main Footer Links & Contact Details */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-            {/* Column 1-2: Royal Brand & Core Legal / Archival Links */}
-            <div className="lg:col-span-2 space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            {/* Column 1: Royal Brand & Core Legal / Archival Links */}
+            <div className="lg:col-span-3 space-y-4">
               <div className="flex items-center gap-3">
                 <img
                   src={ROYAL_HOMEPAGE_ASSETS.logoSunEmblem}
@@ -2943,7 +3914,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                 </div>
               </div>
 
-              <p className="royal-text-cream text-xs leading-relaxed break-words">
+              <p className="royal-text-cream text-xs leading-relaxed break-words pr-2 sm:pr-6">
                 {rh.footerBrandSummary}
               </p>
 
@@ -3010,202 +3981,106 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               </div>
             </div>
 
-            {/* Column 3: Historical Documentary Links */}
-            <div className="space-y-3">
-              <h4 className="royal-text-gold text-xs font-serif font-bold uppercase tracking-wider">
-                {rh.footerQuickLinksTitle}
-              </h4>
-              <ul className="space-y-2 text-xs">
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/documentary')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.documentary}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/odra-desha')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.odraDesha}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/kalinga-war')}
-                    className="royal-text-gold font-semibold hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.kalingaWar || 'The Kalinga War (261 BCE)'}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/gajapathi-kings')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.gajapathiKings}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/timeline')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.timeline}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/maps')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.maps}
-                  </button>
-                </li>
-              </ul>
-            </div>
+            {/* Column 2: Legal Policies, Standards & Navigation Guide */}
+            <div className="lg:col-span-2 space-y-3.5">
+              <div className="rounded-xl bg-[#3E0A12]/85 border border-[#D4AF37]/60 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="royal-text-gold text-xs font-serif font-bold uppercase tracking-wider">
+                    {{
+                      en: 'Legal, Policies & Standards',
+                      hi: 'विधिक नीतियाँ एवं मानक',
+                      te: 'చట్టపరమైన నిబంధనలు & ప్రమాణాలు',
+                      kn: 'ಕಾನೂನು ನೀತಿಗಳು ಮತ್ತು ಮಾನದಂಡಗಳು',
+                      ta: 'சட்டக் கொள்கைகள் & தரநிலைகள்',
+                      mr: 'कायदेशीर धोरणे आणि मानके',
+                      or: 'ଆଇନଗତ ନୀତି ଓ ମାନକ',
+                      bn: 'আইনি নীতিমালা ও মানক'
+                    }[language] || 'Legal, Policies & Standards'}
+                  </h4>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#5C121D] border border-[#D4AF37]/60 royal-text-gold font-semibold">
+                    Verified Archival Records
+                  </span>
+                </div>
 
-            {/* Column 4: Epigraphy & Archives */}
-            <div className="space-y-3">
-              <h4 className="royal-text-gold text-xs font-serif font-bold uppercase tracking-wider">
-                {rh.footerEpigraphyTitle}
-              </h4>
-              <ul className="space-y-2 text-xs">
-                <li>
+                {/* Secondary Policy & Standard Links */}
+                <div className="pt-1 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs">
                   <button
                     type="button"
-                    onClick={() => handleNavClick('/inscriptions')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.inscriptions}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/kings-queens')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.documentedFigures}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/temples-monuments')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.temples}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/genealogy')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.genealogy}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/gallery')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.gallery}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/references')}
-                    className="royal-text-gold font-semibold hover:underline cursor-pointer text-left"
+                    onClick={() => handleNavClick('/privacy')}
+                    className="royal-text-ivory hover:underline cursor-pointer"
                   >
                     {{
-                      en: 'Historical Sources',
-                      hi: 'ऐतिहासिक स्रोत',
-                      te: 'చారిత్రక ఆధారాలు',
-                      kn: 'ಐತಿಹಾಸಿಕ ಆಕರಗಳು',
-                      ta: 'வரலாற்று ஆதாரங்கள்',
-                      mr: 'ऐतिहासिक स्रोत',
-                      or: 'ଐତିହାସିକ ଉତ୍ସ',
-                      bn: 'ঐতিহাসিক উৎস'
-                    }[language] || 'Historical Sources'}
+                      en: 'Privacy Policy',
+                      hi: 'गोपनीयता नीति',
+                      te: 'గోప్యతా విధానం',
+                      kn: 'ಗೌಪ್ಯತಾ ನೀತಿ',
+                      ta: 'தனியுரிமைக் கொள்கை',
+                      mr: 'गोपनीयता धोरण',
+                      or: 'ଗୋପନୀୟତା ନୀତି',
+                      bn: 'গোপনীয়তা নীতি'
+                    }[language] || 'Privacy Policy'}
                   </button>
-                </li>
-              </ul>
-            </div>
+                  <span className="text-[#D4AF37]/50">•</span>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('/accessibility')}
+                    className="royal-text-ivory hover:underline cursor-pointer"
+                  >
+                    {{
+                      en: 'Accessibility Statement',
+                      hi: 'सुलभता विवरण',
+                      te: 'యాక్సెసిబిలిటీ ప్రకటన',
+                      kn: 'ಪ್ರವೇಶಸಾಧ್ಯತೆಯ ಹೇಳಿಕೆ',
+                      ta: 'அணுகல்தன்மை அறிக்கை',
+                      mr: 'सुलभता विधान',
+                      or: 'ସୁଗମ୍ୟତା ବିବରଣୀ',
+                      bn: 'অ্যাক্সেসিবিলিটি বিবৃতি'
+                    }[language] || 'Accessibility Statement'}
+                  </button>
+                  <span className="text-[#D4AF37]/50">•</span>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('/design-system')}
+                    className="royal-text-gold font-medium hover:underline cursor-pointer"
+                  >
+                    {{
+                      en: 'Royal UI Component System',
+                      hi: 'राजकीय UI डिज़ाइन प्रणाली',
+                      te: 'రాయల్ UI డిజైన్ సిస్టమ్',
+                      kn: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ',
+                      ta: 'அரச UI வடிவமைப்பு அமைப்பு',
+                      mr: 'शाही UI डिझाइन प्रणाली',
+                      or: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍',
+                      bn: 'রাজকীয় UI ডিজাইন সিস্টেম'
+                    }[language] || 'Royal UI Component System'}
+                  </button>
+                </div>
 
-            {/* Column 5: Community, Surnames & Original Archive */}
-            <div className="space-y-3">
-              <h4 className="royal-text-gold text-xs font-serif font-bold uppercase tracking-wider">
-                {rh.footerCommunityTitle}
-              </h4>
-              <ul className="space-y-2 text-xs">
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/community-heritage')}
-                    className="royal-text-gold font-semibold hover:underline cursor-pointer text-left"
+                {/* Download Project Export ZIP */}
+                <div className="pt-2 border-t border-[#D4AF37]/25 flex items-center justify-between">
+                  <a
+                    href="/api/export/project-zip"
+                    download="suryavamsha-odiyaraju-kshatriya-portal.zip"
+                    className="royal-text-gold font-semibold hover:underline text-xs flex items-center gap-1.5 cursor-pointer"
                   >
-                    {t.nav.communityHeritage}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/community-surnames')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.communitySurnames}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/community-surnames-north-indian-oad-community')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.communitySurnamesNorth}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/community-prominent-persons')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.communityProminentPersons}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/contact')}
-                    className="royal-text-ivory hover:underline cursor-pointer text-left"
-                  >
-                    {t.nav.contact}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleNavClick('/test-page')}
-                    className="royal-text-gold font-bold hover:underline cursor-pointer text-left"
-                  >
-                    View Original Layout – Test Page (/test-page)
-                  </button>
-                </li>
-              </ul>
+                    <span>
+                      {{
+                        en: 'Export Project (ZIP)',
+                        hi: 'प्रोजेक्ट निर्यात (ZIP)',
+                        te: 'ప్రాజెక్ట్ ఎగుమతి (ZIP)',
+                        kn: 'ಪ್ರಾಜೆಕ್ಟ್ ರಫ್ತು (ZIP)',
+                        ta: 'திட்ட ஏற்றுமதி (ZIP)',
+                        mr: 'प्रोजेक्ट निर्यात (ZIP)',
+                        or: 'ପ୍ରୋଜେକ୍ଟ ରପ୍ତାନି (ZIP)',
+                        bn: 'প্রকল্প রপ্তানি (ZIP)'
+                      }[language] || 'Export Project (ZIP)'}
+                    </span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#762D35] border border-[#D4AF37] royal-text-ivory">
+                      Full
+                    </span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -3288,6 +4163,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
           </div>
         </div>
       </footer>
+
+      {/* Lazy-Loaded Lightbox Modal for Authenticated Archival Gallery Inspection */}
+      {selectedGalleryItem && (
+        <Suspense fallback={null}>
+          <LightboxModal
+            item={selectedGalleryItem}
+            onClose={() => setSelectedGalleryItem(null)}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

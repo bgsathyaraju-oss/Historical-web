@@ -691,7 +691,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['অযোধ্যা', 'কপিল আশ্রম', 'গঙ্গাসাগর']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: ARCHIVE_IMG('samrat_sagara_surya.jpg'),
+    image_url: '/assets/01_samrat_sagara.webp',
     inscriptions_ids: [],
     citations: [
       'Valmiki Ramayana (Balakanda Sarga 38-41).',
@@ -815,7 +815,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['গঙ্গোত্রী', 'হরিদ্বার', 'প্রয়াগরাজ', 'বারাণসী', 'গঙ্গাসাগর']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: ARCHIVE_IMG('maharshi_bhagiratha_penance.jpg'),
+    image_url: '/assets/02_maharshi_bhagiratha_ganga_avatarana.webp',
     inscriptions_ids: [],
     citations: [
       'Valmiki Ramayana (Balakanda Sarga 42-44).',
@@ -939,7 +939,7 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       bn: ['অযোধ্যা', 'চিত্রকূট', 'দণ্ডকারণ্য', 'ভদ্রাচলম', 'রামেশ্বরম']
     },
     evidence_status: 'Traditional Lineage Record',
-    image_url: ARCHIVE_IMG('sri_rama_sculpture.jpg'),
+    image_url: '/assets/03_maryada_purushottama_sri_rama.webp',
     inscriptions_ids: [],
     citations: [
       'Valmiki Ramayana.',

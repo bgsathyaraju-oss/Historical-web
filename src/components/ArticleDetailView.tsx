@@ -31,6 +31,7 @@ import { EvidenceBadge } from './EvidenceBadge';
 import { TranslationMatrixBadge } from './TranslationMatrixBadge';
 import { PublisherCreditCard } from './PublisherCreditCard';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../context/LanguageContext';
+import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
 import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
@@ -186,7 +187,7 @@ export const MONOGRAPH_ENRICHMENT_MAP: Record<string, MonographEnrichment> = {
       en: 'Two Millennia of Paleography & Royal Charters (c. 3rd Century BCE – 16th Century CE)',
       hi: 'दो सहस्राब्दियों का पुरालेख एवं राजपत्र इतिहास (लगभग तीसरी शताब्दी ई.पू. – 16वीं शताब्दी ई.)',
       te: 'రెండు సహస్రాబ్దాల శాసన & లిపి పరిణామ చరిత్ర (క్రీ.పూ. 3వ శతాబ్దం – క్రీ.శ. 16వ శతాబ్దం)',
-      kn: 'ಎರಡು সহಸ್ರಮಾನಗಳ ಶಾಸನ ಮತ್ತು ಲಿಪಿ ವಿಕಾಸ (ಕ್ರಿ.ಪೂ. 3ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 16ನೇ ಶತಮಾನ)',
+      kn: 'ಎರಡು ಸಹಸ್ರಮಾನಗಳ ಶಾಸನ ಮತ್ತು ಲಿಪಿ ವಿಕಾಸ (ಕ್ರಿ.ಪೂ. 3ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 16ನೇ ಶತಮಾನ)',
       ta: 'இரண்டாயிரம் ஆண்டுகால கல்வெட்டு மற்றும் எழுத்துமுறை வரலாறு (பொ.ஊ.மு. 3-ஆம் நூற்றாண்டு – பொ.ஊ. 16-ஆம் நூற்றாண்டு)',
       mr: 'दोन सहस्रकांचा शिलालेख आणि लिपी विकास (इ.स.पू. ३ रे शतक – इ.स. १६ वे शतक)',
       or: 'ଦୁଇ ସହସ୍ରାବ୍ଦର ଶିଳାଲେଖ ଓ ଲିପି ବିବର୍ତ୍ତନ (ଖ୍ରୀ.ପୂ. ୩ୟ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୬ଶ ଶତାବ୍ଦୀ)',
@@ -654,7 +655,7 @@ const ARTICLE_DETAIL_UI: Record<
     publishedLabel: 'ପ୍ରକାଶନ ତାରିଖ:',
     periodLabel: 'ଐତିହାସିକ କାଳଖଣ୍ଡ:',
     statusLabel: 'ସମୀକ୍ଷା ସ୍ଥିତି:',
-    artifactLabel: 'ପ୍ରମାଣିତ ଐତିହାସିକ କীর୍ତ୍ତି / ସ୍ଥାନ:',
+    artifactLabel: 'ପ୍ରମାଣିତ ଐତିହାସିକ କୀର୍ତ୍ତି / ସ୍ଥାନ:',
     execIntroHeading: 'ସଂକ୍ଷିପ୍ତ ପରିଚୟ ଓ ଐତିହାସିକ ପରିସର',
     tocHeading: count => `ସମ୍ପୂର୍ଣ୍ଣ ଅଧ୍ୟାୟ ଓ ବିଭାଗ (${count})`,
     chaptersHeading: 'ସମ୍ପୂର୍ଣ୍ଣ ମୋନୋଗ୍ରାଫ୍ ଅଧ୍ୟାୟ ଓ ବିସ୍ତୃତ ଐତିହାସିକ ବ୍ୟାଖ୍ୟା',
@@ -681,7 +682,7 @@ const ARTICLE_DETAIL_UI: Record<
     epistemicTradDesc: 'ପୌରାଣିକ ବଂଶାବଳୀ, ମାଦଳା ପାଞ୍ଜି ଓ ସାମୁଦାୟିକ ଐତିହ୍ୟରେ ସଂରକ୍ଷିତ।',
     epistemicScholarTitle: '୩. ଐତିହାସିକ ଗବେଷଣା ଓ ବିଶ୍ଳେଷଣ',
     epistemicScholarDesc: 'ଆଧୁନିକ ଶିଳାଲେଖ ଗବେଷଣା (Epigraphia Indica, ASI) ମାଧ୍ୟମରେ ବିଶ୍ଳେଷିତ।',
-    chronologyHeading: 'କାଳାନୁକ୍ରମିକ ଘଟଣାବଳୀ ଓ ଐତିହାସିକ ସମୟরেଖା',
+    chronologyHeading: 'କାଳାନୁକ୍ରମିକ ଘଟଣାବଳୀ ଓ ଐତିହାସିକ ସମୟରେଖା',
     kingdomsPersonalitiesHeading: 'ସମ୍ପୃକ୍ତ ସାମ୍ରାଜ୍ୟ, ରାଜବଂଶ ଓ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
     inscriptionsEvidenceHeading: 'ଉପଲବ୍ଧ ଶିଳାଲେଖ, ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ଅଭିଲେଖ ଓ ଦଲିଲ ପ୍ରମାଣ',
     conclusionHeading: 'ଐତିହାସିକ ବିଶ୍ଳେଷଣ ଓ ସିଦ୍ଧାନ୍ତ',
@@ -776,6 +777,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const [activeTocId, setActiveTocId] = useState<string>('');
 
   const { title: displayTitle, summary: displaySummary, content: displayContent } = getArticleContent(article);
+  const localizedTr = language !== 'en' ? (ARTICLE_TRANSLATIONS as Record<string, any>)[article.id]?.[language] : undefined;
+  const displayAuthor = localizedTr?.author_name || article.author_name;
+  const displaySources: SourceReference[] = localizedTr?.sources || article.sources || [];
   const localizedCat = getMetadataLabel('category', article.category) || article.category;
   const historicalPeriod = getMonographPeriod(article, language);
   const subjectCategories = getMonographCategories(article, localizedCat, translateText, getMetadataLabel);
@@ -868,12 +872,14 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   let currentSecTitle = ui.intro;
   let currentSecLines: string[] = [];
 
-  contentLines.forEach(line => {
+  contentLines.forEach((line, idx) => {
     const trimmed = line.trim();
+    const prevBlank = idx === 0 || contentLines[idx - 1].trim() === '';
     const isHeader =
-      (trimmed.endsWith(':') && trimmed.length < 120 && !trimmed.includes('http')) ||
-      /^(\d+|[०-९]+|[౦-౯]+|[೦-೯]+|[୦-୯]+|[০-৯]+)\.?\s+\S/.test(trimmed) ||
-      /^\#{1,4}\s+\S/.test(trimmed);
+      prevBlank &&
+      ((trimmed.endsWith(':') && trimmed.length < 120 && !trimmed.includes('http')) ||
+        (/^(\d+|[०-९]+|[౦-౯]+|[೦-೯]+|[୦-୯]+|[০-৯]+)\.\s+\S/.test(trimmed) && trimmed.length < 120) ||
+        /^\#{1,4}\s+\S/.test(trimmed));
 
     if (isHeader) {
       if (currentSecLines.some(l => l.trim().length > 0)) {
@@ -1291,7 +1297,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <User className="w-3.5 h-3.5 text-[var(--profile-title-box-text)]" />
                 <span>{ui.authorLabel}</span>
               </div>
-              <div className="text-[var(--profile-title-box-text)] font-semibold mt-1 break-words">{article.author_name}</div>
+              <div className="text-[var(--profile-title-box-text)] font-semibold mt-1 break-words">{displayAuthor}</div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
@@ -1729,20 +1735,20 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         </section>
 
         {/* 11. SOURCE REFERENCES & SCHOLARLY CITATIONS */}
-        {article.sources && article.sources.length > 0 && (
+        {displaySources && displaySources.length > 0 && (
           <section
             aria-label="Sources and References"
             className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border border-[#A87924] space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#A87924]/60 pb-3">
               <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#54351F] font-royal-heading">
-                {ui.sourcesHeading(article.sources.length)}
+                {ui.sourcesHeading(displaySources.length)}
               </h2>
               <span className="text-[11px] text-[#76501F] font-semibold">{ui.sourcesNote}</span>
             </div>
 
             <div className="space-y-3">
-              {article.sources.map((src: SourceReference, i: number) => (
+              {displaySources.map((src: SourceReference, i: number) => (
                 <div
                   key={src.id || i}
                   className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"

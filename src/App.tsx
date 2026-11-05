@@ -15,9 +15,8 @@ import {
   HERITAGE_FIGURE_TO_CANONICAL_BIO_MAP
 } from './data/canonicalArticleMap';
 
-// Eagerly loaded primary landing page and original layout test page for instant rendering
+// Eagerly loaded primary landing page for instant rendering
 import { HomePage } from './pages/HomePage';
-import { TestPage } from './pages/TestPage';
 
 // Lazy-loaded global search modal and secondary route pages for optimal bundle splitting
 const GlobalSearchModal = lazy(() =>
@@ -330,9 +329,6 @@ function AppContent() {
     switch (currentPath) {
       case '/':
         return <HomePage onNavigate={navigateTo} onOpenSearch={() => setSearchModalOpen(true)} />;
-      case '/test-page':
-      case '/test_page':
-        return <TestPage onNavigate={navigateTo} onOpenSearch={() => setSearchModalOpen(true)} />;
       case '/about':
         return <AboutPage onNavigate={navigateTo} />;
       case '/documentary':
@@ -436,7 +432,7 @@ function AppContent() {
       {/* Dynamic SEO, Open Graph & Twitter Card Synchronizer */}
       <SeoHeadManager currentPath={currentPath} language={language} />
 
-      {/* Global Header for /test-page and inner routes (HomePage '/' renders its own Royal Maroon Header & Navigation) */}
+      {/* Global Header for inner routes (HomePage '/' renders its own Royal Maroon Header & Navigation) */}
       {currentPath !== '/' && (
         <Navbar
           currentPath={currentPath}
@@ -481,7 +477,7 @@ function AppContent() {
       {/* Repeating Author Footer on Every Printed / Exported PDF Page */}
       <PrintRepeatingAuthorFooter />
 
-      {/* Global Footer for /test-page and inner routes (HomePage '/' renders its own Royal Maroon Footer) */}
+      {/* Global Footer for inner routes (HomePage '/' renders its own Royal Maroon Footer) */}
       {currentPath !== '/' && <Footer onNavigate={navigateTo} />}
 
       {/* Global Search Modal (Lazy-loaded on demand) */}

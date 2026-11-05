@@ -17,6 +17,7 @@ import {
   Bookmark
 } from 'lucide-react';
 import { EvidenceBadge } from './EvidenceBadge';
+import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
 
 interface ArticleBriefModalProps {
   article: Article | null;
@@ -167,6 +168,9 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
   if (!isOpen || !article) return null;
 
   const { title, summary } = getArticleContent(article);
+  const localizedTr = language !== 'en' ? (ARTICLE_TRANSLATIONS as Record<string, any>)[article.id]?.[language] : undefined;
+  const displayAuthor = localizedTr?.author_name || article.author_name;
+  const displaySources = localizedTr?.sources || article.sources || [];
   const localizedCategory = getMetadataLabel('category', article.category) || article.category;
 
   // Extract key highlight bullet sentences from summary and content
@@ -264,9 +268,9 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
             </h2>
             <div className="mt-2 flex items-center gap-2 text-xs text-[#6B5948]">
               <User className="w-3.5 h-3.5 text-[#A87924]" />
-              <span>{ui.byAuthor} {article.author_name}</span>
+              <span>{ui.byAuthor} {displayAuthor}</span>
               <span>•</span>
-              <span className="text-[#76501F] font-semibold">{article.verification_status}</span>
+              <span className="text-[#76501F] font-semibold">{getMetadataLabel('status', article.verification_status) || article.verification_status}</span>
             </div>
           </div>
 
@@ -314,14 +318,14 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
           )}
 
           {/* Primary Sources & Epigraphic Citations */}
-          {article.sources && article.sources.length > 0 && (
+          {displaySources && displaySources.length > 0 && (
             <div className="space-y-2.5 pt-2 border-t border-[#D8C3A2]">
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#54351F] flex items-center gap-1.5">
                 <Layers className="w-4 h-4 text-[#A87924]" />
-                <span>{ui.sourcesHeading(article.sources.length)}</span>
+                <span>{ui.sourcesHeading(displaySources.length)}</span>
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {article.sources.map((src, idx) => (
+                {displaySources.map((src: any, idx: number) => (
                   <div
                     key={idx}
                     className="p-3 rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] space-y-1 text-xs"
@@ -329,7 +333,7 @@ export const ArticleBriefModal: React.FC<ArticleBriefModalProps> = ({
                     <div className="flex items-center justify-between gap-1">
                       <span className="font-semibold text-[#54351F] truncate">{src.title}</span>
                       <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-[#EFE3D0] text-[#76501F] border border-[#D8C3A2]">
-                        {src.source_type}
+                        {getMetadataLabel('source_type', src.source_type) || src.source_type}
                       </span>
                     </div>
                     <div className="text-[#292521] text-[11px]">
