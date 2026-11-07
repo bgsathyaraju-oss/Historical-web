@@ -4056,30 +4056,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                   </button>
                 </div>
 
-                {/* Download Project Export ZIP */}
-                <div className="pt-2 border-t border-[#D4AF37]/25 flex items-center justify-between">
-                  <a
-                    href="/api/export/project-zip"
-                    download="suryavamsha-odiyaraju-kshatriya-portal.zip"
-                    className="royal-text-gold font-semibold hover:underline text-xs flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <span>
-                      {{
-                        en: 'Export Project (ZIP)',
-                        hi: 'प्रोजेक्ट निर्यात (ZIP)',
-                        te: 'ప్రాజెక్ట్ ఎగుమతి (ZIP)',
-                        kn: 'ಪ್ರಾಜೆಕ್ಟ್ ರಫ್ತು (ZIP)',
-                        ta: 'திட்ட ஏற்றுமதி (ZIP)',
-                        mr: 'प्रोजेक्ट निर्यात (ZIP)',
-                        or: 'ପ୍ରୋଜେକ୍ଟ ରପ୍ତାନି (ZIP)',
-                        bn: 'প্রকল্প রপ্তানি (ZIP)'
-                      }[language] || 'Export Project (ZIP)'}
-                    </span>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#762D35] border border-[#D4AF37] royal-text-ivory">
-                      Full
-                    </span>
-                  </a>
-                </div>
+                
               </div>
             </div>
           </div>
