@@ -367,18 +367,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </div>
 
               {/* Full Archive Export ZIP */}
-              <div className="pt-2 border-t border-[#D4AF37]/25 flex items-center justify-between">
-                <a
-                  href="/api/export/project-zip"
-                  download="suryavamsha-odiyaraju-kshatriya-portal.zip"
-                  className="model4-text-gold font-semibold hover:underline text-xs flex items-center gap-1.5 cursor-pointer"
-                >
-                  <span>{fUi.exportZip}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#762D35] border border-[#D4AF37] model4-text-ivory">
-                    {fUi.fullBadge}
-                  </span>
-                </a>
-              </div>
+              
             </div>
           </div>
         </div>
