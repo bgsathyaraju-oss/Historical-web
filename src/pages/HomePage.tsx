@@ -4055,8 +4055,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                     }[language] || 'Royal UI Component System'}
                   </button>
                 </div>
-
-                
               </div>
             </div>
           </div>

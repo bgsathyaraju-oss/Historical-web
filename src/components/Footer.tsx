@@ -26,8 +26,6 @@ const FOOTER_EXTRA_UI: Record<
     accessibility: string;
     rights: string;
     designSystem: string;
-    exportZip: string;
-    fullBadge: string;
   }
 > = {
   en: {
@@ -45,9 +43,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'Historical Sources',
     accessibility: 'Accessibility Statement',
     rights: 'All historical records & translations reserved.',
-    designSystem: 'Royal UI Component System',
-    exportZip: 'Export Project (ZIP)',
-    fullBadge: 'Full'
+    designSystem: 'Royal UI Component System'
   },
   hi: {
     brandDesc:
@@ -64,9 +60,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ऐतिहासिक स्रोत',
     accessibility: 'सुलभता विवरण',
     rights: 'सभी ऐतिहासिक अभिलेख एवं अनुवाद सुरक्षित।',
-    designSystem: 'राजकीय UI डिज़ाइन प्रणाली',
-    exportZip: 'प्रोजेक्ट निर्यात (ZIP)',
-    fullBadge: 'संपूर्ण'
+    designSystem: 'राजकीय UI डिज़ाइन प्रणाली'
   },
   te: {
     brandDesc:
@@ -83,9 +77,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'చారిత్రక ఆధారాలు',
     accessibility: 'యాక్సెసిబిలిటీ ప్రకటన',
     rights: 'అన్ని చారిత్రక రికార్డులు & అనువాద హక్కులు ప్రత్యేకించబడినవి.',
-    designSystem: 'రాయల్ UI డిజైన్ సిస్టమ్',
-    exportZip: 'ప్రాజెక్ట్ ఎగుమతి (ZIP)',
-    fullBadge: 'పూర్తి'
+    designSystem: 'రాయల్ UI డిజైన్ సిస్టమ్'
   },
   kn: {
     brandDesc:
@@ -102,9 +94,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ಐತಿಹಾಸಿಕ ಆಕರಗಳು',
     accessibility: 'ಪ್ರವೇಶಸಾಧ್ಯತೆಯ ಹೇಳಿಕೆ',
     rights: 'ಎಲ್ಲಾ ಐತಿಹಾಸಿಕ ದಾಖಲೆಗಳು ಮತ್ತು ಅನುವಾದಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.',
-    designSystem: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ',
-    exportZip: 'ಪ್ರಾಜೆಕ್ಟ್ ರಫ್ತು (ZIP)',
-    fullBadge: 'ಪೂರ್ಣ'
+    designSystem: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ'
   },
   ta: {
     brandDesc:
@@ -121,9 +111,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'வரலாற்று ஆதாரங்கள்',
     accessibility: 'அணுகல்தன்மை அறிக்கை',
     rights: 'அனைத்து வரலாற்று ஆவணங்களும் மொழிபெயர்ப்புகளும் பாதுகாக்கப்பட்டவை.',
-    designSystem: 'அரச UI வடிவமைப்பு அமைப்பு',
-    exportZip: 'திட்ட ஏற்றுமதி (ZIP)',
-    fullBadge: 'முழு'
+    designSystem: 'அரச UI வடிவமைப்பு அமைப்பு'
   },
   mr: {
     brandDesc:
@@ -140,9 +128,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ऐतिहासिक स्रोत',
     accessibility: 'सुलभता विधान',
     rights: 'सर्व ऐतिहासिक नोंदी आणि भाषांतरे राखीव.',
-    designSystem: 'शाही UI डिझाइन प्रणाली',
-    exportZip: 'प्रोजेक्ट निर्यात (ZIP)',
-    fullBadge: 'पूर्ण'
+    designSystem: 'शाही UI डिझाइन प्रणाली'
   },
   or: {
     brandDesc:
@@ -159,9 +145,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ଐତିହାସିକ ଉତ୍ସ',
     accessibility: 'ସୁଗମ୍ୟତା ବିବରଣୀ',
     rights: 'ସମସ୍ତ ଐତିହାସିକ ଅଭିଲେଖ ଓ ଅନୁବାଦ ସଂରକ୍ଷିତ।',
-    designSystem: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍',
-    exportZip: 'ପ୍ରୋଜେକ୍ଟ ରପ୍ତାନି (ZIP)',
-    fullBadge: 'ସମ୍ପୂର୍ଣ୍ଣ'
+    designSystem: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍'
   },
   bn: {
     brandDesc:
@@ -178,9 +162,7 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ঐতিহাসিক উৎস',
     accessibility: 'অ্যাক্সেসিবিলিটি বিবৃতি',
     rights: 'সকল ঐতিহাসিক নথি ও অনুবাদ সংরক্ষিত।',
-    designSystem: 'রাজকীয় UI ডিজাইন সিস্টেম',
-    exportZip: 'প্রজেক্ট এক্সপোর্ট (ZIP)',
-    fullBadge: 'সম্পূর্ণ'
+    designSystem: 'রাজকীয় UI ডিজাইন সিস্টেম'
   }
 };
 
@@ -193,9 +175,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   return (
-    <footer className="model4-navy-scope w-full border-t-2 border-[#D4AF37]">
+    <footer
+      className="royal-maroon-banner w-full border-t-2 border-[#D4AF37]"
+      style={{
+        backgroundImage: `linear-gradient(180deg, rgba(56, 9, 16, 0.98) 0%, rgba(36, 5, 10, 0.99) 100%), url("${(import.meta as any).env?.BASE_URL || '/'}assets/bg-maroon-texture.webp")`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
       {/* Research, Documentation & Compilation by Dr.G Sathyanarayana Raju */}
-      <div className="model4-navy-bar border-b border-[#D4AF37]/40 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="border-b border-[#D4AF37]/45 bg-[#31060D]/95 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-5">
             {/* Clickable Circular Profile Photograph with Gold Border & Attached WhatsApp Badge */}
@@ -221,17 +210,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </a>
 
             <div className="space-y-1">
-              <div className="text-[11px] font-bold uppercase tracking-widest model4-text-gold">
+              <div className="text-[11px] font-serif font-bold uppercase tracking-widest royal-text-gold">
                 {t.publisher?.designedAndPublishedBy ||
                   'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
               </div>
-              <h3 className="font-royal-heading font-black text-xl model4-text-ivory">
+              <h3 className="font-serif font-extrabold text-xl sm:text-2xl royal-text-ivory">
                 {t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
               </h3>
-              <p className="text-xs sm:text-sm font-semibold model4-text-gold">
+              <p className="text-xs sm:text-sm font-serif font-semibold royal-text-gold">
                 {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}
               </p>
-              <p className="text-xs model4-text-muted font-medium">
+              <p className="text-xs royal-text-cream font-medium">
                 {t.publisher?.organization ||
                   'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'}
               </p>
@@ -244,7 +233,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={e => handleWhatsAppLinkClick(e, whatsappUrl)}
-              className="model4-btn-maroon inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all cursor-pointer"
+              className="royal-btn-gold inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-serif font-extrabold shadow-md transition-all cursor-pointer"
             >
               <WhatsAppIcon className="w-4 h-4 fill-current" />
               <span>{t.publisher?.contactWhatsApp || 'Contact on WhatsApp (+91 9480112897)'}</span>
@@ -252,7 +241,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
             <a
               href="tel:+919480112897"
-              className="model4-navy-pill inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
+              className="royal-btn-maroon inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-serif font-semibold shadow-md transition-all"
             >
               <Phone className="w-3.5 h-3.5 text-[#F5E1A4]" />
               <span>+91 9480112897</span>
@@ -262,16 +251,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
       </div>
 
       {/* Methodological Integrity Banner */}
-      <div className="border-b border-[#D4AF37]/30 py-6 px-4 bg-[#081530]/80">
+      <div className="border-b border-[#D4AF37]/30 py-6 px-4 bg-[#26050A]/90">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 text-xs sm:text-sm">
-          <div className="p-2.5 rounded-xl model4-navy-subpanel shrink-0">
-            <ShieldCheck className="w-6 h-6 text-[#F5E1A4]" />
+          <div className="p-2.5 rounded-xl bg-[#470B14] border border-[#D4AF37]/70 shrink-0">
+            <ShieldCheck className="w-6 h-6 royal-text-gold" />
           </div>
           <div className="space-y-1 text-center md:text-left">
-            <span className="font-bold model4-text-gold uppercase tracking-wider text-xs block">
+            <span className="font-serif font-bold royal-text-gold uppercase tracking-wider text-xs block">
               {t.evidenceNotice.title}
             </span>
-            <p className="model4-text-muted text-xs leading-relaxed">
+            <p className="royal-text-cream text-xs leading-relaxed">
               {t.evidenceNotice.description}
             </p>
           </div>
@@ -286,30 +275,30 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="flex items-center gap-3">
               <RoyalSunCrest className="w-11 h-11 shrink-0" />
               <div>
-                <h3 className="font-royal-heading font-bold text-base model4-text-gold">
+                <h3 className="font-serif font-bold text-base royal-text-gold">
                   {t.siteTitle}
                 </h3>
-                <p className="text-[11px] model4-text-ivory font-semibold tracking-wider uppercase">
+                <p className="text-[11px] royal-text-ivory font-serif font-semibold tracking-wider uppercase">
                   {t.siteSubtitle}
                 </p>
               </div>
             </div>
-            <p className="text-xs model4-text-muted leading-relaxed pr-2 sm:pr-6">
+            <p className="text-xs royal-text-cream leading-relaxed pr-2 sm:pr-6">
               {fUi.brandDesc}
             </p>
-            <div className="pt-1 text-xs model4-text-muted">
-              <span className="font-bold model4-text-gold">{fUi.supportedLangsLabel}</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
+            <div className="pt-1 text-xs royal-text-cream">
+              <span className="font-serif font-bold royal-text-gold">{fUi.supportedLangsLabel}</span> English, हिन्दी, తెలుగు, ಕನ್ನಡ, தமிழ், मराठी, ଓଡ଼ିଆ, বাংলা.
             </div>
           </div>
 
           {/* Consolidated Essential Legal, Standards & Archival Actions */}
           <div className="lg:col-span-2 space-y-3.5">
-            <div className="rounded-xl model4-navy-subpanel border border-[#D4AF37]/50 p-4 space-y-3">
+            <div className="rounded-xl bg-[#3E0A12]/85 border border-[#D4AF37]/60 p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold model4-text-gold uppercase tracking-wider font-royal-heading">
+                <h4 className="text-xs font-serif font-bold royal-text-gold uppercase tracking-wider">
                   {fUi.colCommunityLegal}
                 </h4>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#5C121D] border border-[#D4AF37]/60 model4-text-gold font-semibold">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#5C121D] border border-[#D4AF37]/60 royal-text-gold font-serif font-semibold">
                   Verified Archival Records
                 </span>
               </div>
@@ -319,21 +308,21 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 <button
                   type="button"
                   onClick={() => onNavigate('/copyright')}
-                  className="model4-btn-maroon px-3 py-1.5 rounded-lg text-xs font-semibold hover:brightness-110 cursor-pointer"
+                  className="royal-btn-maroon px-3 py-1.5 rounded-lg text-xs font-serif font-bold hover:brightness-110 cursor-pointer"
                 >
                   {fUi.copyright}
                 </button>
                 <button
                   type="button"
                   onClick={() => onNavigate('/terms')}
-                  className="model4-btn-maroon px-3 py-1.5 rounded-lg text-xs font-semibold hover:brightness-110 cursor-pointer"
+                  className="royal-btn-maroon px-3 py-1.5 rounded-lg text-xs font-serif font-bold hover:brightness-110 cursor-pointer"
                 >
                   {fUi.disclaimer}
                 </button>
                 <button
                   type="button"
                   onClick={() => onNavigate('/references')}
-                  className="model4-btn-maroon px-3 py-1.5 rounded-lg text-xs font-semibold hover:brightness-110 cursor-pointer"
+                  className="royal-btn-maroon px-3 py-1.5 rounded-lg text-xs font-serif font-bold hover:brightness-110 cursor-pointer"
                 >
                   {fUi.historicalSources}
                 </button>
@@ -344,61 +333,58 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 <button
                   type="button"
                   onClick={() => onNavigate('/privacy')}
-                  className="model4-text-ivory hover:underline cursor-pointer"
+                  className="royal-text-ivory hover:underline cursor-pointer"
                 >
                   {fUi.privacy}
                 </button>
-                <span className="text-[#D4AF37]/50">•</span>
+                <span className="royal-text-gold">•</span>
                 <button
                   type="button"
                   onClick={() => onNavigate('/accessibility')}
-                  className="model4-text-ivory hover:underline cursor-pointer"
+                  className="royal-text-ivory hover:underline cursor-pointer"
                 >
                   {fUi.accessibility}
                 </button>
-                <span className="text-[#D4AF37]/50">•</span>
+                <span className="royal-text-gold">•</span>
                 <button
                   type="button"
                   onClick={() => onNavigate('/design-system')}
-                  className="model4-text-gold font-medium hover:underline cursor-pointer"
+                  className="royal-text-gold font-medium hover:underline cursor-pointer"
                 >
                   {fUi.designSystem}
                 </button>
               </div>
-
-              {/* Full Archive Export ZIP */}
-              
             </div>
           </div>
         </div>
 
         {/* Bottom Bar with Copyright, Disclaimer & Historical Sources */}
-        <div className="mt-12 pt-6 border-t border-[#D4AF37]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs model4-text-muted">
+        <div className="mt-12 pt-6 border-t border-[#D4AF37]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs royal-text-cream">
           <div>
             © {new Date().getFullYear()} {t.siteTitle} • {fUi.rights}
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 model4-text-muted">
-            <button onClick={() => onNavigate('/copyright')} className="hover:underline model4-text-gold font-semibold cursor-pointer">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button onClick={() => onNavigate('/copyright')} className="hover:underline royal-text-gold font-serif font-bold cursor-pointer">
               {fUi.copyright}
             </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/terms')} className="hover:underline model4-text-gold font-semibold cursor-pointer">
+            <span className="royal-text-gold">•</span>
+            <button onClick={() => onNavigate('/terms')} className="hover:underline royal-text-gold font-serif font-bold cursor-pointer">
               {fUi.disclaimer}
             </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/references')} className="hover:underline model4-text-gold font-semibold cursor-pointer">
+            <span className="royal-text-gold">•</span>
+            <button onClick={() => onNavigate('/references')} className="hover:underline royal-text-gold font-serif font-bold cursor-pointer">
               {fUi.historicalSources}
             </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/about')} className="hover:underline model4-text-ivory cursor-pointer">
+            <span className="royal-text-gold">•</span>
+            <button onClick={() => onNavigate('/about')} className="hover:underline royal-text-ivory cursor-pointer">
               {t.nav.about}
             </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/contact')} className="hover:underline model4-text-ivory cursor-pointer">
+            <span className="royal-text-gold">•</span>
+            <button onClick={() => onNavigate('/contact')} className="hover:underline royal-text-ivory cursor-pointer">
               {t.nav.contact}
             </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/privacy')} className="hover:underline model4-text-ivory cursor-pointer">
+            <span className="royal-text-gold">•</span>
+            <button onClick={() => onNavigate('/privacy')} className="hover:underline royal-text-ivory cursor-pointer">
               {fUi.privacy}
             </button>
           </div>
@@ -407,4 +393,5 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
     </footer>
   );
 };
+
 

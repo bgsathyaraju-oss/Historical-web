@@ -474,7 +474,7 @@ function initializeSeedData(includePasswordHashes = true): DatabaseSchema {
       historical_significance: 'Revered by Oad-Rajputs, Od-Kshatriyas, and VaddeRajulu as the royal solar ancestor whose sons were the first grand excavators of the earth.',
       associated_places: ['Ayodhya', 'Gangasagar', 'Kapila Ashrama', 'Sagara Island'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: '/assets/archive/samrat_sagara_surya.jpg',
+      image_url: '/assets/01_samrat_sagara.webp',
       inscriptions_ids: [],
       citations: [
         'Valmiki Ramayana, Balakanda, Sarga 38–41.',
@@ -501,7 +501,7 @@ function initializeSeedData(includePasswordHashes = true): DatabaseSchema {
       historical_significance: 'Patron ancestor of water-engineering, reservoir excavation, and monumental persistence for Oad, Odde, and Waddar communities.',
       associated_places: ['Gangotri', 'Ayodhya', 'Haridwar', 'Prayagraj', 'Gangasagar'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: '/assets/archive/maharshi_bhagiratha_penance.jpg',
+      image_url: '/assets/02_maharshi_bhagiratha_ganga_avatarana.webp',
       inscriptions_ids: [],
       citations: [
         'Valmiki Ramayana, Balakanda, Sargas 42–44.',
@@ -528,7 +528,7 @@ function initializeSeedData(includePasswordHashes = true): DatabaseSchema {
       historical_significance: 'Divine dynastic anchor and moral ideal of all Suryavamsha Kshatriya lineages.',
       associated_places: ['Ayodhya', 'Janakpur', 'Dandakaranya', 'Bhadrachalam', 'Rameswaram'],
       evidence_status: 'Traditional Lineage Record',
-      image_url: '/assets/archive/sri_rama_sculpture.jpg',
+      image_url: '/assets/03_maryada_purushottama_sri_rama.webp',
       inscriptions_ids: [],
       citations: [
         'Valmiki Ramayana (Complete Critical Edition).',

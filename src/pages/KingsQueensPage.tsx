@@ -71,6 +71,7 @@ interface KingsQueensUI {
   filterAllEvidence: string;
   filterPrimary: string;
   filterTraditional: string;
+  lblEvidenceFilter: string;
   searchPlaceholder: string;
   returnHome: string;
   backToList: string;
@@ -80,6 +81,9 @@ interface KingsQueensUI {
   linkCopied: string;
   closeProfile: string;
   readFullBio: string;
+  shareCopyDirectLink: string;
+  shareCopySummaryLink: string;
+  shareWhatsApp: string;
   epistemicBannerTitle: string;
   epistemicVerifiedTitle: string;
   epistemicVerifiedDesc: string;
@@ -87,8 +91,13 @@ interface KingsQueensUI {
   epistemicTradDesc: string;
   epistemicScholarTitle: string;
   epistemicScholarDesc: string;
+  epistemicPillar1Primary: (reign: string, places: string) => string;
+  epistemicPillar1Traditional: (reign: string) => string;
+  epistemicPillar2Body: (name: string, dynasty: string) => string;
+  epistemicPillar3Body: (citations: string) => string;
   secFamilyPeriod: string;
   secBiographyLegacy: string;
+  secExtendedAnalysis: string;
   secEngineeringCivic: string;
   secEpistemicAnalysis: string;
   secChronology: string;
@@ -104,8 +113,31 @@ interface KingsQueensUI {
   lblKnownTitles: string;
   lblAlternateNames: string;
   lblFamilyBackground: string;
+  lblPredecessorParent: string;
+  lblRoyalConsort: string;
+  lblSuccessorsDescendants: string;
   lblAssociatedPlaces: string;
+  lblCorroboratedCentres: string;
   lblHistoricalSignificance: string;
+  lblMilestone: string;
+  lblChronologicalEvent: string;
+  lblBiographicalRegnalEvent: string;
+  openArchivalChronology: string;
+  subInscriptionsGrants: string;
+  inspectEpigraphicRecord: string;
+  subArchivalManuscripts: string;
+  viewArchivalManuscript: string;
+  subAssociatedMonuments: string;
+  portalGajapathiBadge: string;
+  portalGajapathiTitle: string;
+  portalGenealogyBadge: string;
+  portalGenealogyTitle: string;
+  portalOdraBadge: string;
+  portalOdraTitle: string;
+  lblRelatedKeywords: string;
+  lblResearchHashtags: string;
+  lblChronologicalEventsCount: string;
+  lblCitationsCount: string;
   lblPrevPerson: string;
   lblNextPerson: string;
   noResults: string;
@@ -124,6 +156,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'All Evidence Classifications',
     filterPrimary: 'Verified Epigraphic Evidence',
     filterTraditional: 'Traditional & Sacred Lineage',
+    lblEvidenceFilter: 'Evidence Filter:',
     searchPlaceholder: 'Search monarchs, titles, dynasties, reigns, or inscriptions...',
     returnHome: 'Home',
     backToList: 'Back to Personalities',
@@ -133,6 +166,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'Link Copied!',
     closeProfile: 'Close',
     readFullBio: 'Read Complete Biography & Epigraphic Dossier',
+    shareCopyDirectLink: 'Copy Direct Biography Link',
+    shareCopySummaryLink: 'Copy Name, Reign & Link',
+    shareWhatsApp: 'Share via WhatsApp',
     epistemicBannerTitle: 'Historiographical & Epistemic Methodology',
     epistemicVerifiedTitle: 'Verified Historical Facts',
     epistemicVerifiedDesc: 'Corroborated by dated copper-plate charters, temple lithic inscriptions, numismatics, and contemporary court chronicles.',
@@ -140,8 +176,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'Preserved in Puranic genealogies, royal Vamsavalis, Madala Panji temple annals, and venerable community heritage.',
     epistemicScholarTitle: 'Scholarly Interpretations',
     epistemicScholarDesc: 'Analyzed through modern epigraphical editions (Epigraphia Indica, ASI) distinguishing political history from devotional allegory.',
+    epistemicPillar1Primary: (reign, places) =>
+      `Directly attested in primary epigraphic charters, temple lithic records, or archaeological monuments dated to ${reign}. Primary records confirm sovereign titulature, territorial administration across ${places}, and documented regnal events.`,
+    epistemicPillar1Traditional: reign =>
+      `While the persona belongs to ancient sacred or traditional lineage (${reign}), later medieval epigraphs—such as the Veligalani Copper Plates (1458 CE), Korni Grants, and temple architectures—formally invoke this lineage as the foundational heritage of Odra-Kalinga sovereigns and community guilds.`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `Preserved across the Madala Panji temple chronicles of Puri, royal Vamsavalis, Puranic chapters, and regional ballads across Odisha, Andhra Pradesh, Karnataka, Maharashtra, and Gujarat. These accounts celebrate ${name} within the sacred ethos of the ${dynasty}.`,
+    epistemicPillar3Body: citations =>
+      `Evaluated in critical academic monographs (${citations}). Historians carefully distinguish verifiable political, military, and hydraulic achievements from poetic royal panegyrics (Prashasti).`,
     secFamilyPeriod: 'Birth, Dynastic Lineage, Family Background & Historical Period',
     secBiographyLegacy: 'Complete Historical Biography, Achievements & Sovereign Legacy',
+    secExtendedAnalysis: 'Extended Historiographical & Cultural Analysis',
     secEngineeringCivic: 'Architectural, Hydraulic & Cultural Contributions',
     secEpistemicAnalysis: 'Epistemic Classification: Verified Facts, Tradition & Scholarly Analysis',
     secChronology: 'Chronological Biographical & Regnal Timeline',
@@ -157,8 +202,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'Royal, Imperial & Spiritual Titles (Birudas)',
     lblAlternateNames: 'Alternate Epigraphic & Regional Names',
     lblFamilyBackground: 'Documented Family Background & Genealogical Ties',
+    lblPredecessorParent: 'Predecessor / Royal Parent',
+    lblRoyalConsort: 'Royal Consort / Spouse',
+    lblSuccessorsDescendants: 'Documented Successors / Descendants',
     lblAssociatedPlaces: 'Capitals, Fortresses & Associated Historical Centres',
+    lblCorroboratedCentres: 'Corroborated Archaeological Centres:',
     lblHistoricalSignificance: 'Core Historical Significance & Legacy',
+    lblMilestone: 'Milestone',
+    lblChronologicalEvent: 'Chronological Event',
+    lblBiographicalRegnalEvent: 'Biographical & Regnal Event',
+    openArchivalChronology: 'Open Archival Chronology Record',
+    subInscriptionsGrants: 'Corroborating Stone Inscriptions & Copper-Plate Grants',
+    inspectEpigraphicRecord: 'Inspect Full Epigraphic Record',
+    subArchivalManuscripts: 'Associated Archival Manuscripts & Royal Charters',
+    viewArchivalManuscript: 'View Archival Manuscript',
+    subAssociatedMonuments: 'Associated Temples, Fortresses & Archaeological Monuments',
+    portalGajapathiBadge: 'Kingdoms & Dynasties',
+    portalGajapathiTitle: 'Suryavamsha Gajapathi Empire & Sovereign Chronicles',
+    portalGenealogyBadge: 'Dynastic Lineage',
+    portalGenealogyTitle: 'Interactive Suryavamsha & Odra Dynastic Genealogy',
+    portalOdraBadge: 'Historical Geography',
+    portalOdraTitle: 'Odra Desha Capitals, Fortresses & Epigraphic Sites',
+    lblRelatedKeywords: 'Related Archival Keywords',
+    lblResearchHashtags: 'Research Hashtags',
+    lblChronologicalEventsCount: 'Chronological Events',
+    lblCitationsCount: 'Citations',
     lblPrevPerson: 'Previous Historical Personality',
     lblNextPerson: 'Next Historical Personality',
     noResults: 'No historical personalities match your current search or filter criteria.',
@@ -175,6 +243,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'सभी साक्ष्य श्रेणियाँ',
     filterPrimary: 'प्रमाणित शिलालेख साक्ष्य',
     filterTraditional: 'पारंपरिक एवं पौराणिक वंशावली',
+    lblEvidenceFilter: 'साक्ष्य फ़िल्टर:',
     searchPlaceholder: 'सम्राट, उपाधियाँ, राजवंश, शासनकाल या शिलालेख खोजें...',
     returnHome: 'मुख्य पृष्ठ',
     backToList: 'सूची पर वापस जाएँ',
@@ -184,6 +253,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'लिंक कॉपी हो गया!',
     closeProfile: 'बंद करें',
     readFullBio: 'संपूर्ण जीवन-वृत्तांत एवं शिलालेख विवरण पढ़ें',
+    shareCopyDirectLink: 'सीधा जीवनी लिंक कॉपी करें',
+    shareCopySummaryLink: 'नाम, शासनकाल एवं लिंक कॉपी करें',
+    shareWhatsApp: 'व्हाट्सएप पर साझा करें',
     epistemicBannerTitle: 'ऐतिहासिक एवं साक्ष्य पद्धति',
     epistemicVerifiedTitle: 'प्रमाणित ऐतिहासिक तथ्य',
     epistemicVerifiedDesc: 'तिथियुक्त ताम्रपत्रों, मंदिर शिलालेखों, सिक्कों और समकालीन दरबारी अभिलेखों द्वारा पुष्ट।',
@@ -191,8 +263,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'पौराणिक वंशावलियों, राजवंशीय वंशावली, मादला पंजी और सामुदायिक विरासत में संरक्षित।',
     epistemicScholarTitle: 'विद्वानों की व्याख्याएँ',
     epistemicScholarDesc: 'आधुनिक पुरालेख संस्करणों (एपिग्राफिया इंडिका, एएसआई) के माध्यम से विश्लेषित।',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} के प्राथमिक ताम्रपत्रों, मंदिर शिलालेखों और पुरातात्विक स्मारकों में प्रत्यक्ष रूप से प्रमाणित। ये अभिलेख ${places} में राजकीय उपाधियों, क्षेत्रीय प्रशासन और शासन की प्रमुख घटनाओं की पुष्टि करते हैं।`,
+    epistemicPillar1Traditional: reign =>
+      `यद्यपि यह व्यक्तित्व प्राचीन पवित्र एवं पारंपरिक वंशावली (${reign}) से संबद्ध है, तथापि वेलीगलानी ताम्रपत्र (1458 ई.), कोर्नी अनुदान और मंदिर शिलालेख इस वंश को ओड्र-कलिंग शासकों की मूल विरासत के रूप में प्रतिष्ठित करते हैं।`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `पुरी के मादला पंजी मंदिर इतिहास, राजकीय वंशावलियों, पुराणों और ओडिशा, आंध्र प्रदेश, कर्नाटक, महाराष्ट्र तथा गुजरात की लोक-परंपराओं में संरक्षित। ये आख्यान ${dynasty} की पवित्र परंपरा में ${name} का गौरवगान करते हैं।`,
+    epistemicPillar3Body: citations =>
+      `समीक्षात्मक शैक्षणिक ग्रंथों (${citations}) में विश्लेषित। इतिहासकार प्रामाणिक राजनीतिक, सैन्य और जल-अभियांत्रिकी उपलब्धियों को काव्यमय राज-प्रशस्तियों से पृथक कर उनका मूल्यांकन करते हैं।`,
     secFamilyPeriod: 'जन्म, राजवंश, पारिवारिक पृष्ठभूमि एवं ऐतिहासिक काल',
     secBiographyLegacy: 'संपूर्ण ऐतिहासिक जीवनी, उपलब्धियाँ एवं विरासत',
+    secExtendedAnalysis: 'विस्तृत ऐतिहासिक एवं सांस्कृतिक विश्लेषण',
     secEngineeringCivic: 'वास्तुकला, जल-अभियांत्रिकी एवं सांस्कृतिक योगदान',
     secEpistemicAnalysis: 'साक्ष्य वर्गीकरण: प्रमाणित तथ्य, परंपरा एवं विद्वत विश्लेषण',
     secChronology: 'कालानुक्रमिक जीवन एवं शासन घटनाक्रम',
@@ -208,8 +289,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'राजकीय, साम्राज्यिक एवं आध्यात्मिक उपाधियाँ',
     lblAlternateNames: 'वैकल्पिक एवं क्षेत्रीय नाम',
     lblFamilyBackground: 'पारिवारिक पृष्ठभूमि एवं वंशावली संबंध',
+    lblPredecessorParent: 'पूर्ववर्ती शासक / राजकीय माता-पिता',
+    lblRoyalConsort: 'राजमहिषी / जीवनसाथी',
+    lblSuccessorsDescendants: 'प्रमाणित उत्तराधिकारी / वंशज',
     lblAssociatedPlaces: 'राजधानियाँ, दुर्ग एवं संबद्ध ऐतिहासिक केंद्र',
+    lblCorroboratedCentres: 'पुष्ट पुरातात्विक केंद्र:',
     lblHistoricalSignificance: 'प्रमुख ऐतिहासिक महत्व एवं विरासत',
+    lblMilestone: 'ऐतिहासिक चरण',
+    lblChronologicalEvent: 'कालानुक्रमिक घटना',
+    lblBiographicalRegnalEvent: 'जीवनी एवं शासन घटना',
+    openArchivalChronology: 'कालानुक्रमिक अभिलेख खोलें',
+    subInscriptionsGrants: 'पुष्टिकारक शिलालेख एवं ताम्रपत्र अनुदान',
+    inspectEpigraphicRecord: 'संपूर्ण शिलालेख विवरण देखें',
+    subArchivalManuscripts: 'संबद्ध पांडुलिपियाँ एवं राजकीय चार्टर',
+    viewArchivalManuscript: 'पांडुलिपि अभिलेख देखें',
+    subAssociatedMonuments: 'संबद्ध मंदिर, दुर्ग एवं पुरातात्विक स्मारक',
+    portalGajapathiBadge: 'साम्राज्य एवं राजवंश',
+    portalGajapathiTitle: 'सूर्यवंश गजपति साम्राज्य एवं शासक वृत्तांत',
+    portalGenealogyBadge: 'राजवंशीय वंशावली',
+    portalGenealogyTitle: 'सूर्यवंश एवं ओड्र राजवंशीय वंशावली वृक्ष',
+    portalOdraBadge: 'ऐतिहासिक भूगोल',
+    portalOdraTitle: 'ओड्र देश की राजधानियाँ, दुर्ग एवं शिलालेख स्थल',
+    lblRelatedKeywords: 'संबंधित अभिलेखीय कीवर्ड',
+    lblResearchHashtags: 'शोध हैशटैग',
+    lblChronologicalEventsCount: 'कालानुक्रमिक घटनाएँ',
+    lblCitationsCount: 'संदर्भ उद्धरण',
     lblPrevPerson: 'पिछली ऐतिहासिक विभूति',
     lblNextPerson: 'अगली ऐतिहासिक विभूति',
     noResults: 'आपकी खोज से मेल खाती कोई ऐतिहासिक विभूति नहीं मिली।',
@@ -226,6 +330,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'అన్ని ఆధార వర్గాలు',
     filterPrimary: 'ధృవీకరించబడిన శాసన ఆధారాలు',
     filterTraditional: 'సాంప్రదాయ & పురాణ వంశావళి',
+    lblEvidenceFilter: 'ఆధార ఫిల్టర్:',
     searchPlaceholder: 'చక్రవర్తులు, బిరుదులు, రాజవంశాలు, పాలనా కాలం వెతకండి...',
     returnHome: 'హోమ్',
     backToList: 'జాబితాకు తిరిగి వెళ్ళండి',
@@ -235,6 +340,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'లింక్ కాపీ చేయబడింది!',
     closeProfile: 'మూసివేయండి',
     readFullBio: 'పూర్తి జీవిత చరిత్ర & శాసన వివరాలు చదవండి',
+    shareCopyDirectLink: 'జీవిత చరిత్ర డైరెక్ట్ లింక్ కాపీ చేయండి',
+    shareCopySummaryLink: 'పేరు, పాలనా కాలం & లింక్ కాపీ చేయండి',
+    shareWhatsApp: 'వాట్సాప్ ద్వారా షేర్ చేయండి',
     epistemicBannerTitle: 'చారిత్రక ఆధారాల వర్గీకరణ విధానం',
     epistemicVerifiedTitle: 'ధృవీకరించబడిన చారిత్రక వాస్తవాలు',
     epistemicVerifiedDesc: 'తామ్రపత్ర శాసనాలు, దేవాలయ శిలాశాసనాలు మరియు సమకాలీన ఆధారాలతో నిర్ధారించబడినవి.',
@@ -242,8 +350,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'పురాణ వంశావళులు, మాదలా పంజీ మరియు తరతరాల సామాజిక వారసత్వంలో భద్రపరచబడినవి.',
     epistemicScholarTitle: 'చరిత్రకారుల విశ్లేషణలు',
     epistemicScholarDesc: 'ఆధునిక పురావస్తు పరిశోధనలు (Epigraphia Indica, ASI) ఆధారంగా విశ్లేషించబడినవి.',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} నాటి ప్రాథమిక తామ్రపత్ర శాసనాలు, దేవాలయ శిలాశాసనాలు మరియు పురావస్తు స్మారక చిహ్నాలలో ప్రత్యక్షంగా ధృవీకరించబడింది. ఈ ఆధారాలు ${places} ప్రాంతాలలో రాజ బిరుదులు, పరిపాలన మరియు చారిత్రక సంఘటనలను నిర్ధారిస్తాయి.`,
+    epistemicPillar1Traditional: reign =>
+      `ఈ మహాపురుషుడు ప్రాచీన పవిత్ర వంశావళికి (${reign}) చెందినప్పటికీ, వెలిగలని తామ్రపత్రాలు (1458 CE), కోర్ని శాసనాలు మరియు దేవాలయ వాస్తుశిల్పం ఈ వంశాన్ని ఓడ్ర-కళింగ చక్రవర్తుల మూల వారసత్వంగా పేర్కొంటున్నాయి.`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `పురీ జగన్నాథ మాదలా పంజీ గ్రంథాలు, రాజ వంశావళులు, పురాణాలు మరియు ఒడిశా, ఆంధ్రప్రదేశ్, కర్ణాటక, మహారాష్ట్ర ప్రాంతీయ గాథలలో భద్రపరచబడింది. ఈ కథనాలు ${dynasty} పవిత్ర సంప్రదాయంలో ${name} కీర్తిని వివరిస్తాయి.`,
+    epistemicPillar3Body: citations =>
+      `ప్రముఖ చారిత్రక పరిశోధనా గ్రంథాలలో (${citations}) విశ్లేషించబడింది. చరిత్రకారులు శాసనపరమైన రాజకీయ, సైనిక మరియు జలవనరుల విజయాలను కావ్య ప్రశస్తుల నుండి వేరుచేసి పరిశీలిస్తారు.`,
     secFamilyPeriod: 'జననం, రాజవంశం, కుటుంబ నేపథ్యం & చారిత్రక కాలం',
     secBiographyLegacy: 'పూర్తి చారిత్రక జీవిత చరిత్ర, విజయాలు & వారసత్వం',
+    secExtendedAnalysis: 'విస్తృత చారిత్రక & సాంస్కృతిక విశ్లేషణ',
     secEngineeringCivic: 'నిర్మాణ, జలవనరుల & సాంస్కృతిక సేవలు',
     secEpistemicAnalysis: 'ఆధారాల విశ్లేషణ: చారిత్రక వాస్తవాలు, సంప్రదాయం & పరిశోధన',
     secChronology: 'కాలక్రమ జీవిత & పాలనా సంఘటనలు',
@@ -259,8 +376,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'రాజ, సామ్రాజ్య & ఆధ్యాత్మిక బిరుదులు',
     lblAlternateNames: 'ఇతర శాసన & ప్రాంతీయ పేర్లు',
     lblFamilyBackground: 'కుటుంబ నేపథ్యం & వంశావళి సంబంధాలు',
+    lblPredecessorParent: 'పూర్వీకులు / రాజ తల్లిదండ్రులు',
+    lblRoyalConsort: 'రాజమహిషి / జీవిత భాగస్వామి',
+    lblSuccessorsDescendants: 'ధృవీకరించబడిన వారసులు / సంతతి',
     lblAssociatedPlaces: 'రాజధానులు, కోటలు & సంబంధిత చారిత్రక కేంద్రాలు',
+    lblCorroboratedCentres: 'ధృవీకరించబడిన పురావస్తు కేంద్రాలు:',
     lblHistoricalSignificance: 'ప్రధాన చారిత్రక ప్రాముఖ్యత & వారసత్వం',
+    lblMilestone: 'మైలురాయి',
+    lblChronologicalEvent: 'కాలక్రమ సంఘటన',
+    lblBiographicalRegnalEvent: 'జీవిత & పాలనా సంఘటన',
+    openArchivalChronology: 'కాలక్రమ రికార్డును తెరవండి',
+    subInscriptionsGrants: 'ధృవీకరించే శిలాశాసనాలు & తామ్రపత్ర దానాలు',
+    inspectEpigraphicRecord: 'పూర్తి శాసన రికార్డును చూడండి',
+    subArchivalManuscripts: 'సంబంధిత తాళపత్ర గ్రంథాలు & రాజ శాసనాలు',
+    viewArchivalManuscript: 'పురాతన పత్రాన్ని చూడండి',
+    subAssociatedMonuments: 'సంబంధిత దేవాలయాలు, కోటలు & పురావస్తు కట్టడాలు',
+    portalGajapathiBadge: 'రాజ్యాలు & రాజవంశాలు',
+    portalGajapathiTitle: 'సూర్యవంశ గజపతి సామ్రాజ్యం & చక్రవర్తుల చరిత్ర',
+    portalGenealogyBadge: 'రాజవంశ వంశావళి',
+    portalGenealogyTitle: 'సూర్యవంశ & ఓడ్ర రాజవంశ వంశావళి వృక్షం',
+    portalOdraBadge: 'చారిత్రక భౌగోళికత',
+    portalOdraTitle: 'ఓడ్ర దేశ రాజధానులు, కోటలు & శాసన కేంద్రాలు',
+    lblRelatedKeywords: 'సంబంధిత పరిశోధనా కీవర్డ్‌లు',
+    lblResearchHashtags: 'పరిశోధనా హ్యాష్‌ట్యాగ్‌లు',
+    lblChronologicalEventsCount: 'కాలక్రమ సంఘటనలు',
+    lblCitationsCount: 'ఆధార సూచనలు',
     lblPrevPerson: 'మునుపటి చారిత్రక వ్యక్తి',
     lblNextPerson: 'తదుపరి చారిత్రక వ్యక్తి',
     noResults: 'మీ శోధనకు సరిపోయే చారిత్రక వ్యక్తులు కనుగొనబడలేదు.',
@@ -277,6 +417,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'ಎಲ್ಲಾ ಸಾಕ್ಷ್ಯ ವರ್ಗಗಳು',
     filterPrimary: 'ದೃಢೀಕೃತ ಶಾಸನ ಸಾಕ್ಷ್ಯ',
     filterTraditional: 'ಸಾಂಪ್ರದಾಯಿಕ ಮತ್ತು ಪೌರಾಣಿಕ ವಂಶಾವಳಿ',
+    lblEvidenceFilter: 'ಸಾಕ್ಷ್ಯ ಫಿಲ್ಟರ್:',
     searchPlaceholder: 'ಸಾಮ್ರಾಟರು, ಬಿರುದುಗಳು, ರಾಜವಂಶ, ಆಳ್ವಿಕೆ ಹುಡುಕಿ...',
     returnHome: 'ಮುಖಪುಟ',
     backToList: 'ಪಟ್ಟಿಗೆ ಹಿಂತಿರುಗಿ',
@@ -286,6 +427,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
     closeProfile: 'ಮುಚ್ಚಿ',
     readFullBio: 'ಸಂಪೂರ್ಣ ಜೀವನ ಚರಿತ್ರೆ ಮತ್ತು ಶಾಸನ ವಿವರಗಳನ್ನು ಓದಿ',
+    shareCopyDirectLink: 'ನೇರ ಜೀವನ ಚರಿತ್ರೆ ಲಿಂಕ್ ನಕಲಿಸಿ',
+    shareCopySummaryLink: 'ಹೆಸರು, ಆಳ್ವಿಕೆ ಮತ್ತು ಲಿಂಕ್ ನಕಲಿಸಿ',
+    shareWhatsApp: 'ವಾಟ್ಸಾಪ್ ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ',
     epistemicBannerTitle: 'ಐತಿಹಾಸಿಕ ಸಾಕ್ಷ್ಯ ವರ್ಗೀಕರಣ ವಿಧಾನ',
     epistemicVerifiedTitle: 'ದೃಢೀಕೃತ ಐತಿಹಾಸಿಕ ಸತ್ಯಗಳು',
     epistemicVerifiedDesc: 'ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ಶಾಸನಗಳು ಮತ್ತು ಸಮಕಾಲೀನ ದಾಖಲೆಗಳಿಂದ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ.',
@@ -293,8 +437,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'ಪುರಾಣ ವಂಶಾವಳಿಗಳು, ಮಾದಲಾ ಪಂಜಿ ಮತ್ತು ಸಮುದಾಯ ಪರಂಪರೆಯಲ್ಲಿ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ.',
     epistemicScholarTitle: 'ವಿದ್ವಾಂಸರ ವಿಶ್ಲೇಷಣೆಗಳು',
     epistemicScholarDesc: 'ಆಧುನಿಕ ಶಾಸನ ಸಂಶೋಧನೆಗಳ (Epigraphia Indica, ASI) ಮೂಲಕ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ.',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} ಕಾಲದ ಪ್ರಾಥಮಿಕ ತಾಮ್ರಪತ್ರ ಶಾಸನಗಳು, ದೇವಾಲಯದ ಶಿಲಾಶಾಸನಗಳು ಮತ್ತು ಪುರಾತತ್ವ ಸ್ಮಾರಕಗಳಲ್ಲಿ ನೇರವಾಗಿ ದೃಢೀಕರಿಸಲ್ಪಟ್ಟಿದೆ. ಈ ದಾಖಲೆಗಳು ${places} ಪ್ರದೇಶಗಳಲ್ಲಿ ರಾಜ ಬಿರುದುಗಳು ಮತ್ತು ಆಡಳಿತವನ್ನು ದೃಢಪಡಿಸುತ್ತವೆ.`,
+    epistemicPillar1Traditional: reign =>
+      `ಈ ವ್ಯಕ್ತಿತ್ವವು ಪ್ರಾಚೀನ ಪವಿತ್ರ ವಂಶಾವಳಿಗೆ (${reign}) ಸೇರಿದ್ದರೂ, ವೆಲಿಗಲನಿ ತಾಮ್ರಪತ್ರಗಳು (1458 CE), ಕೊರ್ನಿ ಶಾಸನಗಳು ಮತ್ತು ದೇವಾಲಯದ ವಾಸ್ತುಶಿಲ್ಪವು ಈ ವಂಶವನ್ನು ಓಡ್ರ-ಕಳಿಂಗ ಅರಸರ ಮೂಲ ಪರಂಪರೆಯಾಗಿ ಉಲ್ಲೇಖಿಸುತ್ತವೆ.`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `ಪುರಿಯ ಮಾದಲಾ ಪಂಜಿ ದೇವಾಲಯದ ದಾಖಲೆಗಳು, ರಾಜ ವಂಶಾವಳಿಗಳು, ಪುರಾಣಗಳು ಮತ್ತು ಒಡಿಶಾ, ಆಂಧ್ರಪ್ರದೇಶ, ಕರ್ನಾಟಕ ಹಾಗೂ ಮಹಾರಾಷ್ಟ್ರದ ಜನಪದ ಪರಂಪರೆಗಳಲ್ಲಿ ಸಂರಕ್ಷಿಸಲಾಗಿದೆ. ಈ ಖಾತೆಗಳು ${dynasty} ಪರಂಪರೆಯಲ್ಲಿ ${name} ಅವರನ್ನು ಗೌರವಿಸುತ್ತವೆ.`,
+    epistemicPillar3Body: citations =>
+      `ಶೈಕ್ಷಣಿಕ ಸಂಶೋಧನಾ ಗ್ರಂಥಗಳಲ್ಲಿ (${citations}) ಮೌಲ್ಯಮಾಪನ ಮಾಡಲಾಗಿದೆ. ಇತಿಹಾಸಕಾರರು ರಾಜಕೀಯ, ಸೈನಿಕ ಮತ್ತು ಜಲ-ಎಂಜಿನಿಯರಿಂಗ್ ಸಾಧನೆಗಳನ್ನು ಕಾವ್ಯಾತ್ಮಕ ಪ್ರಶಸ್ತಿಗಳಿಂದ ಬೇರ್ಪಡಿಸಿ ವಿಶ್ಲೇಷಿಸುತ್ತಾರೆ.`,
     secFamilyPeriod: 'ಜನನ, ರಾಜವಂಶ, ಕುಟುಂಬದ ಹಿನ್ನೆಲೆ ಮತ್ತು ಐತಿಹಾಸಿಕ ಕಾಲ',
     secBiographyLegacy: 'ಸಂಪೂರ್ಣ ಐತಿಹಾಸಿಕ ಜೀವನ ಚರಿತ್ರೆ, ಸಾಧನೆಗಳು ಮತ್ತು ಪರಂಪರೆ',
+    secExtendedAnalysis: 'ವಿಸ್ತೃತ ಐತಿಹಾಸಿಕ ಮತ್ತು ಸಾಂಸ್ಕೃತಿಕ ವಿಶ್ಲೇಷಣೆ',
     secEngineeringCivic: 'ವಾಸ್ತುಶಿಲ್ಪ, ಜಲ-ಎಂಜಿನಿಯರಿಂಗ್ ಮತ್ತು ಸಾಂಸ್ಕೃತಿಕ ಕೊಡುಗೆಗಳು',
     secEpistemicAnalysis: 'ಸಾಕ್ಷ್ಯ ವಿಶ್ಲೇಷಣೆ: ಐತಿಹಾಸಿಕ ಸತ್ಯಗಳು, ಸಂಪ್ರದಾಯ ಮತ್ತು ಸಂಶೋಧನೆ',
     secChronology: 'ಕಾಲಾನುಕ್ರಮದ ಜೀವನ ಮತ್ತು ಆಳ್ವಿಕೆಯ ಘಟನೆಗಳು',
@@ -307,11 +460,34 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblLifeDates: 'ಜನನ / ಅಂದಾಜು ಜೀವಿತಾವಧಿ',
     lblDynastyLineage: 'ರಾಜವಂಶ ಮತ್ತು ಪರಂಪರೆ',
     lblCategoryRole: 'ಐತಿಹಾಸಿಕ ವರ್ಗೀಕರಣ',
-    lblKnownTitles: 'ರಾಜಕೀಯ, ಸಾಮ್ರಾಜ್ಯ ಮತ್ತು ಆध्यात्मिक ಬಿರುದುಗಳು',
+    lblKnownTitles: 'ರಾಜಕೀಯ, ಸಾಮ್ರಾಜ್ಯ ಮತ್ತು ಆಧ್ಯಾತ್ಮಿಕ ಬಿರುದುಗಳು',
     lblAlternateNames: 'ಪರ್ಯಾಯ ಮತ್ತು ಪ್ರಾದೇಶಿಕ ಹೆಸರುಗಳು',
     lblFamilyBackground: 'ಕುಟುಂಬದ ಹಿನ್ನೆಲೆ ಮತ್ತು ವಂಶಾವಳಿ ಸಂಬಂಧಗಳು',
+    lblPredecessorParent: 'ಪೂರ್ವಿಕರು / ರಾಜ ಪೋಷಕರು',
+    lblRoyalConsort: 'ರಾಜಮಹಿಷಿ / ಪತ್ನಿ',
+    lblSuccessorsDescendants: 'ದೃಢೀಕೃತ ಉತ್ತರಾಧಿಕಾರಿಗಳು / ವಂಶಸ್ಥರು',
     lblAssociatedPlaces: 'ರಾಜಧಾನಿಗಳು, ಕೋಟೆಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಕೇಂದ್ರಗಳು',
+    lblCorroboratedCentres: 'ದೃಢೀಕೃತ ಪುರಾತತ್ವ ಕೇಂದ್ರಗಳು:',
     lblHistoricalSignificance: 'ಪ್ರಮುಖ ಐತಿಹಾಸಿಕ ಮಹತ್ವ ಮತ್ತು ಪರಂಪರೆ',
+    lblMilestone: 'ಮೈಲಿಗಲ್ಲು',
+    lblChronologicalEvent: 'ಕಾಲಾನುಕ್ರಮದ ಘಟನೆ',
+    lblBiographicalRegnalEvent: 'ಜೀವನ ಮತ್ತು ಆಳ್ವಿಕೆಯ ಘಟನೆ',
+    openArchivalChronology: 'ಕಾಲಾನುಕ್ರಮ ದಾಖಲೆಯನ್ನು ತೆರೆಯಿರಿ',
+    subInscriptionsGrants: 'ದೃಢೀಕರಿಸುವ ಶಿಲಾಶಾಸನಗಳು ಮತ್ತು ತಾಮ್ರಪತ್ರ ದಾನಗಳು',
+    inspectEpigraphicRecord: 'ಸಂಪೂರ್ಣ ಶಾಸನ ದಾಖಲೆಯನ್ನು ವೀಕ್ಷಿಸಿ',
+    subArchivalManuscripts: 'ಸಂಬಂಧಿತ ಹಸ್ತಪ್ರತಿಗಳು ಮತ್ತು ರಾಜ ಶಾಸನಗಳು',
+    viewArchivalManuscript: 'ಹಸ್ತಪ್ರತಿ ದಾಖಲೆಯನ್ನು ವೀಕ್ಷಿಸಿ',
+    subAssociatedMonuments: 'ಸಂಬಂಧಿತ ದೇವಾಲಯಗಳು, ಕೋಟೆಗಳು ಮತ್ತು ಪುರಾತತ್ವ ಸ್ಮಾರಕಗಳು',
+    portalGajapathiBadge: 'ಸಾಮ್ರಾಜ್ಯಗಳು ಮತ್ತು ರಾಜವಂಶಗಳು',
+    portalGajapathiTitle: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯ ಮತ್ತು ಸಾಮ್ರಾಟರ ವೃತ್ತಾಂತ',
+    portalGenealogyBadge: 'ರಾಜವಂಶದ ವಂಶಾವಳಿ',
+    portalGenealogyTitle: 'ಸೂರ್ಯವಂಶ ಮತ್ತು ಓಡ್ರ ರಾಜವಂಶದ ವಂಶವೃಕ್ಷ',
+    portalOdraBadge: 'ಐತಿಹಾಸಿಕ ಭೂಗೋಳ',
+    portalOdraTitle: 'ಓಡ್ರ ದೇಶದ ರಾಜಧಾನಿಗಳು, ಕೋಟೆಗಳು ಮತ್ತು ಶಾಸನ ತಾಣಗಳು',
+    lblRelatedKeywords: 'ಸಂಬಂಧಿತ ದಾಖಲೆ ಕೀವರ್ಡ್‌ಗಳು',
+    lblResearchHashtags: 'ಸಂಶೋಧನಾ ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು',
+    lblChronologicalEventsCount: 'ಕಾಲಾನುಕ್ರಮದ ಘಟನೆಗಳು',
+    lblCitationsCount: 'ಆಧಾರ ಉಲ್ಲೇಖಗಳು',
     lblPrevPerson: 'ಹಿಂದಿನ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿ',
     lblNextPerson: 'ಮುಂದಿನ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿ',
     noResults: 'ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದಿಕೆಯಾಗುವ ಯಾವುದೇ ಐತಿಹಾಸಿಕ ವ್ಯಕ್ತಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ.',
@@ -328,6 +504,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'அனைத்து சான்று வகைகள்',
     filterPrimary: 'உறுதிப்படுத்தப்பட்ட கல்வெட்டுச் சான்று',
     filterTraditional: 'பாரம்பரிய & புராண வம்சாவளி',
+    lblEvidenceFilter: 'சான்று வடிகட்டி:',
     searchPlaceholder: 'மன்னர்கள், பட்டங்கள், வம்சங்கள், ஆட்சிக்காலம் தேடுக...',
     returnHome: 'முகப்பு',
     backToList: 'பட்டியலுக்குத் திரும்பு',
@@ -337,6 +514,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'இணைப்பு நகலெடுக்கப்பட்டது!',
     closeProfile: 'மூடு',
     readFullBio: 'முழு வாழ்க்கை வரலாறு & கல்வெட்டு ஆவணங்களைப் படிக்கவும்',
+    shareCopyDirectLink: 'நேரடி வாழ்க்கை வரலாறு இணைப்பை நகலெடு',
+    shareCopySummaryLink: 'பெயர், ஆட்சிக்காலம் & இணைப்பை நகலெடு',
+    shareWhatsApp: 'வாட்ஸ்அப் மூலம் பகிரவும்',
     epistemicBannerTitle: 'வரலாற்றுச் சான்று வகைப்பாடு முறை',
     epistemicVerifiedTitle: 'உறுதிப்படுத்தப்பட்ட வரலாற்று உண்மைகள்',
     epistemicVerifiedDesc: 'செப்பேடுகள், கோயில் கல்வெட்டுகள் மற்றும் சமகால ஆவணங்களால் உறுதிப்படுத்தப்பட்டவை.',
@@ -344,8 +524,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'புராண வம்சாவளிகள், மாதளா பஞ்சி மற்றும் சமூக மரபில் பாதுகாக்கப்பட்டவை.',
     epistemicScholarTitle: 'அறிஞர்களின் ஆய்வுகள்',
     epistemicScholarDesc: 'நவீன கல்வெட்டு ஆய்வுகள் (Epigraphia Indica, ASI) மூலம் பகுப்பாய்வு செய்யப்பட்டவை.',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} காலத்திய முதன்மைச் செப்பேடுகள், கோயில் கல்வெட்டுகள் மற்றும் தொல்லியல் சின்னங்களில் நேரடியாக உறுதிப்படுத்தப்பட்டுள்ளது. இந்த ஆவணங்கள் ${places} பகுதிகளில் அரச பட்டங்கள் மற்றும் நிர்வாகத்தை உறுதிப்படுத்துகின்றன.`,
+    epistemicPillar1Traditional: reign =>
+      `இவர் பண்டைய புனித மரபினைச் (${reign}) சார்ந்தவராக இருப்பினும், வெளிகலனி செப்பேடுகள் (1458 CE), கொர்னி மானியங்கள் மற்றும் கோயில் கல்வெட்டுகள் இந்த வம்சத்தை ஒட்ர-கலிங்க மன்னர்களின் அடிப்படை மரபாகக் குறிப்பிடுகின்றன.`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `பூரி மாதளா பஞ்சி கோயில் வரலாறுகள், அரச வம்சாவளிகள், புராணங்கள் மற்றும் ஒடிசா, ஆந்திரா, கர்நாடகா, மகாராஷ்டிரா பிராந்திய மரபுகளில் பாதுகாக்கப்பட்டுள்ளது. இவை ${dynasty} மரபில் ${name} பெருமையைப் போற்றுகின்றன.`,
+    epistemicPillar3Body: citations =>
+      `முதன்மை வரலாற்று ஆய்வு நூல்களில் (${citations}) மதிப்பீடு செய்யப்பட்டுள்ளது. வரலாற்றாசிரியர்கள் அரசியல், ராணுவ மற்றும் நீர்ப்பாசனச் சாதனைகளைக் கவிதைப் புகழுரைகளிலிருந்து (பிரசஸ்தி) பிரித்து ஆராய்கின்றனர்.`,
     secFamilyPeriod: 'பிறப்பு, அரச வம்சம், குடும்பப் பின்னணி & வரலாற்றுக் காலம்',
     secBiographyLegacy: 'முழு வாழ்க்கை வரலாறு, சாதனைகள் & மரபு',
+    secExtendedAnalysis: 'விரிவான வரலாற்று & கலாச்சாரப் பகுப்பாய்வு',
     secEngineeringCivic: 'கட்டிடக்கலை, நீர்ப்பாசன & கலாச்சாரப் பங்களிப்புகள்',
     secEpistemicAnalysis: 'சான்று பகுப்பாய்வு: வரலாற்று உண்மைகள், மரபு & ஆய்வு',
     secChronology: 'காலவரிசை வாழ்க்கை & ஆட்சி நிகழ்வுகள்',
@@ -361,8 +550,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'அரச, பேரரச & ஆன்மீகப் பட்டங்கள் (பிருதுகள்)',
     lblAlternateNames: 'மாற்று கல்வெட்டு & பிராந்தியப் பெயர்கள்',
     lblFamilyBackground: 'குடும்பப் பின்னணி & வம்சாவளி உறவுகள்',
+    lblPredecessorParent: 'முன்னோர் / அரச பெற்றோர்',
+    lblRoyalConsort: 'அரச பத்தினி / துணைவர்',
+    lblSuccessorsDescendants: 'ஆவணப்படுத்தப்பட்ட வாரிசுகள் / வழித்தோன்றல்கள்',
     lblAssociatedPlaces: 'தலைநகரங்கள், கோட்டைகள் & தொடர்புடைய வரலாற்று மையங்கள்',
+    lblCorroboratedCentres: 'உறுதிப்படுத்தப்பட்ட தொல்லியல் மையங்கள்:',
     lblHistoricalSignificance: 'முக்கிய வரலாற்றுச் சிறப்பு & மரபு',
+    lblMilestone: 'மைல்கல்',
+    lblChronologicalEvent: 'காலவரிசை நிகழ்வு',
+    lblBiographicalRegnalEvent: 'வாழ்க்கை & ஆட்சி நிகழ்வு',
+    openArchivalChronology: 'காலவரிசை ஆவணத்தைத் திறக்கவும்',
+    subInscriptionsGrants: 'உறுதிப்படுத்தும் கல்வெட்டுகள் & செப்பேட்டு மானியங்கள்',
+    inspectEpigraphicRecord: 'முழு கல்வெட்டு ஆவணத்தைக் காண்க',
+    subArchivalManuscripts: 'தொடர்புடைய ஓலைச்சுவடிகள் & அரச சாசனங்கள்',
+    viewArchivalManuscript: 'ஆவணச் சுவடியைக் காண்க',
+    subAssociatedMonuments: 'தொடர்புடைய கோயில்கள், கோட்டைகள் & தொல்லியல் சின்னங்கள்',
+    portalGajapathiBadge: 'பேரரசுகள் & அரச வம்சங்கள்',
+    portalGajapathiTitle: 'சூர்யவம்ச கஜபதி பேரரசு & மன்னர்கள் வரலாறு',
+    portalGenealogyBadge: 'அரச வம்சாவளி',
+    portalGenealogyTitle: 'சூர்யவம்ச & ஒட்ர அரச வம்சாவளி மரம்',
+    portalOdraBadge: 'வரலாற்றுப் புவியியல்',
+    portalOdraTitle: 'ஒட்ர தேசத் தலைநகரங்கள், கோட்டைகள் & கல்வெட்டுத் தளங்கள்',
+    lblRelatedKeywords: 'தொடர்புடைய ஆவண முக்கிய வார்த்தைகள்',
+    lblResearchHashtags: 'ஆய்வு ஹேஷ்டேக்குகள்',
+    lblChronologicalEventsCount: 'காலவரிசை நிகழ்வுகள்',
+    lblCitationsCount: 'ஆதார மேற்கோள்கள்',
     lblPrevPerson: 'முந்தைய வரலாற்று ஆளுமை',
     lblNextPerson: 'அடுத்த வரலாற்று ஆளுமை',
     noResults: 'உங்கள் தேடலுக்குப் பொருந்தும் வரலாற்று ஆளுமைகள் எதுவும் கிடைக்கவில்லை.',
@@ -379,6 +591,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'सर्व पुरावा प्रकार',
     filterPrimary: 'प्रमाणित शिलालेख पुरावा',
     filterTraditional: 'पारंपारिक आणि पौराणिक वंशावळ',
+    lblEvidenceFilter: 'पुरावा फिल्टर:',
     searchPlaceholder: 'सम्राट, पदव्या, राजवंश, शासनकाळ शोधा...',
     returnHome: 'मुख्य पृष्ठ',
     backToList: 'यादीकडे परत जा',
@@ -388,6 +601,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'लिंक कॉपी झाली!',
     closeProfile: 'बंद करा',
     readFullBio: 'संपूर्ण चरित्र आणि शिलालेख माहिती वाचा',
+    shareCopyDirectLink: 'थेट चरित्र लिंक कॉपी करा',
+    shareCopySummaryLink: 'नाव, शासनकाळ आणि लिंक कॉपी करा',
+    shareWhatsApp: 'व्हॉट्सॲपद्वारे शेअर करा',
     epistemicBannerTitle: 'ऐतिहासिक पुरावा वर्गीकरण पद्धती',
     epistemicVerifiedTitle: 'प्रमाणित ऐतिहासिक तथ्ये',
     epistemicVerifiedDesc: 'ताम्रपट, मंदिर शिलालेख आणि समकालीन नोंदींद्वारे पुष्टी केलेले.',
@@ -395,8 +611,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'पौराणिक वंशावळी, मादला पंजी आणि सामुदायिक वारशात जतन केलेले.',
     epistemicScholarTitle: 'विद्वानांचे विश्लेषण',
     epistemicScholarDesc: 'आधुनिक शिलालेख संशोधनाद्वारे (Epigraphia Indica, ASI) विश्लेषित.',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} काळातील प्राथमिक ताम्रपट, मंदिर शिलालेख आणि पुरातत्त्वीय स्मारकांमध्ये थेट प्रमाणित. हे अभिलेख ${places} प्रदेशातील राजकीय पदव्या आणि प्रशासनाची पुष्टी करतात.`,
+    epistemicPillar1Traditional: reign =>
+      `हे व्यक्तिमत्त्व प्राचीन पवित्र वंशावळीशी (${reign}) संबंधित असले, तरी वेलीगलानी ताम्रपट (१४५८ इ.स.), कोर्नी दानपत्रे आणि मंदिर स्थापत्य या वंशाला ओड्र-कलिंग शासकांचा मूळ वारसा म्हणून गौरवतात.`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `पुरीच्या मादला पंजी मंदिर बखरी, राजवंशावळी, पुराणे आणि ओडिशा, आंध्र प्रदेश, कर्नाटक, महाराष्ट्र व गुजरातमधील लोकपरंपरांमध्ये जतन केलेले. हे वृत्तांत ${dynasty} परंपरेत ${name} यांचा गौरव करतात.`,
+    epistemicPillar3Body: citations =>
+      `समीक्षात्मक संशोधन ग्रंथांमध्ये (${citations}) मूल्यमापन केलेले. इतिहासकार राजकीय, लष्करी आणि जल-अभियांत्रिकी कामगिरीला काव्यात्मक प्रशस्तींपासून वेगळे करून पाहतात.`,
     secFamilyPeriod: 'जन्म, राजवंश, कौटुंबिक पार्श्वभूमी आणि ऐतिहासिक काळ',
     secBiographyLegacy: 'संपूर्ण ऐतिहासिक चरित्र, कार्ये आणि वारसा',
+    secExtendedAnalysis: 'विस्तृत ऐतिहासिक आणि सांस्कृतिक विश्लेषण',
     secEngineeringCivic: 'स्थापत्य, जल-अभियांत्रिकी आणि सांस्कृतिक योगदान',
     secEpistemicAnalysis: 'पुरावा वर्गीकरण: प्रमाणित तथ्ये, परंपरा आणि संशोधन',
     secChronology: 'कालानुक्रमिक जीवन आणि शासन घटनाक्रम',
@@ -412,8 +637,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'राजकीय, साम्राज्यिक आणि आध्यात्मिक पदव्या',
     lblAlternateNames: 'पर्यायी आणि प्रादेशिक नावे',
     lblFamilyBackground: 'कौटुंबिक पार्श्वभूमी आणि वंशावळ संबंध',
+    lblPredecessorParent: 'पूर्ववर्ती शासक / राजपालक',
+    lblRoyalConsort: 'राजमहिषी / जोडीदार',
+    lblSuccessorsDescendants: 'प्रमाणित उत्तराधिकारी / वंशज',
     lblAssociatedPlaces: 'राजधान्या, किल्ले आणि संबंधित ऐतिहासिक केंद्रे',
+    lblCorroboratedCentres: 'पुष्ट पुरातत्त्वीय केंद्रे:',
     lblHistoricalSignificance: 'प्रमुख ऐतिहासिक महत्त्व आणि वारसा',
+    lblMilestone: 'महत्त्वाचा टप्पा',
+    lblChronologicalEvent: 'कालानुक्रमिक घटना',
+    lblBiographicalRegnalEvent: 'चरित्र आणि शासन घटना',
+    openArchivalChronology: 'कालानुक्रमिक नोंद उघडा',
+    subInscriptionsGrants: 'पुष्टी करणारे शिलालेख आणि ताम्रपट दानपत्रे',
+    inspectEpigraphicRecord: 'संपूर्ण शिलालेख नोंद पहा',
+    subArchivalManuscripts: 'संबंधित हस्तलिखिते आणि राजसनदा',
+    viewArchivalManuscript: 'हस्तलिखित अभिलेख पहा',
+    subAssociatedMonuments: 'संबंधित मंदिरे, किल्ले आणि पुरातत्त्वीय स्मारके',
+    portalGajapathiBadge: 'साम्राज्ये आणि राजवंश',
+    portalGajapathiTitle: 'सूर्यवंश गजपती साम्राज्य आणि सम्राट वृत्तांत',
+    portalGenealogyBadge: 'राजवंश वंशावळ',
+    portalGenealogyTitle: 'सूर्यवंश आणि ओड्र राजवंश वंशावळ वृक्ष',
+    portalOdraBadge: 'ऐतिहासिक भूगोल',
+    portalOdraTitle: 'ओड्र देशाच्या राजधान्या, किल्ले आणि शिलालेख स्थळे',
+    lblRelatedKeywords: 'संबंधित अभिलेखीय कीवर्ड',
+    lblResearchHashtags: 'संशोधन हॅशटॅग',
+    lblChronologicalEventsCount: 'कालानुक्रमिक घटना',
+    lblCitationsCount: 'संदर्भ उद्धरणे',
     lblPrevPerson: 'मागील ऐतिहासिक विभूती',
     lblNextPerson: 'पुढील ऐतिहासिक विभूती',
     noResults: 'तुमच्या शोधाशी जुळणारी कोणतीही ऐतिहासिक विभूती आढळली नाही.',
@@ -430,6 +678,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'ସମସ୍ତ ପ୍ରମାଣ ଶ୍ରେଣୀ',
     filterPrimary: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ସାକ୍ଷ୍ୟ',
     filterTraditional: 'ପାରମ୍ପରିକ ଓ ପୌରାଣିକ ବଂଶାବଳୀ',
+    lblEvidenceFilter: 'ପ୍ରମାଣ ଫିଲ୍ଟର:',
     searchPlaceholder: 'ସମ୍ରାଟ, ଉପାଧି, ରାଜବଂଶ, ଶାସନକାଳ ଖୋଜନ୍ତୁ...',
     returnHome: 'ମୁଖ୍ୟ ପୃଷ୍ଠା',
     backToList: 'ତାଲିକାକୁ ଫେରନ୍ତୁ',
@@ -439,6 +688,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'ଲିଙ୍କ୍ କପି ହେଲା!',
     closeProfile: 'ବନ୍ଦ କରନ୍ତୁ',
     readFullBio: 'ସମ୍ପୂର୍ଣ୍ଣ ଜୀବନୀ ଓ ଶିଳାଲେଖ ବିବରଣୀ ପଢ଼ନ୍ତୁ',
+    shareCopyDirectLink: 'ସିଧାସଳଖ ଜୀବନୀ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    shareCopySummaryLink: 'ନାମ, ଶାସନକାଳ ଓ ଲିଙ୍କ୍ କପି କରନ୍ତୁ',
+    shareWhatsApp: 'ହ୍ୱାଟ୍সଆପ୍ ମାଧ୍ୟମରେ ସେୟାର କରନ୍ତୁ',
     epistemicBannerTitle: 'ଐତିହାସିକ ପ୍ରମାଣ ବର୍ଗୀକରଣ ପଦ୍ଧତି',
     epistemicVerifiedTitle: 'ପ୍ରମାଣିତ ଐତିହାସିକ ତଥ୍ୟ',
     epistemicVerifiedDesc: 'ତାମ୍ରପଟା, ମନ୍ଦିର ଶିଳାଲେଖ ଓ ସମসামୟିକ ଅଭିଲେଖ ଦ୍ୱାରା ପ୍ରମାଣିତ।',
@@ -446,8 +698,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'ପୌରାଣିକ ବଂଶାବଳୀ, ମାଦଳା ପାଞ୍ଜି ଓ ସାମୁଦାୟିକ ଐତିହ୍ୟରେ ସଂରକ୍ଷିତ।',
     epistemicScholarTitle: 'ଐତିହାସିକ ଗବେଷଣା ଓ ବିଶ୍ଳେଷଣ',
     epistemicScholarDesc: 'ଆଧୁନିକ ଶିଳାଲେଖ ଗବେଷଣା (Epigraphia Indica, ASI) ମାଧ୍ୟମରେ ବିଶ୍ଳେଷିତ।',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} ସମୟର ମୌଳିକ ତାମ୍ରପଟା, ମନ୍ଦିର ଶିଳାଲେଖ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସ୍ମାରକୀରେ ପ୍ରତ୍ୟକ୍ଷ ଭାବରେ ପ୍ରମାଣିତ। ଏହି ଅଭିଲେଖଗୁଡ଼ିକ ${places} ଅଞ୍ଚଳରେ ରାଜକୀୟ ଉପାଧି ଓ ପ୍ରଶାସନକୁ ନିଶ୍ଚିତ କରେ।`,
+    epistemicPillar1Traditional: reign =>
+      `ଏହି ବ୍ୟକ୍ତିତ୍ୱ ପ୍ରାଚୀନ ପବିତ୍ର ବଂଶାବଳୀ (${reign}) ସହିତ ସମ୍ପୃକ୍ତ ହେଲେ ମଧ୍ୟ, ଭେলিଗାଲାନି ତାମ୍ରପଟା (୧୪୫୮ ଖ୍ରୀଷ୍ଟାବ୍ଦ), କୋର୍ଣ୍ଣି ଦାନପତ୍ର ଓ ମନ୍ଦିର ସ୍ଥାପତ୍ୟ ଏହି ବଂଶକୁ ଓଡ଼୍ର-କଳିଙ୍ଗ ସମ୍ରାଟମାନଙ୍କର ମୂଳ ଐତିହ୍ୟ ଭାବରେ ଉଲ୍ଲେଖ କରନ୍ତି।`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `ପୁରୀର ମାଦଳା ପାଞ୍ଜି, ରାଜବଂଶାବଳୀ, ପୁରାଣ ଏବଂ ଓଡ଼ିଶା, ଆନ୍ଧ୍ରପ୍ରଦେଶ, କର୍ଣ୍ଣାଟକ ଓ ମହାରାଷ୍ଟ୍ରର ଆଞ୍ଚଳିକ ପରମ୍ପରାରେ ସଂରକ୍ଷିତ। ଏହି ବିବରଣୀଗୁଡ଼ିକ ${dynasty} ପରମ୍ପରାରେ ${name}ଙ୍କ ଗୌରବ ଗାନ କରେ।`,
+    epistemicPillar3Body: citations =>
+      `ପ୍ରମୁଖ ଐତିହାସିକ ଗବେଷଣା ଗ୍ରନ୍ଥଗୁଡ଼ିକରେ (${citations}) ମୂଲ୍ୟାଙ୍କିତ। ଐତିହାସିକମାନେ ପ୍ରମାଣିତ ରାଜନୈତିକ, ସାମରିକ ଓ ଜଳସେଚନ କୃତିତ୍ୱକୁ କାବ୍ୟিক ପ୍ରଶସ୍ତିଠାରୁ ପୃଥକ କରି ବିଶ୍ଳେଷଣ କରନ୍ତି।`,
     secFamilyPeriod: 'ଜନ୍ମ, ରାଜବଂଶ, ପାରିବାରିକ ପୃଷ୍ଠଭୂମି ଓ ଐତିହାସିକ କାଳ',
     secBiographyLegacy: 'ସମ୍ପୂର୍ଣ୍ଣ ଐତିହାସିକ ଜୀବନୀ, କୃତିତ୍ୱ ଓ ଐତିହ୍ୟ',
+    secExtendedAnalysis: 'ବିস্তୃତ ଐତିହାସିକ ଓ ସାଂସ୍କୃତିକ ବିଶ୍ଳେଷଣ',
     secEngineeringCivic: 'ସ୍ଥାପତ୍ୟ, ଜଳସେଚନ ଓ ସାଂସ୍କୃତିକ ଅବଦାନ',
     secEpistemicAnalysis: 'ପ୍ରମାଣ ବିଶ୍ଳେଷଣ: ଐତିହାସିକ ତଥ୍ୟ, ପରମ୍ପରା ଓ ଗବେଷଣା',
     secChronology: 'କାଳାନୁକ୍ରମିକ ଜୀବନ ଓ ଶାସନ ଘଟଣାବଳୀ',
@@ -463,8 +724,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'ରାଜକୀୟ, ସାମ୍ରାଜ୍ୟ ଓ ଆଧ୍ୟାତ୍ମିକ ଉପାଧି',
     lblAlternateNames: 'ବିକଳ୍ପ ଓ ଆଞ୍ଚଳିକ ନାମ',
     lblFamilyBackground: 'ପାରିବାରିକ ପୃଷ୍ଠଭୂମି ଓ ବଂଶାବଳୀ ସମ୍ପର୍କ',
+    lblPredecessorParent: 'ପୂର୍ବসূରୀ / ରାଜକୀୟ ପିତାମାତା',
+    lblRoyalConsort: 'ରାଜমହିଷୀ / ସହଧର୍ମିଣୀ',
+    lblSuccessorsDescendants: 'ପ୍ରମାଣିତ ଉତ୍ତରାଧିକାରୀ / ବଂଶଧର',
     lblAssociatedPlaces: 'ରାଜଧାନୀ, ଦୁର୍ଗ ଓ ସମ୍ପୃକ୍ତ ଐତିହାସିକ କେନ୍ଦ୍ର',
+    lblCorroboratedCentres: 'ପ୍ରମାଣିତ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ କେନ୍ଦ୍ର:',
     lblHistoricalSignificance: 'ମୁଖ୍ୟ ଐତିହାସିକ ଗୁରୁତ୍ୱ ଓ ଐତିହ୍ୟ',
+    lblMilestone: 'ମାଇଲଖୁଣ୍ଟ',
+    lblChronologicalEvent: 'କାଳାନୁକ୍ରମିକ ଘଟଣା',
+    lblBiographicalRegnalEvent: 'ଜୀବନୀ ଓ ଶାସନ ଘଟଣା',
+    openArchivalChronology: 'କାଳାନୁକ୍ରମିକ ଅଭିଲେଖ ଖୋଲନ୍ତୁ',
+    subInscriptionsGrants: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ତାମ୍ରପଟା ଅନୁଦାନ',
+    inspectEpigraphicRecord: 'ସମ୍ପୂର୍ଣ୍ଣ ଶିଳାଲେଖ ବିବରଣୀ ଦେଖନ୍ତୁ',
+    subArchivalManuscripts: 'ସମ୍ପୃକ୍ତ ତାଳପତ୍ର ପୋଥି ଓ ରାଜକୀୟ ସନନ୍ଦ',
+    viewArchivalManuscript: 'ପ୍ରାଚୀନ ପୋଥି ଅଭିଲେଖ ଦେଖନ୍ତୁ',
+    subAssociatedMonuments: 'ସମ୍ପୃକ୍ତ ମନ୍ଦିର, ଦୁର୍ଗ ଓ ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ ସ୍ମାରକୀ',
+    portalGajapathiBadge: 'ସାମ୍ରାଜ୍ୟ ଓ ରାଜବଂଶ',
+    portalGajapathiTitle: 'ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟ ଓ ସମ୍ରାଟ ଇତିହାସ',
+    portalGenealogyBadge: 'ରାଜବଂଶ ବଂଶାବଳୀ',
+    portalGenealogyTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଓ ଓଡ଼୍ର ରାଜବଂଶ ବଂଶାବଳୀ ବୃକ୍ଷ',
+    portalOdraBadge: 'ଐତିହାସିକ ଭୂଗୋଳ',
+    portalOdraTitle: 'ଓଡ଼୍ର ଦେଶର ରାଜଧାନୀ, ଦୁର୍ଗ ଓ ଶିଳାଲେଖ ସ୍ଥଳ',
+    lblRelatedKeywords: 'ସମ୍ପୃକ୍ତ ଅଭିଲେଖ କିୱାର୍ଡ',
+    lblResearchHashtags: 'ଗବେଷଣା ହ୍ୟାଶଟ୍ୟାଗ୍',
+    lblChronologicalEventsCount: 'କାଳାନୁକ୍ରମିକ ଘଟଣାବଳୀ',
+    lblCitationsCount: 'ଆଧାର ସନ୍ଦର୍ଭ',
     lblPrevPerson: 'ପୂର୍ବବର୍ତ୍ତୀ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
     lblNextPerson: 'ପରବର୍ତ୍ତୀ ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ',
     noResults: 'ଆପଣଙ୍କ ସନ୍ଧାନ ସହିତ ମେଳ ଖାଉଥିବା କୌଣସି ଐତିହାସିକ ବ୍ୟକ୍ତିତ୍ୱ ମିଳିଲା ନାହିଁ।',
@@ -481,6 +765,7 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     filterAllEvidence: 'সকল প্রমাণ বিভাগ',
     filterPrimary: 'প্রমাণিত শিলালিপি সাক্ষ্য',
     filterTraditional: 'ঐতিহ্যবাহী ও পৌরাণিক বংশাবলী',
+    lblEvidenceFilter: 'প্রমাণ ফিল্টার:',
     searchPlaceholder: 'সম্রাট, উপাধি, রাজবংশ, শাসনকাল খুঁজুন...',
     returnHome: 'হোম পেজ',
     backToList: 'তালিকায় ফিরে যান',
@@ -490,6 +775,9 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     linkCopied: 'লিঙ্ক কপি হয়েছে!',
     closeProfile: 'বন্ধ করুন',
     readFullBio: 'সম্পূর্ণ জীবনী ও শিলালিপি বিবরণ পড়ুন',
+    shareCopyDirectLink: 'সরাসরি জীবনী লিঙ্ক কপি করুন',
+    shareCopySummaryLink: 'নাম, শাসনকাল ও লিঙ্ক কপি করুন',
+    shareWhatsApp: 'হোয়াটসঅ্যাপে শেয়ার করুন',
     epistemicBannerTitle: 'ঐতিহাসিক প্রমাণ শ্রেণীবিন্যাস পদ্ধতি',
     epistemicVerifiedTitle: 'প্রমাণিত ঐতিহাসিক তথ্য',
     epistemicVerifiedDesc: 'তাম্রশাসন, মন্দিরের শিলালিপি ও সমসাময়িক নথিপত্র দ্বারা প্রমাণিত।',
@@ -497,8 +785,17 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     epistemicTradDesc: 'পৌরাণিক বংশাবলী, মাদলা পাঁজি ও সম্প্রদায়গত ঐতিহ্যে সংরক্ষিত।',
     epistemicScholarTitle: 'ঐতিহাসিক গবেষণা ও বিশ্লেষণ',
     epistemicScholarDesc: 'আধুনিক লিপিতত্ত্ব গবেষণা (Epigraphia Indica, ASI) দ্বারা বিশ্লেষিত।',
+    epistemicPillar1Primary: (reign, places) =>
+      `${reign} সময়কালের প্রাথমিক তাম্রশাসন, মন্দিরের শিলালিপি ও প্রত্নতাত্ত্বিক স্মৃতিস্তম্ভে প্রত্যক্ষভাবে প্রমাণিত। এই নথিগুলি ${places} অঞ্চলে রাজকীয় উপাধি ও শাসনব্যবস্থা নিশ্চিত করে।`,
+    epistemicPillar1Traditional: reign =>
+      `যদিও এই ব্যক্তিত্ব প্রাচীন পবিত্র বংশাবলীর (${reign}) অন্তর্ভুক্ত, তথাপি ভেলিগালানি তাম্রশাসন (১৪৫৮ খ্রিস্টাব্দ), কোর্ণি অনুদান ও মন্দির স্থাপত্য এই বংশকে ওড্র-কলিঙ্গ সম্রাটদের মূল ঐতিহ্য হিসেবে উল্লেখ করে।`,
+    epistemicPillar2Body: (name, dynasty) =>
+      `পুরীর মাদলা পাঁজি মন্দির ইতিবৃত্ত, রাজবংশাবলী, পুরাণ এবং উড়িষ্যা, অন্ধ্রপ্রদেশ, কর্ণাটক ও মহারাষ্ট্রের আঞ্চলিক ঐতিহ্যে সংরক্ষিত। এই বিবরণীগুলি ${dynasty} ঐতিহ্যে ${name}-এর মহিমা কীর্তন করে।`,
+    epistemicPillar3Body: citations =>
+      `প্রামাণিক গবেষণা গ্রন্থসমূহে (${citations}) মূল্যায়িত। ইতিহাসবিদগণ প্রমাণিত রাজনৈতিক, সামরিক ও জল-প্রকৌশল কৃতিত্বকে কাব্যিক রাজপ্রশস্তি থেকে পৃথক করে বিশ্লেষণ করেন।`,
     secFamilyPeriod: 'জন্ম, রাজবংশ, পারিবারিক পটভূমি ও ঐতিহাসিক কাল',
     secBiographyLegacy: 'সম্পূর্ণ ঐতিহাসিক জীবনী, কৃতিত্ব ও উত্তরাধিকার',
+    secExtendedAnalysis: 'বিস্তৃত ঐতিহাসিক ও সাংস্কৃতিক বিশ্লেষণ',
     secEngineeringCivic: 'স্থাপত্য, জল-প্রকৌশল ও সাংস্কৃতিক অবদান',
     secEpistemicAnalysis: 'প্রমাণ বিশ্লেষণ: ঐতিহাসিক তথ্য, ঐতিহ্য ও গবেষণা',
     secChronology: 'কালানুক্রমিক জীবন ও শাসন ঘটনাক্রম',
@@ -514,8 +811,31 @@ const KINGS_QUEENS_UI: Record<LanguageCode, KingsQueensUI> = {
     lblKnownTitles: 'রাজকীয়, সাম্রাজ্যিক ও আধ্যাত্মিক উপাধি',
     lblAlternateNames: 'বিকল্প ও আঞ্চলিক নাম',
     lblFamilyBackground: 'পারিবারিক পটভূমি ও বংশাবলী সম্পর্ক',
+    lblPredecessorParent: 'পূর্বসূরি / রাজকীয় পিতামাতা',
+    lblRoyalConsort: 'রাজমহিষী / জীবনসঙ্গী',
+    lblSuccessorsDescendants: 'প্রমাণিত উত্তরাধিকারী / বংশধর',
     lblAssociatedPlaces: 'রাজধানী, দুর্গ ও সম্পর্কিত ঐতিহাসিক কেন্দ্র',
+    lblCorroboratedCentres: 'প্রমাণিত প্রত্নতাত্ত্বিক কেন্দ্র:',
     lblHistoricalSignificance: 'মূল ঐতিহাসিক গুরুত্ব ও উত্তরাধিকার',
+    lblMilestone: 'মাইলফলক',
+    lblChronologicalEvent: 'কালানুক্রমিক ঘটনা',
+    lblBiographicalRegnalEvent: 'জীবনী ও শাসন ঘটনা',
+    openArchivalChronology: 'কালানুক্রমিক নথি খুলুন',
+    subInscriptionsGrants: 'প্রমাণিত শিলালিপি ও তাম্রশাসন অনুদান',
+    inspectEpigraphicRecord: 'সম্পূর্ণ শিলালিপি বিবরণ দেখুন',
+    subArchivalManuscripts: 'সম্পর্কিত পাণ্ডুলিপি ও রাজকীয় সনদ',
+    viewArchivalManuscript: 'প্রাচীন পাণ্ডুলিপি দেখুন',
+    subAssociatedMonuments: 'সম্পর্কিত মন্দির, দুর্গ ও প্রত্নতাত্ত্বিক স্মৃতিস্তম্ভ',
+    portalGajapathiBadge: 'সাম্রাজ্য ও রাজবংশ',
+    portalGajapathiTitle: 'সূর্যবংশীয় গজপতি সাম্রাজ্য ও সম্রাট ইতিবৃত্ত',
+    portalGenealogyBadge: 'রাজবংশীয় বংশাবলী',
+    portalGenealogyTitle: 'সূর্যবংশ ও ওড্র রাজবংশের বংশলতিকা বৃক্ষ',
+    portalOdraBadge: 'ঐতিহাসিক ভূগোল',
+    portalOdraTitle: 'ওড্র দেশের রাজধানী, দুর্গ ও শিলালিপি স্থানসমূহ',
+    lblRelatedKeywords: 'সম্পর্কিত আর্কাইভ কিওয়ার্ড',
+    lblResearchHashtags: 'গবেষণা হ্যাশট্যাগ',
+    lblChronologicalEventsCount: 'কালানুক্রমিক ঘটনা',
+    lblCitationsCount: 'সূত্র উদ্ধৃতি',
     lblPrevPerson: 'পূর্ববর্তী ঐতিহাসিক ব্যক্তিত্ব',
     lblNextPerson: 'পরবর্তী ঐতিহাসিক ব্যক্তিত্ব',
     noResults: 'আপনার অনুসন্ধানের সাথে মেলে এমন কোনো ঐতিহাসিক ব্যক্তিত্ব পাওয়া যায়নি।',
@@ -557,7 +877,7 @@ function getFigureHashtags(fig: HistoricalFigure): string[] {
   const cleanName = fig.name.replace(/[^a-zA-Z0-9]/g, '');
   const cleanDynasty = fig.dynasty_name.split('(')[0].replace(/[^a-zA-Z0-9]/g, '');
   return [
-    `#${cleanName}`,
+    cleanName ? `#${cleanName}` : `#${fig.id.replace(/^fig_/, '')}`,
     cleanDynasty ? `#${cleanDynasty}` : '#SuryavamshaGajapathi',
     '#OdraKshatriyaHeritage',
     '#HistoricalPersonages',
@@ -566,12 +886,17 @@ function getFigureHashtags(fig: HistoricalFigure): string[] {
 }
 
 // Parse a chronological event string into year/era badge + description
-function parseMajorEventString(rawEvent: string, fallbackEra: string, index: number) {
+function parseMajorEventString(
+  rawEvent: string,
+  fallbackEra: string,
+  index: number,
+  ui: KingsQueensUI
+) {
   const colonIdx = rawEvent.indexOf(':');
   if (colonIdx > 0 && colonIdx < 38) {
     return {
       eraLabel: rawEvent.slice(0, colonIdx).trim(),
-      title: `Milestone #${index + 1}`,
+      title: `${ui.lblMilestone} #${index + 1}`,
       description: rawEvent.slice(colonIdx + 1).trim()
     };
   }
@@ -579,13 +904,13 @@ function parseMajorEventString(rawEvent: string, fallbackEra: string, index: num
   if (parenMatch) {
     return {
       eraLabel: parenMatch[1],
-      title: rawEvent.slice(0, parenMatch.index).trim() || `Chronological Event #${index + 1}`,
+      title: rawEvent.slice(0, parenMatch.index).trim() || `${ui.lblChronologicalEvent} #${index + 1}`,
       description: rawEvent
     };
   }
   return {
     eraLabel: fallbackEra,
-    title: `Biographical & Regnal Event #${index + 1}`,
+    title: `${ui.lblBiographicalRegnalEvent} #${index + 1}`,
     description: rawEvent
   };
 }
@@ -595,24 +920,48 @@ interface KingsQueensPageProps {
   initialFigureId?: string | null;
 }
 
+// Canonical public/assets images for the three Traditional & Sacred Lineage Progenitor articles
+const PROGENITOR_CANONICAL_IMAGES: Record<string, string> = {
+  fig_samrat_sagara: '/assets/01_samrat_sagara.webp',
+  fig_maharshi_bhagiratha: '/assets/02_maharshi_bhagiratha_ganga_avatarana.webp',
+  fig_sri_rama: '/assets/03_maryada_purushottama_sri_rama.webp'
+};
+
+function resolveKingsQueensFigureImage(figure: Pick<HistoricalFigure, 'id' | 'image_url'>): string {
+  const baseUrl = ((import.meta as any).env?.BASE_URL || '/').replace(/\/$/, '');
+  const canonicalPath = PROGENITOR_CANONICAL_IMAGES[figure.id];
+  if (canonicalPath) {
+    return `${baseUrl}${canonicalPath}`;
+  }
+  return figure.image_url;
+}
+
 export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, initialFigureId }) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, getArticleContent, getMetadataLabel } = useLanguage();
   const ui = KINGS_QUEENS_UI[language] || KINGS_QUEENS_UI.en;
 
-  const initialFigures = getAllDocumentedFigures(language);
-  const [figures, setFigures] = useState<HistoricalFigure[]>(initialFigures);
+  // Canonical 14-monarch repository data localized for all 8 languages with guaranteed public/assets progenitor images
+  const figures = useMemo(
+    () =>
+      getAllDocumentedFigures(language).map(fig => ({
+        ...fig,
+        image_url: resolveKingsQueensFigureImage(fig)
+      })),
+    [language]
+  );
+
   const [activeFigureId, setActiveFigureId] = useState<string | null>(() => {
-    if (initialFigureId && initialFigures.some(f => f.id === initialFigureId)) {
-      return initialFigureId;
-    }
     try {
       const params = new URLSearchParams(window.location.search);
       const figParam = params.get('figure') || params.get('id');
-      if (figParam && initialFigures.some(f => f.id === figParam)) {
+      if (figParam && DOCUMENTED_FIGURES_REPO.some(f => f.id === figParam)) {
         return figParam;
       }
     } catch {
       // Ignore URL parsing errors
+    }
+    if (initialFigureId && DOCUMENTED_FIGURES_REPO.some(f => f.id === initialFigureId)) {
+      return initialFigureId;
     }
     return null;
   });
@@ -623,31 +972,49 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
   const [copied, setCopied] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const savedScrollY = useRef<number>(0);
+  const prevInitialFigureIdRef = useRef<string | null | undefined>(initialFigureId);
 
-  // Synchronize figure translations whenever language changes
+  // Synchronize initialFigureId prop ONLY when initialFigureId itself changes (never on language switch)
   useEffect(() => {
-    const updated = getAllDocumentedFigures(language);
-    setFigures(updated);
-
-    fetch(`/api/content/figures?lang=${language}`)
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => {
-        if (data?.figures && data.figures.length > 0) {
-          setFigures(data.figures);
-        }
-      })
-      .catch(() => {
-        // Offline or network restricted - repository data is already loaded
-      });
-  }, [language]);
-
-  // Synchronize initialFigureId prop changes (e.g. from global search navigation)
-  useEffect(() => {
-    if (initialFigureId && figures.some(f => f.id === initialFigureId)) {
-      setActiveFigureId(initialFigureId);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (initialFigureId !== prevInitialFigureIdRef.current) {
+      prevInitialFigureIdRef.current = initialFigureId;
+      if (initialFigureId && DOCUMENTED_FIGURES_REPO.some(f => f.id === initialFigureId)) {
+        setActiveFigureId(initialFigureId);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
-  }, [initialFigureId, figures]);
+  }, [initialFigureId]);
+
+  // Apply initial ?lang= query parameter ONCE on mount if present in shared link
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const langParam = params.get('lang') as LanguageCode | null;
+      if (
+        langParam &&
+        ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
+        langParam !== language
+      ) {
+        setLanguage(langParam);
+      }
+    } catch {
+      // Ignore URL parsing errors
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keep URL ?lang= parameter (if present) synchronized with user's selected language so it never loops back to English
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('lang') && url.searchParams.get('lang') !== language) {
+        url.searchParams.set('lang', language);
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {
+      // Ignore history API restrictions
+    }
+  }, [language]);
 
   const activeFigure = useMemo(() => {
     if (!activeFigureId) return null;
@@ -685,15 +1052,6 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      const langParam = params.get('lang') as LanguageCode | null;
-      if (
-        langParam &&
-        ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'].includes(langParam) &&
-        langParam !== language
-      ) {
-        setLanguage(langParam);
-        return;
-      }
 
       if (params.get('autodownloadpdf') === '1' && activeFigure && !isAndroidWebViewEnvironment()) {
         const timer = setTimeout(() => {
@@ -729,7 +1087,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     } catch {
       // Ignore
     }
-  }, [activeFigure, language, setLanguage]);
+  }, [activeFigure, language]);
 
   const openFigureDetail = (figureId: string) => {
     savedScrollY.current = window.scrollY;
@@ -738,6 +1096,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     try {
       const url = new URL(window.location.href);
       url.searchParams.set('figure', figureId);
+      if (url.searchParams.has('lang')) {
+        url.searchParams.set('lang', language);
+      }
       window.history.replaceState({}, '', url.toString());
     } catch {
       // Ignore in sandboxed iframe
@@ -752,6 +1113,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
       const url = new URL(window.location.href);
       url.searchParams.delete('figure');
       url.searchParams.delete('id');
+      if (url.searchParams.has('lang')) {
+        url.searchParams.set('lang', language);
+      }
       window.history.replaceState({}, '', url.toString());
     } catch {
       // Ignore
@@ -919,60 +1283,78 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
       ? genealogyNodes.filter(g => g.parent_id === genealogyNode.id)
       : [];
 
-    // Cross-reference Corroborating Inscriptions
+    const enNameToken = (repoEntry?.name.en || activeFigure.name).split(' ')[0].toLowerCase();
+    const localNameToken = activeFigure.name.split(' ')[0].toLowerCase();
+    const enPlaces = repoEntry?.associated_places.en || activeFigure.associated_places || [];
+
+    // Cross-reference Corroborating Inscriptions across all 8 languages
     const allInscriptions = getCanonicalInscriptions(language);
+    const enInscriptions = getCanonicalInscriptions('en');
     const matchedInscriptions = allInscriptions.filter(insc => {
       if ((activeFigure.inscriptions_ids || []).includes(insc.id)) return true;
-      const firstToken = activeFigure.name.split(' ')[0].toLowerCase();
-      return firstToken.length > 3 && insc.ruler.toLowerCase().includes(firstToken);
+      const enInsc = enInscriptions.find(e => e.id === insc.id);
+      const rulerText = `${insc.ruler} ${enInsc?.ruler || ''}`.toLowerCase();
+      return (
+        (enNameToken.length > 3 && rulerText.includes(enNameToken)) ||
+        (localNameToken.length > 2 && rulerText.includes(localNameToken))
+      );
     });
 
-    // Cross-reference Historical Documents
+    // Cross-reference Historical Documents across all 8 languages
     const allDocuments = getCanonicalDocuments(language);
+    const enDocuments = getCanonicalDocuments('en');
     const matchedDocuments = allDocuments.filter(doc => {
-      const firstToken = activeFigure.name.split(' ')[0].toLowerCase();
+      const enDoc = enDocuments.find(e => e.id === doc.id);
+      const combinedDocText = `${doc.title} ${doc.author_authority} ${doc.translation_excerpt} ${enDoc?.title || ''} ${enDoc?.author_authority || ''} ${enDoc?.translation_excerpt || ''}`.toLowerCase();
       return (
-        (firstToken.length > 3 &&
-          (doc.title.toLowerCase().includes(firstToken) ||
-            doc.author_authority.toLowerCase().includes(firstToken) ||
-            doc.translation_excerpt.toLowerCase().includes(firstToken))) ||
+        (enNameToken.length > 3 && combinedDocText.includes(enNameToken)) ||
+        (localNameToken.length > 2 && combinedDocText.includes(localNameToken)) ||
         (figCategory === 'gajapathi_monarchs' && doc.id === 'doc_madala_panji')
       );
     });
 
-    // Cross-reference Archaeological Monuments & Historical Locations
+    // Cross-reference Archaeological Monuments & Historical Locations across all 8 languages
     const allMonuments = getCanonicalMonuments(language);
+    const enMonuments = getCanonicalMonuments('en');
     const matchedMonuments = allMonuments.filter(mon => {
-      const firstToken = activeFigure.name.split(' ')[0].toLowerCase();
-      const byRuler = firstToken.length > 3 && mon.patron_ruler.toLowerCase().includes(firstToken);
-      const byPlace = (activeFigure.associated_places || []).some(p => {
+      const enMon = enMonuments.find(e => e.id === mon.id);
+      const rulerText = `${mon.patron_ruler} ${enMon?.patron_ruler || ''}`.toLowerCase();
+      const monPlaceText = `${mon.name} ${mon.location} ${enMon?.name || ''} ${enMon?.location || ''}`.toLowerCase();
+      const byRuler =
+        (enNameToken.length > 3 && rulerText.includes(enNameToken)) ||
+        (localNameToken.length > 2 && rulerText.includes(localNameToken));
+      const byPlace = [...(activeFigure.associated_places || []), ...enPlaces].some(p => {
         const cleanP = p.split('(')[0].trim().toLowerCase();
-        return cleanP.length > 3 && (mon.name.toLowerCase().includes(cleanP) || mon.location.toLowerCase().includes(cleanP));
+        return cleanP.length > 3 && monPlaceText.includes(cleanP);
       });
       return byRuler || byPlace;
     });
 
     const allLocations = getCanonicalLocations(language);
+    const enLocations = getCanonicalLocations('en');
     const matchedLocations = allLocations.filter(loc => {
-      return (activeFigure.associated_places || []).some(p => {
+      const enLoc = enLocations.find(e => e.id === loc.id);
+      const locNameText = `${loc.name} ${loc.ancient_name} ${enLoc?.name || ''} ${enLoc?.ancient_name || ''}`.toLowerCase();
+      return [...(activeFigure.associated_places || []), ...enPlaces].some(p => {
         const cleanP = p.split('(')[0].trim().toLowerCase();
         return (
           cleanP.length > 3 &&
-          (loc.name.toLowerCase().includes(cleanP) ||
-            loc.ancient_name.toLowerCase().includes(cleanP) ||
-            cleanP.includes(loc.name.toLowerCase()))
+          (locNameText.includes(cleanP) ||
+            cleanP.includes(loc.name.toLowerCase()) ||
+            (enLoc ? cleanP.includes(enLoc.name.toLowerCase()) : false))
         );
       });
     });
 
-    // Cross-reference Canonical Timeline Events
+    // Cross-reference Canonical Timeline Events across all 8 languages
     const allTimelineEvents = getCanonicalTimelineEvents(language);
+    const enTimelineEvents = getCanonicalTimelineEvents('en');
     const matchedTimelineEvents = allTimelineEvents.filter(ev => {
-      const firstToken = activeFigure.name.split(' ')[0].toLowerCase();
+      const enEv = enTimelineEvents.find(e => e.id === ev.id);
+      const evText = `${ev.rulers_involved} ${ev.title} ${enEv?.rulers_involved || ''} ${enEv?.title || ''}`.toLowerCase();
       return (
-        firstToken.length > 3 &&
-        (ev.rulers_involved.toLowerCase().includes(firstToken) ||
-          ev.title.toLowerCase().includes(firstToken))
+        (enNameToken.length > 3 && evText.includes(enNameToken)) ||
+        (localNameToken.length > 2 && evText.includes(localNameToken))
       );
     });
 
@@ -993,7 +1375,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
     const mappedArticleIds = FIGURE_TO_ARTICLES_MAP[activeFigure.id] || [
       'art_gajapathi_kapilendra',
       'art_odra_desha_history',
-      'art_epigraphic_tradition_odra'
+      'art_epigraphic_evolution_odra'
     ];
     const relatedArticles = mappedArticleIds
       .map(id => allArticles.find(a => a.id === id))
@@ -1099,7 +1481,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                     >
                       <Copy className="w-4 h-4 text-[#762D35]" />
-                      <span>Copy Direct Biography Link</span>
+                      <span>{ui.shareCopyDirectLink}</span>
                     </button>
                     <button
                       onClick={() => {
@@ -1109,7 +1491,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold cursor-pointer"
                     >
                       <FileText className="w-4 h-4 text-[#762D35]" />
-                      <span>Copy Name, Reign & Link</span>
+                      <span>{ui.shareCopySummaryLink}</span>
                     </button>
                     <a
                       href={`https://wa.me/?text=${encodeURIComponent(
@@ -1124,7 +1506,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       className="w-full text-left px-3 py-2.5 rounded-xl hover:bg-[#FFF9EF] flex items-center gap-2.5 font-semibold text-[#1c5236]"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      <span>Share via WhatsApp</span>
+                      <span>{ui.shareWhatsApp}</span>
                     </a>
                   </div>
                 )}
@@ -1223,6 +1605,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div className="lg:col-span-4 space-y-2.5 max-w-sm mx-auto lg:max-w-none w-full">
                 <div className="relative rounded-2xl overflow-hidden border-2 border-[#A87924] shadow-lg bg-[#FFFCF5] dark:bg-[#1A0A0E] aspect-[4/5] flex items-center justify-center">
                   <img
+                    key={`${activeFigure.id}-${activeFigure.image_url}`}
                     src={activeFigure.image_url}
                     alt={activeFigure.name}
                     className="w-full h-full object-contain object-center"
@@ -1345,13 +1728,13 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     </div>
                     {parentNode && (
                       <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
-                        <dt className="text-[var(--secondary-text)] font-medium">Predecessor / Royal Parent:</dt>
+                        <dt className="text-[var(--secondary-text)] font-medium">{ui.lblPredecessorParent}:</dt>
                         <dd className="font-bold text-[var(--heading-text)] sm:text-right">{parentNode.name}</dd>
                       </div>
                     )}
                     {(genealogyNode?.spouse || activeFigure.spouse_name) && (
                       <div className="flex flex-col sm:flex-row sm:justify-between border-b border-[var(--border-color)]/70 pb-2">
-                        <dt className="text-[var(--secondary-text)] font-medium">Royal Consort / Spouse:</dt>
+                        <dt className="text-[var(--secondary-text)] font-medium">{ui.lblRoyalConsort}:</dt>
                         <dd className="font-bold text-[var(--heading-text)] sm:text-right">
                           {genealogyNode?.spouse || activeFigure.spouse_name}
                         </dd>
@@ -1359,7 +1742,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     )}
                     {childNodes.length > 0 && (
                       <div className="flex flex-col sm:flex-row sm:justify-between pb-1">
-                        <dt className="text-[var(--secondary-text)] font-medium">Documented Successors / Descendants:</dt>
+                        <dt className="text-[var(--secondary-text)] font-medium">{ui.lblSuccessorsDescendants}:</dt>
                         <dd className="font-bold text-[var(--heading-text)] sm:text-right">
                           {childNodes.map(c => c.name).join(', ')}
                         </dd>
@@ -1396,7 +1779,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   {matchedLocations.length > 0 && (
                     <div className="space-y-2.5 pt-2 border-t border-[var(--border-color)]">
                       <div className="text-[11px] font-bold uppercase tracking-wider text-[var(--secondary-text)]">
-                        Corroborated Archaeological Centres:
+                        {ui.lblCorroboratedCentres}
                       </div>
                       {matchedLocations.map(loc => (
                         <div
@@ -1443,7 +1826,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div className="mt-6 pt-6 border-t border-[var(--border-color)] space-y-4">
                 <h3 className="text-lg font-serif font-bold text-[var(--heading-text)] flex items-center gap-2">
                   <Compass className="w-5 h-5 text-[var(--accent-gold)]" />
-                  <span>Extended Historiographical & Cultural Analysis</span>
+                  <span>{ui.secExtendedAnalysis}</span>
                 </h3>
                 {extendedNarrative.detailed_narrative.split('\n\n').map((para, idx) => (
                   <p key={idx} className="text-[var(--primary-text)] text-sm sm:text-base leading-relaxed">
@@ -1483,8 +1866,11 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 </div>
                 <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed">
                   {activeFigure.evidence_status === 'Documented Primary Evidence'
-                    ? `Directly attested in primary epigraphic charters, temple lithic records, or archaeological monuments dated to ${activeFigure.reign_period}. Primary records confirm sovereign titulature, territorial administration across ${(activeFigure.associated_places || []).slice(0, 3).join(', ')}, and documented regnal events.`
-                    : `While the persona belongs to ancient sacred or traditional lineage (${activeFigure.reign_period}), later medieval epigraphs—such as the Veligalani Copper Plates (1458 CE), Korni Grants, and temple architectures—formally invoke this lineage as the foundational heritage of Odra-Kalinga sovereigns and community guilds.`}
+                    ? ui.epistemicPillar1Primary(
+                        activeFigure.reign_period,
+                        (activeFigure.associated_places || []).slice(0, 3).join(', ')
+                      )
+                    : ui.epistemicPillar1Traditional(activeFigure.reign_period)}
                 </p>
               </div>
 
@@ -1495,7 +1881,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <span>2. {ui.epistemicTradTitle}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed">
-                  Preserved across the <em>Madala Panji</em> temple chronicles of Puri, royal <em>Vamsavalis</em>, Puranic chapters, and regional ballads across Odisha, Andhra Pradesh, Karnataka, Maharashtra, and Gujarat. These accounts celebrate {activeFigure.name} within the sacred ethos of the {activeFigure.dynasty_name}.
+                  {ui.epistemicPillar2Body(activeFigure.name, activeFigure.dynasty_name)}
                 </p>
               </div>
 
@@ -1506,7 +1892,9 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                   <span>3. {ui.epistemicScholarTitle}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-[var(--primary-text)] leading-relaxed">
-                  Evaluated in critical academic monographs ({(activeFigure.citations || []).slice(0, 2).join('; ') || 'Epigraphia Indica & ASI Surveys'}). Historians carefully distinguish verifiable political, military, and hydraulic achievements from poetic royal panegyrics (<em>Prashasti</em>).
+                  {ui.epistemicPillar3Body(
+                    (activeFigure.citations || []).slice(0, 2).join('; ') || 'Epigraphia Indica & ASI Surveys'
+                  )}
                 </p>
               </div>
             </div>
@@ -1521,7 +1909,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
             <div className="relative pl-6 sm:pl-8 border-l-2 border-[var(--accent-gold)] space-y-6">
               {(activeFigure.major_events || []).map((rawEv, idx) => {
-                const parsed = parseMajorEventString(rawEv, activeFigure.reign_period, idx);
+                const parsed = parseMajorEventString(rawEv, activeFigure.reign_period, idx, ui);
                 return (
                   <div key={idx} className="relative bg-[var(--surface-bg)] rounded-xl p-4 sm:p-5 border border-[var(--border-color)]">
                     <div className="absolute -left-[31px] sm:-left-[39px] top-5 w-4 h-4 rounded-full bg-[#762D35] border-4 border-[var(--card-bg)] shadow-sm" />
@@ -1554,7 +1942,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                       {tev.year_text} ({tev.period})
                     </span>
                     <span className="text-xs font-bold text-[var(--link-color)] inline-flex items-center gap-1">
-                      Open Archival Chronology Record <ChevronRight className="w-3.5 h-3.5" />
+                      {ui.openArchivalChronology} <ChevronRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
                   <h3 className="text-base font-serif font-bold text-[var(--heading-text)]">{tev.title}</h3>
@@ -1576,7 +1964,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--secondary-text)] mb-3 flex items-center gap-2">
                   <Scroll className="w-4 h-4 text-[var(--accent-gold)]" />
-                  <span>Corroborating Stone Inscriptions & Copper-Plate Grants ({matchedInscriptions.length})</span>
+                  <span>{ui.subInscriptionsGrants} ({matchedInscriptions.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {matchedInscriptions.map(insc => (
@@ -1599,7 +1987,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         </h4>
                         <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{insc.historical_context}</p>
                         <div className="text-[11px] font-bold text-[var(--link-color)] mt-2 inline-flex items-center gap-1">
-                          <span>Inspect Full Epigraphic Record</span>
+                          <span>{ui.inspectEpigraphicRecord}</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </div>
                       </div>
@@ -1614,7 +2002,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--secondary-text)] mb-3 flex items-center gap-2">
                   <FileText className="w-4 h-4 text-[var(--accent-gold)]" />
-                  <span>Associated Archival Manuscripts & Royal Charters ({matchedDocuments.length})</span>
+                  <span>{ui.subArchivalManuscripts} ({matchedDocuments.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {matchedDocuments.map(doc => (
@@ -1633,7 +2021,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         </h4>
                         <p className="text-xs text-[var(--secondary-text)] mt-1 line-clamp-2">{doc.translation_excerpt}</p>
                         <div className="text-[11px] font-bold text-[var(--link-color)] mt-2 inline-flex items-center gap-1">
-                          <span>View Archival Manuscript</span>
+                          <span>{ui.viewArchivalManuscript}</span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </div>
                       </div>
@@ -1648,7 +2036,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--secondary-text)] mb-3 flex items-center gap-2">
                   <Landmark className="w-4 h-4 text-[var(--accent-gold)]" />
-                  <span>Associated Temples, Fortresses & Archaeological Monuments ({matchedMonuments.length})</span>
+                  <span>{ui.subAssociatedMonuments} ({matchedMonuments.length})</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {matchedMonuments.map((mon, idx) => (
@@ -1718,6 +2106,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
                   >
                     <img
+                      key={`${rel.id}-${rel.image_url}`}
                       src={rel.image_url}
                       alt={rel.name}
                       className="w-14 h-14 rounded-lg object-cover object-top border border-[#A87924] shrink-0"
@@ -1749,32 +2138,36 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 <span>{ui.secRelatedKingdomsArticles}</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {relatedArticles.map((art, idx) => (
-                  <div
-                    key={art.id}
-                    onClick={() => onNavigate(`/documentary?article=${art.id}`)}
-                    className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
-                  >
-                    {art.featured_image && (
-                      <img
-                        src={art.featured_image}
-                        alt={art.original_title}
-                        className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
-                      />
-                    )}
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="royal-index-box">#{idx + 1}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] break-words">
-                          {art.category}
-                        </span>
+                {relatedArticles.map((art, idx) => {
+                  const { title: localizedTitle } = getArticleContent(art);
+                  const localizedCategory = getMetadataLabel('category', art.category) || art.category;
+                  return (
+                    <div
+                      key={art.id}
+                      onClick={() => onNavigate(`/documentary?article=${encodeURIComponent(art.id)}`)}
+                      className="royal-related-link-btn group transition-all cursor-pointer flex items-start gap-3"
+                    >
+                      {art.featured_image && (
+                        <img
+                          src={art.featured_image}
+                          alt={localizedTitle || art.original_title}
+                          className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="royal-index-box">#{idx + 1}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] break-words">
+                            {localizedCategory}
+                          </span>
+                        </div>
+                        <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
+                          {localizedTitle || art.original_title}
+                        </h4>
                       </div>
-                      <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
-                        {art.original_title}
-                      </h4>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {/* Direct Kingdom & Dynasty Portal Cards */}
                 <div
@@ -1783,18 +2176,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 >
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/gajapathi_empire_map_1465.jpg`}
-                    alt="Suryavamsha Gajapathi Empire"
+                    alt={ui.portalGajapathiTitle}
                     className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="royal-index-box">#{relatedArticles.length + 1}</span>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                        Kingdoms & Dynasties
+                        {ui.portalGajapathiBadge}
                       </span>
                     </div>
                     <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
-                      Suryavamsha Gajapathi Empire & Sovereign Chronicles
+                      {ui.portalGajapathiTitle}
                     </h4>
                   </div>
                 </div>
@@ -1805,18 +2198,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 >
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/odia_palm_leaf_manuscript.jpg`}
-                    alt="Royal Genealogy & Dynastic Tree"
+                    alt={ui.portalGenealogyTitle}
                     className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="royal-index-box">#{relatedArticles.length + 2}</span>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                        Dynastic Lineage
+                        {ui.portalGenealogyBadge}
                       </span>
                     </div>
                     <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
-                      Interactive Suryavamsha & Odra Dynastic Genealogy
+                      {ui.portalGenealogyTitle}
                     </h4>
                   </div>
                 </div>
@@ -1827,18 +2220,18 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                 >
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/archive/barabati_fort_ramparts.jpg`}
-                    alt="Odra Desha Historical Geography"
+                    alt={ui.portalOdraTitle}
                     className="w-16 h-16 rounded-lg object-cover border border-[#A87924] shrink-0"
                   />
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="royal-index-box">#{relatedArticles.length + 3}</span>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F]">
-                        Historical Geography
+                        {ui.portalOdraBadge}
                       </span>
                     </div>
                     <h4 className="royal-card-title-box text-xs sm:text-sm font-serif font-bold text-[#54351F] break-words">
-                      Odra Desha Capitals, Fortresses & Epigraphic Sites
+                      {ui.portalOdraTitle}
                     </h4>
                   </div>
                 </div>
@@ -1850,7 +2243,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div>
                 <div className="text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] mb-2.5 flex items-center gap-1.5">
                   <Tag className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
-                  <span>Related Archival Keywords</span>
+                  <span>{ui.lblRelatedKeywords}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {figureKeywords.map((kw, idx) => (
@@ -1871,7 +2264,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               <div>
                 <div className="text-xs font-bold uppercase tracking-wider text-[var(--heading-text)] mb-2.5 flex items-center gap-1.5">
                   <Hash className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
-                  <span>Research Hashtags</span>
+                  <span>{ui.lblResearchHashtags}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {figureHashtags.map((tag: string, idx: number) => (
@@ -2100,7 +2493,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
           <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#D8C3A2]">
             <span className="text-xs font-bold text-[#54351F] inline-flex items-center gap-1 mr-1">
               <Filter className="w-3.5 h-3.5 text-[#A87924]" />
-              <span>Evidence Filter:</span>
+              <span>{ui.lblEvidenceFilter}</span>
             </span>
             {[
               { id: 'all', label: ui.filterAllEvidence },
@@ -2167,6 +2560,7 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     {/* Portrait Image Container */}
                     <div className="sm:w-48 md:w-52 shrink-0 relative bg-[#EFE3D0] aspect-[4/3] sm:aspect-auto sm:min-h-[230px] overflow-hidden border-b sm:border-b-0 sm:border-r border-[#D8C3A2]">
                       <img
+                        key={`${fig.id}-${fig.image_url}`}
                         src={fig.image_url}
                         alt={fig.name}
                         className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
@@ -2218,11 +2612,11 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                         <div className="flex items-center gap-3">
                           <span className="inline-flex items-center gap-1 font-semibold text-[#54351F]">
                             <Calendar className="w-3.5 h-3.5 text-[#A87924]" />
-                            {(fig.major_events || []).length} Chronological Events
+                            {(fig.major_events || []).length} {ui.lblChronologicalEventsCount}
                           </span>
                           <span className="inline-flex items-center gap-1 font-semibold text-[#54351F]">
                             <FileText className="w-3.5 h-3.5 text-[#A87924]" />
-                            {(fig.citations || []).length} Citations
+                            {(fig.citations || []).length} {ui.lblCitationsCount}
                           </span>
                         </div>
                         <span className="theme-hashtag px-2 py-0.5 rounded bg-[#FFFCF5] text-[#54351F] border border-[#D8C3A2] font-bold truncate max-w-[180px]">
