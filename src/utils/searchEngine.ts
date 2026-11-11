@@ -27,11 +27,14 @@ import {
   PROMINENT_PERSON_TO_CANONICAL_FIGURE_MAP,
   resolveCanonicalNavigationTarget
 } from '../data/canonicalArticleMap';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { searchGlobalReferenceRegistry } from '../data/globalReferenceIdRegistry';
 import type { LanguageCode } from '../types';
 
 export interface SearchResultItem {
   type: 'Article' | 'Historical Monarch' | 'Community Prominent Person' | 'Royal Progenitor' | 'Community Lineage' | 'Epigraphic Inscription' | 'Directory';
   id: string;
+  reference_id?: string;
   title: string;
   subtitle: string;
   snippet: string;
@@ -92,7 +95,28 @@ export function performClientSearch(
     });
   };
 
-  // 0. 74-Name Master Reference & Search Alias Cross-Reference Index (45 Original + 29 Supplementary)
+  // 0A. Direct Global Reference ID Registry Search (matches exact or partial PREFIX-NNNN across all 692 records first)
+  const matchedRegistryRecords = searchGlobalReferenceRegistry(rawQuery);
+  for (const regRec of matchedRegistryRecords) {
+    if (
+      regRec.newReferenceId.toLowerCase().includes(query) ||
+      (regRec.previousReferenceId && regRec.previousReferenceId.toLowerCase().includes(query))
+    ) {
+      results.push({
+        type: 'Article',
+        id: regRec.internalRecordId,
+        reference_id: regRec.newReferenceId,
+        title: regRec.contentTitle,
+        subtitle: `REFERENCE ID: ${regRec.newReferenceId} • ${regRec.englishPageTitle}`,
+        snippet: `${regRec.contentCategory} — ${regRec.englishPageTitle} (${regRec.dataSourceFile})`,
+        verification_status: regRec.recordStatus,
+        link: regRec.canonicalRoute,
+        category: regRec.contentCategory
+      });
+    }
+  }
+
+  // 0B. 76-Name Master Reference & Search Alias Cross-Reference Index (45 Original + 31 Supplementary)
   if (filterType === 'all' || filterType === 'community' || filterType === 'articles') {
     matched70Entries.forEach(refEntry => {
       const displayLabel = refEntry.localizedLabel[currentLang] || refEntry.localizedLabel.en;
@@ -108,6 +132,7 @@ export function performClientSearch(
       results.push({
         type: 'Community Lineage',
         id: refEntry.id,
+        reference_id: getPermanentReferenceNumber(refEntry.id),
         title: `${displayLabel}${displayLabel !== refEntry.canonicalTerm ? ` (${refEntry.canonicalTerm})` : ''}`,
         subtitle: `${classLabel} • ${datasetBadge} (#${refEntry.order}/${MASTER_70_REFERENCE_REGISTRY.length})`,
         snippet: contextText,
@@ -126,6 +151,8 @@ export function performClientSearch(
       const artTrans = ARTICLE_TRANSLATIONS[art.id] || {};
       
       const origMatch = matchesAny(
+        getPermanentReferenceNumber(art.id),
+        art.id,
         art.original_title,
         art.summary,
         art.original_content,
@@ -212,6 +239,8 @@ export function performClientSearch(
       const allSignificances = Object.values(fig.historical_significance);
 
       const origMatch = matchesAny(
+        getPermanentReferenceNumber(fig.id),
+        fig.id,
         ...allNames,
         ...(fig.alternate_names || []),
         ...allTitles,
@@ -503,14 +532,17 @@ export function performClientSearch(
     }
   }
 
-  // Deduplicate results by id and type
+  // Deduplicate results by id and type and attach permanent reference_id
   const seen = new Set<string>();
   const uniqueResults: SearchResultItem[] = [];
   for (const item of results) {
     const key = `${item.type}:${item.id}`;
     if (!seen.has(key)) {
       seen.add(key);
-      uniqueResults.push(item);
+      uniqueResults.push({
+        ...item,
+        reference_id: item.reference_id || getPermanentReferenceNumber(item.id)
+      });
     }
   }
 

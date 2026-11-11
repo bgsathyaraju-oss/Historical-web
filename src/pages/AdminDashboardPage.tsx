@@ -17,6 +17,11 @@ import {
   Download
 } from 'lucide-react';
 import { UserRole, CommunitySubmission, LanguageCode } from '../types';
+import {
+  GLOBAL_PREFIX_REGISTRY,
+  getGlobalContentReferenceRegistry,
+  auditGlobalReferenceRegistry
+} from '../data/globalReferenceIdRegistry';
 
 interface AdminPageProps {
   onNavigate: (path: string) => void;
@@ -24,7 +29,10 @@ interface AdminPageProps {
 
 export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'submissions' | 'users' | 'articles' | 'translations' | 'logs'>('overview');
+  const { language } = useLanguage();
+  const [activeTab, setActiveTab] = useState<'overview' | 'registry' | 'submissions' | 'users' | 'articles' | 'translations' | 'logs'>('overview');
+  const [registrySearch, setRegistrySearch] = useState('');
+  const [selectedPrefix, setSelectedPrefix] = useState<string>('ALL');
 
   const [overviewData, setOverviewData] = useState<any>(null);
   const [submissions, setSubmissions] = useState<CommunitySubmission[]>([]);
@@ -281,6 +289,7 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-[#D8C3A2]">
         {[
           { id: 'overview', label: 'Overview Metrics' },
+          { id: 'registry', label: `Global Reference IDs (${getGlobalContentReferenceRegistry().length})` },
           { id: 'submissions', label: `Moderation Queue (${submissions.length})` },
           { id: 'articles', label: 'Publish Historical Article' },
           { id: 'translations', label: 'Manage Translations' },
@@ -773,6 +782,131 @@ export const AdminDashboardPage: React.FC<AdminPageProps> = ({ onNavigate }) => 
           </div>
         </div>
       )}
+
+      {/* Tab: Global Reference ID Master Registry */}
+      {activeTab === 'registry' && (() => {
+        const allRecords = getGlobalContentReferenceRegistry();
+        const auditReport = auditGlobalReferenceRegistry();
+        const prefixEntries = Object.values(GLOBAL_PREFIX_REGISTRY);
+        const q = registrySearch.trim().toLowerCase();
+        const filteredRecords = allRecords.filter(rec => {
+          if (selectedPrefix !== 'ALL' && rec.prefix !== selectedPrefix) return false;
+          if (!q) return true;
+          return (
+            rec.newReferenceId.toLowerCase().includes(q) ||
+            (rec.previousReferenceId && rec.previousReferenceId.toLowerCase().includes(q)) ||
+            rec.internalRecordId.toLowerCase().includes(q) ||
+            rec.englishPageTitle.toLowerCase().includes(q) ||
+            rec.contentCategory.toLowerCase().includes(q) ||
+            rec.contentTitle.toLowerCase().includes(q)
+          );
+        });
+
+        return (
+          <div className="p-6 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] space-y-6 shadow-md">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D8C3A2] pb-4">
+              <div>
+                <h3 className="font-royal-heading font-bold text-lg text-[#54351F]">
+                  Global Content Reference Registry ({allRecords.length} Records • {prefixEntries.length} Page-Title Prefixes)
+                </h3>
+                <p className="text-xs text-[#6B5948]">
+                  Unified Page-Title-Based Reference ID Architecture • Unique IDs: {auditReport.uniqueReferenceIds}/{auditReport.totalRecords} • Duplicate IDs: {auditReport.duplicateIds.length} • Missing IDs: {auditReport.missingIds.length} • Invalid Prefixes: {auditReport.invalidPrefixes.length} • Display Mismatches: {auditReport.displayToRegistryMismatches.length} • Invalid Migration Targets: {auditReport.invalidMigrationTargets.length} • Unresolved Relationship Refs: {auditReport.orphanedRelationships.length}
+                </p>
+              </div>
+              <input
+                type="text"
+                value={registrySearch}
+                onChange={e => setRegistrySearch(e.target.value)}
+                placeholder="Search by REF ID (e.g. RD-0001, CH-0048), Title, or Internal Key..."
+                className="w-full sm:w-80 px-3.5 py-2 rounded-xl bg-white border border-[#D8C3A2] text-xs text-[#292521] focus:outline-none focus:border-[#A87924]"
+              />
+            </div>
+
+            {/* Prefix Filter Pills */}
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() => setSelectedPrefix('ALL')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold border cursor-pointer ${
+                  selectedPrefix === 'ALL'
+                    ? 'bg-[#762D35] text-white border-[#A87924]'
+                    : 'bg-[#FFF9EF] text-[#54351F] border-[#D8C3A2] hover:bg-[#EFE3D0]'
+                }`}
+              >
+                ALL ({allRecords.length})
+              </button>
+              {prefixEntries.map(p => (
+                <button
+                  key={p.prefix}
+                  type="button"
+                  onClick={() => setSelectedPrefix(p.prefix)}
+                  title={`${p.englishPageTitle} (${p.idFormatExample})`}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold border cursor-pointer ${
+                    selectedPrefix === p.prefix
+                      ? 'bg-[#762D35] text-white border-[#A87924]'
+                      : 'bg-[#FFF9EF] text-[#54351F] border-[#D8C3A2] hover:bg-[#EFE3D0]'
+                  }`}
+                >
+                  {p.prefix} ({auditReport.countsByPrefix[p.prefix] || 0})
+                </button>
+              ))}
+            </div>
+
+            <div className="overflow-x-auto max-h-[540px] border border-[#D8C3A2] rounded-2xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-[#EFE3D0] text-[#54351F] sticky top-0 z-10 border-b border-[#D8C3A2]">
+                  <tr>
+                    <th className="p-3 font-bold">New Reference ID</th>
+                    <th className="p-3 font-bold">Previous ID</th>
+                    <th className="p-3 font-bold">English Page Title</th>
+                    <th className="p-3 font-bold">Content Title ({language.toUpperCase()})</th>
+                    <th className="p-3 font-bold">Internal Key</th>
+                    <th className="p-3 font-bold">Source File</th>
+                    <th className="p-3 font-bold">Languages</th>
+                    <th className="p-3 font-bold">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#D8C3A2]">
+                  {filteredRecords.slice(0, 200).map(rec => (
+                    <tr key={rec.newReferenceId} className="hover:bg-[#FFF9EF] text-[#292521]">
+                      <td className="p-3 font-mono font-bold text-[#762D35]" lang="en" translate="no">
+                        {rec.newReferenceId}
+                      </td>
+                      <td className="p-3 font-mono text-[11px] text-[#6B5948]" lang="en" translate="no">
+                        {rec.previousReferenceId || '—'}
+                      </td>
+                      <td className="p-3 font-semibold text-[#54351F]">{rec.englishPageTitle}</td>
+                      <td className="p-3">
+                        <button
+                          type="button"
+                          onClick={() => onNavigate(rec.canonicalRoute)}
+                          className="text-left font-semibold text-[#762D35] hover:underline cursor-pointer"
+                        >
+                          {rec.contentTitle}
+                        </button>
+                      </td>
+                      <td className="p-3 font-mono text-[11px] text-[#6B5948]">{rec.internalRecordId}</td>
+                      <td className="p-3 font-mono text-[10px] text-[#6B5948]">{rec.dataSourceFile}</td>
+                      <td className="p-3 text-[10px] font-semibold text-[#1E5631]">
+                        {rec.availableLanguages.length}/8 ({rec.availableLanguages.join(', ')})
+                      </td>
+                      <td className="p-3">
+                        <span className="px-2 py-0.5 rounded bg-[#EEF7F0] text-[#1E5631] border border-[#A3CFAF] text-[10px] font-bold">
+                          {rec.recordStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="text-[11px] text-[#6B5948] flex items-center justify-between">
+              <span>Showing {Math.min(filteredRecords.length, 200)} of {filteredRecords.length} matching records</span>
+              <span>All 8 Languages Verified (EN, HI, TE, KN, TA, MR, OR, BN)</span>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Tab: Audit Trail */}
       {activeTab === 'logs' && (

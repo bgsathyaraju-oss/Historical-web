@@ -32,6 +32,8 @@ import {
 } from 'lucide-react';
 import { LanguageCode, HistoricalFigure } from '../types';
 import { EvidenceBadge } from '../components/EvidenceBadge';
+import { ReferenceIdBadge } from '../components/ReferenceIdBadge';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
 import { PublisherCreditCard } from '../components/PublisherCreditCard';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../context/LanguageContext';
 import {
@@ -1232,7 +1234,10 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
 
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase();
+      const refNum = getPermanentReferenceNumber(fig.id).toLowerCase();
       return (
+        refNum.includes(q) ||
+        fig.id.toLowerCase().includes(q) ||
         fig.name.toLowerCase().includes(q) ||
         fig.dynasty_name.toLowerCase().includes(q) ||
         fig.reign_period.toLowerCase().includes(q) ||
@@ -1582,13 +1587,14 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
               Suryavamsha Odiyaraju Kshatriya Historical Documentary &amp; Royal Heritage Portal — {ui.pageTitle}
             </p>
             <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
-              Research, Documentation &amp; Compilation by Dr.G Sathyanarayana Raju • Founder &amp; Historical Documentation Contributor
+              Research, Documentation &amp; Compilation by G.Sathyanarayana Raju.Peetla. • Founder &amp; Historical Documentation Contributor
             </p>
           </div>
         <header className="print-article-header bg-[#EFE3D0] text-[#292521] border-b-2 border-[#A87924]">
           <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 sm:py-14">
             {/* Breadcrumb & Classification Row */}
             <div className="flex flex-wrap items-center gap-2.5 mb-6 text-xs">
+              <ReferenceIdBadge itemId={activeFigure.id} />
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#762D35] border border-[#A87924] text-white font-bold uppercase tracking-wider">
                 <Crown className="w-3.5 h-3.5" />
                 {categoryLabel}
@@ -2581,9 +2587,14 @@ export const KingsQueensPage: React.FC<KingsQueensPageProps> = ({ onNavigate, in
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#76501F]">
-                            {categoryLabel}
-                          </span>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-extrabold font-mono px-2 py-0.5 rounded-full bg-[#762D35] text-white border border-[#A87924]">
+                              REF ID: {getPermanentReferenceNumber(fig.id)}
+                            </span>
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#76501F]">
+                              {categoryLabel}
+                            </span>
+                          </div>
                           <EvidenceBadge status={fig.evidence_status} />
                         </div>
 

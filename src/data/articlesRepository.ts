@@ -1,6 +1,7 @@
 import type { Article, LanguageCode, SourceReference } from '../types/index.ts';
 import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations.ts';
 import { resolveCanonicalArticleId } from './canonicalArticleMap.ts';
+import { EXPANDED_HISTORICAL_ARTICLES, ARTICLE_STRUCTURED_METADATA_MAP } from './expandedDynastiesAndCategoriesArticles.ts';
 
 const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
 
@@ -68,11 +69,11 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
       {
         id: 'src_03',
         source_type: 'Inscription',
-        title: 'Veligalani Copper Plate Inscription',
-        author_or_authority: 'Kapilendra Deva / Court of Kataka',
-        publication_or_location: 'Epigraphia Indica Vol. XXXIII',
-        year_or_era: '1458 CE',
-        citation_details: 'Lines 1–45',
+        title: 'Veligalani Copper Plate Inscription of Kapilendra Deva (Saka 1380 = 1458 CE)',
+        author_or_authority: 'Kapilendra Deva / Court of Kataka (ed. D.C. Sircar)',
+        publication_or_location: 'Epigraphia Indica, Vol. XXXIII, pp. 275–292',
+        year_or_era: '1458 CE (Saka 1380)',
+        citation_details: 'Lines 1–45; Saka 1380 conversion to 1458 CE',
         verified: true
       },
       {
@@ -82,17 +83,27 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
         author_or_authority: 'Dr. R. Subrahmanyam',
         publication_or_location: 'Waltair: Andhra University',
         year_or_era: '1957',
-        citation_details: 'Monograph No. 34',
+        citation_details: 'Monograph No. 34, pp. 32, 62–65 (1434/35–1466/67 CE chronology)',
+        verified: true
+      },
+      {
+        id: 'src_04b',
+        source_type: 'Scholarly Book',
+        title: 'The History of the Gajapati Kings of Orissa',
+        author_or_authority: 'Prof. Prabhat Mukherjee (with reference to R.D. Banerji, 1930)',
+        publication_or_location: 'Calcutta: Kitab Mahal',
+        year_or_era: '1953',
+        citation_details: 'pp. 49–53 (Analysis of overlapping Anka regnal reckonings placing final year at 1466/67 vs. 1468–1470 CE)',
         verified: true
       }
     ],
-    original_content: `In 1434 CE, following the political dissolution of the Later Ganga rule, Kapilendra Deva ascended the throne of Kataka. Unlike his predecessors who had adopted a predominantly defensive posture against aggressive neighbors, Kapilendra instituted a profound military reformation centered upon an elite elephant corps (Gaja-sena), robust archery divisions, and mobile cavalry.
+    original_content: `In 1434/1435 CE, following the political dissolution of the Later Ganga rule, Kapilendra Deva ascended the throne of Kataka. Unlike his predecessors who had adopted a predominantly defensive posture against aggressive neighbors, Kapilendra instituted a profound military reformation centered upon an elite elephant corps (Gaja-sena), robust archery divisions, and mobile cavalry.
 
-The Southern Expeditions:
-Entrusting southern military operations to his capable eldest son, Kumara Hamvira Deva, the Gajapathi forces captured the strategic coastal forts of Kondavidu, Bellamkonda, Vinukonda, and Udayagiri. Epigraphic evidence confirms that by 1464 CE, Gajapathi officers had established administrative endowments in Srirangam, Munnur, and Tiruvarur on the banks of the Kaveri.
+The Southern Expeditions & Veligalani Charter (1458 CE / Saka 1380):
+Entrusting southern military operations to his capable eldest son, Kumara Hamvira Deva, the Gajapathi forces captured the strategic coastal forts of Kondavidu (1454 CE), Bellamkonda, Vinukonda, and Udayagiri. In the Veligalani Copper-Plate Grant dated Saka 1380 (1458 CE; Epigraphia Indica, Vol. XXXIII, pp. 275–292), Kapilendra Deva formally bears the imperial title "Gajapathi Gaudesvara Navakoti Karnata Kalavargesvara". Epigraphic evidence further confirms that by 1464 CE (Saka 1386), Gajapathi officers had established administrative endowments in Srirangam, Munnur, and Tiruvarur on the banks of the Kaveri.
 
-Administrative Integration:
-Kapilendra did not merely conquer; he instituted administrative stability by replacing old feudal lords with loyal military commanders (Nayakas and Mahapatras). He lowered land assessments, regulated temple revenues, and issued imperial declarations protecting peasants from arbitrary local levies. His reign heralded the blossoming of vernacular literature, providing royal patronage to Sarala Dasa, who composed the pioneering Odia Mahabharata.`
+Administrative Integration & Scholarly Chronology of Final Regnal Year:
+Kapilendra did not merely conquer; he instituted administrative stability by replacing old feudal lords with loyal military commanders (Nayakas and Mahapatras). He lowered land assessments, regulated temple revenues (Lingaraja Temple proclamation, 1452 CE), and patronized Sarala Dasa, who composed the pioneering Odia Mahabharata. Regarding the close of his reign on the banks of the Krishna River, historians preserve two scholarly interpretations: Dr. R. Subrahmanyam (1957) and Dr. K.C. Panigrahi (1981) place his demise in late 1466 or early 1467 CE following his 14 December 1466 Puri Jagannatha temple record, whereas R.D. Banerji (1930) and Prof. Prabhat Mukherjee (1953) examine overlapping Anka regnal years with Purushottama Deva that extend nominal calculations to 1468 or 1469/1470 CE.`
   },
   {
     id: 'art_genealogy_methodology',
@@ -101,7 +112,7 @@ Kapilendra did not merely conquer; he instituted administrative stability by rep
     original_language: 'en',
     original_title: 'Methodological Standards: Distinguishing Epigraphic Lineages from Traditional Vamsavalis',
     summary: 'Why rigorous historiography requires explicit demarcation between primary epigraphic records and post-medieval oral or traditional family claims.',
-    author_name: 'Dr.G Sathyanarayana Raju',
+    author_name: 'G.Sathyanarayana Raju.Peetla.',
     publication_date: '2026-02-14',
     verification_status: 'Published',
     evidence_category: 'scholarly_interpretation',
@@ -220,7 +231,7 @@ Over two millennia of geographical migration, the ancestral ethnonym Odra (Prakr
     original_language: 'en',
     original_title: 'Suryavamsha Antiquity: From Samrat Sagara and Bhagiratha to Emperor Kharavela and Sri Rama',
     summary: 'An exploration of the civilizational memory connecting the Solar Dynastic monarchs of the Epics with the historical epigraphy of ancient Odra Desha and living community veneration.',
-    author_name: 'Dr.G Sathyanarayana Raju',
+    author_name: 'G.Sathyanarayana Raju.Peetla.',
     publication_date: '2026-02-23',
     verification_status: 'Published',
     evidence_category: 'traditional_account',
@@ -391,7 +402,8 @@ The accession of Kapilendra Deva in 1434 CE brought about a revolutionary develo
 - The Veligalani Copper Plates (1458 CE): A bilingual monument incised on copper leaves discovered in Guntur district, Andhra Pradesh. The introductory Sanskrit portion details Kapilendra's solar ancestry and imperial titles (Gajapathi Gaudesvara Navakoti Karnata Kalavargesvara), while the concluding portions detail the distribution of villages to 120 scholars in both Sanskrit and Telugu.
 - The Lingaraja Temple Edict (1452 CE): Proclaiming tax reductions and justice for the common peasantry, carved on the temple porch in early Odia script.
 - Southern Pillar Records: Inscriptions at Srisailam, Draksharama, Simhachalam, Kondavidu, and Srirangam, recording the endowments of Kumara Hamvira Deva and Prataparudra Deva, establishing the administrative reach of the Gajapathi commanders across the Deccan.`
-  }
+  },
+  ...EXPANDED_HISTORICAL_ARTICLES
 ];
 
 export function getLocalizedArticle(article: Article, lang: LanguageCode): Article {
@@ -434,13 +446,17 @@ export function getAllArticles(lang: LanguageCode = 'en'): Article[] {
 
 export function getArticleByIdOrSlug(idOrSlug: string, lang: LanguageCode = 'en'): Article | null {
   const canonicalId = resolveCanonicalArticleId(idOrSlug);
-  const found = CANONICAL_ARTICLES.find(
-    a =>
+  const normalizedQuery = (idOrSlug || '').trim().toUpperCase();
+  const found = CANONICAL_ARTICLES.find(a => {
+    const structMeta = ARTICLE_STRUCTURED_METADATA_MAP[a.id];
+    return (
       a.id === canonicalId ||
       a.slug === canonicalId ||
       a.id === idOrSlug ||
-      a.slug === idOrSlug
-  );
+      a.slug === idOrSlug ||
+      (structMeta && structMeta.refNumber.toUpperCase() === normalizedQuery)
+    );
+  });
   if (!found) return null;
   return getLocalizedArticle(found, lang);
 }

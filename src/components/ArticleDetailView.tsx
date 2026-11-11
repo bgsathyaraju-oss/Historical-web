@@ -53,6 +53,9 @@ import {
   getCanonicalMonuments,
   getCanonicalTimelineEvents
 } from '../data/archivalSeedData';
+import { ARTICLE_STRUCTURED_METADATA_MAP } from '../data/expandedDynastiesAndCategoriesArticles';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { ReferenceIdBadge } from './ReferenceIdBadge';
 
 export interface ArticleDetailViewProps {
   article: Article;
@@ -206,6 +209,12 @@ export function getMonographPeriod(article: Article, lang: LanguageCode): string
   if (enrichment) {
     return enrichment.historicalPeriod[lang] || enrichment.historicalPeriod.en;
   }
+  const structMeta = ARTICLE_STRUCTURED_METADATA_MAP[article.id];
+  if (structMeta) {
+    const p = structMeta.historicalPeriod[lang] || structMeta.historicalPeriod.en;
+    const d = structMeta.approxDateRange[lang] || structMeta.approxDateRange.en;
+    return `${p} (${d})`;
+  }
   return article.publication_date || 'Classical & Medieval Era';
 }
 
@@ -213,7 +222,8 @@ export function getMonographCategories(
   article: Article,
   localizedPrimaryCategory: string,
   translateFn?: (text: string) => string,
-  getMetaFn?: (type: 'category' | 'evidence' | 'status' | 'source_type', val: string) => string
+  getMetaFn?: (type: 'category' | 'evidence' | 'status' | 'source_type', val: string) => string,
+  lang: LanguageCode = 'en'
 ): string[] {
   const localize = (raw: string) => {
     if (getMetaFn) {
@@ -226,6 +236,13 @@ export function getMonographCategories(
   if (enrichment) {
     return Array.from(
       new Set([localizedPrimaryCategory, ...enrichment.subjectCategories.slice(1).map(localize)])
+    );
+  }
+  const structMeta = ARTICLE_STRUCTURED_METADATA_MAP[article.id];
+  if (structMeta) {
+    const subcat = structMeta.subcategoryName[lang] || structMeta.subcategoryName.en;
+    return Array.from(
+      new Set([localizedPrimaryCategory, subcat, ...(article.tags || []).slice(0, 2).map(localize)])
     );
   }
   return Array.from(
@@ -782,8 +799,10 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   const displaySources: SourceReference[] = localizedTr?.sources || article.sources || [];
   const localizedCat = getMetadataLabel('category', article.category) || article.category;
   const historicalPeriod = getMonographPeriod(article, language);
-  const subjectCategories = getMonographCategories(article, localizedCat, translateText, getMetadataLabel);
+  const subjectCategories = getMonographCategories(article, localizedCat, translateText, getMetadataLabel, language);
   const enrichment = MONOGRAPH_ENRICHMENT_MAP[article.id];
+  const structuredMeta = ARTICLE_STRUCTURED_METADATA_MAP[article.id];
+  const permanentRefNumber = structuredMeta?.refNumber || getPermanentReferenceNumber(article.id, 'HD');
   const autoActionTriggeredRef = useRef<string | null>(null);
   const langParamInitializedRef = useRef<boolean>(false);
 
@@ -1004,7 +1023,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
     setPdfDownloadResult(null);
     try {
       const result = await downloadArticleAsPdf({
-        articleTitle: displayTitle,
+        articleTitle: `[${permanentRefNumber}] ${displayTitle}`,
         language,
         containerElement: articleRef.current,
         articleUrl: getDirectMonographUrl(false)
@@ -1032,7 +1051,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       window.open(printUrl, '_system');
       return;
     }
-    triggerArticlePrintWithTitle(displayTitle);
+    triggerArticlePrintWithTitle(`[${permanentRefNumber}] ${displayTitle}`);
   };
 
   const handleShare = async () => {
@@ -1256,8 +1275,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           <p className="text-[11px] font-bold uppercase tracking-widest text-[#54351F]">
             {t.siteTitle} • {t.siteSubtitle}
           </p>
+          <p className="text-[11px] font-bold text-[#762D35] mt-0.5">
+            Unique Article Reference Number: {permanentRefNumber} • Article ID: {article.id}
+          </p>
           <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
-            {translateText('Research, Documentation & Compilation by Dr.G Sathyanarayana Raju')}
+            {translateText('Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.')}
           </p>
           <p className="text-[10px] text-[#76501F] break-all mt-0.5">
             {getDirectMonographUrl(false)}
@@ -1267,6 +1289,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         {/* 1. MONOGRAPH HEADER, HISTORICAL PERIOD & SUBJECT CATEGORIES */}
         <header className="print-article-header space-y-5 border-b border-[#A87924]/50 pb-6">
           <div className="flex flex-wrap items-center gap-2">
+            <ReferenceIdBadge referenceId={permanentRefNumber} />
             {subjectCategories.map((cat, idx) => (
               <span
                 key={idx}
@@ -1282,7 +1305,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             {displayTitle}
           </h1>
 
-          {/* Historical Period, Author & Verification Metadata Grid */}
+          {/* Section A: Structured Article Identification & Historical Period Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1 text-xs">
             <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
               <div className="text-[10px] font-bold uppercase tracking-wider text-[#76501F] flex items-center gap-1.5">
@@ -1290,6 +1313,12 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <span>{ui.periodLabel}</span>
               </div>
               <div className="text-[#292521] font-bold mt-1">{historicalPeriod}</div>
+              {structuredMeta && (
+                <div className="text-[11px] text-[#76501F] mt-1">
+                  <span className="font-semibold">{translateText('Geographical Scope:')}</span>{' '}
+                  {structuredMeta.geographicalLocation[language] || structuredMeta.geographicalLocation.en}
+                </div>
+              )}
             </div>
 
             <div className="royal-profile-title-box p-3.5 rounded-xl bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] border border-[var(--profile-title-box-border)]">
@@ -1298,6 +1327,9 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 <span>{ui.authorLabel}</span>
               </div>
               <div className="text-[var(--profile-title-box-text)] font-semibold mt-1 break-words">{displayAuthor}</div>
+              <div className="text-[11px] text-[var(--profile-title-box-text)] opacity-90 mt-1 font-mono">
+                {ui.articleIdLabel} {permanentRefNumber} ({article.id})
+              </div>
             </div>
 
             <div className="p-3.5 rounded-xl bg-[#FFF9EF] border border-[#A87924]/50">
@@ -1308,6 +1340,11 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div className="text-emerald-800 font-bold mt-1">
                 {getMetadataLabel('status', article.verification_status) || article.verification_status} ({article.publication_date})
               </div>
+              {structuredMeta && (
+                <div className="text-[11px] text-[#54351F] mt-1 font-semibold">
+                  {structuredMeta.subcategoryName[language] || structuredMeta.subcategoryName.en}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1318,7 +1355,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
           )}
         </header>
 
-        {/* 2. FEATURED HISTORICAL IMAGE */}
+        {/* 2. FEATURED HISTORICAL IMAGE & SECTION F: VISUAL PROVENANCE METADATA */}
         {article.featured_image && (
           <figure className="print-lead-figure relative rounded-2xl overflow-hidden print:overflow-visible border border-[#A87924] group shadow-md bg-[#FFF9EF]">
             <div className="print-lead-figure-box">
@@ -1336,9 +1373,37 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                 className="print-lead-image w-full h-64 sm:h-80 md:h-[420px] object-cover transition-transform duration-500 group-hover:scale-[1.01]"
               />
             </div>
-            <figcaption className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] p-4 text-xs border-t border-[var(--profile-title-box-border)] break-words">
-              <span className="text-[var(--profile-title-box-text)] font-bold mr-1.5">{ui.artifactLabel}</span>
-              {displayTitle} — <span className="text-[var(--profile-title-box-text)] font-semibold">{historicalPeriod}</span>
+            <figcaption className="royal-profile-title-box bg-[var(--profile-title-box-bg)] text-[var(--profile-title-box-text)] p-4 text-xs border-t border-[var(--profile-title-box-border)] break-words space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span className="text-[var(--profile-title-box-text)] font-bold mr-1.5">{ui.artifactLabel}</span>
+                  {structuredMeta?.imageProvenance
+                    ? structuredMeta.imageProvenance.caption
+                    : `${displayTitle} — ${historicalPeriod}`}
+                </div>
+                {structuredMeta?.imageProvenance && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FFFCF5] text-[#54351F] border border-[#A87924]">
+                    {structuredMeta.imageProvenance.visualType === 'Archival Photograph / Epigraphic Facsimile'
+                      ? translateText('Archival / Epigraphic Photography')
+                      : structuredMeta.imageProvenance.visualType === 'Cartographic Reconstruction'
+                      ? translateText('Historical Cartographic Reconstruction')
+                      : translateText('Symbolic / Traditional Artistic Illustration')}
+                  </span>
+                )}
+              </div>
+              {structuredMeta?.imageProvenance && (
+                <div className="text-[11px] opacity-95 pt-1 border-t border-[var(--profile-title-box-border)]/40 flex flex-wrap gap-x-4 gap-y-1">
+                  <span>
+                    <strong>{translateText('Period:')}</strong> {structuredMeta.imageProvenance.period}
+                  </span>
+                  <span>
+                    <strong>{translateText('Provenance:')}</strong> {structuredMeta.imageProvenance.sourceOrProvenance}
+                  </span>
+                  <span>
+                    <strong>{translateText('Attribution:')}</strong> {structuredMeta.imageProvenance.credit}
+                  </span>
+                </div>
+              )}
             </figcaption>
           </figure>
         )}
@@ -1719,6 +1784,89 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             ))}
           </div>
         </section>
+
+        {/* 9B (SECTION G). 76 COMMUNITY NAMES — HISTORICAL CROSS-REFERENCE */}
+        {structuredMeta && (
+          <section
+            aria-label="76 Community Names Historical Cross-Reference"
+            className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border-2 border-[#A87924] space-y-5"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#A87924]/60 pb-3">
+              <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5">
+                <ShieldCheck className="w-5 h-5 text-[#762D35]" />
+                <span>
+                  {translateText('76 Community Names Directory — Historical Cross-Reference')}
+                </span>
+              </h2>
+              <span className="px-2.5 py-1 rounded-full bg-[#762D35] text-white text-[11px] font-bold border border-[#A87924]">
+                Ref: {permanentRefNumber}
+              </span>
+            </div>
+
+            {structuredMeta.communityCrossReferences &&
+            structuredMeta.communityCrossReferences.length > 0 ? (
+              <div className="space-y-4">
+                <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
+                  {translateText(
+                    'In accordance with strict historiographical standards, only those community designations from the 76 Community Names Directory that possess documented epigraphic, military, hydrological, or archival corroboration for this historical subject are linked below:'
+                  )}
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  {structuredMeta.communityCrossReferences.map((comm, cIdx) => (
+                    <div
+                      key={comm.communityId || cIdx}
+                      onClick={() =>
+                        onNavigate &&
+                        onNavigate(
+                          comm.targetRoute || `/community-heritage?tab=synonyms&id=${encodeURIComponent(comm.communityId)}`
+                        )
+                      }
+                      className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] hover:bg-[#F5EBD9] transition-all cursor-pointer group space-y-1.5"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#762D35] text-white text-[11px] font-bold border border-[#A87924]">
+                          {comm.associationType}
+                        </span>
+                        <span className="text-[11px] font-bold text-[#762D35] group-hover:underline inline-flex items-center gap-1">
+                          <span>{translateText('Open Community Dossier')}</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                      <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F]">
+                        {comm.canonicalTerm}
+                      </h3>
+                      <p className="text-xs font-semibold text-[#76501F]">
+                        {comm.relationshipSummary[language] || comm.relationshipSummary.en}
+                      </p>
+                      <p className="text-[11px] text-[#292521] leading-relaxed">
+                        <strong>{translateText('Evidence:')}</strong> {comm.supportingRef} ({comm.historicalPeriod})
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {structuredMeta.unverifiedCommunityNotice && (
+              <div className="p-4 rounded-xl bg-[#FFFCF5] border-l-4 border-[#762D35] border-y border-r border-[#A87924] text-xs sm:text-sm text-[#292521] space-y-1">
+                <div className="font-bold text-[#762D35] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span>Historical association not independently verified.</span>
+                </div>
+                {language !== 'en' && (
+                  <p className="text-xs font-semibold text-[#54351F]">
+                    {translateText('Historical association not independently verified.')}
+                  </p>
+                )}
+                <p className="text-xs text-[#54351F] leading-relaxed">
+                  {translateText(
+                    'To preserve historical accuracy and avoid speculative claims, communities from the 76 Community Names Directory are not artificially linked where direct epigraphic or primary documentary evidence does not independently verify affiliation.'
+                  )}
+                </p>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* 10. HISTORICAL ANALYSIS & CONCLUSIONS */}
         <section

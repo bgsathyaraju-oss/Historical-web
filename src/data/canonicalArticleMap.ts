@@ -81,6 +81,8 @@ export const LEGACY_ARTICLE_ID_ALIASES: Record<string, string> = {
   art_epigraphic_tradition_odra: 'art_epigraphic_evolution_odra',
   art_odra_migration_south: 'art_oad_rajputh_od_history',
   curated_kalinga_war_261bce: 'art_odra_desha_history',
+  art_dyn_western_chalukyas: 'art_dyn_chalukya_synthesis',
+  art_dyn_siddhini_kings: 'art_dyn_siddhini_kings_verification',
   ...MONO_SECTION_TO_CANONICAL_ARTICLE_MAP,
 };
 
@@ -114,8 +116,8 @@ export const PROMINENT_PERSON_TO_CANONICAL_FIGURE_MAP: Record<string, string> = 
   kapilendra_deva: 'fig_kapilendra_deva',
   purushottama_deva: 'fig_purushottama_deva',
   prataparudra_deva: 'fig_prataparudra_deva',
-  anantavarman_chodaganga: 'fig_chodaganga_deva',
-  narasimha_deva_i: 'fig_langula_narasimha',
+  anantavarman_chodaganga: 'fig_anantavarman_chodaganga',
+  narasimha_deva_i: 'fig_langula_narasimha_deva',
   mukunda_deva: 'fig_mukunda_deva',
   hamvira_deva: 'fig_hamvira_deva',
 };

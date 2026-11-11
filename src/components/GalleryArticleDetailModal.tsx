@@ -27,6 +27,7 @@ import {
   filterGalleryArticlesByKeyword,
   getAllGalleryKeywords
 } from '../data/galleryArticlesEnrichment';
+import { ReferenceIdBadge } from './ReferenceIdBadge';
 
 export type ModalHistoryView =
   | { type: 'article'; articleId: string }
@@ -352,6 +353,7 @@ export const GalleryArticleDetailModal: React.FC<GalleryArticleDetailModalProps>
           {/* Article Title & Key Metadata Banner */}
           <div className="space-y-4 border-b border-[#D8C3A2] pb-6">
             <div className="flex flex-wrap items-center gap-2 text-xs text-[#54351F] font-semibold">
+              <ReferenceIdBadge itemId={item.id} />
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FFF9EF] border border-[#D8C3A2]">
                 <Calendar className="w-3.5 h-3.5 text-[#A87924]" />
                 {item.period}

@@ -417,6 +417,15 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                     <span className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-[#E9D9BE] text-[#54351F] border border-[#D8C3A2]">
                       {getMetadataLabel('category', item.type) || item.type}
                     </span>
+                    {item.reference_id && (
+                      <span
+                        lang="en"
+                        translate="no"
+                        className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FFF9EF] text-[#762D35] border border-[#A87924]"
+                      >
+                        REF ID: {item.reference_id}
+                      </span>
+                    )}
                     <h4 className="text-sm sm:text-base font-bold text-[#54351F] group-hover:text-[#762D35] transition-colors">
                       {item.title}
                     </h4>

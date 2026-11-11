@@ -10,7 +10,9 @@ import {
   FileText,
   CheckCircle2,
   ShieldCheck,
-  X
+  X,
+  Hash,
+  Layers
 } from 'lucide-react';
 import { Article, LanguageCode } from '../types';
 import { EvidenceBadge } from '../components/EvidenceBadge';
@@ -21,8 +23,10 @@ import {
   getMonographCategories
 } from '../components/ArticleDetailView';
 import { useLanguage } from '../context/LanguageContext';
-import { getAllArticles } from '../data/articlesRepository';
+import { getAllArticles, getArticleByIdOrSlug } from '../data/articlesRepository';
 import { resolveCanonicalArticleId } from '../data/canonicalArticleMap';
+import { SEVEN_HISTORICAL_CATEGORIES, getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { ARTICLE_STRUCTURED_METADATA_MAP } from '../data/expandedDynastiesAndCategoriesArticles';
 
 const RESEARCH_PAGE_UI: Record<
   LanguageCode,
@@ -153,21 +157,15 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [activeArticleId, setActiveArticleId] = useState<string | null>(() => {
     if (initialArticleId) {
-      const canonical = resolveCanonicalArticleId(initialArticleId);
-      const match = initialArticles.find(
-        a => a.id === canonical || a.slug === canonical || a.id === initialArticleId || a.slug === initialArticleId
-      );
-      if (match) return match.id;
+      const byRefOrSlug = getArticleByIdOrSlug(initialArticleId, language);
+      if (byRefOrSlug) return byRefOrSlug.id;
     }
     try {
       const params = new URLSearchParams(window.location.search);
-      const artParam = params.get('article') || params.get('id');
+      const artParam = params.get('article') || params.get('id') || params.get('ref');
       if (artParam) {
-        const canonical = resolveCanonicalArticleId(artParam);
-        const match = initialArticles.find(
-          a => a.id === canonical || a.slug === canonical || a.id === artParam || a.slug === artParam
-        );
-        if (match) return match.id;
+        const byRefOrSlug = getArticleByIdOrSlug(artParam, language);
+        if (byRefOrSlug) return byRefOrSlug.id;
       }
     } catch {
       // Ignore
@@ -269,14 +267,17 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
   const normalizedSearch = (search || '').normalize('NFC').toLowerCase().trim();
 
   const filtered = articles.filter(a => {
+    const structMeta = ARTICLE_STRUCTURED_METADATA_MAP[a.id];
     if (activeCategory !== 'all') {
       const catKey = a.category.toLowerCase();
+      const codeMatch = structMeta && structMeta.categoryCode.toLowerCase() === activeCategory.toLowerCase();
       const match =
+        codeMatch ||
         (activeCategory === 'odra_desha_geography' && (catKey.includes('odra') || catKey.includes('geography'))) ||
         (activeCategory === 'suryavamsha_gajapathi_kings' &&
           (catKey.includes('gajapathi') || catKey.includes('kapilendra'))) ||
         (activeCategory === 'genealogy_methodology' &&
-          (catKey.includes('genealogy') || catKey.includes('methodology'))) ||
+          (catKey.includes('genealogy') || catKey.includes('methodology') || catKey.includes('dynasties'))) ||
         (activeCategory === 'oad_rajput_heritage' &&
           (catKey.includes('oad') || catKey.includes('rajput') || catKey.includes('synonym'))) ||
         (activeCategory === 'suryavamsha_lineage_antiquity' &&
@@ -302,8 +303,10 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
     const normOrigSummary = (a.summary || '').normalize('NFC').toLowerCase();
     const normAuthor = (a.author_name || '').normalize('NFC').toLowerCase();
     const normCat = (a.category || '').normalize('NFC').toLowerCase();
+    const normRef = (structMeta?.refNumber || '').toLowerCase();
 
     return (
+      normRef.includes(normalizedSearch) ||
       normTitle.includes(normalizedSearch) ||
       normSummary.includes(normalizedSearch) ||
       normOrigTitle.includes(normalizedSearch) ||
@@ -417,6 +420,106 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
         </div>
       </div>
 
+      {/* 7 HISTORICAL CATEGORIES HUB */}
+      <section className="rounded-3xl bg-[#FFFCF5] border-2 border-[#A87924] p-5 sm:p-7 space-y-5 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D8C3A2] pb-3">
+          <div className="flex items-center gap-2">
+            <Layers className="w-5 h-5 text-[#762D35]" />
+            <h2 className="font-royal-heading font-extrabold text-lg sm:text-2xl text-[#54351F]">
+              7 Historical Categories & Permanent Reference Architecture
+            </h2>
+          </div>
+          <span className="text-xs font-bold text-[#76501F] bg-[#FFF9EF] px-3 py-1 rounded-full border border-[#A87924]">
+            HT • IA • RD • KM • HD • HG • HF ({articles.length} Complete Monographs)
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {SEVEN_HISTORICAL_CATEGORIES.map(cat => {
+            const isSelected = activeCategory === cat.code;
+            const catCount = articles.filter(
+              a => ARTICLE_STRUCTURED_METADATA_MAP[a.id]?.categoryCode === cat.code
+            ).length;
+            return (
+              <div
+                key={cat.id}
+                onClick={() => handleCategoryChange(isSelected ? 'all' : cat.code)}
+                className={`rounded-2xl border p-3.5 transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                  isSelected
+                    ? 'bg-[#762D35] text-white border-[#A87924] shadow-md'
+                    : 'bg-[#FFF9EF] text-[#292521] border-[#D8C3A2] hover:border-[#A87924] hover:bg-[#F5EBD9]'
+                }`}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider border ${
+                        isSelected
+                          ? 'bg-[#FFFCF5] text-[#762D35] border-[#A87924]'
+                          : 'bg-[#762D35] text-white border-[#A87924]'
+                      }`}
+                    >
+                      {cat.code}-xxxx
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold ${
+                        isSelected ? 'text-[#F5EBD9]' : 'text-[#76501F]'
+                      }`}
+                    >
+                      {catCount} {catCount === 1 ? 'Article' : 'Articles'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src={cat.thumbnail}
+                      alt={cat.title[language] || cat.title.en}
+                      className="w-11 h-11 rounded-lg object-cover border border-[#A87924] shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <h3
+                        className={`font-royal-heading font-bold text-xs sm:text-sm leading-snug ${
+                          isSelected ? 'text-white' : 'text-[#54351F]'
+                        }`}
+                      >
+                        {cat.title[language] || cat.title.en}
+                      </h3>
+                      <p
+                        className={`text-[10px] truncate ${
+                          isSelected ? 'text-[#F5EBD9]' : 'text-[#76501F]'
+                        }`}
+                      >
+                        {cat.subtitle[language] || cat.subtitle.en}
+                      </p>
+                    </div>
+                  </div>
+                  <p
+                    className={`text-[11px] line-clamp-2 leading-relaxed ${
+                      isSelected ? 'text-white/90' : 'text-[#292521]'
+                    }`}
+                  >
+                    {cat.introduction[language] || cat.introduction.en}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1 pt-1 border-t border-[#A87924]/30">
+                  {cat.subcategories.slice(0, 2).map(sub => (
+                    <span
+                      key={sub.id}
+                      className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${
+                        isSelected
+                          ? 'bg-white/15 text-white'
+                          : 'bg-[#FFFCF5] text-[#54351F] border border-[#D8C3A2]'
+                      }`}
+                    >
+                      {sub.label[language] || sub.label.en}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Search and Category Filter Bar */}
       <div className="space-y-4 p-4 sm:p-5 rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] shadow-sm">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -489,7 +592,9 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
             const { title: cardTitle, summary: cardSummary } = getArticleContent(art);
             const localizedCat = getMetadataLabel('category', art.category) || art.category;
             const periodText = getMonographPeriod(art, language);
-            const subjectCats = getMonographCategories(art, localizedCat);
+            const subjectCats = getMonographCategories(art, localizedCat, undefined, undefined, language);
+            const structMeta = ARTICLE_STRUCTURED_METADATA_MAP[art.id];
+            const refBadge = structMeta?.refNumber || getPermanentReferenceNumber(art.id, 'HD');
 
             return (
               <article
@@ -516,10 +621,16 @@ export const ResearchArticlesPage: React.FC<ResearchArticlesPageProps> = ({
                     />
 
                     <div className="absolute top-3.5 left-3.5 right-3.5 flex flex-wrap items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFCF5]/95 border border-[#D8C3A2] text-[#54351F] text-[11px] font-bold shadow-xs">
-                        <Clock className="w-3 h-3 text-[#762D35] shrink-0" />
-                        <span className="truncate max-w-[260px]">{periodText}</span>
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#762D35] text-white border border-[#A87924] text-[11px] font-extrabold shadow-sm">
+                          <Hash className="w-3 h-3 text-[#F5EBD9]" />
+                          <span>{refBadge}</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFCF5]/95 border border-[#D8C3A2] text-[#54351F] text-[11px] font-bold shadow-xs">
+                          <Clock className="w-3 h-3 text-[#762D35] shrink-0" />
+                          <span className="truncate max-w-[200px]">{periodText}</span>
+                        </span>
+                      </div>
                       <EvidenceBadge category={art.evidence_category} size="sm" />
                     </div>
                   </div>

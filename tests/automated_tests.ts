@@ -1060,7 +1060,7 @@ async function runTestSuite() {
     assert(purushottamaMeta.imageUrl.endsWith('/assets/og/purushottama_deva_kanchi.jpg'), 'Unexpected Purushottama OG image');
     assert(odraArticleMeta.imageUrl.endsWith('/assets/og/odra_kalinga_map.jpg'), 'Unexpected Odra article OG image');
     assert(baxiMeta.imageUrl.endsWith('/assets/og/baxi_jagabandhu_statue.jpg'), 'Unexpected Baxi Jagabandhu OG image');
-    assert(publisherMeta.imageUrl.endsWith('/assets/og/dr_g_sathyanarayana_raju.jpg'), 'Unexpected Dr.G Sathyanarayana Raju OG image');
+    assert(publisherMeta.imageUrl.endsWith('/assets/og/dr_g_sathyanarayana_raju.jpg'), 'Unexpected G.Sathyanarayana Raju.Peetla. OG image');
 
     // 3. Verify 8-language localized metadata
     const langs = ['en', 'hi', 'te', 'kn', 'ta', 'mr', 'or', 'bn'] as const;

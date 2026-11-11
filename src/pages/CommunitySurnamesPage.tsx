@@ -234,7 +234,9 @@ export function CommunitySurnamesPage({ onNavigate }: CommunitySurnamesPageProps
       if (!q) return true;
 
       const localizedScript = entry.transliterations[language] || entry.surname;
+      const refId = `CSS-${String(entry.orderIndex).padStart(4, '0')}`.toLowerCase();
       return (
+        refId.includes(q) ||
         entry.surname.toLowerCase().includes(q) ||
         localizedScript.toLowerCase().includes(q) ||
         Object.values(entry.transliterations).some((val) =>
@@ -496,7 +498,14 @@ export function CommunitySurnamesPage({ onNavigate }: CommunitySurnamesPageProps
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <span
+                                lang="en"
+                                translate="no"
+                                className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#762D35] bg-[#FFF9EF] px-2 py-0.5 rounded border border-[#A87924]"
+                              >
+                                REF ID: CSS-{String(item.orderIndex).padStart(4, '0')}
+                              </span>
                               <span className="inline-flex items-center gap-0.5 text-[10px] font-mono text-[#6B5948] bg-[#FFF9EF] px-2 py-0.5 rounded border border-[#D8C3A2]">
                                 <Hash className="w-2.5 h-2.5 text-[#A87924]" />
                                 {String(item.orderIndex).padStart(3, '0')}

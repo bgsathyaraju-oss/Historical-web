@@ -755,7 +755,7 @@ export function resolveItemMetadataById(
       queryKey: 'id',
       itemId: matchedRef70.id,
       ogType: 'article',
-      section: '74-Name Reference Index',
+      section: '76-Name Reference Index',
       keywords: [matchedRef70.canonicalTerm, ...matchedRef70.relatedTopicsAndKeywords.slice(0, 4)]
     };
   }
@@ -1176,7 +1176,7 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     rawImagePath: CATEGORY_FALLBACK_IMAGES.about,
     imageAlt: 'Contact the Suryavamsha Historical Documentary Editorial Board',
     section: 'Contact',
-    keywords: ['Contact Editorial Board', 'Submit Archival Records', 'Dr.G Sathyanarayana Raju']
+    keywords: ['Contact Editorial Board', 'Submit Archival Records', 'G.Sathyanarayana Raju.Peetla.']
   },
   '/copyright': {
     title: lang => {

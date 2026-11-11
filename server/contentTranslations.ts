@@ -1,6 +1,7 @@
 import type { LanguageCode, SourceReference } from '../src/types/index.ts';
 import { COMPLETE_ARTICLE_TRANSLATIONS_PART1 } from '../src/data/canonicalArticlesCompleteTranslationsPart1.ts';
 import { COMPLETE_ARTICLE_TRANSLATIONS_PART2 } from '../src/data/canonicalArticlesCompleteTranslationsPart2.ts';
+import { EXPANDED_ARTICLE_TRANSLATIONS } from '../src/data/expandedArticlesTranslations.ts';
 
 export interface ContentTranslationMap {
   title: string;
@@ -12,7 +13,8 @@ export interface ContentTranslationMap {
 
 export const ARTICLE_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, ContentTranslationMap>>> = {
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART1,
-  ...COMPLETE_ARTICLE_TRANSLATIONS_PART2
+  ...COMPLETE_ARTICLE_TRANSLATIONS_PART2,
+  ...EXPANDED_ARTICLE_TRANSLATIONS
 };
 
 export interface EntityTranslation {

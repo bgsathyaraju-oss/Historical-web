@@ -11,48 +11,48 @@ const FOOTER_I18N: Record<LanguageCode, LocalizedFooterLabels> = {
   en: {
     titlesLocalized:
       'Founder • Web Developer / Designer • Digital Creator • Historical Documentation Contributor',
-    creditLocalized: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'
+    creditLocalized: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.'
   },
   hi: {
     titlesLocalized:
       'संस्थापक • वेब डेवलपर / डिज़ाइनर • डिजिटल क्रिएटर • ऐतिहासिक दस्तावेजीकरण योगदानकर्ता',
-    creditLocalized: 'शोध, दस्तावेजीकरण एवं संकलन: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'शोध, दस्तावेजीकरण एवं संकलन: G.Sathyanarayana Raju.Peetla.'
   },
   te: {
     titlesLocalized:
       'వ్యవస్థాపకులు • వెబ్ డెవలపర్ / డిజైనర్ • డిజిటల్ క్రియేటర్ • చారిత్రక డాక్యుమెంటేషన్ సహకారకర్త',
-    creditLocalized: 'పరిశోధన, డాక్యుమెంటేషన్ & సంకలనం: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'పరిశోధన, డాక్యుమెంటేషన్ & సంకలనం: G.Sathyanarayana Raju.Peetla.'
   },
   kn: {
     titlesLocalized:
       'ಸ್ಥಾಪಕರು • ವೆಬ್ ಡೆವಲಪರ್ / ಡಿಸೈನರ್ • ಡಿಜಿಟಲ್ ಕ್ರಿಯೇಟರ್ • ಐತಿಹಾಸಿಕ ದಾಖಲಾತಿ ಕೊಡುಗೆದಾರರು',
-    creditLocalized: 'ಸಂಶೋಧನೆ, ದಾಖಲಾತಿ ಮತ್ತು ಸಂಕಲನ: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'ಸಂಶೋಧನೆ, ದಾಖಲಾತಿ ಮತ್ತು ಸಂಕಲನ: G.Sathyanarayana Raju.Peetla.'
   },
   ta: {
     titlesLocalized:
       'நிறுவனர் • வலை உருவாக்குநர் / வடிவமைப்பாளர் • டிஜிட்டல் படைப்பாளர் • வரலாற்று ஆவணப்படுத்தல் பங்களிப்பாளர்',
-    creditLocalized: 'ஆராய்ச்சி, ஆவணப்படுத்தல் மற்றும் தொகுப்பு: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'ஆராய்ச்சி, ஆவணப்படுத்தல் மற்றும் தொகுப்பு: G.Sathyanarayana Raju.Peetla.'
   },
   mr: {
     titlesLocalized:
       'संस्थापक • वेब डेव्हलपर / डिझायनर • डिजिटल क्रिएटर • ऐतिहासिक दस्तऐवजीकरण योगदानकर्ते',
-    creditLocalized: 'संशोधन, दस्तऐवजीकरण आणि संकलन: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'संशोधन, दस्तऐवजीकरण आणि संकलन: G.Sathyanarayana Raju.Peetla.'
   },
   or: {
     titlesLocalized:
       'ପ୍ରତିଷ୍ଠାତା • ୱେବ୍ ଡେଭଲପର୍ / ଡିଜାଇନର୍ • ଡିଜିଟାଲ୍ କ୍ରିଏଟର୍ • ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ ଯୋଗଦାନକାରୀ',
-    creditLocalized: 'ଗବେଷଣା, ଦସ୍ତାବିଜୀକରଣ ଓ ସଂକଳନ: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'ଗବେଷଣା, ଦସ୍ତାବିଜୀକରଣ ଓ ସଂକଳନ: G.Sathyanarayana Raju.Peetla.'
   },
   bn: {
     titlesLocalized:
       'প্রতিষ্ঠাতা • ওয়েব ডেভেলপার / ডিজাইনার • ডিজিটাল ক্রিয়েটর • ঐতিহাসিক নথিপত্র সংকলন অবদানকারী',
-    creditLocalized: 'গবেষণা, নথিবদ্ধকরণ ও সংকলন: Dr.G Sathyanarayana Raju'
+    creditLocalized: 'গবেষণা, নথিবদ্ধকরণ ও সংকলন: G.Sathyanarayana Raju.Peetla.'
   }
 };
 
 /**
  * Shared repeating print/PDF page footer rendered at the bottom of EVERY printed/exported PDF page.
- * Features the 30px circular profile photo of Dr.G Sathyanarayana Raju, all 4 professional titles,
+ * Features the 30px circular profile photo of G.Sathyanarayana Raju.Peetla., all 4 professional titles,
  * author credit, organization, royal heritage styling, and 8-language support.
  */
 export const PrintRepeatingAuthorFooter: React.FC = () => {
@@ -64,15 +64,15 @@ export const PrintRepeatingAuthorFooter: React.FC = () => {
     <div
       className="print-repeating-author-footer print-only"
       role="contentinfo"
-      aria-label="Repeating PDF Page Author Footer — Dr.G Sathyanarayana Raju"
+      aria-label="Repeating PDF Page Author Footer — G.Sathyanarayana Raju.Peetla."
     >
       <div className="print-repeating-author-footer-inner">
-        {/* 30px Circular Profile Photo of Dr.G Sathyanarayana Raju + Compact Author Details */}
+        {/* 30px Circular Profile Photo of G.Sathyanarayana Raju.Peetla. + Compact Author Details */}
         <div className="print-author-footer-left">
           <div className="print-author-avatar-frame">
             <img
               src={profileImgSrc}
-              alt="Dr.G Sathyanarayana Raju"
+              alt="G.Sathyanarayana Raju.Peetla."
               loading="eager"
               decoding="sync"
               className="print-author-avatar"
@@ -81,7 +81,7 @@ export const PrintRepeatingAuthorFooter: React.FC = () => {
 
           <div className="print-author-details-block">
             <div className="print-author-line-primary">
-              <span className="print-author-name">Dr.G Sathyanarayana Raju</span>
+              <span className="print-author-name">G.Sathyanarayana Raju.Peetla.</span>
               <span className="print-author-sep">—</span>
               <span className="print-author-role">
                 Founder • Web Developer / Designer • Digital Creator • Historical Documentation Contributor
@@ -91,7 +91,7 @@ export const PrintRepeatingAuthorFooter: React.FC = () => {
 
             <div className="print-author-line-secondary">
               <span className="print-author-credit">
-                Research, Documentation &amp; Compilation by Dr.G Sathyanarayana Raju
+                Research, Documentation &amp; Compilation by G.Sathyanarayana Raju.Peetla.
                 {language !== 'en' ? ` (${labels.creditLocalized})` : ''}
               </span>
               <span className="print-author-sep">•</span>

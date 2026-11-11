@@ -894,7 +894,7 @@ export const CANONICAL_MEMBERS: UserProfile[] = [
   },
   {
     user_id: 'usr_member_001',
-    full_name: 'Dr.G Sathyanarayana Raju',
+    full_name: 'G.Sathyanarayana Raju.Peetla.',
     gender: 'Male',
     country: 'India',
     state_or_province: 'Karnataka',
@@ -903,7 +903,7 @@ export const CANONICAL_MEMBERS: UserProfile[] = [
     profile_photo_url: `${(import.meta as any).env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`,
     education: 'Independent Historical Documentation & Epigraphy Researcher',
     profession: 'Founder & Historical Documentation Contributor',
-    current_work: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju',
+    current_work: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.',
     organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
     biography: 'Founder & Historical Documentation Contributor researching the epigraphy and diaspora of Suryavamsha Odiyaraju families across Karnataka, Andhra Pradesh, Telangana, Odisha, Tamil Nadu, and Maharashtra.',
     areas_of_historical_interest: ['Genealogical Records', 'Diaspora Movements', 'Oral Traditions', 'Madala Panji Studies'],

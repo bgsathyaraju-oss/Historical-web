@@ -2078,7 +2078,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbKapilendraDeva,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconPersonages,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 14,
         targetPath: '/documentary?article=art_gajapathi_kapilendra'
       },
@@ -2099,7 +2099,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbOdraKingdom,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconDynasties,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 8,
         targetPath: '/documentary?article=art_surya_vamsa_sagara_rama'
       },
@@ -2116,7 +2116,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbTrikalinga,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconGeography,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 8,
         targetPath: '/odra-desha'
       },
@@ -2133,7 +2133,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.thumbKalingaArchitecture,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconGallery,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 9,
         targetPath: '/temples-monuments'
       },
@@ -2150,7 +2150,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerRoyalBattle,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconMonographs,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 11,
         targetPath: '/kalinga-war'
       },
@@ -2167,7 +2167,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerInscriptionStone,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconInscriptions,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 10,
         targetPath: '/inscriptions'
       },
@@ -2190,7 +2190,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('hathigumpha_inscription.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconInscriptions,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 9,
         targetPath: '/documentary?article=art_epigraphic_evolution_odra'
       },
@@ -2211,7 +2211,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerMapOdraDesha,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconGeography,
         evidenceCategory: 'verified_archaeological',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 9,
         targetPath: '/documentary?article=art_odra_desha_history'
       },
@@ -2234,7 +2234,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('kolleru_wetland_sanctuary.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconDynasties,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 8,
         targetPath: '/documentary?article=art_kolletikota_peddintlamma_lake'
       },
@@ -2255,7 +2255,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerFortHeritage,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconCommunity,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 12,
         targetPath: '/documentary?article=art_oad_rajputh_od_history'
       },
@@ -2278,7 +2278,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('copper_plate_charter.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconArticles,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 7,
         targetPath: '/documentary?article=art_genealogy_methodology'
       },
@@ -2295,7 +2295,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ROYAL_HOMEPAGE_ASSETS.bannerSculptureHeritage,
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconSurnames,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 9,
         targetPath: '/community-surnames-north-indian-oad-community'
       },
@@ -2312,7 +2312,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('purushottama_deva_kanchi.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconArticles,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 9,
         targetPath: '/gajapathi-kings'
       },
@@ -2329,7 +2329,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('barabati_fort_ramparts.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconSurnames,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 10,
         targetPath: '/community-surnames'
       },
@@ -2346,7 +2346,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('baxi_jagabandhu_statue.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconMedia,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju',
+        authorName: 'G.Sathyanarayana Raju.Peetla.',
         citationsCount: 8,
         targetPath: '/community-prominent-persons'
       },
@@ -2384,7 +2384,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
         thumbnail: ARCHIVE_IMG('jasma_devi_sahasralinga.jpg'),
         iconWebp: ROYAL_HOMEPAGE_ASSETS.iconCommunity,
         evidenceCategory: 'scholarly_interpretation',
-        authorName: 'Dr.G Sathyanarayana Raju & Community Archives',
+        authorName: 'G.Sathyanarayana Raju.Peetla. & Community Archives',
         citationsCount: 18,
         targetPath: '/community-heritage'
       }
@@ -2553,7 +2553,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
 
   const whatsappGreeting =
     t.publisher?.whatsappGreeting ||
-    'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
+    'Namaste G.Sathyanarayana Raju.Peetla. ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   const handleNavClick = (path: string) => {
@@ -3820,7 +3820,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                 <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-[3px] border-[#D4AF37] shadow-[0_0_22px_rgba(212,175,55,0.55)] ring-2 ring-[#762D35]">
                   <img
                     src={`${(import.meta as any).env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`}
-                    alt={t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
+                    alt={t.publisher?.publisherName || 'G.Sathyanarayana Raju.Peetla.'}
                     className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                     decoding="async"
@@ -3838,10 +3838,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
               <div className="space-y-1 min-w-0">
                 <div className="royal-text-gold text-[11px] font-serif font-bold uppercase tracking-widest leading-[1.35] break-words">
                   {t.publisher?.designedAndPublishedBy ||
-                    'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
+                    'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.'}
                 </div>
                 <h3 className="royal-text-ivory font-serif font-extrabold text-lg sm:text-2xl leading-[1.3] break-words">
-                  {t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
+                  {t.publisher?.publisherName || 'G.Sathyanarayana Raju.Peetla.'}
                 </h3>
                 <p className="royal-text-gold text-xs sm:text-sm font-serif font-semibold leading-[1.35] break-words">
                   {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}

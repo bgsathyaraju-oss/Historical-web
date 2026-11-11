@@ -16,7 +16,9 @@ import { getAllArticles } from '../data/articlesRepository';
 import { getCanonicalInscriptions } from '../data/archivalSeedData';
 import { DYNASTY_TRANSLATIONS } from '../../server/contentTranslations';
 import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
-import { LanguageCode } from '../types';
+import { ArticleDetailView } from '../components/ArticleDetailView';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { LanguageCode, Article } from '../types';
 
 interface GajapathiKingdomPageProps {
   onNavigate: (path: string) => void;
@@ -775,12 +777,25 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
     []
   );
 
-  // Relevant Gajapathi & Odra articles localized in the current language
+  // Relevant Gajapathi, Odra & 13 Royal Dynasties / Kshatriya Lineage articles localized in the current language
   const gajapathiArticles = useMemo(() => {
     const all = getAllArticles(language);
     return all.filter(a =>
       [
         'art_gajapathi_kapilendra',
+        'art_dyn_eastern_gangas',
+        'art_dyn_western_gangas',
+        'art_dyn_imperial_cholas',
+        'art_dyn_chalukya_synthesis',
+        'art_dyn_pallavas_kanchi',
+        'art_dyn_kadambas_banavasi',
+        'art_dyn_badami_chalukyas',
+        'art_dyn_vengi_chalukyas',
+        'art_dyn_siddhini_kings_verification',
+        'art_lin_suryavamshi_kshatriyas',
+        'art_lin_chandravamshi_kshatriyas',
+        'art_lin_suryavamshi_kings',
+        'art_lin_chandravamshi_kings',
         'art_odra_desha_history',
         'art_epigraphic_evolution_odra',
         'art_kolletikota_peddintlamma_lake'
@@ -1039,6 +1054,29 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
   const militaryDossier = GAJAPATHI_DOSSIERS.find(d => d.id === 'military-gajasena')!;
   const cultureDossier = GAJAPATHI_DOSSIERS.find(d => d.id === 'culture-renaissance')!;
 
+  const selectedFullArticle: Article | null = useMemo(() => {
+    if (selectedTarget?.type !== 'article') return null;
+    const allArts = getAllArticles(language);
+    return allArts.find(a => a.id === selectedTarget.id) || null;
+  }, [selectedTarget, language]);
+
+  if (selectedFullArticle) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-[#292521]">
+        <ArticleDetailView
+          article={selectedFullArticle}
+          allArticles={gajapathiArticles.length > 0 ? gajapathiArticles : getAllArticles(language)}
+          onBack={() => setSelectedTarget(null)}
+          onSelectArticle={nextArt => {
+            setSelectedTarget({ type: 'article', id: nextArt.id });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onNavigate={onNavigate}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 text-[#292521]">
       {/* Page Hero */}
@@ -1272,6 +1310,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {gajapathiArticles.map(art => {
                 const { title, summary } = getArticleContent(art);
+                const refNum = getPermanentReferenceNumber(art.id, art.category);
                 const fallbackImg = `${basePath ? basePath + '/' : '/'}assets/archive/barabati_fort_gateway.jpg`;
                 return (
                   <div
@@ -1303,6 +1342,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        <div className="absolute top-3 left-3">
+                          <span className="px-2.5 py-0.5 rounded-md bg-[#762D35] text-white font-mono text-[10px] font-bold border border-[#D4AF37]/40 shadow-sm">
+                            Ref: {refNum}
+                          </span>
+                        </div>
                       </div>
                       <div className="p-6 pb-3 space-y-2">
                         <div className="flex items-center justify-between gap-2 text-[11px] text-[#A87924] font-semibold">

@@ -36,6 +36,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { EvidenceBadge } from '../components/EvidenceBadge';
+import { ReferenceIdBadge } from '../components/ReferenceIdBadge';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
 import { WhatsAppIcon, PublisherCreditCard } from '../components/PublisherCreditCard';
 import { useLanguage } from '../context/LanguageContext';
 import { SUPPORTED_LANGUAGES } from '../i18n/translations';
@@ -2519,7 +2521,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         sourceReferencesHeading: 'Historical Source References & Scholarly Citations',
         sourceReferencesSub:
           'Primary epigraphic records, colonial gazetteers, archaeological reports, and scholarly monographs.',
-        relatedContextHeading: 'Related Historical Context & 74-Name Master Reference Mapping',
+        relatedContextHeading: 'Related Historical Context & 76-Name Master Reference Mapping',
         relatedArticlesHeading: 'Related Heritage Articles',
         relatedArticlesSub: 'Click any related article card below to open its full historical dossier.',
         readFullArticleBtn: 'Read Full Article',
@@ -2529,7 +2531,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'Indexed topic hashtags for quick cross-referencing.',
         previousArticleLabel: 'Previous Article in Section',
         nextArticleLabel: 'Next Article in Section',
-        consultPublisherLabel: 'Discuss with Dr.G Sathyanarayana Raju (+91 9480112897)',
+        consultPublisherLabel: 'Discuss with G.Sathyanarayana Raju.Peetla. (+91 9480112897)',
         verifiedSourceBadge: 'Documented Reference',
         epigraphicEraBadge: 'Verified Epigraphic / Primary Era',
         historicalPeriodBadge: 'Documented Historical Period',
@@ -2566,7 +2568,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'शिलालेख, ताम्रपत्र, वीरगल, दुर्ग, जल-स्थापत्य और पवित्र मंदिर प्रमाण।',
         sourceReferencesHeading: 'ऐतिहासिक स्रोत संदर्भ एवं प्रामाणिक उद्धरण',
         sourceReferencesSub: 'प्राथमिक अभिलेखीय स्रोत, गजेटियर, पुरातत्व रिपोर्ट एवं शोध ग्रंथ।',
-        relatedContextHeading: 'संबंधित ऐतिहासिक संदर्भ एवं 74-नाम संदर्भ सूची मानचित्रण',
+        relatedContextHeading: 'संबंधित ऐतिहासिक संदर्भ एवं 76-नाम संदर्भ सूची मानचित्रण',
         relatedArticlesHeading: 'संबंधित विरासत लेख',
         relatedArticlesSub: 'पूर्ण ऐतिहासिक विवरण पढ़ने के लिए किसी भी संबंधित लेख कार्ड पर क्लिक करें।',
         readFullArticleBtn: 'पूरा लेख पढ़ें',
@@ -2576,7 +2578,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'त्वरित संदर्भ के लिए अनुक्रमित विषय हैशटैग।',
         previousArticleLabel: 'पिछला लेख',
         nextArticleLabel: 'अगला लेख',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) जी से संपर्क करें (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.) जी से संपर्क करें (+91 9480112897)',
         verifiedSourceBadge: 'प्रमाणित संदर्भ',
         epigraphicEraBadge: 'प्रमाणित अभिलेखीय कालखंड',
         historicalPeriodBadge: 'दस्तावेजी ऐतिहासिक काल',
@@ -2613,7 +2615,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'శిలాశాసనాలు, తామ్రశాసనాలు, వీరగల్లులు, కోటలు, జలాశయాలు మరియు పవిత్ర దేవాలయాలు.',
         sourceReferencesHeading: 'చారిత్రక ఆధారాలు & గ్రంథ సూచిక (Citations)',
         sourceReferencesSub: 'ప్రాథమిక శాసన ఆధారాలు, గెజిటీర్లు, పురావస్తు నివేదికలు మరియు పరిశోధనా గ్రంథాలు.',
-        relatedContextHeading: 'సంబంధిత చారిత్రక సందర్భం & 74-పేర్ల రిఫరెన్స్ మ్యాపింగ్',
+        relatedContextHeading: 'సంబంధిత చారిత్రక సందర్భం & 76-పేర్ల రిఫరెన్స్ మ్యాపింగ్',
         relatedArticlesHeading: 'సంబంధిత వారసత్వ వ్యాసాలు (Related Articles)',
         relatedArticlesSub: 'పూర్తి వ్యాసాన్ని చదవడానికి క్రింది సంబంధిత కార్డుపై క్లిక్ చేయండి.',
         readFullArticleBtn: 'పూర్తి వ్యాసం చదవండి',
@@ -2623,7 +2625,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'శీఘ్ర శోధన కోసం చారిత్రక హ్యాష్‌ట్యాగ్‌లు.',
         previousArticleLabel: 'మునుపటి వ్యాసం',
         nextArticleLabel: 'తదుపరి వ్యాసం',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (డా. జి. సత్యనారాయణ రాజు) గారితో చర్చించండి (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (జి. సత్యనారాయణ రాజు. పీట్ల.) గారితో చర్చించండి (+91 9480112897)',
         verifiedSourceBadge: 'ధృవీకరించబడిన ఆధారం',
         epigraphicEraBadge: 'శాసన / ప్రాథమిక ఆధార యుగం',
         historicalPeriodBadge: 'చారిత్రక కాలం',
@@ -2660,7 +2662,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'ಶಿಲಾಶಾಸನಗಳು, ತಾಮ್ರಪಟಗಳು, ವೀರಗಲ್ಲುಗಳು, ಕೋಟೆಗಳು, ಜಲಾಶಯಗಳು ಮತ್ತು ದೇವಾಲಯಗಳು.',
         sourceReferencesHeading: 'ಐತಿಹಾಸಿಕ ಆಕರಗಳು ಮತ್ತು ಉಲ್ಲೇಖಗಳು (Citations)',
         sourceReferencesSub: 'ಪ್ರಾಥಮಿಕ ಶಾಸನ ದಾಖಲೆಗಳು, ಗೆಜೆಟಿಯರ್‌ಗಳು ಮತ್ತು ಸಂಶೋಧನಾ ಗ್ರಂಥಗಳು.',
-        relatedContextHeading: 'ಸಂಬಂಧಿತ ಐತಿಹಾಸಿಕ ಹಿನ್ನೆಲೆ ಮತ್ತು 74-ಹೆಸರುಗಳ ಉಲ್ಲೇಖ ಪಟ್ಟಿ',
+        relatedContextHeading: 'ಸಂಬಂಧಿತ ಐತಿಹಾಸಿಕ ಹಿನ್ನೆಲೆ ಮತ್ತು 76-ಹೆಸರುಗಳ ಉಲ್ಲೇಖ ಪಟ್ಟಿ',
         relatedArticlesHeading: 'ಸಂಬಂಧಿತ ಪರಂಪರೆಯ ಲೇಖನಗಳು',
         relatedArticlesSub: 'ಸಂಪೂರ್ಣ ಲೇಖನವನ್ನು ಓದಲು ಕೆಳಗಿನ ಯಾವುದೇ ಕಾರ್ಡ್ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ.',
         readFullArticleBtn: 'ಪೂರ್ಣ ಲೇಖನ ಓದಿ',
@@ -2670,7 +2672,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'ತ್ವರಿತ ಉಲ್ಲೇಖಕ್ಕಾಗಿ ವಿಷಯ ಹ್ಯಾಶ್‌ಟ್ಯಾಗ್‌ಗಳು.',
         previousArticleLabel: 'ಹಿಂದಿನ ಲೇಖನ',
         nextArticleLabel: 'ಮುಂದಿನ ಲೇಖನ',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು) ಅವರೊಂದಿಗೆ ಚರ್ಚಿಸಿ (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು. ಪೀಟ್ಲ.) ಅವರೊಂದಿಗೆ ಚರ್ಚಿಸಿ (+91 9480112897)',
         verifiedSourceBadge: 'ದೃಢೀಕೃತ ಆಕರ',
         epigraphicEraBadge: 'ದೃಢೀಕೃತ ಶಾಸನ ಕಾಲಘಟ್ಟ',
         historicalPeriodBadge: 'ಐತಿಹಾಸಿಕ ಕಾಲಘಟ್ಟ',
@@ -2707,7 +2709,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'கல்வெட்டுகள், செப்பேடுகள், நடுகற்கள், கோட்டைகள், நீர்நிலைகள் மற்றும் திருக்கோயில்கள்.',
         sourceReferencesHeading: 'வரலாற்று ஆதாரங்கள் மற்றும் மேற்கோள்கள் (Citations)',
         sourceReferencesSub: 'முதன்மைக் கல்வெட்டுப் பதிவுகள், அரசிதழ்கள் மற்றும் ஆய்வு நூல்கள்.',
-        relatedContextHeading: 'தொடர்புடைய வரலாற்றுச் சூழல் & 74-பெயர்கள் குறிப்புப் பட்டியல்',
+        relatedContextHeading: 'தொடர்புடைய வரலாற்றுச் சூழல் & 76-பெயர்கள் குறிப்புப் பட்டியல்',
         relatedArticlesHeading: 'தொடர்புடைய பாரம்பரியக் கட்டுரைகள்',
         relatedArticlesSub: 'முழுக் கட்டுரையையும் படிக்க கீழே உள்ள எந்தவொரு அட்டையையும் சொடுக்கவும்.',
         readFullArticleBtn: 'முழுக் கட்டுரையைப் படிக்க',
@@ -2717,7 +2719,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'விரைவான தேடலுக்கான தலைப்பு ஹேஷ்டேக்குகள்.',
         previousArticleLabel: 'முந்தைய கட்டுரை',
         nextArticleLabel: 'அடுத்த கட்டுரை',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு) அவர்களுடன் உரையாட (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (ஜி. சத்யநாராயண ராஜு. பீட்லா.) அவர்களுடன் உரையாட (+91 9480112897)',
         verifiedSourceBadge: 'சரிபார்க்கப்பட்ட ஆதாரம்',
         epigraphicEraBadge: 'கல்வெட்டு / முதன்மை ஆதார காலம்',
         historicalPeriodBadge: 'ஆவணப்படுத்தப்பட்ட வரலாற்றுக் காலம்',
@@ -2754,7 +2756,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'शिलालेख, ताम्रपट, वीरगळ, किल्ले, जल-स्थापत्य आणि पवित्र मंदिरे.',
         sourceReferencesHeading: 'ऐतिहासिक स्रोत संदर्भ आणि उद्धरणे (Citations)',
         sourceReferencesSub: 'प्राथमिक शिलालेख नोंदी, गॅझेटिअर्स आणि संशोधन ग्रंथ.',
-        relatedContextHeading: 'संबंधित ऐतिहासिक संदर्भ आणि 74-नावे संदर्भ सूची',
+        relatedContextHeading: 'संबंधित ऐतिहासिक संदर्भ आणि 76-नावे संदर्भ सूची',
         relatedArticlesHeading: 'संबंधित वारसा लेख (Related Articles)',
         relatedArticlesSub: 'संपूर्ण लेख वाचण्यासाठी खालील कोणत्याही संबंधित कार्डवर क्लिक करा.',
         readFullArticleBtn: 'संपूर्ण लेख वाचा',
@@ -2764,7 +2766,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'जलद संदर्भासाठी विषय हॅशटॅग.',
         previousArticleLabel: 'मागील लेख',
         nextArticleLabel: 'पुढील लेख',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) यांच्याशी संपर्क साधा (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.) यांच्याशी संपर्क साधा (+91 9480112897)',
         verifiedSourceBadge: 'प्रमाणित संदर्भ',
         epigraphicEraBadge: 'प्रमाणित शिलालेख कालखंड',
         historicalPeriodBadge: 'दस्तऐवजी ऐतिहासिक कालखंड',
@@ -2801,7 +2803,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'ଶିଳାଲେଖ, ତାମ୍ରପଟ୍ଟା, ବୀରସ୍ତମ୍ଭ, ଦୁର୍ଗ, ଜଳାଶୟ ଓ ପବିତ୍ର ମନ୍ଦିର।',
         sourceReferencesHeading: 'ଐତିହାସିକ ଉତ୍ସ ଓ ଗ୍ରନ୍ଥ ସନ୍ଦର୍ଭ (Citations)',
         sourceReferencesSub: 'ପ୍ରାଥମିକ ଶିଳାଲେଖ ତଥ୍ୟ, ଗେଜେଟିୟର ଓ ଗବେଷଣା ଗ୍ରନ୍ଥ।',
-        relatedContextHeading: 'ସମ୍ପୃକ୍ତ ଐତିହାସିକ ପ୍ରସଙ୍ଗ ଓ 74-ନାମ ସନ୍ଦର୍ଭ ତାଲିକା',
+        relatedContextHeading: 'ସମ୍ପୃକ୍ତ ଐତିହାସିକ ପ୍ରସଙ୍ଗ ଓ 76-ନାମ ସନ୍ଦର୍ଭ ତାଲିକା',
         relatedArticlesHeading: 'ସମ୍ପୃକ୍ତ ଐତିହ୍ୟ ଲେଖା (Related Articles)',
         relatedArticlesSub: 'ସମ୍ପୂର୍ଣ୍ଣ ଲେଖା ପଢ଼ିବା ପାଇଁ ତଳେ ଥିବା ଯେକୌଣସି କାର୍ଡ ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ।',
         readFullArticleBtn: 'ସମ୍ପୂର୍ଣ୍ଣ ଲେଖା ପଢ଼ନ୍ତୁ',
@@ -2811,7 +2813,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'ଦ୍ରୁତ ସନ୍ଧାନ ପାଇଁ ବିଷୟ ହ୍ୟାଶଟ୍ୟାଗ୍।',
         previousArticleLabel: 'ପୂର୍ବବର୍ତ୍ତୀ ଲେଖା',
         nextArticleLabel: 'ପରବର୍ତ୍ତୀ ଲେଖା',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (ଡ. ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)ଙ୍କ ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ. ପୀଟଲା.)ଙ୍କ ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
         verifiedSourceBadge: 'ପ୍ରମାଣିତ ସନ୍ଦର୍ଭ',
         epigraphicEraBadge: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ କାଳଖଣ୍ଡ',
         historicalPeriodBadge: 'ଐତିହାସିକ କାଳଖଣ୍ଡ',
@@ -2848,7 +2850,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         inscriptionsEvidenceSub: 'শিলালিপি, তাম্রশাসন, বীরস্তম্ভ, দুর্গ, জলাশয় ও পবিত্র মন্দির।',
         sourceReferencesHeading: 'ঐতিহাসিক তথ্যসূত্র ও উদ্ধৃতি (Citations)',
         sourceReferencesSub: 'প্রাথমিক শিলালিপি নথি, গেজেটিয়ার ও গবেষণা গ্রন্থ।',
-        relatedContextHeading: 'সংশ্লিষ্ট ঐতিহাসিক প্রেক্ষাপট ও ৭৪-নাম রেফারেন্স তালিকা',
+        relatedContextHeading: 'সংশ্লিষ্ট ঐতিহাসিক প্রেক্ষাপট ও ৭৬-নাম রেফারেন্স তালিকা',
         relatedArticlesHeading: 'সংশ্লিষ্ট ঐতিহ্য নিবন্ধ (Related Articles)',
         relatedArticlesSub: 'সম্পূর্ণ নিবন্ধটি পড়তে নিচের যেকোনো সম্পর্কিত কার্ডে ক্লিক করুন।',
         readFullArticleBtn: 'সম্পূর্ণ নিবন্ধ পড়ুন',
@@ -2858,7 +2860,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
         hashtagsSub: 'দ্রুত অনুসন্ধানের জন্য বিষয়ভিত্তিক হ্যাশট্যাগ।',
         previousArticleLabel: 'পূর্ববর্তী নিবন্ধ',
         nextArticleLabel: 'পরবর্তী নিবন্ধ',
-        consultPublisherLabel: 'Dr.G Sathyanarayana Raju (ড. জি. সত্যনারায়ণ রাজু)-এর সাথে আলোচনা করুন (+91 9480112897)',
+        consultPublisherLabel: 'G.Sathyanarayana Raju.Peetla. (জি. সত্যনারায়ণ রাজু. পীটলা.)-এর সাথে আলোচনা করুন (+91 9480112897)',
         verifiedSourceBadge: 'প্রত্যয়িত তথ্যসূত্র',
         epigraphicEraBadge: 'প্রত্যয়িত শিলালিপি কালখণ্ড',
         historicalPeriodBadge: 'ঐতিহাসিক সময়কাল',
@@ -3523,7 +3525,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
               Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal — {articleDetailUi.printHeaderTitle}
             </p>
             <p className="text-[11px] font-semibold mt-0.5">
-              Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
+              Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. • Founder & Historical Documentation Contributor
             </p>
           </div>
 
@@ -3834,6 +3836,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     <span>{fullArticleData.eraOrPeriod}</span>
                   </span>
                 )}
+
+                <ReferenceIdBadge itemId={fullArticleData.id} />
               </div>
 
               <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold font-royal-heading text-[#54351F] leading-snug break-words">
@@ -4514,7 +4518,7 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
 
               <a
                 href={`https://wa.me/919480112897?text=${encodeURIComponent(
-                  `Namaste Dr.G Sathyanarayana Raju ji, regarding Community Heritage article: ${fullArticleData.title}`
+                  `Namaste G.Sathyanarayana Raju.Peetla. ji, regarding Community Heritage article: ${fullArticleData.title}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -4822,13 +4826,20 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                       </figure>
 
                       <div className="p-4 space-y-2.5">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start justify-between gap-2 flex-wrap">
                           <span className="px-2 py-0.5 rounded-md bg-[#762D35] text-white border border-[var(--accent-gold)] text-[10px] font-bold">
                             #{entry.orderNumber} • {entry.canonicalName}
                           </span>
-                          <span className="text-[10px] text-[var(--secondary-text)] font-medium text-right line-clamp-1">
-                            {locGroup}
+                          <span
+                            lang="en"
+                            translate="no"
+                            className="px-2 py-0.5 rounded bg-[#FFF9EF] text-[#762D35] border border-[#A87924] text-[10px] font-mono font-bold"
+                          >
+                            REF ID: {getPermanentReferenceNumber(entry.id)}
                           </span>
+                        </div>
+                        <div className="text-[10px] text-[var(--secondary-text)] font-medium line-clamp-1">
+                          {locGroup}
                         </div>
 
                         <div>
@@ -5106,8 +5117,8 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                             </span>
                           </div>
 
-                          {/* Epistemic Distinction Pill */}
-                          <div>
+                          {/* Epistemic Distinction Pill & Reference ID */}
+                          <div className="flex flex-wrap items-center gap-1.5">
                             <span
                               className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border ${
                                 isEpigraphic
@@ -5119,6 +5130,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                             >
                               <CheckCircle2 className="w-3 h-3 shrink-0" />
                               <span>{epistemicLabel}</span>
+                            </span>
+                            <span
+                              lang="en"
+                              translate="no"
+                              className="px-2 py-0.5 rounded bg-[#FFF9EF] text-[#762D35] border border-[#A87924] text-[10px] font-mono font-bold"
+                            >
+                              REF ID: {getPermanentReferenceNumber(item.id)}
                             </span>
                           </div>
 
@@ -5324,6 +5342,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                             <span className="px-2 py-0.5 rounded bg-stone-900 text-[10px] font-semibold text-[#d4af37] border border-stone-700">
                               {classLabel}
                             </span>
+                            <span
+                              lang="en"
+                              translate="no"
+                              className="px-2 py-0.5 rounded bg-[#FFF9EF] text-[#762D35] border border-[#A87924] text-[10px] font-mono font-bold"
+                            >
+                              REF ID: {getPermanentReferenceNumber(refEntry.id)}
+                            </span>
                           </div>
 
                           <div>
@@ -5519,9 +5544,16 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
                     </figure>
 
                     <div className="p-6 space-y-4">
-                      <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start justify-between gap-3 flex-wrap">
                         <span className="px-3 py-1 rounded-full bg-[#580014] text-[#fae29c] border border-[#d4af37]/40 text-xs font-bold">
                           {(cat.title[language] || cat.title.en).split(':')[0] || cat.codeLabel}
+                        </span>
+                        <span
+                          lang="en"
+                          translate="no"
+                          className="px-2 py-0.5 rounded bg-[#FFF9EF] text-[#762D35] border border-[#A87924] text-[10px] font-mono font-bold"
+                        >
+                          REF ID: {getPermanentReferenceNumber(cat.id)}
                         </span>
                         <span className="text-[11px] text-stone-400 font-medium">
                           {cat.includedSubClassifications.length} {step2Labels.subcategoriesLabel}
@@ -6093,12 +6125,13 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
             {/* Modal Header */}
             <div className="flex items-start justify-between gap-4 border-b border-stone-800 pb-4">
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded text-[11px] font-bold bg-[#580014] text-[#fae29c] border border-[#d4af37]/40">
                     {step5Ui.figuresTab.epigraphicStatus[selectedFigure.epigraphic_status] ||
                       selectedFigure.epigraphic_status}
                   </span>
                   <span className="text-xs text-stone-400">⏳ {selectedFigure.reign_or_dates}</span>
+                  <ReferenceIdBadge itemId={selectedFigure.id} />
                 </div>
                 <h3 className="font-royal-heading font-extrabold text-2xl sm:text-3xl text-[#fcedc7]">
                   {selectedFigure.localized_name[language] || selectedFigure.canonical_name}

@@ -32,6 +32,8 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { LanguageCode } from '../types';
+import { ReferenceIdBadge } from '../components/ReferenceIdBadge';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
 import {
   downloadArticleAsPdf,
   triggerArticlePrintWithTitle,
@@ -1591,7 +1593,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'Key Historical Contributions & Feats',
         shareLink: 'Share Article Link',
         linkCopied: 'Link Copied!',
-        consultPublisher: 'Discuss with Dr.G Sathyanarayana Raju (+91 9480112897)',
+        consultPublisher: 'Discuss with G.Sathyanarayana Raju.Peetla. (+91 9480112897)',
         emptyStateTitle: 'No prominent persons match your search criteria',
         emptyStateDesc: 'Try adjusting your branch, category, regional filter, or search keywords to view historical records.',
         clearFilters: 'Reset All Filters',
@@ -1651,7 +1653,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'प्रमुख ऐतिहासिक योगदान एवं उपलब्धियां',
         shareLink: 'लेख लिंक साझा करें',
         linkCopied: 'लिंक कॉपी हो गया!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) जी से संपर्क करें (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.) जी से संपर्क करें (+91 9480112897)',
         emptyStateTitle: 'आपके खोज मानदंडों के अनुसार कोई परिणाम नहीं मिला',
         emptyStateDesc: 'कृपया शाखा, श्रेणी, राज्य फिल्टर या खोज शब्दों में परिवर्तन करें।',
         clearFilters: 'सभी फिल्टर हटाएं',
@@ -1711,7 +1713,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'ముఖ్య చారిత్రక విజయాలు & సేవలు',
         shareLink: 'లింక్ షేర్ చేయండి',
         linkCopied: 'లింక్ కాపీ చేయబడింది!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (డాక్టర్ జి. సత్యనారాయణ రాజు) గారితో చర్చించండి (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (జి. సత్యనారాయణ రాజు. పీట్ల.) గారితో చర్చించండి (+91 9480112897)',
         emptyStateTitle: 'మీ శోధనకు తగిన ప్రముఖుల వివరాలు కనుగొనబడలేదు',
         emptyStateDesc: 'దయచేసి మీ శోధన పదాలను లేదా ప్రాంతీయ/వర్గ ఎంపికను మార్చండి.',
         clearFilters: 'అన్ని ఫిల్టర్‌లను రీసెట్ చేయండి',
@@ -1771,7 +1773,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'ಪ್ರಮುಖ ಐತಿಹಾಸಿಕ ಕೊಡುಗೆಗಳು',
         shareLink: 'ಲಿಂಕ್ ಹಂಚಿಕೊಳ್ಳಿ',
         linkCopied: 'ಲಿಂಕ್ ನಕಲಿಸಲಾಗಿದೆ!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು) ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು. ಪೀಟ್ಲ.) ಅವರನ್ನು ಸಂಪರ್ಕಿಸಿ (+91 9480112897)',
         emptyStateTitle: 'ಯಾವುದೇ ಫಲಿತಾಂಶಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
         emptyStateDesc: 'ದಯವಿಟ್ಟು ಹುಡುಕಾಟದ ಪದಗಳನ್ನು ಅಥವಾ ಫಿಲ್ಟರ್ ಬದಲಾಯಿಸಿ.',
         clearFilters: 'ಎಲ್ಲಾ ಫಿಲ್ಟರ್ ಮರುಹೊಂದಿಸಿ',
@@ -1831,7 +1833,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'முக்கிய வரலாற்றுப் பங்களிப்புகள்',
         shareLink: 'பகிர்',
         linkCopied: 'இணைப்பு நகலெடுக்கப்பட்டது!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு)வைத் தொடர்பு கொள்ள (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (ஜி. சத்யநாராயண ராஜு. பீட்லா.)வைத் தொடர்பு கொள்ள (+91 9480112897)',
         emptyStateTitle: 'முடிவுகள் எதுவும் கிடைக்கவில்லை',
         emptyStateDesc: 'தயவுசெய்து தேடல் சொற்களை அல்லது வடிகட்டிகளை மாற்றி முயற்சிக்கவும்.',
         clearFilters: 'வடிகட்டிகளை மீட்டமைக்க',
@@ -1891,7 +1893,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'प्रमुख ऐतिहासिक योगदान',
         shareLink: 'लिंक शेअर करा',
         linkCopied: 'लिंक कॉपी झाली!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) यांच्याशी चर्चा करा (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.) यांच्याशी चर्चा करा (+91 9480112897)',
         emptyStateTitle: 'कोणतेही निकाल आढळले नाहीत',
         emptyStateDesc: 'कृपया शोध शब्द किंवा फिल्टर तपासा.',
         clearFilters: 'फिल्टर रीसेट करा',
@@ -1951,7 +1953,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'ମୁଖ୍ୟ ଐତିହାସିକ ଅବଦାନ',
         shareLink: 'ଲିଙ୍କ୍ ସେୟାର୍ କରନ୍ତୁ',
         linkCopied: 'ଲିଙ୍କ୍ କପି ହୋଇଗଲା!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)ଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ. ପୀଟଲା.)ଙ୍କ ସହିତ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
         emptyStateTitle: 'କୌଣସି ତଥ୍ୟ ମିଳିଲା ନାହିଁ',
         emptyStateDesc: 'ଦୟାକରି ଖୋଜିବା ଶବ୍ଦ ବା ଫିଲ୍ଟର୍ ପରିବର୍ତ୍ତନ କରନ୍ତୁ।',
         clearFilters: 'ସମସ୍ତ ଫିଲ୍ଟର୍ ରିସେଟ୍ କରନ୍ତୁ',
@@ -2011,7 +2013,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         keyContributions: 'প্রধান ঐতিহাসিক অবদান',
         shareLink: 'লিঙ্ক শেয়ার করুন',
         linkCopied: 'লিঙ্ক কপি হয়েছে!',
-        consultPublisher: 'Dr.G Sathyanarayana Raju (ডক্টর জি. সত্যনারায়ণ রাজু)-এর সাথে যোগাযোগ করুন (+91 9480112897)',
+        consultPublisher: 'G.Sathyanarayana Raju.Peetla. (জি. সত্যনারায়ণ রাজু. পীটলা.)-এর সাথে যোগাযোগ করুন (+91 9480112897)',
         emptyStateTitle: 'কোনো ফলাফল পাওয়া যায়নি',
         emptyStateDesc: 'অনুগ্রহ করে অনুসন্ধান শব্দ বা ফিল্টার পরিবর্তন করুন।',
         clearFilters: 'ফিল্টার রিসেট করুন',
@@ -2178,9 +2180,12 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
       // 10. Search query match across names, alternative names, titles, era, region, community labels, 70-name aliases, and professions
       if (!q) return true;
 
-      const alias70Match = extMeta.communityLabels.some(lblId =>
-        matchedProminentLabelIdsFrom70.has(lblId)
-      );
+      const alias70Match =
+        extMeta.communityLabels.some(lblId => matchedProminentLabelIdsFrom70.has(lblId)) ||
+        person.branches.some(b => {
+          const mappedLabelId = BRANCH_TO_COMMUNITY_LABEL_ID[b];
+          return mappedLabelId ? matchedProminentLabelIdsFrom70.has(mappedLabelId) : false;
+        });
       const nameMatch = Object.values(person.name).some(val => val.toLowerCase().includes(q));
       const altNameMatch = extMeta.alternativeNames.some(alt => alt.toLowerCase().includes(q));
       const titlesMatch = Object.values(person.titles).some(val => val.toLowerCase().includes(q));
@@ -2201,7 +2206,10 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
           Object.values(chrono.knownDates).some(val => val.toLowerCase().includes(q))
         : false;
 
+      const refNumMatch = getPermanentReferenceNumber(person.id).toLowerCase().includes(q) || person.id.toLowerCase().includes(q);
+
       return (
+        refNumMatch ||
         alias70Match ||
         nameMatch ||
         altNameMatch ||
@@ -3230,7 +3238,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'Archival Inscriptions & Primary Research',
         footerHeading: 'Explore Verified Inscriptions & Royal Genealogy',
         footerBody:
-          'Every prominent figure documented above is grounded in epigraphical inscriptions, copper plates, temple chronicles, and colonial gazetteers curated by Dr.G Sathyanarayana Raju.'
+          'Every prominent figure documented above is grounded in epigraphical inscriptions, copper plates, temple chronicles, and colonial gazetteers curated by G.Sathyanarayana Raju.Peetla.'
       },
       hi: {
         heroBadge: 'ऐतिहासिक सम्राट, शासक, राजवंश एवं समाज विभूति निर्देशिका',
@@ -3274,7 +3282,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'अभिलेखीय शिलालेख एवं प्राथमिक शोध',
         footerHeading: 'प्रमाणित शिलालेख एवं राजवंशीय वंशावली देखें',
         footerBody:
-          'ऊपर प्रलेखित प्रत्येक प्रमुख व्यक्तित्व Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) द्वारा संकलित शिलालेखों, ताम्रपत्रों, मंदिर इतिहास और गजेटियर साक्ष्यों पर आधारित है।'
+          'ऊपर प्रलेखित प्रत्येक प्रमुख व्यक्तित्व G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.) द्वारा संकलित शिलालेखों, ताम्रपत्रों, मंदिर इतिहास और गजेटियर साक्ष्यों पर आधारित है।'
       },
       te: {
         heroBadge: 'చారిత్రక చక్రవర్తులు, పాలకులు, రాజవంశాలు & సమాజ ప్రముఖుల డైరెక్టరీ',
@@ -3318,7 +3326,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'పురావస్తు శాసనాలు & ప్రాథమిక పరిశోధన',
         footerHeading: 'ధృవీకరించబడిన శాసనాలు & రాజవంశావళిని అన్వేషించండి',
         footerBody:
-          'పైన నమోదు చేయబడిన ప్రతి ప్రముఖ వ్యక్తి Dr.G Sathyanarayana Raju (డా. జి. సత్యనారాయణ రాజు) గారు సేకరించిన శిలాశాసనాలు, తామ్రపత్రాలు, ఆలయ రికార్డులు మరియు గెజిటీర్ ఆధారాలపై ఆధారపడి ఉన్నారు.'
+          'పైన నమోదు చేయబడిన ప్రతి ప్రముఖ వ్యక్తి G.Sathyanarayana Raju.Peetla. (జి. సత్యనారాయణ రాజు. పీట్ల.) గారు సేకరించిన శిలాశాసనాలు, తామ్రపత్రాలు, ఆలయ రికార్డులు మరియు గెజిటీర్ ఆధారాలపై ఆధారపడి ఉన్నారు.'
       },
       kn: {
         heroBadge: 'ಚಾರಿತ್ರಿಕ ಸಾಮ್ರಾಟರು, ಅರಸರು, ರಾಜವಂಶಗಳು ಮತ್ತು ಸಮಾಜದ ಗಣ್ಯರ ಕೈಪಿಡಿ',
@@ -3362,7 +3370,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'ಪತ್ರಾಗಾರ ಶಾಸನಗಳು ಮತ್ತು ಪ್ರಾಥಮಿಕ ಸಂಶೋಧನೆ',
         footerHeading: 'ದೃಢೀಕೃತ ಶಾಸನಗಳು ಮತ್ತು ರಾಜವಂಶಾವಳಿಯನ್ನು ಅನ್ವೇಷಿಸಿ',
         footerBody:
-          'ಮೇಲೆ ದಾಖಲಿಸಲಾದ ಪ್ರತಿಯೊಬ್ಬ ಪ್ರಮುಖ ವ್ಯಕ್ತಿಯ ವಿವರಗಳು Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು) ಅವರು ಸಂಗ್ರಹಿಸಿದ ಶಿಲಾಶಾಸನಗಳು, ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ದಾಖಲೆಗಳು ಮತ್ತು ಗೆಜೆಟಿಯರ್ ಆಧಾರಗಳನ್ನು ಆಧರಿಸಿವೆ.'
+          'ಮೇಲೆ ದಾಖಲಿಸಲಾದ ಪ್ರತಿಯೊಬ್ಬ ಪ್ರಮುಖ ವ್ಯಕ್ತಿಯ ವಿವರಗಳು G.Sathyanarayana Raju.Peetla. (ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು. ಪೀಟ್ಲ.) ಅವರು ಸಂಗ್ರಹಿಸಿದ ಶಿಲಾಶಾಸನಗಳು, ತಾಮ್ರಪತ್ರಗಳು, ದೇವಾಲಯದ ದಾಖಲೆಗಳು ಮತ್ತು ಗೆಜೆಟಿಯರ್ ಆಧಾರಗಳನ್ನು ಆಧರಿಸಿವೆ.'
       },
       ta: {
         heroBadge: 'வரலாற்றுப் பேரரசர்கள், மன்னர்கள், அரசவம்சங்கள் & சமூக ஆளுமைகள் அடைவு',
@@ -3406,7 +3414,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'ஆவணக் கல்வெட்டுகள் & முதன்மை ஆய்வு',
         footerHeading: 'சான்றுரைக்கப்பட்ட கல்வெட்டுகள் & அரச வம்சாவளியை ஆராயுங்கள்',
         footerBody:
-          'மேலே ஆவணப்படுத்தப்பட்டுள்ள ஒவ்வொரு ஆளுமையும் Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு) அவர்களால் தொகுக்கப்பட்ட கல்வெட்டுகள், செப்பேடுகள், கோயில் ஆவணங்கள் மற்றும் கெசட்டியர் சான்றுகளை அடிப்படையாகக் கொண்டது.'
+          'மேலே ஆவணப்படுத்தப்பட்டுள்ள ஒவ்வொரு ஆளுமையும் G.Sathyanarayana Raju.Peetla. (ஜி. சத்யநாராயண ராஜு. பீட்லா.) அவர்களால் தொகுக்கப்பட்ட கல்வெட்டுகள், செப்பேடுகள், கோயில் ஆவணங்கள் மற்றும் கெசட்டியர் சான்றுகளை அடிப்படையாகக் கொண்டது.'
       },
       mr: {
         heroBadge: 'ऐतिहासिक सम्राट, शासक, राजवंश व समाज रत्ने निर्देशिका',
@@ -3450,7 +3458,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'अभिलेखीय शिलालेख व प्राथमिक संशोधन',
         footerHeading: 'प्रमाणित शिलालेख व राजवंशावळ पहा',
         footerBody:
-          'वरील प्रत्येक प्रमुख व्यक्तिमत्त्व Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू) यांनी संकलित केलेल्या शिलालेख, ताम्रपट, मंदिर नोंदी आणि गॅझेटियर पुराव्यांवर आधारित आहे.'
+          'वरील प्रत्येक प्रमुख व्यक्तिमत्त्व G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.) यांनी संकलित केलेल्या शिलालेख, ताम्रपट, मंदिर नोंदी आणि गॅझेटियर पुराव्यांवर आधारित आहे.'
       },
       or: {
         heroBadge: 'ଐତିହାସିକ ସମ୍ରାଟ, ଶାସକ, ରାଜବଂଶ ଓ ସମାଜର ବିଶିଷ୍ଟ ବ୍ୟକ୍ତିତ୍ୱ ନିର୍ଦ୍ଦେଶିକା',
@@ -3494,7 +3502,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'ଅଭିଲେଖୀୟ ଶିଳାଲେଖ ଓ ପ୍ରାଥମିକ ଗବେଷଣା',
         footerHeading: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ ଓ ରାଜବଂଶାବଳୀ ଅନ୍ୱେଷଣ କରନ୍ତୁ',
         footerBody:
-          'ଉପରେ ଉଲ୍ଲେଖିତ ପ୍ରତ୍ୟେକ ବିଶିଷ୍ଟ ବ୍ୟକ୍ତିତ୍ୱ Dr.G Sathyanarayana Raju (ଡ. ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)ଙ୍କ ଦ୍ୱାରା ସଂକଳିତ ଶିଳାଲେଖ, ତାମ୍ରପଟ୍ଟା, ମନ୍ଦିର ଇତିହାସ ଓ ଗେଜେଟିୟର ପ୍ରମାଣ ଉପରେ ଆଧାରିତ।'
+          'ଉପରେ ଉଲ୍ଲେଖିତ ପ୍ରତ୍ୟେକ ବିଶିଷ୍ଟ ବ୍ୟକ୍ତିତ୍ୱ G.Sathyanarayana Raju.Peetla. (ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ. ପୀଟଲା.)ଙ୍କ ଦ୍ୱାରା ସଂକଳିତ ଶିଳାଲେଖ, ତାମ୍ରପଟ୍ଟା, ମନ୍ଦିର ଇତିହାସ ଓ ଗେଜେଟିୟର ପ୍ରମାଣ ଉପରେ ଆଧାରିତ।'
       },
       bn: {
         heroBadge: 'ঐতিহাসিক সম্রাট, শাসক, রাজবংশ ও সমাজের বিশিষ্ট ব্যক্তিত্ব নির্দেশিকা',
@@ -3538,7 +3546,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
         footerBadge: 'আর্কাইভাল শিলালিপি ও প্রাথমিক গবেষণা',
         footerHeading: 'প্রত্যয়িত শিলালিপি ও রাজবংশাবলী অন্বেষণ করুন',
         footerBody:
-          'উপরে নথিভুক্ত প্রতিটি বিশিষ্ট ব্যক্তিত্ব Dr.G Sathyanarayana Raju (ড. জি. সত্যনারায়ণ রাজু) কর্তৃক সংকলিত শিলালিপি, তাম্রশাসন, মন্দির ইতিহাস ও গেজেটিয়ার প্রমাণের ওপর ভিত্তি করে রচিত।'
+          'উপরে নথিভুক্ত প্রতিটি বিশিষ্ট ব্যক্তিত্ব G.Sathyanarayana Raju.Peetla. (জি. সত্যনারায়ণ রাজু. পীটলা.) কর্তৃক সংকলিত শিলালিপি, তাম্রশাসন, মন্দির ইতিহাস ও গেজেটিয়ার প্রমাণের ওপর ভিত্তি করে রচিত।'
       }
     };
     return dict[currentLang] || dict.en;
@@ -4115,7 +4123,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal — {detailSectionHeadings.printWebsiteHeader}
             </p>
             <p className="text-[11px] font-semibold mt-0.5">
-              Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
+              Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. • Founder & Historical Documentation Contributor
             </p>
           </div>
 
@@ -4149,6 +4157,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
               {/* SECTION 1: Article Title, Subtitle, Alternative Names & Quick Reference Panel */}
               <div className="flex-1 min-w-0 space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
+                  <ReferenceIdBadge itemId={activePerson.id} />
                   {chrono !== undefined && (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-[#182032] text-[#d4af37] border border-[#c99738]/40">
                       #{chrono.order}
@@ -5536,7 +5545,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
 
               <a
                 href={`https://wa.me/919480112897?text=${encodeURIComponent(
-                  `Namaste Dr.G Sathyanarayana Raju ji, regarding prominent person: ${localizedName}`
+                  `Namaste G.Sathyanarayana Raju.Peetla. ji, regarding prominent person: ${localizedName}`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -5952,7 +5961,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                   <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
                     <span>
-                      {refUi.supplementary25Badge} (25) — {refUi.sectionTitle}
+                      {refUi.supplementary25Badge} ({supplementary25.length}) — {refUi.sectionTitle}
                     </span>
                   </span>
                   <button
@@ -6023,7 +6032,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                           <div className="space-y-1">
                             <div className="flex flex-wrap items-center gap-1.5">
                               <span className="font-bold text-[var(--heading-text)]">
-                                #{matchedRef.order}/70 {locName}
+                                #{matchedRef.order}/{MASTER_70_REFERENCE_REGISTRY.length} {locName}
                               </span>
                               <span className="px-2 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-semibold border border-[#A87924]">
                                 {classText}
@@ -6267,6 +6276,9 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                     {/* Card Top Metadata Bar: Chronological Index, Role Badge, Epistemic Tier & Period */}
                     <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                       <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold font-mono bg-[#762D35] text-white border border-[#A87924]">
+                          REF ID: {getPermanentReferenceNumber(person.id)}
+                        </span>
                         {chrono !== undefined && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[var(--surface-bg)] text-[var(--heading-text)] border border-[var(--border-color)]">
                             #{chrono.order}
@@ -6517,7 +6529,7 @@ export const CommunityProminentPersonsPage: React.FC<CommunityProminentPersonsPa
                       <span>{directoryLabels.placeholderStatusText}</span>
                       <a
                         href={`https://wa.me/919480112897?text=${encodeURIComponent(
-                          `Namaste Dr.G Sathyanarayana Raju ji, I would like to submit verified historical documentation for: ${ph.title.en}`
+                          `Namaste G.Sathyanarayana Raju.Peetla. ji, I would like to submit verified historical documentation for: ${ph.title.en}`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"

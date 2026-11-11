@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { EvidenceCategory, VerificationStatus, LanguageCode } from '../types';
 import { EvidenceBadge } from './EvidenceBadge';
+import { ReferenceIdBadge } from './ReferenceIdBadge';
 import { useLanguage } from '../context/LanguageContext';
 import { copyTextCrossPlatform, triggerCrossPlatformShare } from '../utils/pdfExport';
 
@@ -376,6 +377,7 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
             <div className="space-y-2.5 flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2">
+                <ReferenceIdBadge itemId={item.id} />
                 {displayEra && (
                   <span className="text-xs font-bold uppercase tracking-wider text-[#54351F] px-3 py-0.5 rounded-full bg-[#EFE3D0] border border-[#D8C3A2] flex items-center gap-1.5">
                     <Calendar className="w-3 h-3 text-[#A87924]" />
@@ -636,23 +638,22 @@ export const ContentDetailModal: React.FC<ContentDetailModalProps> = ({
 
         {/* Pinned Modal Footer */}
         <div className="p-4 sm:p-5 border-t border-[#D8C3A2] flex flex-wrap items-center justify-between gap-3 bg-[#F1E4D0] rounded-b-2xl sm:rounded-b-3xl shrink-0">
-          {item.actionButton ? (
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                item.actionButton?.onClick();
-              }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#A87924]/50 transition-all cursor-pointer"
-            >
-              <Scroll className="w-3.5 h-3.5 text-[#A87924]" />
-              <span>{item.actionButton.label}</span>
-            </button>
-          ) : (
-            <span className="text-[11px] text-[#6B5948] font-mono">
-              {ui.recordIdLabel}: {item.id}
-            </span>
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            <ReferenceIdBadge itemId={item.id} size="sm" />
+            {item.actionButton && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  item.actionButton?.onClick();
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#FFFCF5] hover:bg-[#E9D9BE] text-[#54351F] border border-[#A87924]/50 transition-all cursor-pointer"
+              >
+                <Scroll className="w-3.5 h-3.5 text-[#A87924]" />
+                <span>{item.actionButton.label}</span>
+              </button>
+            )}
+          </div>
 
           <button
             type="button"

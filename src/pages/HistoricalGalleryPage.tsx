@@ -25,6 +25,7 @@ import {
   EnrichedGalleryArticle
 } from '../data/galleryArticlesEnrichment';
 import { useLanguage } from '../context/LanguageContext';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
 
 const GALLERY_PAGE_HEADER: Record<
   string,
@@ -564,8 +565,11 @@ export const HistoricalGalleryPage: React.FC<HistoricalGalleryPageProps> = ({
                       alt={item.alt_text}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-[#762D35] px-2.5 py-1 rounded-full border border-[#A87924]">
+                    <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">
+                      <span className="text-[10px] font-extrabold font-mono uppercase tracking-wider text-white bg-[#762D35] px-2.5 py-1 rounded-full border border-[#A87924]">
+                        REF ID: {getPermanentReferenceNumber(item.id)}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#54351F] bg-[#FFFCF5]/95 px-2.5 py-1 rounded-full border border-[#A87924]">
                         {enriched.categoryLabel}
                       </span>
                     </div>

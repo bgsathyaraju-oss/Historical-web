@@ -116,8 +116,34 @@ async function startServer() {
     next();
   });
 
-  // 3. Load application modules and initialize database
+  // 3. Load application modules and (in dev) initialize Vite in parallel for sub-second cold start
+  let seoModuleCache: typeof import('./src/utils/seoMetadata.ts') | null = null;
+  const getSeoModule = () => {
+    if (seoModuleCache) return Promise.resolve(seoModuleCache);
+    return import('./src/utils/seoMetadata.ts').then(m => {
+      seoModuleCache = m;
+      return m;
+    });
+  };
+
+  const viteServerPromise = !isProduction
+    ? import('vite').then(({ createServer: createViteServer }) =>
+        createViteServer({
+          server: {
+            middlewareMode: true,
+            host: '0.0.0.0',
+            port: PORT,
+            allowedHosts: true,
+            hmr: false,
+            watch: null
+          },
+          appType: 'custom'
+        })
+      )
+    : Promise.resolve(null);
+
   const [
+    vite,
     { authMiddleware },
     { authRouter },
     { contentRouter },
@@ -127,9 +153,9 @@ async function startServer() {
     { uploadRouter },
     { exportRouter },
     { getDb },
-    { runMigrations },
-    { resolveSeoMetadata, injectSeoMetadataIntoHtml }
+    { runMigrations }
   ] = await Promise.all([
+    viteServerPromise,
     import('./server/auth.ts'),
     import('./server/routes/authRoutes.ts'),
     import('./server/routes/contentRoutes.ts'),
@@ -139,9 +165,13 @@ async function startServer() {
     import('./server/routes/uploadRoutes.ts'),
     import('./server/routes/exportRoutes.ts'),
     import('./server/db.ts'),
-    import('./server/migrate.ts'),
-    import('./src/utils/seoMetadata.ts')
+    import('./server/migrate.ts')
   ]);
+
+  // Warm up SEO module asynchronously in the background after core server is ready
+  setTimeout(() => {
+    getSeoModule().catch(() => {});
+  }, 50);
 
   try {
     runMigrations();
@@ -196,8 +226,9 @@ async function startServer() {
   app.use('/api/export', exportRouter);
 
   // Dynamic Social Sharing Preview & Open Graph Metadata Inspection Endpoint
-  app.get('/api/seo/preview', (req, res) => {
+  app.get('/api/seo/preview', async (req, res) => {
     try {
+      const { resolveSeoMetadata } = await getSeoModule();
       const rawTargetUrl = (req.query.url as string | undefined) || '/';
       let pathname = rawTargetUrl;
       let search = '';
@@ -228,20 +259,7 @@ async function startServer() {
     }
   });
 
-  if (!isProduction) {
-    const { createServer: createViteServer } = await import('vite');
-    const vite = await createViteServer({
-      server: {
-        middlewareMode: true,
-        host: '0.0.0.0',
-        port: PORT,
-        allowedHosts: true,
-        hmr: false,
-        watch: null
-      },
-      appType: 'custom'
-    });
-
+  if (!isProduction && vite) {
     app.use(vite.middlewares);
 
     app.use('*', async (req, res, next) => {
@@ -251,19 +269,30 @@ async function startServer() {
         if (fs.existsSync(indexPath)) {
           let template = fs.readFileSync(indexPath, 'utf-8');
           template = await vite.transformIndexHtml(url, template);
-          const qIdx = url.indexOf('?');
-          const pathname = qIdx >= 0 ? url.slice(0, qIdx) : url;
-          const search = qIdx >= 0 ? url.slice(qIdx) : '';
-          const origin = getRequestPublicOrigin(req);
-          const dbArticles = getDb()?.articles || [];
-          const seoMeta = resolveSeoMetadata({
-            pathname,
-            search,
-            origin,
-            extraArticles: dbArticles
-          });
-          const injectedHtml = injectSeoMetadataIntoHtml(template, seoMeta);
-          res.status(200).set({ 'Content-Type': 'text/html; charset=utf-8' }).end(injectedHtml);
+          try {
+            const seoMod = seoModuleCache || (await Promise.race([
+              getSeoModule(),
+              new Promise<null>(r => setTimeout(() => r(null), 350))
+            ]));
+            if (seoMod) {
+              const { resolveSeoMetadata, injectSeoMetadataIntoHtml } = seoMod;
+              const qIdx = url.indexOf('?');
+              const pathname = qIdx >= 0 ? url.slice(0, qIdx) : url;
+              const search = qIdx >= 0 ? url.slice(qIdx) : '';
+              const origin = getRequestPublicOrigin(req);
+              const dbArticles = getDb()?.articles || [];
+              const seoMeta = resolveSeoMetadata({
+                pathname,
+                search,
+                origin,
+                extraArticles: dbArticles
+              });
+              template = injectSeoMetadataIntoHtml(template, seoMeta);
+            }
+          } catch {
+            // Serve transformed template immediately if SEO metadata is still warming up
+          }
+          res.status(200).set({ 'Content-Type': 'text/html; charset=utf-8' }).end(template);
           return;
         }
         next();
@@ -285,8 +314,9 @@ async function startServer() {
       })
     );
 
-    app.get('*', (req, res) => {
+    app.get('*', async (req, res) => {
       try {
+        const { resolveSeoMetadata, injectSeoMetadataIntoHtml } = await getSeoModule();
         const url = req.originalUrl || req.url || '/';
         const qIdx = url.indexOf('?');
         const pathname = qIdx >= 0 ? url.slice(0, qIdx) : url;

@@ -230,14 +230,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'Export Project (ZIP)'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju',
-      publisherName: 'Dr.G Sathyanarayana Raju',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.',
+      publisherName: 'G.Sathyanarayana Raju.Peetla.',
       leaderTitle: 'Founder & Historical Documentation Contributor',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
       leaderBio: 'Leading the digital historical documentation, epigraphic preservation, and pan-Indian cultural integration of the Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal.',
       contactWhatsApp: 'Contact on WhatsApp (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'
+      whatsappGreeting: 'Namaste G.Sathyanarayana Raju.Peetla. ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal'
     },
     hero: {
       badge: 'Epigraphic Archival Rigor & Primary Evidence',
@@ -405,14 +405,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'प्रोजेक्ट ज़िप डाउनलोड'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (शोध, दस्तावेज़ीकरण एवं संकलन: डॉ. जी. सत्यनारायण राजू)',
-      publisherName: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (शोध, दस्तावेज़ीकरण एवं संकलन: जी. सत्यनारायण राजू. पीटला.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (संस्थापक एवं ऐतिहासिक दस्तावेज़ीकरण योगदानकर्ता)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक धरोहर, पुरातात्विक अभिलेखों के संरक्षण एवं अखिल भारतीय सांस्कृतिक समन्वय के संस्थापक एवं ऐतिहासिक दस्तावेज़ीकरण योगदानकर्ता — Dr.G Sathyanarayana Raju।',
+      leaderBio: 'सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक धरोहर, पुरातात्विक अभिलेखों के संरक्षण एवं अखिल भारतीय सांस्कृतिक समन्वय के संस्थापक एवं ऐतिहासिक दस्तावेज़ीकरण योगदानकर्ता — G.Sathyanarayana Raju.Peetla.।',
       contactWhatsApp: 'व्हाट्सएप पर संपर्क करें (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'नमस्ते Dr.G Sathyanarayana Raju जी, सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक पोर्टल के संदर्भ में'
+      whatsappGreeting: 'नमस्ते G.Sathyanarayana Raju.Peetla. जी, सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक पोर्टल के संदर्भ में'
     },
     hero: {
       badge: 'प्रामाणिक शिलालेखीय साक्ष्य एवं ऐतिहासिक अनुसंधान',
@@ -580,14 +580,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'ప్రాజెక్ట్ జిప్ డౌన్‌లోడ్'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (పరిశోధన, డాక్యుమెంటేషన్ & సంకలనం: డాక్టర్ జి. సత్యనారాయణ రాజు)',
-      publisherName: 'Dr.G Sathyanarayana Raju (డాక్టర్ జి. సత్యనారాయణ రాజు)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (పరిశోధన, డాక్యుమెంటేషన్ & సంకలనం: జి. సత్యనారాయణ రాజు. పీట్ల.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (జి. సత్యనారాయణ రాజు. పీట్ల.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (వ్యవస్థాపకులు & చారిత్రక డాక్యుమెంటేషన్ కంట్రిబ్యూటర్)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'సూర్యవంశ ఒడియరాజు క్షత్రియ సాంస్కృతిక వారసత్వం, ప్రాచీన శాసనాల పరిరక్షణ మరియు సమగ్ర చారిత్రక డిజిటలైజేషన్ నడిపిస్తున్న వ్యవస్థాపకులు — Dr.G Sathyanarayana Raju.',
+      leaderBio: 'సూర్యవంశ ఒడియరాజు క్షత్రియ సాంస్కృతిక వారసత్వం, ప్రాచీన శాసనాల పరిరక్షణ మరియు సమగ్ర చారిత్రక డిజిటలైజేషన్ నడిపిస్తున్న వ్యవస్థాపకులు — G.Sathyanarayana Raju.Peetla..',
       contactWhatsApp: 'వాట్సాప్‌లో సంప్రదించండి (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'నమస్కారం Dr.G Sathyanarayana Raju గారు, సూర్యవంశ ఒడియరాజు క్షత్రియ చారిత్రక పోర్టల్ గురించి'
+      whatsappGreeting: 'నమస్కారం G.Sathyanarayana Raju.Peetla. గారు, సూర్యవంశ ఒడియరాజు క్షత్రియ చారిత్రక పోర్టల్ గురించి'
     },
     hero: {
       badge: 'శాసన ఆధారిత చారిత్రక పరిశోధన & ప్రైమరీ ఆధారాలు',
@@ -755,14 +755,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'ಪ್ರಾಜೆಕ್ಟ್ ಜಿಪ್ ಡೌನ್‌ಲೋಡ್'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (ಸಂಶೋಧನೆ, ದಾಖಲೀಕರಣ ಮತ್ತು ಸಂಕಲನ: ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು)',
-      publisherName: 'Dr.G Sathyanarayana Raju (ಡಾ. ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (ಸಂಶೋಧನೆ, ದಾಖಲೀಕರಣ ಮತ್ತು ಸಂಕಲನ: ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು. ಪೀಟ್ಲ.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (ಜಿ. ಸತ್ಯನಾರಾಯಣ ರಾಜು. ಪೀಟ್ಲ.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (ಸ್ಥಾಪಕರು ಮತ್ತು ಐತಿಹಾಸಿಕ ದಾಖಲೀಕರಣ ಕೊಡುಗೆದಾರರು)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಪರಂಪರೆಯ ಐತಿಹಾಸಿಕ ದಾಖಲೀಕರಣ, ಶಾಸನ ಸಂರಕ್ಷಣೆ ಮತ್ತು ಅಖಿಲ ಭಾರತ ಸಾಂಸ್ಕೃತಿಕ ಏಕತೆಯ ಮುಂಚೂಣಿ ಮಾರ್ಗದರ್ಶಕರು — Dr.G Sathyanarayana Raju.',
+      leaderBio: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಪರಂಪರೆಯ ಐತಿಹಾಸಿಕ ದಾಖಲೀಕರಣ, ಶಾಸನ ಸಂರಕ್ಷಣೆ ಮತ್ತು ಅಖಿಲ ಭಾರತ ಸಾಂಸ್ಕೃತಿಕ ಏಕತೆಯ ಮುಂಚೂಣಿ ಮಾರ್ಗದರ್ಶಕರು — G.Sathyanarayana Raju.Peetla..',
       contactWhatsApp: 'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಿ (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'ನಮಸ್ಕಾರ Dr.G Sathyanarayana Raju ಜೀ, ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಐತಿಹಾಸಿಕ ಪೋರ್ಟಲ್ ಕುರಿತು'
+      whatsappGreeting: 'ನಮಸ್ಕಾರ G.Sathyanarayana Raju.Peetla. ಜೀ, ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಐತಿಹಾಸಿಕ ಪೋರ್ಟಲ್ ಕುರಿತು'
     },
     hero: {
       badge: 'ಶಾಸನ ಆಧಾರಿತ ಐತಿಹಾಸಿಕ ಸಂಶೋಧನೆ & ಮೂಲ ಪುರಾವೆ',
@@ -930,14 +930,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'திட்ட ஜிப் பதிவிறக்கம்'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (ஆராய்ச்சி, ஆவணப்படுத்தல் & தொகுப்பு: டாக்டர் ஜி. சத்யநாராயண ராஜு)',
-      publisherName: 'Dr.G Sathyanarayana Raju (டாக்டர் ஜி. சத்யநாராயண ராஜு)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (ஆராய்ச்சி, ஆவணப்படுத்தல் & தொகுப்பு: ஜி. சத்யநாராயண ராஜு. பீட்லா.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (ஜி. சத்யநாராயண ராஜு. பீட்லா.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (நிறுவனர் & வரலாற்று ஆவணப் பங்களிப்பாளர்)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'சூரியவம்ச ஒட்டியராஜு சத்திரிய வரலாற்று ஆவணப்படுத்துதல், கல்வெட்டு பாதுகாப்பு மற்றும் அகில பாரத கலாச்சார ஒருங்கிணைப்பின் முதன்மை வழிகாட்டி — Dr.G Sathyanarayana Raju.',
+      leaderBio: 'சூரியவம்ச ஒட்டியராஜு சத்திரிய வரலாற்று ஆவணப்படுத்துதல், கல்வெட்டு பாதுகாப்பு மற்றும் அகில பாரத கலாச்சார ஒருங்கிணைப்பின் முதன்மை வழிகாட்டி — G.Sathyanarayana Raju.Peetla..',
       contactWhatsApp: 'வாட்ஸ்அப்பில் தொடர்புகொள்ள (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'வணக்கம் Dr.G Sathyanarayana Raju ஜி, சூரியவம்ச ஒட்டியராஜு சத்திரிய வரலாற்று தளம் குறித்து'
+      whatsappGreeting: 'வணக்கம் G.Sathyanarayana Raju.Peetla. ஜி, சூரியவம்ச ஒட்டியராஜு சத்திரிய வரலாற்று தளம் குறித்து'
     },
     hero: {
       badge: 'கல்வெட்டு சான்றுகள் மற்றும் வரலாற்று ஆய்வு',
@@ -1105,14 +1105,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'प्रकल्प झिप डाउनलोड'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (संशोधन, दस्तावेजीकरण व संकलन: डॉ. जी. सत्यनारायण राजू)',
-      publisherName: 'Dr.G Sathyanarayana Raju (डॉ. जी. सत्यनारायण राजू)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (संशोधन, दस्तावेजीकरण व संकलन: जी. सत्यनारायण राजू. पीटला.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (जी. सत्यनारायण राजू. पीटला.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (संस्थापक व ऐतिहासिक दस्तावेजीकरण योगदानकर्ते)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'सूर्यवंश ओडियाराजू क्षत्रिय वारशाचे ऐतिहासिक दस्तावेजीकरण, शिलालेख संवर्धन आणि अखिल भारतीय सांस्कृतिक ऐक्याचे मार्गदर्शक नेतृत्व — Dr.G Sathyanarayana Raju.',
+      leaderBio: 'सूर्यवंश ओडियाराजू क्षत्रिय वारशाचे ऐतिहासिक दस्तावेजीकरण, शिलालेख संवर्धन आणि अखिल भारतीय सांस्कृतिक ऐक्याचे मार्गदर्शक नेतृत्व — G.Sathyanarayana Raju.Peetla..',
       contactWhatsApp: 'व्हॉट्सॲपवर संपर्क साधा (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'नमस्ते Dr.G Sathyanarayana Raju जी, सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक पोर्टल संदर्भात'
+      whatsappGreeting: 'नमस्ते G.Sathyanarayana Raju.Peetla. जी, सूर्यवंश ओडियाराजू क्षत्रिय ऐतिहासिक पोर्टल संदर्भात'
     },
     hero: {
       badge: 'शिलालेखीय पुरावे आणि ऐतिहासिक संशोधन',
@@ -1280,14 +1280,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'ପ୍ରକଳ୍ପ ଜିପ୍ ଡାଉନଲୋଡ୍'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (ଗବେଷଣା, ଦସ୍ତାବିଜୀକରଣ ଓ ସଂକଳନ: ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)',
-      publisherName: 'Dr.G Sathyanarayana Raju (ଡକ୍ଟର ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (ଗବେଷଣା, ଦସ୍ତାବିଜୀକରଣ ଓ ସଂକଳନ: ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ. ପୀଟଲା.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (ଜି. ସତ୍ୟନାରାୟଣ ରାଜୁ. ପୀଟଲା.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (প্রতিଷ୍ଠାତା ଓ ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ ଯୋଗଦାନକାରୀ)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟର ଡିଜିଟାଲ୍ ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ, ଶିଳାଲେଖ ସଂରକ୍ଷଣ ତଥା ସର୍ବଭାରତୀୟ ସାଂସ୍କୃତିକ ଏକତାର ମାର୍ଗଦର୍ଶକ — Dr.G Sathyanarayana Raju।',
+      leaderBio: 'ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟର ଡିଜିଟାଲ୍ ଐତିହାସିକ ଦସ୍ତାବିଜୀକରଣ, ଶିଳାଲେଖ ସଂରକ୍ଷଣ ତଥା ସର୍ବଭାରତୀୟ ସାଂସ୍କୃତିକ ଏକତାର ମାର୍ଗଦର୍ଶକ — G.Sathyanarayana Raju.Peetla.।',
       contactWhatsApp: 'ହ୍ୱାଟ୍ସଆପ୍‌ରେ ଯୋଗାଯୋଗ କରନ୍ତୁ (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'ନମସ୍କାର Dr.G Sathyanarayana Raju ଜୀ, ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟ ପୋର୍ଟାଲ୍ ସମ୍ପର୍କରେ'
+      whatsappGreeting: 'ନମସ୍କାର G.Sathyanarayana Raju.Peetla. ଜୀ, ସୂର୍ଯ୍ୟବଂଶୀ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଐତିହ୍ୟ ପୋର୍ଟାଲ୍ ସମ୍ପର୍କରେ'
     },
     hero: {
       badge: 'ପ୍ରାମାଣିକ ଶିଳାଲେଖ ଓ ଐତିହାସିକ ଗବେଷଣା',
@@ -1455,14 +1455,14 @@ export const baseTranslations: Record<LanguageCode, BaseTranslationDictionary> =
       exportZip: 'প্রকল্প জিপ ডাউনলোড'
     },
     publisher: {
-      designedAndPublishedBy: 'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju (গবেষণা, নথিবদ্ধকরণ ও সংকলন: ডক্টর জি. সত্যনারায়ণ রাজু)',
-      publisherName: 'Dr.G Sathyanarayana Raju (ডক্টর জি. সত্যনারায়ণ রাজু)',
+      designedAndPublishedBy: 'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. (গবেষণা, নথিবদ্ধকরণ ও সংকলন: জি. সত্যনারায়ণ রাজু. পীটলা.)',
+      publisherName: 'G.Sathyanarayana Raju.Peetla. (জি. সত্যনারায়ণ রাজু. পীটলা.)',
       leaderTitle: 'Founder & Historical Documentation Contributor (প্রতিষ্ঠাতা ও ঐতিহাসিক নথিবদ্ধকরণ অবদানকারী)',
       organization: 'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal',
-      leaderBio: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় ঐতিহ্যের ডিজিটাল ঐতিহাসিক নথিবদ্ধকরণ, শিলালিপি সংরক্ষণ এবং সর্বভারতীয় সাংস্কৃতিক সংহতির দিশারি — Dr.G Sathyanarayana Raju।',
+      leaderBio: 'সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় ঐতিহ্যের ডিজিটাল ঐতিহাসিক নথিবদ্ধকরণ, শিলালিপি সংরক্ষণ এবং সর্বভারতীয় সাংস্কৃতিক সংহতির দিশারি — G.Sathyanarayana Raju.Peetla.।',
       contactWhatsApp: 'হোয়াটসঅ্যাপে যোগাযোগ করুন (+91 9480112897)',
       callMobile: '+91 9480112897',
-      whatsappGreeting: 'নমস্কার Dr.G Sathyanarayana Raju জী, সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় ঐতিহাসিক পোর্টাল প্রসঙ্গে'
+      whatsappGreeting: 'নমস্কার G.Sathyanarayana Raju.Peetla. জী, সূর্যবংশ ওডিয়ারাজু ক্ষত্রিয় ঐতিহাসিক পোর্টাল প্রসঙ্গে'
     },
     hero: {
       badge: 'শিলালিপিভিত্তিক ঐতিহাসিক গবেষণা ও সংরক্ষণ',

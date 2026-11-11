@@ -59,11 +59,11 @@ export interface PdfExportResult {
 }
 
 const AUTHOR_PHOTO_PATH = `${(import.meta as any).env?.BASE_URL || '/'}assets/dr_g_sathyanarayana_raju.png`;
-const CANONICAL_AUTHOR_NAME = 'Dr.G Sathyanarayana Raju';
+const CANONICAL_AUTHOR_NAME = 'G.Sathyanarayana Raju.Peetla.';
 const CANONICAL_AUTHOR_ROLES =
   'Founder • Web Developer / Designer • Digital Creator • Historical Documentation Contributor';
 const CANONICAL_AUTHOR_CREDIT =
-  'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju';
+  'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.';
 const CANONICAL_ORGANIZATION =
   'Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
 
@@ -1809,7 +1809,7 @@ export function extractStructuredArticleContent(
 }
 
 /**
- * Renders the repeating circular-photo Author Footer (`Dr.G Sathyanarayana Raju`)
+ * Renders the repeating circular-photo Author Footer (`G.Sathyanarayana Raju.Peetla.`)
  * and `Page X of Y` badge onto a high-resolution HTML5 Canvas data URL.
  * Uses the Royal Light Almond theme (`#FFFCF5` / `#FFF9EF` / `#54351F` / `#A87924`).
  */
@@ -1900,7 +1900,7 @@ function renderRepeatingAuthorFooterDataUrl(
   ctx.fillStyle = ROYAL_THEME.primaryText;
   ctx.fillText(CANONICAL_AUTHOR_ROLES, textX + nameWidth + 28, 53);
 
-  // Secondary Line: Research, Documentation & Compilation by Dr.G Sathyanarayana Raju
+  // Secondary Line: Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.
   ctx.font = 'bold 17px system-ui, -apple-system, sans-serif';
   ctx.fillStyle = ROYAL_THEME.linkColor;
   ctx.fillText(CANONICAL_AUTHOR_CREDIT, textX, 88);
@@ -3482,7 +3482,7 @@ async function renderArticlePagesToCanvases(
       );
       authY += 24;
 
-      // Author Name: Dr.G Sathyanarayana Raju
+      // Author Name: G.Sathyanarayana Raju.Peetla.
       ctx.font = `bold 26px ${serifFont}`;
       ctx.fillStyle = ROYAL_THEME.headingText;
       ctx.fillText(block.name, authContentX, authY);

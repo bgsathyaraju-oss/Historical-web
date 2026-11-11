@@ -171,7 +171,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   const fUi = FOOTER_EXTRA_UI[language] || FOOTER_EXTRA_UI.en;
   const whatsappGreeting =
     t.publisher?.whatsappGreeting ||
-    'Namaste Dr.G Sathyanarayana Raju ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
+    'Namaste G.Sathyanarayana Raju.Peetla. ji, regarding Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal';
   const whatsappUrl = `https://wa.me/919480112897?text=${encodeURIComponent(whatsappGreeting)}`;
 
   return (
@@ -183,7 +183,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         backgroundPosition: 'center'
       }}
     >
-      {/* Research, Documentation & Compilation by Dr.G Sathyanarayana Raju */}
+      {/* Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. */}
       <div className="border-b border-[#D4AF37]/45 bg-[#31060D]/95 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-5">
@@ -200,7 +200,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-[3px] border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.45)] ring-2 ring-[#762D35]">
                 <img
                   src={`${import.meta.env.BASE_URL}assets/dr_g_sathyanarayana_raju.png`}
-                  alt={t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
+                  alt={t.publisher?.publisherName || 'G.Sathyanarayana Raju.Peetla.'}
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
@@ -212,10 +212,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <div className="space-y-1">
               <div className="text-[11px] font-serif font-bold uppercase tracking-widest royal-text-gold">
                 {t.publisher?.designedAndPublishedBy ||
-                  'Research, Documentation & Compilation by Dr.G Sathyanarayana Raju'}
+                  'Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla.'}
               </div>
               <h3 className="font-serif font-extrabold text-xl sm:text-2xl royal-text-ivory">
-                {t.publisher?.publisherName || 'Dr.G Sathyanarayana Raju'}
+                {t.publisher?.publisherName || 'G.Sathyanarayana Raju.Peetla.'}
               </h3>
               <p className="text-xs sm:text-sm font-serif font-semibold royal-text-gold">
                 {t.publisher?.leaderTitle || 'Founder & Historical Documentation Contributor'}

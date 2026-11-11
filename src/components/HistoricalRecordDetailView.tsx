@@ -72,6 +72,8 @@ import {
   Reference70Entry,
   matchReference70Terms
 } from '../data/communityReference70Registry';
+import { ReferenceIdBadge } from './ReferenceIdBadge';
+import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
 
 export type HistoricalRecordCategory =
   | 'all'
@@ -963,51 +965,51 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
     MASTER_70_REFERENCE_REGISTRY.forEach(entry => byOrder.set(entry.order, entry));
 
     // Curated historical & regional cross-reference map for each canonical record ID
-    // (1-74 orders from MASTER_70_REFERENCE_REGISTRY, where #56 is Bhoi and #70-#74 are Bhoyudu, Bhoyilu, Boyidu, Boyilu, Pedda-Bhoyudu)
+    // (1-76 orders from MASTER_70_REFERENCE_REGISTRY, where #67-#76 are OddaRaya, VoddaRaya, OddeRaya, VaddeRaya, VaddeBaidu, OddeBaidu, Baidu, Pedda-Baidu, DoraBiddalu, Routhu-Raya)
     const curatedOrdersByRecordId: Record<string, number[]> = {
       // Inscriptions
-      insc_veligalani_1458: [43, 66, 28, 44, 45, 1, 2, 12, 23, 53, 54, 70, 74],
-      insc_lingaraja_1452: [43, 66, 28, 31, 44, 45, 47, 48, 53, 54, 55, 1],
-      insc_simhachalam_prataparudra: [43, 66, 44, 4, 28, 45, 1, 12, 23, 53, 54, 70, 71],
-      insc_hathigumpha: [44, 4, 28, 31, 45, 50, 66, 53],
-      insc_srirangam_1464: [43, 66, 28, 44, 45, 1, 17, 23, 53, 54],
+      insc_veligalani_1458: [43, 63, 28, 44, 45, 1, 2, 12, 23, 67, 68, 70, 75, 76],
+      insc_lingaraja_1452: [43, 63, 28, 31, 44, 45, 47, 48, 53, 67, 76, 1],
+      insc_simhachalam_prataparudra: [43, 63, 44, 4, 28, 45, 1, 12, 23, 67, 68, 70, 75, 76],
+      insc_hathigumpha: [44, 4, 28, 31, 45, 50, 63, 67],
+      insc_srirangam_1464: [43, 63, 28, 44, 45, 1, 17, 23, 67, 68, 76],
       // Documents
-      doc_madala_panji: [43, 66, 28, 44, 45, 48, 53, 54, 55, 56, 1, 70, 74],
-      doc_sarasvati_vilasa: [43, 66, 28, 44, 45, 1, 12, 42, 54],
+      doc_madala_panji: [43, 63, 28, 44, 45, 48, 53, 67, 75, 76, 1],
+      doc_sarasvati_vilasa: [43, 63, 28, 44, 45, 1, 12, 42, 67, 70],
       // Timeline events
-      ev_kharavela_1st_bce: [44, 4, 28, 31, 45, 53, 66],
-      ev_jasma_devi_1120: [28, 29, 26, 27, 35, 39, 40, 1, 66],
-      ev_siddharameshwara_1150: [39, 40, 9, 12, 17, 23, 28, 1],
-      ev_1434: [43, 66, 28, 44, 45, 42, 53, 54, 1],
-      ev_1448: [43, 66, 44, 4, 28, 1, 2, 12, 23, 53, 70, 71, 74],
-      ev_kolletikota_gajapathi_garrison: [43, 66, 28, 44, 1, 2, 3, 12, 23, 53, 70, 71, 72, 73, 74],
-      ev_1458: [43, 66, 28, 44, 45, 1, 12, 23, 53, 54, 70],
-      ev_1464: [43, 66, 28, 44, 1, 17, 23, 53, 54],
-      ev_1489: [43, 66, 28, 44, 45, 48, 53, 54, 1],
-      ev_1515: [43, 66, 44, 28, 45, 1, 12, 23, 53, 70, 72],
-      ev_1568: [43, 66, 28, 44, 45, 53, 54, 55, 56, 1],
+      ev_kharavela_1st_bce: [44, 4, 28, 31, 45, 63, 67],
+      ev_jasma_devi_1120: [28, 29, 26, 27, 35, 39, 40, 1, 63],
+      ev_siddharameshwara_1150: [39, 40, 9, 12, 17, 23, 28, 1, 69, 71, 72],
+      ev_1434: [43, 63, 28, 44, 45, 42, 67, 76, 1],
+      ev_1448: [43, 63, 44, 4, 28, 1, 2, 12, 23, 67, 68, 70, 75, 76],
+      ev_kolletikota_gajapathi_garrison: [43, 63, 28, 44, 1, 2, 3, 12, 23, 67, 68, 70, 73, 74, 75, 76],
+      ev_1458: [43, 63, 28, 44, 45, 1, 12, 23, 67, 68, 70, 75, 76],
+      ev_1464: [43, 63, 28, 44, 1, 17, 23, 67, 68, 76],
+      ev_1489: [43, 63, 28, 44, 45, 48, 67, 76, 1],
+      ev_1515: [43, 63, 44, 28, 45, 1, 12, 23, 67, 69, 70, 75, 76],
+      ev_1568: [43, 63, 28, 44, 45, 53, 67, 75, 76, 1],
       // Archaeological locations
-      loc_barabati_fort: [43, 66, 28, 31, 44, 45, 53, 54, 55, 56, 1],
-      loc_kondapalli_fort: [43, 66, 44, 28, 1, 2, 12, 23, 53, 70, 71, 72, 73, 74],
-      loc_udayagiri_fort: [43, 66, 28, 44, 1, 9, 12, 23, 39, 53, 70, 72, 74],
-      loc_simhachalam_complex: [43, 66, 44, 4, 28, 45, 1, 12, 23, 53, 70],
+      loc_barabati_fort: [43, 63, 28, 31, 44, 45, 53, 67, 76, 1],
+      loc_kondapalli_fort: [43, 63, 44, 28, 1, 2, 12, 23, 67, 68, 70, 73, 74, 75, 76],
+      loc_udayagiri_fort: [43, 63, 28, 44, 1, 9, 12, 23, 39, 67, 69, 70, 71, 72, 75, 76],
+      loc_simhachalam_complex: [43, 63, 44, 4, 28, 45, 1, 12, 23, 67, 68, 75, 76],
       // Monuments
-      mon_puri_jagannath: [43, 66, 28, 44, 45, 48, 53, 54, 56, 1],
-      mon_konark_sun: [66, 28, 44, 45, 48, 53, 54, 1],
-      mon_simhachalam: [43, 66, 44, 4, 28, 1, 12, 23, 53, 70],
-      mon_lingaraja: [43, 66, 28, 31, 44, 45, 48, 53, 54, 1],
+      mon_puri_jagannath: [43, 63, 28, 44, 45, 48, 53, 67, 76, 1],
+      mon_konark_sun: [63, 28, 44, 45, 48, 53, 67, 1],
+      mon_simhachalam: [43, 63, 44, 4, 28, 1, 12, 23, 67, 68, 75],
+      mon_lingaraja: [43, 63, 28, 31, 44, 45, 48, 53, 67, 1],
       // Epistemic claims & Bibliographic corpora
-      clm_01: [43, 66, 28, 44, 45, 42, 1, 12, 53, 54],
-      clm_02: [43, 66, 28, 44, 45, 56, 1, 26, 27, 35],
-      clm_03: [43, 66, 28, 44, 1, 12, 23, 53, 70, 71, 72, 73, 74],
-      'ref-epigraphic': [43, 66, 28, 44, 45, 4, 1, 12, 23, 53, 54],
-      'ref-chronicles': [43, 66, 28, 44, 45, 56, 1, 12, 23, 70, 71, 72, 73, 74],
-      'ref-modern-scholarship': [43, 66, 28, 31, 44, 45, 1, 12, 26, 27, 39, 53, 54, 56]
+      clm_01: [43, 63, 28, 44, 45, 42, 1, 12, 67, 68, 70],
+      clm_02: [43, 63, 28, 44, 45, 1, 26, 27, 35, 67, 75],
+      clm_03: [43, 63, 28, 44, 1, 12, 23, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76],
+      'ref-epigraphic': [43, 63, 28, 44, 45, 4, 1, 12, 23, 67, 68, 69, 70, 76],
+      'ref-chronicles': [43, 63, 28, 44, 45, 1, 12, 23, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76],
+      'ref-modern-scholarship': [43, 63, 28, 31, 44, 45, 1, 12, 26, 27, 39, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76]
     };
 
     return (recId: string, textCorpus: string): Reference70Entry[] => {
       const selected = new Map<number, Reference70Entry>();
-      const curatedOrders = curatedOrdersByRecordId[recId] || [43, 66, 28, 44, 45, 1, 12, 53, 54];
+      const curatedOrders = curatedOrdersByRecordId[recId] || [43, 63, 28, 44, 45, 1, 12, 67, 70, 75, 76];
       curatedOrders.forEach(ord => {
         const entry = byOrder.get(ord);
         if (entry) selected.set(entry.order, entry);
@@ -1192,21 +1194,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'Suryavamsi Gajapati Empire & Royal Lineage',
             period: '1434–1541 CE • Cuttack, Puri & Kalinga-Utkala',
             badge: 'Dynasty & Imperial Polity',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'Odra Desha, Kalinga & Utkala Historical Geography',
             period: 'Ancient to Early Modern • Mahanadi to Godavari',
             badge: 'Historical Kingdom & Territory',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'Chauhan, Bhanja, Soma & Ganga Dynastic Chronology',
             period: '4th Century CE – 19th Century CE',
             badge: 'Dynastic Chronology',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1300,21 +1302,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'सूर्यवंशी गजपति साम्राज्य और शाही वंशावली',
             period: '1434–1541 ईस्वी • कटक, पुरी और कलिंग-उत्कल',
             badge: 'राजवंश और साम्राज्यीय शासन',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ओड्र देश, कलिंग और उत्कल का ऐतिहासिक भूगोल',
             period: 'प्राचीन से प्रारंभिक आधुनिक काल • महानदी से गोदावरी',
             badge: 'ऐतिहासिक राज्य और क्षेत्र',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'चौहान, भंज, सोम और गंग राजवंशीय कालक्रम',
             period: 'चौथी शताब्दी ईस्वी – 19वीं शताब्दी ईस्वी',
             badge: 'राजवंशीय कालक्रम',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1408,21 +1410,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'సూర్యవంశ గజపతి సామ్రాజ్యం & రాజ వంశావళి',
             period: 'సా.శ. 1434–1541 • కటక్, పూరీ & కళింగ-ఉత్కళ',
             badge: 'రాజవంశం & సామ్రాజ్య పాలన',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ఓడ్ర దేశం, కళింగ & ఉత్కళ చారిత్రక భూగోళం',
             period: 'ప్రాచీన నుండి తొలి ఆధునిక కాలం • మహానది నుండి గోదావరి',
             badge: 'చారిత్రక రాజ్యం & భూభాగం',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'చౌహాన్, భంజ, సోమ & గంగ రాజవంశ కాలక్రమం',
             period: 'సా.శ. 4వ శతాబ్దం – 19వ శతాబ్దం',
             badge: 'రాజవంశ కాలక్రమం',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1516,21 +1518,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯ ಮತ್ತು ರಾಜ ವಂಶಾವಳಿ',
             period: 'ಕ್ರಿ.ಶ. 1434–1541 • ಕಟಕ್, ಪುರಿ ಮತ್ತು ಕಳಿಂಗ-ಉತ್ಕಲ',
             badge: 'ರಾಜವಂಶ ಮತ್ತು ಸಾಮ್ರಾಜ್ಯ ಆಡಳಿತ',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ಓಡ್ರ ದೇಶ, ಕಳಿಂಗ ಮತ್ತು ಉತ್ಕಲ ಐತಿಹಾಸಿಕ ಭೂಗೋಳ',
             period: 'ಪ್ರಾಚೀನದಿಂದ ಆರಂಭಿಕ ಆಧುನಿಕ ಕಾಲ • ಮಹಾನದಿಯಿಂದ ಗೋದಾವರಿ',
             badge: 'ಐತಿಹಾಸಿಕ ಸಾಮ್ರಾಜ್ಯ ಮತ್ತು ಪ್ರದೇಶ',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'ಚೌಹಾಣ್, ಭಂಜ, ಸೋಮ ಮತ್ತು ಗಂಗ ರಾಜವಂಶೀಯ ಕಾಲಾನುಕ್ರಮ',
             period: 'ಕ್ರಿ.ಶ. 4ನೇ ಶತಮಾನ – 19ನೇ ಶತಮಾನ',
             badge: 'ರಾಜವಂಶೀಯ ಕಾಲಾನುಕ್ರಮ',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1624,21 +1626,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'சூர்யவம்ச கஜபதி பேரரசு & அரச வம்சாவளி',
             period: 'பொ.ஊ. 1434–1541 • கட்டாக், புரி & கலிங்க-உத்கல',
             badge: 'வம்சம் & பேரரசு ஆட்சி',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ஒட்ர தேசம், கலிங்கம் & உத்கல வரலாற்றுப் புவியியல்',
             period: 'பண்டைய முதல் தொடக்க நவீன காலம் • மகாநதி முதல் கோதாவரி',
             badge: 'வரலாற்று அரசு & நிலப்பரப்பு',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'சௌஹான், பஞ்சா, சோம & கங்க வம்சக் காலவரிசை',
             period: 'பொ.ஊ. 4-ஆம் நூற்றாண்டு – 19-ஆம் நூற்றாண்டு',
             badge: 'வம்சக் காலவரிசை',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1732,21 +1734,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'सूर्यवंशी गजपती साम्राज्य आणि शाही वंशावळ',
             period: 'इ.स. १४३४–१५४१ • कटक, पुरी आणि कलिंग-उत्कल',
             badge: 'राजवंश आणि साम्राज्यीय राज्यव्यवस्था',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ओड्र देश, कलिंग आणि उत्कल ऐतिहासिक भूगोल',
             period: 'प्राचीन ते प्रारंभिक आधुनिक काळ • महानदी ते गोदावरी',
             badge: 'ऐतिहासिक राज्य आणि भूप्रदेश',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'चौहान, भंज, सोम आणि गंग राजवंशीय कालक्रम',
             period: 'इ.स. ४ थे शतक – १९ वे शतक',
             badge: 'राजवंशीय कालक्रम',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1840,21 +1842,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟ ଓ ରାଜ ବଂଶାବଳୀ',
             period: '୧୪୩୪–୧୫୪୧ ଖ୍ରୀଷ୍ଟାବ୍ଦ • କଟକ, ପୁରୀ ଓ କଳିଙ୍ଗ-ଉତ୍କଳ',
             badge: 'ରାଜବଂଶ ଓ ସାମ୍ରାଜ୍ୟ ଶାସନ',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ଓଡ୍ର ଦେଶ, କଳିଙ୍ଗ ଓ ଉତ୍କଳର ଐତିହାସିକ ଭୂଗୋଳ',
             period: 'ପ୍ରାଚୀନରୁ ପ୍ରାରମ୍ଭିକ ଆଧୁନିକ କାଳ • ମହାନଦୀରୁ ଗୋଦାବରୀ',
             badge: 'ଐତିହାସିକ ରାଜ୍ୟ ଓ ଭୂଖଣ୍ଡ',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'ଚୌହାନ, ଭଞ୍ଜ, ସୋମ ଓ ଗଙ୍ଗ ରାଜବଂଶୀୟ କାଳକ୍ରମ',
             period: 'ଖ୍ରୀଷ୍ଟୀୟ ୪ର୍ଥ ଶତାବ୍ଦୀ – ୧୯ଶ ଶତାବ୍ଦୀ',
             badge: 'ରାଜବଂଶୀୟ କାଳକ୍ରମ',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -1948,21 +1950,21 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
             title: 'সূর্যবংশী গজপতি সাম্রাজ্য ও রাজবংশাবলি',
             period: '১৪৩৪–১৫৪১ খ্রিস্টাব্দ • কটক, পুরী ও কলিঙ্গ-উৎকল',
             badge: 'রাজবংশ ও সাম্রাজ্যিক শাসন',
-            imageUrl: '/assets/gallery/konark_wheel.svg',
+            imageUrl: '/assets/archive/konark_chariot_wheel.jpg',
             route: '/gajapathi-kings'
           },
           {
             title: 'ওড্র দেশ, কলিঙ্গ ও উৎকল ঐতিহাসিক ভূগোল',
             period: 'প্রাচীন থেকে প্রারম্ভিক আধুনিক কাল • মহানদী থেকে গোদাবরী',
             badge: 'ঐতিহাসিক রাজ্য ও ভূখণ্ড',
-            imageUrl: '/assets/gallery/udayagiri_caves.svg',
+            imageUrl: '/assets/archive/emperor_kharavela_udayagiri.jpg',
             route: '/odra-desha'
           },
           {
             title: 'চৌহান, ভঞ্জ, সোম ও গঙ্গ রাজবংশীয় কালানুক্রম',
             period: 'খ্রিস্টীয় ৪র্থ শতাব্দী – ১৯শ শতাব্দী',
             badge: 'রাজবংশীয় কালানুক্রম',
-            imageUrl: '/assets/gallery/jagannath_puri.svg',
+            imageUrl: '/assets/archive/puri_jagannatha_temple.jpg',
             route: '/genealogy'
           }
         ]
@@ -3038,7 +3040,10 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
       if (activeCategory !== 'all' && rec.category !== activeCategory) return false;
       if (epistemicFilter !== 'all' && rec.epistemicTier !== epistemicFilter) return false;
       if (!q) return true;
+      const refNum = getPermanentReferenceNumber(rec.id).toLowerCase();
       return (
+        refNum.includes(q) ||
+        rec.id.toLowerCase().includes(q) ||
         rec.title.toLowerCase().includes(q) ||
         rec.subtitle.toLowerCase().includes(q) ||
         rec.summary.toLowerCase().includes(q) ||
@@ -3321,8 +3326,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
     const figurePriorityByRecord: Record<string, string[]> = {
       insc_veligalani_1458: ['fig_kapilendra_deva', 'fig_hamvira_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva'],
       insc_lingaraja_1452: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva', 'fig_hamvira_deva'],
-      insc_simhachalam_prataparudra: ['fig_prataparudra_deva', 'fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_virabhadra_deva'],
-      insc_hathigumpha: ['fig_kharavela', 'fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva'],
+      insc_simhachalam_prataparudra: ['fig_prataparudra_deva', 'fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_hamvira_deva'],
+      insc_hathigumpha: ['fig_king_kharavela', 'fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva'],
       insc_srirangam_1464: ['fig_hamvira_deva', 'fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva']
     };
     const priorityFigIds = figurePriorityByRecord[activeRecord.id];
@@ -3355,7 +3360,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
               Suryavamsha Odiyaraju Kshatriya Historical Documentary & Royal Heritage Portal — {pageTitle}
             </p>
             <p className="text-[11px] font-semibold text-[#292521] mt-0.5">
-              Research, Documentation & Compilation by Dr.G Sathyanarayana Raju • Founder & Historical Documentation Contributor
+              Research, Documentation & Compilation by G.Sathyanarayana Raju.Peetla. • Founder & Historical Documentation Contributor
             </p>
             <p className="text-[10px] text-[#6B5948] break-all mt-0.5">
               {getCanonicalRecordUrl(activeRecord.id)}
@@ -3623,6 +3628,8 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
             {/* Category, Epistemic Classification & Chronological Date Badges */}
             <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+              <ReferenceIdBadge itemId={activeRecord.id} />
+
               <span className="px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-[#762D35] text-white border border-[#A87924]">
                 {activeRecord.categoryLabel}
               </span>
@@ -3841,7 +3848,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                   className="royal-related-link-btn print-avoid-break p-3 rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer flex items-start gap-3 group"
                 >
                   <img
-                    src={fig.image_url || '/assets/gallery/jagannath_puri.svg'}
+                    src={fig.image_url || '/assets/archive/puri_jagannatha_temple.jpg'}
                     alt={fig.name}
                     loading="lazy"
                     onError={handleImgError}
@@ -4051,7 +4058,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       className="royal-related-link-btn print-avoid-break p-3.5 rounded-2xl bg-[#F8DDE3] border border-[#E8BFC9] hover:bg-[#F1C8D2] transition-all cursor-pointer flex items-start gap-3.5 group shadow-sm"
                     >
                       <img
-                        src={mono.featured_image || '/assets/gallery/konark_wheel.svg'}
+                        src={mono.featured_image || '/assets/archive/konark_chariot_wheel.jpg'}
                         alt={mono.original_title}
                         loading="lazy"
                         onError={handleImgError}
@@ -4136,7 +4143,7 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
                       >
                         <div className="flex flex-wrap items-center justify-between gap-1.5">
                           <span className="royal-index-box px-2 py-0.5 rounded bg-[#762D35] text-white text-[10px] font-bold border border-[#A87924]">
-                            #{refEntry.order} / 74
+                            #{refEntry.order} / {MASTER_70_REFERENCE_REGISTRY.length}
                           </span>
                           <span
                             className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
@@ -4634,8 +4641,11 @@ export const HistoricalRecordsExplorer: React.FC<HistoricalRecordsExplorerProps>
 
                   {/* Card Body */}
                   <div className="p-5 sm:p-6 space-y-3">
-                    {/* Epistemic Distinction Pill */}
-                    <div>
+                    {/* Epistemic Distinction Pill & Reference ID */}
+                    <div className="flex flex-wrap items-center justify-between gap-1.5">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-extrabold font-mono px-2 py-0.5 rounded-full bg-[#762D35] text-white border border-[#A87924]">
+                        REF ID: {getPermanentReferenceNumber(rec.id)}
+                      </span>
                       <span
                         className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                           isVerified

@@ -224,7 +224,7 @@ export const MemberRegistrationPage: React.FC<RegisterPageProps> = ({ onNavigate
                 value={formData.full_name}
                 onChange={handleInputChange}
                 required
-                placeholder="e.g. Sathyanarayana Raju"
+                placeholder="e.g. G.Sathyanarayana Raju.Peetla."
                 className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-[#FFFFFF] text-[#292521] placeholder-[#6B5948] border border-[#D8C3A2] focus:outline-none focus:border-[#A87924]"
               />
             </div>
