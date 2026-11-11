@@ -1,20 +1,37 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, UserProfile, UserPreferences } from '../types';
+import { User, UserProfile, UserPreferences, UserRole } from '../types';
+import { auth, db } from '../lib/firebase';
+import { onAuthStateChanged, signOut as fbSignOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: any) => Promise<{ success: boolean; error?: string }>;
-  adminLogin: (email: string, pass: string) => Promise<{ success: boolean; error?: string; user?: User }>;
-  adminRegister: (data: any) => Promise<{ success: boolean; error?: string; user?: User }>;
+  adminLogin: (email: string, pass: string) => Promise<{ success: boolean; error?: string; user?: User; isStaticHost?: boolean }>;
+  adminRegister: (data: any) => Promise<{ success: boolean; error?: string; user?: User; isStaticHost?: boolean }>;
   checkAdminEligibility: (email: string) => Promise<{ eligible: boolean; error?: string; role?: string }>;
   logout: () => Promise<void>;
   updateProfile: (profileData: Partial<UserProfile>) => Promise<{ success: boolean; error?: string }>;
   refreshUser: () => Promise<void>;
+  setDirectUser: (user: User | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+async function safeParseJson(res: Response): Promise<{ ok: boolean; data?: any; isHtml?: boolean }> {
+  try {
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      return { ok: false, isHtml: contentType.includes('text/html') };
+    }
+    const data = await res.json();
+    return { ok: true, data };
+  } catch {
+    return { ok: false };
+  }
+}
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -23,22 +40,107 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchCurrentUser = async () => {
     try {
       const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      } else {
+      const jsonRes = await safeParseJson(res);
+      if (jsonRes.ok && res.ok && jsonRes.data?.user) {
+        setUser(jsonRes.data.user);
+      } else if (!auth.currentUser) {
         setUser(null);
       }
     } catch {
-      setUser(null);
+      if (!auth.currentUser) {
+        setUser(null);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCurrentUser().catch(() => {});
+    let isMounted = true;
+
+    // Listen to Firebase Auth state for static Firebase Hosting & cross-page persistence
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      if (fbUser) {
+        // First check if backend session is available
+        try {
+          const res = await fetch('/api/auth/me');
+          const jsonRes = await safeParseJson(res);
+          if (jsonRes.ok && res.ok && jsonRes.data?.user) {
+            if (isMounted) {
+              setUser(jsonRes.data.user);
+              setLoading(false);
+            }
+            return;
+          }
+        } catch {
+          // Backend offline or static host, proceed to Firestore verification
+        }
+
+        // Resolve role directly from Firestore admins collection or owner whitelist
+        try {
+          const normalizedEmail = (fbUser.email || '').toLowerCase().trim();
+          const isOwner = normalizedEmail === 'bgsathyaraju@gmail.com';
+          let role: UserRole = isOwner ? 'super_admin' : 'member';
+          let adminData: any = null;
+
+          try {
+            const adminDoc = await getDoc(doc(db, 'admins', fbUser.uid));
+            if (adminDoc.exists()) {
+              adminData = adminDoc.data();
+              if (adminData.isAuthorizedAdmin && adminData.role) {
+                role = adminData.role;
+              } else if (isOwner) {
+                role = 'super_admin';
+              }
+            }
+          } catch (e) {
+            console.warn('[AUTH CONTEXT] Firestore admin check:', e);
+          }
+
+          if (isMounted) {
+            setUser({
+              id: fbUser.uid,
+              email: fbUser.email || '',
+              role,
+              status: 'active',
+              email_verified: fbUser.emailVerified ?? true,
+              created_at: fbUser.metadata?.creationTime || new Date().toISOString(),
+              profile: {
+                user_id: fbUser.uid,
+                full_name: fbUser.displayName || adminData?.fullName || fbUser.email || 'Administrator',
+                gender: 'Prefer not to say',
+                country: adminData?.country || 'India',
+                state_or_province: adminData?.state || '',
+                district: adminData?.city || '',
+                city_town_village: adminData?.city || '',
+                organization: 'Suryavamsha Odiyaraju Kshatriya Archival Council',
+                current_work: role === 'super_admin' ? 'Website Owner & Archival Custodian' : 'Archival Administrator',
+                biography: 'Authorized Archival & Editorial Administrator.',
+                areas_of_historical_interest: ['Suryavamsha Gajapathi Dynasties', 'Kakatiya Dynasty History'],
+                languages_known: ['English', 'Telugu', 'Kannada', 'Odia', 'Hindi'],
+                profile_visibility: 'members'
+              }
+            });
+            setLoading(false);
+          }
+        } catch {
+          if (isMounted) setLoading(false);
+        }
+      } else {
+        // No Firebase user, check server session cookie
+        fetchCurrentUser().catch(() => {});
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
+
+  const setDirectUser = (newUser: User | null) => {
+    setUser(newUser);
+  };
 
   const login = async (email: string, pass: string) => {
     try {
@@ -47,13 +149,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: pass })
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Login failed.' };
+      const jsonRes = await safeParseJson(res);
+      if (jsonRes.isHtml) {
+        return { success: false, error: 'Server authentication unavailable on static hosting.' };
       }
-      setUser(data.user);
+      if (!jsonRes.ok) {
+        return { success: false, error: 'Communication error during login.' };
+      }
+      if (!res.ok) {
+        return { success: false, error: jsonRes.data?.error || 'Login failed.' };
+      }
+      setUser(jsonRes.data.user);
       return { success: true };
-    } catch (err: any) {
+    } catch {
       return { success: false, error: 'Network error during login.' };
     }
   };
@@ -65,49 +173,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Registration failed.' };
+      const jsonRes = await safeParseJson(res);
+      if (jsonRes.isHtml) {
+        return { success: false, error: 'Server registration unavailable on static hosting.' };
       }
-      setUser(data.user);
+      if (!jsonRes.ok) {
+        return { success: false, error: 'Communication error during registration.' };
+      }
+      if (!res.ok) {
+        return { success: false, error: jsonRes.data?.error || 'Registration failed.' };
+      }
+      setUser(jsonRes.data.user);
       return { success: true };
-    } catch (err: any) {
+    } catch {
       return { success: false, error: 'Network error during registration.' };
     }
   };
 
-  const adminLogin = async (email: string, pass: string) => {
+  const adminLogin = async (
+    email: string,
+    pass: string
+  ): Promise<{ success: boolean; error?: string; user?: User; isStaticHost?: boolean }> => {
     try {
       const res = await fetch('/api/auth/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: pass })
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Admin login failed.' };
+      const jsonRes = await safeParseJson(res);
+      if (jsonRes.isHtml) {
+        return { success: false, isStaticHost: true, error: 'Static host without Express runtime.' };
       }
-      setUser(data.user);
-      return { success: true, user: data.user };
-    } catch (err: any) {
-      return { success: false, error: 'Network error during admin login.' };
+      if (!jsonRes.ok) {
+        return { success: false, error: 'Communication error with admin authentication service.' };
+      }
+      if (!res.ok) {
+        return { success: false, error: jsonRes.data?.error || 'Admin login failed.' };
+      }
+      setUser(jsonRes.data.user);
+      return { success: true, user: jsonRes.data.user };
+    } catch {
+      return { success: false, error: 'Network error communicating with authentication service.' };
     }
   };
 
-  const adminRegister = async (formData: any) => {
+  const adminRegister = async (
+    formData: any
+  ): Promise<{ success: boolean; error?: string; user?: User; isStaticHost?: boolean }> => {
     try {
       const res = await fetch('/api/auth/admin/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Admin account creation failed.' };
+      const jsonRes = await safeParseJson(res);
+      if (jsonRes.isHtml) {
+        return { success: true, isStaticHost: true };
       }
-      setUser(data.user);
-      return { success: true, user: data.user };
-    } catch (err: any) {
+      if (!jsonRes.ok) {
+        return { success: false, error: 'Communication error during admin registration.' };
+      }
+      if (!res.ok) {
+        return { success: false, error: jsonRes.data?.error || 'Admin account creation failed.' };
+      }
+      setUser(jsonRes.data.user);
+      return { success: true, user: jsonRes.data.user };
+    } catch {
       return { success: false, error: 'Network error during admin account creation.' };
     }
   };
@@ -119,11 +250,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return { eligible: false, error: data.error || 'Not authorized for admin registration.' };
+      const jsonRes = await safeParseJson(res);
+      if (jsonRes.isHtml) {
+        const isOwner = email.toLowerCase().trim() === 'bgsathyaraju@gmail.com';
+        return { eligible: isOwner, role: isOwner ? 'super_admin' : undefined };
       }
-      return { eligible: true, role: data.role };
+      if (!res.ok) {
+        return { eligible: false, error: jsonRes.data?.error || 'Not authorized for admin registration.' };
+      }
+      return { eligible: true, role: jsonRes.data?.role };
     } catch {
       return { eligible: false, error: 'Network error verifying admin eligibility.' };
     }
@@ -131,7 +266,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
+      await fbSignOut(auth);
+    } catch {
+      // ignore
+    }
+    try {
       await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // ignore
     } finally {
       setUser(null);
     }
@@ -144,14 +286,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profileData)
       });
-      const data = await res.json();
+      const jsonRes = await safeParseJson(res);
       if (!res.ok) {
-        return { success: false, error: data.error || 'Failed to update profile.' };
+        return { success: false, error: jsonRes.data?.error || 'Failed to update profile.' };
       }
       if (user) {
         setUser({
           ...user,
-          profile: data.profile
+          profile: jsonRes.data?.profile || {
+            ...(user.profile || {
+              user_id: user.id,
+              full_name: user.email,
+              gender: 'Prefer not to say',
+              country: 'India',
+              state_or_province: '',
+              district: '',
+              city_town_village: ''
+            }),
+            ...profileData
+          }
         });
       }
       return { success: true };
@@ -172,7 +325,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         checkAdminEligibility,
         logout,
         updateProfile,
-        refreshUser: fetchCurrentUser
+        refreshUser: fetchCurrentUser,
+        setDirectUser
       }}
     >
       {children}

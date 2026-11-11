@@ -15,15 +15,19 @@ import {
   KeyRound,
   X
 } from 'lucide-react';
-import { auth } from '../lib/firebase';
+import { auth, db } from '../lib/firebase';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { User, UserRole } from '../types';
 
 interface AdminLoginPageProps {
   onNavigate: (path: string) => void;
 }
 
+export const AUTHORIZED_OWNER_EMAIL = 'bgsathyaraju@gmail.com';
+
 export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onNavigate }) => {
-  const { user, adminLogin, logout } = useAuth();
+  const { user, adminLogin, logout, setDirectUser } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,27 +61,138 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onNavigate }) =>
     setLoading(true);
 
     try {
-      // 1. Attempt Firebase Authentication Client SDK login
+      // 1. Authenticate with Firebase Authentication Client SDK
+      let fbUser: any = null;
+      let fbError: any = null;
+
       try {
-        await signInWithEmailAndPassword(auth, cleanEmail, password);
+        const userCred = await signInWithEmailAndPassword(auth, cleanEmail, password);
+        fbUser = userCred.user;
       } catch (fbErr: any) {
-        // Log warning but proceed to server verification for unified session handling
-        console.warn('[FIREBASE AUTH ATTEMPT]', fbErr?.code || fbErr?.message);
+        fbError = fbErr;
       }
 
-      // 2. Authenticate through Server API with strict Role Guard
+      // 2. Try Server API in parallel/fallback (for full-stack Cloud Run/dev environments)
       const res = await adminLogin(cleanEmail, password);
 
-      if (!res.success) {
-        setErrorMessage(res.error || 'Invalid administrative credentials or insufficient privileges.');
-        setLoading(false);
+      if (res.success && res.user) {
+        onNavigate('/admin');
         return;
       }
 
-      // 3. Navigate directly to Admin Dashboard
-      onNavigate('/admin');
+      // 3. If Server API is unavailable or static hosting (res.isStaticHost), verify Firebase Auth user & Firestore role
+      if (fbUser) {
+        const normalizedEmail = cleanEmail.toLowerCase();
+        const isOwner = normalizedEmail === AUTHORIZED_OWNER_EMAIL.toLowerCase();
+        let adminRole: UserRole | null = isOwner ? 'super_admin' : null;
+        let adminProfileData: any = null;
+
+        try {
+          const adminDoc = await getDoc(doc(db, 'admins', fbUser.uid));
+          if (adminDoc.exists()) {
+            adminProfileData = adminDoc.data();
+            if (adminProfileData.isAuthorizedAdmin && adminProfileData.role) {
+              adminRole = adminProfileData.role;
+            } else if (isOwner) {
+              adminRole = 'super_admin';
+            }
+          }
+        } catch (dbErr) {
+          console.warn('[FIRESTORE ROLE CHECK]', dbErr);
+          if (isOwner) {
+            adminRole = 'super_admin';
+          }
+        }
+
+        const allowedRoles: UserRole[] = [
+          'super_admin',
+          'admin',
+          'historical_editor',
+          'research_reviewer',
+          'translator',
+          'community_moderator'
+        ];
+
+        if (adminRole && allowedRoles.includes(adminRole)) {
+          const verifiedUser: User = {
+            id: fbUser.uid,
+            email: fbUser.email || cleanEmail,
+            role: adminRole,
+            status: 'active',
+            email_verified: fbUser.emailVerified ?? true,
+            created_at: fbUser.metadata?.creationTime || new Date().toISOString(),
+            profile: {
+              user_id: fbUser.uid,
+              full_name: fbUser.displayName || adminProfileData?.fullName || cleanEmail,
+              gender: 'Prefer not to say',
+              country: adminProfileData?.country || 'India',
+              state_or_province: adminProfileData?.state || '',
+              district: adminProfileData?.city || '',
+              city_town_village: adminProfileData?.city || '',
+              organization: 'Suryavamsha Odiyaraju Kshatriya Archival Council',
+              current_work: adminRole === 'super_admin' ? 'Website Owner & Archival Custodian' : 'Archival Administrator',
+              biography: isOwner
+                ? 'Primary Website Owner, Archival Custodian & Epigraphic Researcher for the Suryavamsha Odiyaraju Kshatriya Royal Heritage Portal.'
+                : 'Authorized Archival & Editorial Administrator.',
+              areas_of_historical_interest: [
+                'Suryavamsha Gajapathi Dynasties',
+                'Kakatiya Dynasty History',
+                'Epigraphic Records & Archaeology',
+                'Community Heritage & Surnames'
+              ],
+              languages_known: ['English', 'Telugu', 'Kannada', 'Odia', 'Hindi'],
+              profile_visibility: 'members'
+            }
+          };
+
+          if (setDirectUser) {
+            setDirectUser(verifiedUser);
+          }
+          onNavigate('/admin');
+          return;
+        } else {
+          // The user authenticated with Firebase, but lacks administrative credentials in Firestore
+          setErrorMessage(
+            'Access Denied: This account is registered as a Member and does not possess Administrative privileges. Please log in through the Member Portal.'
+          );
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 4. If Firebase Authentication failed, display precise error message
+      if (fbError) {
+        const code = fbError.code || '';
+        if (
+          code === 'auth/invalid-credential' ||
+          code === 'auth/wrong-password' ||
+          code === 'auth/user-not-found'
+        ) {
+          setErrorMessage('Invalid email credentials or password.');
+        } else if (code === 'auth/too-many-requests') {
+          setErrorMessage(
+            'Access temporarily blocked due to multiple failed login attempts. Please reset your password or try again later.'
+          );
+        } else if (code === 'auth/user-disabled') {
+          setErrorMessage(
+            'This administrative account has been suspended. Please contact the website owner.'
+          );
+        } else if (code === 'auth/invalid-email') {
+          setErrorMessage('Please enter a valid email address.');
+        } else {
+          setErrorMessage(
+            fbError.message || 'Authentication failed. Please check your credentials.'
+          );
+        }
+      } else {
+        setErrorMessage(
+          res.error || 'Invalid administrative credentials or insufficient privileges.'
+        );
+      }
     } catch (err: any) {
-      setErrorMessage(err?.message || 'An unexpected error occurred during administrative login.');
+      setErrorMessage(
+        err?.message || 'An unexpected error occurred during administrative login.'
+      );
     } finally {
       setLoading(false);
     }
@@ -97,26 +212,48 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onNavigate }) =>
     setForgotSubmitting(true);
 
     try {
-      // 1. Send Firebase Auth reset email if available
+      let fbSuccess = false;
+      let fbErrorMsg: string | null = null;
+
+      // 1. Send Firebase Auth reset email directly via Client SDK
       try {
         await sendPasswordResetEmail(auth, cleanEmail);
+        fbSuccess = true;
       } catch (fbErr: any) {
+        fbErrorMsg = fbErr.message;
         console.warn('[FIREBASE RESET WARNING]', fbErr.message);
       }
 
-      // 2. Call server reset endpoint
-      const res = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: cleanEmail })
-      });
-      const data = await res.json();
+      // 2. Opportunistically call server reset endpoint if available
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail })
+        });
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          if (data.message) {
+            setForgotSuccessMsg(data.message);
+            return;
+          }
+        }
+      } catch {
+        // Fall back to Firebase Client SDK result
+      }
 
-      setForgotSuccessMsg(
-        data.message || 'Password recovery instructions have been dispatched to your email address.'
-      );
+      if (fbSuccess) {
+        setForgotSuccessMsg(
+          'Password recovery instructions have been dispatched to your registered email address via Firebase Authentication.'
+        );
+      } else {
+        setForgotErrorMsg(
+          fbErrorMsg || 'Unable to dispatch password reset email. Please ensure the email address is correct.'
+        );
+      }
     } catch {
-      setForgotErrorMsg('Network error while processing password recovery. Please try again.');
+      setForgotErrorMsg('An error occurred while processing password recovery. Please try again.');
     } finally {
       setForgotSubmitting(false);
     }
