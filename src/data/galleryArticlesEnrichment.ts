@@ -1226,7 +1226,9 @@ export function getEnrichedGalleryArticles(
             significance: item.description
           }
         ],
-        historicalPeople: [],
+        historicalPeople: item.id.includes('kakatiya')
+          ? ['Rani Rudrama Devi', 'Ganapati Deva Kakatiya', 'Prataparudra II']
+          : ['Historical Sovereigns & Epigraphers'],
         historicalPlaces: [item.location],
         dynasties: [KEYWORD_DICTIONARY.kw_suryavamsha[lang]],
         references: [

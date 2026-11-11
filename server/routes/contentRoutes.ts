@@ -105,14 +105,13 @@ contentRouter.get('/articles/:idOrSlug', (req: Request, res: Response) => {
   if (lang !== 'en') {
     const builtinTr = (ARTICLE_TRANSLATIONS as Record<string, any>)[article.id]?.[lang];
     const userTr = (article.translations as Record<string, any> | undefined)?.[lang];
-    const effectiveUserTr = userTr && userTr.status !== 'pending' ? userTr : undefined;
-    if (effectiveUserTr) {
-      displayTitle = effectiveUserTr.title;
-      displayContent = effectiveUserTr.content;
-      displaySummary = effectiveUserTr.summary;
-      displayAuthor = effectiveUserTr.author_name || builtinTr?.author_name || article.author_name;
-      displaySources = effectiveUserTr.sources || builtinTr?.sources || article.sources;
-      translationStatus = effectiveUserTr.status;
+    if (userTr) {
+      displayTitle = userTr.title;
+      displayContent = userTr.content;
+      displaySummary = userTr.summary;
+      displayAuthor = userTr.author_name || builtinTr?.author_name || article.author_name;
+      displaySources = userTr.sources || builtinTr?.sources || article.sources;
+      translationStatus = userTr.status;
     } else if (builtinTr) {
       displayTitle = builtinTr.title;
       displayContent = builtinTr.content;
@@ -120,11 +119,6 @@ contentRouter.get('/articles/:idOrSlug', (req: Request, res: Response) => {
       displayAuthor = builtinTr.author_name || article.author_name;
       displaySources = builtinTr.sources || article.sources;
       translationStatus = 'reviewed';
-    } else if (userTr) {
-      displayTitle = userTr.title;
-      displayContent = userTr.content;
-      displaySummary = userTr.summary;
-      translationStatus = userTr.status;
     } else {
       hasTranslation = false;
     }

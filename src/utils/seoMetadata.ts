@@ -1213,6 +1213,18 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     imageAlt: 'Privacy Policy — Suryavamsha Odiyaraju Kshatriya Portal',
     section: 'Privacy Policy',
     keywords: ['Privacy Policy', 'Data Protection', 'Community Directory']
+  },
+  '/page-directory': {
+    title: lang => {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+      return `Website Page Directory — Complete Website Pages, Links & Navigation Index | ${t.siteTitle}`;
+    },
+    description: () =>
+      'Complete Website Pages, Links, Reference IDs & Page Health Monitor Index across all main pages, historical articles, royal dynasties, Kakatiya Dynasty records, inscriptions, maps, and 8-language archives.',
+    rawImagePath: CATEGORY_FALLBACK_IMAGES.home,
+    imageAlt: 'Website Page Directory — Complete Website Pages, Links & Navigation Index',
+    section: 'Website Page Directory',
+    keywords: ['Website Page Directory', 'Navigation Index', 'Reference ID Registry', 'Page Health Monitor', 'Sitemap']
   }
 };
 
@@ -1235,7 +1247,9 @@ const ROUTE_ALIASES: Record<string, string> = {
   '/surnames': '/community-surnames',
   '/media': '/gallery',
   '/publications': '/literature',
-  '/members': '/directory'
+  '/members': '/directory',
+  '/website-page-directory': '/page-directory',
+  '/sitemap': '/page-directory'
 };
 
 export interface ResolveSeoInput {

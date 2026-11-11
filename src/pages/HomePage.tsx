@@ -3977,6 +3977,24 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                       bn: 'ঐতিহাসিক উৎস'
                     }[language] || 'Historical Sources'}
                   </button>
+
+                  {/* 4. Website Page Directory */}
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('/page-directory')}
+                    className="royal-btn-gold px-3 py-1.5 rounded-lg text-xs font-serif font-extrabold leading-[1.3] cursor-pointer"
+                  >
+                    {{
+                      en: 'Website Page Directory',
+                      hi: 'वेबसाइट पृष्ठ निर्देशिका',
+                      te: 'వెబ్‌సైట్ పేజీల డైరెక్టరీ',
+                      kn: 'ವೆಬ್‌ಸೈಟ್ ಪುಟಗಳ ನಿರ್ದೇಶಿಕೆ',
+                      ta: 'வலைத்தளப் பக்கங்களின் அடைவு',
+                      mr: 'वेबसाइट पृष्ठ निर्देशिका',
+                      or: 'ୱେବସାଇଟ୍ ପୃଷ୍ଠା ନିର୍ଦ୍ଦେଶିକା',
+                      bn: 'ওয়েবসাইট পৃষ্ঠা নির্দেশিকা'
+                    }[language] || 'Website Page Directory'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -4054,6 +4072,23 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                       bn: 'রাজকীয় UI ডিজাইন সিস্টেম'
                     }[language] || 'Royal UI Component System'}
                   </button>
+                  <span className="text-[#D4AF37]/50">•</span>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick('/page-directory')}
+                    className="royal-text-gold font-bold hover:underline cursor-pointer"
+                  >
+                    {{
+                      en: 'Website Page Directory',
+                      hi: 'वेबसाइट पृष्ठ निर्देशिका',
+                      te: 'వెబ్‌సైట్ పేజీల డైరెక్టరీ',
+                      kn: 'ವೆಬ್‌ಸೈಟ್ ಪುಟಗಳ ನಿರ್ದೇಶಿಕೆ',
+                      ta: 'வலைத்தளப் பக்கங்களின் அடைவு',
+                      mr: 'वेबसाइट पृष्ठ निर्देशिका',
+                      or: 'ୱେବସାଇଟ୍ ପୃଷ୍ଠା ନିର୍ଦ୍ଦେଶିକା',
+                      bn: 'ওয়েবসাইট পৃষ্ঠা নির্দেশিকা'
+                    }[language] || 'Website Page Directory'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -4117,6 +4152,23 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
                   or: 'ଐତିହାସିକ ଉତ୍ସ',
                   bn: 'ঐতিহাসিক উৎস'
                 }[language] || 'Historical Sources'}
+              </button>
+              <span className="royal-text-gold">·</span>
+              <button
+                type="button"
+                onClick={() => handleNavClick('/page-directory')}
+                className="royal-text-gold font-bold hover:underline cursor-pointer"
+              >
+                {{
+                  en: 'Website Page Directory',
+                  hi: 'वेबसाइट पृष्ठ निर्देशिका',
+                  te: 'వెబ్‌సైట్ పేజీల డైరెక్టరీ',
+                  kn: 'ವೆಬ್‌ಸೈಟ್ ಪುಟಗಳ ನಿರ್ದೇಶಿಕೆ',
+                  ta: 'வலைத்தளப் பக்கங்களின் அடைவு',
+                  mr: 'वेबसाइट पृष्ठ निर्देशिका',
+                  or: 'ୱେବସାଇଟ୍ ପୃଷ୍ଠା ନିର୍ଦ୍ଦେଶିକା',
+                  bn: 'ওয়েবসাইট পৃষ্ঠা নির্দেশিকা'
+                }[language] || 'Website Page Directory'}
               </button>
               <span className="royal-text-gold">·</span>
               <button

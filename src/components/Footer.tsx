@@ -26,6 +26,7 @@ const FOOTER_EXTRA_UI: Record<
     accessibility: string;
     rights: string;
     designSystem: string;
+    pageDirectory: string;
   }
 > = {
   en: {
@@ -43,7 +44,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'Historical Sources',
     accessibility: 'Accessibility Statement',
     rights: 'All historical records & translations reserved.',
-    designSystem: 'Royal UI Component System'
+    designSystem: 'Royal UI Component System',
+    pageDirectory: 'Website Page Directory'
   },
   hi: {
     brandDesc:
@@ -60,7 +62,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ऐतिहासिक स्रोत',
     accessibility: 'सुलभता विवरण',
     rights: 'सभी ऐतिहासिक अभिलेख एवं अनुवाद सुरक्षित।',
-    designSystem: 'राजकीय UI डिज़ाइन प्रणाली'
+    designSystem: 'राजकीय UI डिज़ाइन प्रणाली',
+    pageDirectory: 'वेबसाइट पृष्ठ निर्देशिका'
   },
   te: {
     brandDesc:
@@ -77,7 +80,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'చారిత్రక ఆధారాలు',
     accessibility: 'యాక్సెసిబిలిటీ ప్రకటన',
     rights: 'అన్ని చారిత్రక రికార్డులు & అనువాద హక్కులు ప్రత్యేకించబడినవి.',
-    designSystem: 'రాయల్ UI డిజైన్ సిస్టమ్'
+    designSystem: 'రాయల్ UI డిజైన్ సిస్టమ్',
+    pageDirectory: 'వెబ్‌సైట్ పేజీల డైరెక్టరీ'
   },
   kn: {
     brandDesc:
@@ -94,7 +98,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ಐತಿಹಾಸಿಕ ಆಕರಗಳು',
     accessibility: 'ಪ್ರವೇಶಸಾಧ್ಯತೆಯ ಹೇಳಿಕೆ',
     rights: 'ಎಲ್ಲಾ ಐತಿಹಾಸಿಕ ದಾಖಲೆಗಳು ಮತ್ತು ಅನುವಾದಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ.',
-    designSystem: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ'
+    designSystem: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ',
+    pageDirectory: 'ವೆಬ್‌ಸೈಟ್ ಪುಟಗಳ ನಿರ್ದೇಶಿಕೆ'
   },
   ta: {
     brandDesc:
@@ -111,7 +116,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'வரலாற்று ஆதாரங்கள்',
     accessibility: 'அணுகல்தன்மை அறிக்கை',
     rights: 'அனைத்து வரலாற்று ஆவணங்களும் மொழிபெயர்ப்புகளும் பாதுகாக்கப்பட்டவை.',
-    designSystem: 'அரச UI வடிவமைப்பு அமைப்பு'
+    designSystem: 'அரச UI வடிவமைப்பு அமைப்பு',
+    pageDirectory: 'வலைத்தளப் பக்கங்களின் அடைவு'
   },
   mr: {
     brandDesc:
@@ -128,7 +134,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ऐतिहासिक स्रोत',
     accessibility: 'सुलभता विधान',
     rights: 'सर्व ऐतिहासिक नोंदी आणि भाषांतरे राखीव.',
-    designSystem: 'शाही UI डिझाइन प्रणाली'
+    designSystem: 'शाही UI डिझाइन प्रणाली',
+    pageDirectory: 'वेबसाइट पृष्ठ निर्देशिका'
   },
   or: {
     brandDesc:
@@ -145,7 +152,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ଐତିହାସିକ ଉତ୍ସ',
     accessibility: 'ସୁଗମ୍ୟତା ବିବରଣୀ',
     rights: 'ସମସ୍ତ ଐତିହାସିକ ଅଭିଲେଖ ଓ ଅନୁବାଦ ସଂରକ୍ଷିତ।',
-    designSystem: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍'
+    designSystem: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍',
+    pageDirectory: 'ୱେବସାଇଟ୍ ପୃଷ୍ଠା ନିର୍ଦ୍ଦେଶିକା'
   },
   bn: {
     brandDesc:
@@ -162,7 +170,8 @@ const FOOTER_EXTRA_UI: Record<
     historicalSources: 'ঐতিহাসিক উৎস',
     accessibility: 'অ্যাক্সেসিবিলিটি বিবৃতি',
     rights: 'সকল ঐতিহাসিক নথি ও অনুবাদ সংরক্ষিত।',
-    designSystem: 'রাজকীয় UI ডিজাইন সিস্টেম'
+    designSystem: 'রাজকীয় UI ডিজাইন সিস্টেম',
+    pageDirectory: 'ওয়েবসাইট পৃষ্ঠা নির্দেশিকা'
   }
 };
 
@@ -326,6 +335,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 >
                   {fUi.historicalSources}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/page-directory')}
+                  className="royal-btn-gold px-3 py-1.5 rounded-lg text-xs font-serif font-extrabold hover:brightness-110 cursor-pointer"
+                >
+                  {fUi.pageDirectory}
+                </button>
               </div>
 
               {/* Secondary Legal & Standard Links */}
@@ -353,6 +369,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 >
                   {fUi.designSystem}
                 </button>
+                <span className="royal-text-gold">•</span>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/page-directory')}
+                  className="royal-text-gold font-bold hover:underline cursor-pointer"
+                >
+                  {fUi.pageDirectory}
+                </button>
+                <span className="royal-text-gold">•</span>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('/admin-login')}
+                  className="royal-text-ivory hover:underline cursor-pointer opacity-90"
+                  title="Archival Administration & Editorial Login"
+                >
+                  Admin Portal
+                </button>
               </div>
             </div>
           </div>
@@ -374,6 +407,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <span className="royal-text-gold">•</span>
             <button onClick={() => onNavigate('/references')} className="hover:underline royal-text-gold font-serif font-bold cursor-pointer">
               {fUi.historicalSources}
+            </button>
+            <span className="royal-text-gold">•</span>
+            <button onClick={() => onNavigate('/page-directory')} className="hover:underline royal-text-gold font-serif font-bold cursor-pointer">
+              {fUi.pageDirectory}
             </button>
             <span className="royal-text-gold">•</span>
             <button onClick={() => onNavigate('/about')} className="hover:underline royal-text-ivory cursor-pointer">

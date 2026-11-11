@@ -56,6 +56,11 @@ import {
   COMMUNITY_HERITAGE_DETAILED_ARTICLES,
   SYNONYM_COMPREHENSIVE_MONOGRAPHS
 } from './communityHeritageArticlesData.ts';
+import {
+  KAKATIYA_REFERENCE_ID_MAP,
+  KAKATIYA_INSCRIPTIONS,
+  KAKATIYA_DYNASTY_RECORD
+} from './kakatiyaDynastyData.ts';
 
 export type ReferencePrefixCode =
   | 'HT'
@@ -79,7 +84,8 @@ export type ReferencePrefixCode =
   | 'HR'
   | 'CA'
   | 'EN'
-  | 'WP';
+  | 'WP'
+  | 'KD';
 
 export interface PrefixRegistryEntry {
   prefix: ReferencePrefixCode;
@@ -328,6 +334,15 @@ export const GLOBAL_PREFIX_REGISTRY: Record<ReferencePrefixCode, PrefixRegistryE
     derivationRule: 'W(ebsite) P(ages)',
     idFormatExample: 'WP-0001',
     description: 'Permanent Reference IDs for all 31 application page routes and 7 canonical category hubs.'
+  },
+  KD: {
+    prefix: 'KD',
+    englishPageTitle: 'Kakatiya Dynasty (Royal Dynasties — Anumakonda & Orugallu)',
+    categoryTitle: '3. Royal Dynasties — Kakatiya Dynasty',
+    canonicalRoute: '/gajapathi-kings?id=dyn_kakatiya_orugallu',
+    derivationRule: 'K(akatiya) D(ynasty)',
+    idFormatExample: 'KD-0001',
+    description: 'Comprehensive Kakatiya Dynasty monograph (KD-0001), 9 Kakatiya rulers (KD-0002..KD-0010), 4 temples & monuments (KD-0011..KD-0014), 4 historical locations (KD-0015..KD-0018), 4 primary inscriptions (KD-0019..KD-0022), royal dynasty record (KD-0023), gallery plate (KD-0024), genealogy node (KD-0025), and 8 dated timeline events (KD-0026..KD-0033).'
   }
 };
 
@@ -689,7 +704,11 @@ export const PERMANENT_GLOBAL_REFERENCE_ID_MAP: Record<string, string> = {
   cat_kingdoms_maps: 'WP-0035',
   cat_historical_documentary: 'WP-0036',
   cat_historical_gallery: 'WP-0037',
-  cat_historical_figures: 'WP-0038'
+  cat_historical_figures: 'WP-0038',
+  page_website_directory: 'WP-0039',
+
+  // 23. Kakatiya Dynasty (KD-0001 to KD-0033)
+  ...KAKATIYA_REFERENCE_ID_MAP
 };
 
 // Deterministically populate CH-0048 .. CH-0123 for the 76 Master Community References
@@ -889,11 +908,17 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
       contentTitle: art.original_title,
       contentCategory: art.category || prefixMeta.categoryTitle,
       internalRecordId: art.id,
-      dataSourceFile: art.id.startsWith('art_dyn_') || art.id.startsWith('art_lin_') || art.id.startsWith('art_ht_') || art.id.startsWith('art_ia_') || art.id.startsWith('art_km_') || art.id.startsWith('art_hd_') || art.id.startsWith('art_hg_')
-        ? 'src/data/expandedDynastiesAndCategoriesArticles.ts'
-        : 'src/data/articlesRepository.ts',
+      dataSourceFile:
+        art.id === 'art_dyn_kakatiya_orugallu'
+          ? 'src/data/kakatiyaDynastyData.ts'
+          : art.id.startsWith('art_dyn_') || art.id.startsWith('art_lin_') || art.id.startsWith('art_ht_') || art.id.startsWith('art_ia_') || art.id.startsWith('art_km_') || art.id.startsWith('art_hd_') || art.id.startsWith('art_hg_')
+          ? 'src/data/expandedDynastiesAndCategoriesArticles.ts'
+          : 'src/data/articlesRepository.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: [],
+      relatedContentIds:
+        art.id === 'art_dyn_kakatiya_orugallu'
+          ? ['comm_dir_10_vaddera', 'comm_dir_12_vaddirajulu', 'fig_kakatiya_ganapati_deva', 'fig_kakatiya_rudrama_devi', 'fig_kakatiya_prataparudra_ii']
+          : [],
       creationDate: art.publication_date || '2026-01-18',
       lastUpdatedDate: '2026-11-11',
       recordStatus:
@@ -953,21 +978,23 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
   };
   for (const ev of CANONICAL_TIMELINE_EVENTS) {
     const refId = getReferenceIdByInternalId(ev.id, 'HT');
+    const evPrefix = (refId.split('-')[0] as ReferencePrefixCode) || 'HT';
+    const isKakatiyaEv = evPrefix === 'KD';
     addRecord({
       newReferenceId: refId,
-      previousReferenceId: prevEventRefMap[ev.id] || ev.id,
-      englishPageTitle: 'Historical Timeline',
+      previousReferenceId: prevEventRefMap[ev.id] || refId,
+      englishPageTitle: isKakatiyaEv ? GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle : 'Historical Timeline',
       contentTitle: `${ev.title} (${ev.year_text})`,
-      contentCategory: 'Historical Timeline Events',
+      contentCategory: isKakatiyaEv ? '3. Royal Dynasties — Kakatiya Timeline Events' : 'Historical Timeline Events',
       internalRecordId: ev.id,
-      dataSourceFile: 'src/data/archivalSeedData.ts',
+      dataSourceFile: isKakatiyaEv ? 'src/data/kakatiyaDynastyData.ts' : 'src/data/archivalSeedData.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: ['art_ht_chronological_methodology'],
-      creationDate: '2026-01-20',
+      relatedContentIds: isKakatiyaEv ? ['art_dyn_kakatiya_orugallu', 'art_ht_chronological_methodology'] : ['art_ht_chronological_methodology'],
+      creationDate: isKakatiyaEv ? '2026-11-11' : '2026-01-20',
       lastUpdatedDate: '2026-11-11',
       recordStatus: 'Active & Verified',
       canonicalRoute: `/timeline?id=${encodeURIComponent(ev.id)}`,
-      prefix: 'HT'
+      prefix: evPrefix
     });
   }
 
@@ -1004,8 +1031,27 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
       prefix: 'IA'
     });
   }
+  for (const kIns of KAKATIYA_INSCRIPTIONS) {
+    const refId = getReferenceIdByInternalId(kIns.id, 'KD');
+    addRecord({
+      newReferenceId: refId,
+      previousReferenceId: refId,
+      englishPageTitle: GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle,
+      contentTitle: `${kIns.name} (${kIns.era_or_date})`,
+      contentCategory: '2. Inscriptions & Archaeology — Kakatiya Epigraphy',
+      internalRecordId: kIns.id,
+      dataSourceFile: 'src/data/kakatiyaDynastyData.ts',
+      availableLanguages: ALL_EIGHT_LANGUAGES,
+      relatedContentIds: ['art_dyn_kakatiya_orugallu', 'art_ia_south_indian_epigraphy_corpus'],
+      creationDate: '2026-11-11',
+      lastUpdatedDate: '2026-11-11',
+      recordStatus: 'Active & Verified',
+      canonicalRoute: `/inscriptions?id=${encodeURIComponent(kIns.id)}`,
+      prefix: 'KD'
+    });
+  }
 
-  // 5. 8 Inline Royal Dynasty & Administration Dossiers on GajapathiKingdomPage (RD-0014 .. RD-0021)
+  // 5. 8 Inline Royal Dynasty & Administration Dossiers on GajapathiKingdomPage (RD-0014 .. RD-0021) + Kakatiya Dynasty Record (KD-0023)
   const rdInlineItems: Array<{ id: string; ref: string; title: string }> = [
     { id: 'dyn_suryavamsha_gajapathi', ref: 'RD-0014', title: 'Suryavamsha Gajapathi Imperial Dynasty (1434–1541 CE)' },
     { id: 'dyn_eastern_ganga', ref: 'RD-0015', title: 'Imperial Eastern Ganga (Chodaganga) Dynasty (496–1434 CE)' },
@@ -1034,6 +1080,22 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
       prefix: 'RD'
     });
   }
+  addRecord({
+    newReferenceId: 'KD-0023',
+    previousReferenceId: 'KD-0023',
+    englishPageTitle: GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle,
+    contentTitle: `${KAKATIYA_DYNASTY_RECORD.name.en} (${KAKATIYA_DYNASTY_RECORD.period.en})`,
+    contentCategory: '3. Royal Dynasties — Kakatiya Dynasty',
+    internalRecordId: KAKATIYA_DYNASTY_RECORD.id,
+    dataSourceFile: 'src/data/kakatiyaDynastyData.ts',
+    availableLanguages: ALL_EIGHT_LANGUAGES,
+    relatedContentIds: ['art_dyn_kakatiya_orugallu', 'fig_kakatiya_ganapati_deva', 'fig_kakatiya_rudrama_devi', 'fig_kakatiya_prataparudra_ii'],
+    creationDate: '2026-11-11',
+    lastUpdatedDate: '2026-11-11',
+    recordStatus: 'Active & Verified',
+    canonicalRoute: `/gajapathi-kings?id=${encodeURIComponent(KAKATIYA_DYNASTY_RECORD.id)}`,
+    prefix: 'KD'
+  });
 
   // 6. 6 Canonical Historical Locations + 1 Map Zenith Record (KM-0004 .. KM-0010)
   const prevLocRefMap: Record<string, string> = {
@@ -1046,21 +1108,23 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
   };
   for (const loc of CANONICAL_LOCATIONS) {
     const refId = getReferenceIdByInternalId(loc.id, 'KM');
+    const locPrefix = (refId.split('-')[0] as ReferencePrefixCode) || 'KM';
+    const isKakatiyaLoc = locPrefix === 'KD';
     addRecord({
       newReferenceId: refId,
-      previousReferenceId: prevLocRefMap[loc.id] || loc.id,
-      englishPageTitle: 'Kingdoms & Maps',
+      previousReferenceId: prevLocRefMap[loc.id] || refId,
+      englishPageTitle: isKakatiyaLoc ? GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle : 'Kingdoms & Maps',
       contentTitle: `${loc.name} (${loc.ancient_name})`,
-      contentCategory: '4. Kingdoms & Maps (Historical Locations & Citadels)',
+      contentCategory: isKakatiyaLoc ? '4. Kingdoms & Maps — Kakatiya Capitals, Ports & Reservoirs' : '4. Kingdoms & Maps (Historical Locations & Citadels)',
       internalRecordId: loc.id,
-      dataSourceFile: 'src/data/archivalSeedData.ts',
+      dataSourceFile: isKakatiyaLoc ? 'src/data/kakatiyaDynastyData.ts' : 'src/data/archivalSeedData.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: ['art_km_deccan_corridors_forts'],
-      creationDate: '2026-01-20',
+      relatedContentIds: isKakatiyaLoc ? ['art_dyn_kakatiya_orugallu', 'art_km_deccan_corridors_forts'] : ['art_km_deccan_corridors_forts'],
+      creationDate: isKakatiyaLoc ? '2026-11-11' : '2026-01-20',
       lastUpdatedDate: '2026-11-11',
       recordStatus: 'Active & Verified',
       canonicalRoute: `/maps?id=${encodeURIComponent(loc.id)}`,
-      prefix: 'KM'
+      prefix: locPrefix
     });
   }
   addRecord({
@@ -1113,49 +1177,59 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
   };
   for (const gal of CANONICAL_GALLERY) {
     const refId = getReferenceIdByInternalId(gal.id, 'HG');
+    const galPrefix = (refId.split('-')[0] as ReferencePrefixCode) || 'HG';
+    const isKakatiyaGal = galPrefix === 'KD';
     addRecord({
       newReferenceId: refId,
-      previousReferenceId: prevGalRefMap[gal.id] || gal.id,
-      englishPageTitle: 'Historical Gallery',
+      previousReferenceId: prevGalRefMap[gal.id] || refId,
+      englishPageTitle: isKakatiyaGal ? GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle : 'Historical Gallery',
       contentTitle: gal.title,
-      contentCategory: '6. Historical Gallery (Archival Visual Plates)',
+      contentCategory: isKakatiyaGal ? '6. Historical Gallery — Kakatiya Architectural Plates' : '6. Historical Gallery (Archival Visual Plates)',
       internalRecordId: gal.id,
-      dataSourceFile: 'src/data/archivalSeedData.ts',
+      dataSourceFile: isKakatiyaGal ? 'src/data/kakatiyaDynastyData.ts' : 'src/data/archivalSeedData.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: ['art_hg_architectural_emblems_provenance'],
-      creationDate: '2026-01-20',
+      relatedContentIds: isKakatiyaGal ? ['art_dyn_kakatiya_orugallu', 'art_hg_architectural_emblems_provenance'] : ['art_hg_architectural_emblems_provenance'],
+      creationDate: isKakatiyaGal ? '2026-11-11' : '2026-01-20',
       lastUpdatedDate: '2026-11-11',
       recordStatus: 'Active & Verified',
       canonicalRoute: `/gallery?id=${encodeURIComponent(gal.id)}`,
-      prefix: 'HG'
+      prefix: galPrefix
     });
   }
 
-  // 9. 14 Documented Historical Figures in KingsQueensPage (HF-0002 .. HF-0014, HF-0017)
+  // 9. Documented Historical Figures in KingsQueensPage (HF-0002 .. HF-0014, HF-0017 + 9 Kakatiya Rulers KD-0002 .. KD-0010)
   for (const fig of DOCUMENTED_FIGURES_REPO) {
     const refId = getReferenceIdByInternalId(fig.id, 'HF');
+    const figPrefix = (refId.split('-')[0] as ReferencePrefixCode) || 'HF';
+    const isKakatiyaFig = figPrefix === 'KD';
+    const figNameEn = typeof fig.name === 'string' ? fig.name : fig.name.en;
+    const figReignEn = (typeof fig.reign_period === 'string' ? fig.reign_period : fig.reign_period?.en) || fig.approx_dates;
     addRecord({
       newReferenceId: refId,
       previousReferenceId: refId,
-      englishPageTitle: 'Historical Figures (Documented Historical Figures / Kings & Queens)',
-      contentTitle: `${fig.name} (${fig.reign_period || fig.approx_dates})`,
-      contentCategory: '7. Historical Figures (Monarchs, Progenitors & Sacred Guardians)',
+      englishPageTitle: isKakatiyaFig
+        ? GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle
+        : 'Historical Figures (Documented Historical Figures / Kings & Queens)',
+      contentTitle: `${figNameEn} (${figReignEn})`,
+      contentCategory: isKakatiyaFig
+        ? '7. Historical Figures — Kakatiya Monarchs of Anumakonda & Orugallu'
+        : '7. Historical Figures (Monarchs, Progenitors & Sacred Guardians)',
       internalRecordId: fig.id,
-      dataSourceFile: 'src/data/documentedFiguresRepository.ts',
+      dataSourceFile: isKakatiyaFig ? 'src/data/kakatiyaDynastyData.ts' : 'src/data/documentedFiguresRepository.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: fig.inscriptions_ids || [],
-      creationDate: '2026-01-21',
+      relatedContentIds: isKakatiyaFig ? ['art_dyn_kakatiya_orugallu', ...(fig.inscriptions_ids || [])] : (fig.inscriptions_ids || []),
+      creationDate: isKakatiyaFig ? '2026-11-11' : '2026-01-21',
       lastUpdatedDate: '2026-11-11',
       recordStatus:
         fig.evidence_status === 'Documented Primary Evidence' || fig.evidence_status === 'Epigraphic Record'
           ? 'Active & Verified'
           : 'Active — Traditional Lineage Record',
       canonicalRoute: `/kings-queens?figure=${encodeURIComponent(fig.id)}`,
-      prefix: 'HF'
+      prefix: figPrefix
     });
   }
 
-  // 10. 4 Canonical Temples & Monuments (TM-0001 .. TM-0004)
+  // 10. Canonical Temples & Monuments (TM-0001 .. TM-0004 + 4 Kakatiya Monuments KD-0011 .. KD-0014)
   const prevMonRefMap: Record<string, string> = {
     mon_meghanada_pacheri: 'IA-6638',
     mon_konark_sun: 'IA-4812',
@@ -1164,21 +1238,23 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
   };
   for (const mon of CANONICAL_MONUMENTS) {
     const refId = getReferenceIdByInternalId(mon.id, 'TM');
+    const monPrefix = (refId.split('-')[0] as ReferencePrefixCode) || 'TM';
+    const isKakatiyaMon = monPrefix === 'KD';
     addRecord({
       newReferenceId: refId,
-      previousReferenceId: prevMonRefMap[mon.id] || mon.id,
-      englishPageTitle: 'Temples & Monuments',
+      previousReferenceId: prevMonRefMap[mon.id] || refId,
+      englishPageTitle: isKakatiyaMon ? GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle : 'Temples & Monuments',
       contentTitle: `${mon.name} (${mon.location})`,
-      contentCategory: 'Temples & Monuments',
+      contentCategory: isKakatiyaMon ? 'Temples & Monuments — Kakatiya Architecture' : 'Temples & Monuments',
       internalRecordId: mon.id,
-      dataSourceFile: 'src/data/archivalSeedData.ts',
+      dataSourceFile: isKakatiyaMon ? 'src/data/kakatiyaDynastyData.ts' : 'src/data/archivalSeedData.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: ['art_hg_architectural_emblems_provenance'],
-      creationDate: '2026-01-20',
+      relatedContentIds: isKakatiyaMon ? ['art_dyn_kakatiya_orugallu', 'art_hg_architectural_emblems_provenance'] : ['art_hg_architectural_emblems_provenance'],
+      creationDate: isKakatiyaMon ? '2026-11-11' : '2026-01-20',
       lastUpdatedDate: '2026-11-11',
       recordStatus: 'Active & Verified',
       canonicalRoute: `/temples-monuments?id=${encodeURIComponent(mon.id)}`,
-      prefix: 'TM'
+      prefix: monPrefix
     });
   }
 
@@ -1207,27 +1283,29 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
     });
   }
 
-  // 12. 9 Royal Genealogy Lineage Nodes + 3 Epistemic Lineage Claims (RG-0001 .. RG-0012)
+  // 12. Royal Genealogy Lineage Nodes + 3 Epistemic Lineage Claims (RG-0001 .. RG-0012 + Kakatiya Lineage Node KD-0025)
   for (const gen of CANONICAL_GENEALOGY) {
     const refId = getReferenceIdByInternalId(gen.id, 'RG');
+    const genPrefix = (refId.split('-')[0] as ReferencePrefixCode) || 'RG';
+    const isKakatiyaGen = genPrefix === 'KD';
     addRecord({
       newReferenceId: refId,
-      previousReferenceId: gen.id,
-      englishPageTitle: 'Royal Genealogy',
+      previousReferenceId: isKakatiyaGen ? refId : gen.id,
+      englishPageTitle: isKakatiyaGen ? GLOBAL_PREFIX_REGISTRY.KD.englishPageTitle : 'Royal Genealogy',
       contentTitle: `${gen.name}${gen.reign ? ' (' + gen.reign + ')' : ''}`,
-      contentCategory: 'Royal Genealogy (Lineage Nodes)',
+      contentCategory: isKakatiyaGen ? 'Royal Genealogy — Kakatiya Durjaya-Ikshvaku Lineage' : 'Royal Genealogy (Lineage Nodes)',
       internalRecordId: gen.id,
-      dataSourceFile: 'src/data/archivalSeedData.ts',
+      dataSourceFile: isKakatiyaGen ? 'src/data/kakatiyaDynastyData.ts' : 'src/data/archivalSeedData.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: ['art_genealogy_methodology'],
-      creationDate: '2026-01-20',
+      relatedContentIds: isKakatiyaGen ? ['art_dyn_kakatiya_orugallu', 'art_genealogy_methodology'] : ['art_genealogy_methodology'],
+      creationDate: isKakatiyaGen ? '2026-11-11' : '2026-01-20',
       lastUpdatedDate: '2026-11-11',
       recordStatus:
         gen.relationship_type === 'documented_primary' || gen.relationship_type === 'epigraphic_confirmed'
           ? 'Active & Verified'
           : 'Active — Traditional Lineage Record',
       canonicalRoute: `/genealogy?id=${encodeURIComponent(gen.id)}`,
-      prefix: 'RG'
+      prefix: genPrefix
     });
   }
   for (const clm of CANONICAL_CLAIMS) {
@@ -1676,7 +1754,8 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
     { id: 'cat_kingdoms_maps', ref: 'WP-0035', title: 'Category 4 Hub: Kingdoms & Maps', route: '/maps' },
     { id: 'cat_historical_documentary', ref: 'WP-0036', title: 'Category 5 Hub: Historical Documentary', route: '/documentary' },
     { id: 'cat_historical_gallery', ref: 'WP-0037', title: 'Category 6 Hub: Historical Gallery', route: '/gallery' },
-    { id: 'cat_historical_figures', ref: 'WP-0038', title: 'Category 7 Hub: Historical Figures', route: '/kings-queens' }
+    { id: 'cat_historical_figures', ref: 'WP-0038', title: 'Category 7 Hub: Historical Figures', route: '/kings-queens' },
+    { id: 'page_website_directory', ref: 'WP-0039', title: 'Website Page Directory — Complete Website Pages, Links & Navigation Index', route: '/page-directory' }
   ];
   for (const wp of wpItems) {
     addRecord({

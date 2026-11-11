@@ -8,11 +8,23 @@ service cloud.firestore {
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
+    function isSuperAdminEmail() {
+      return isAuthenticated() && request.auth.token.email.lower() == 'bgsathyaraju@gmail.com';
+    }
+    function isAdmin() {
+      return isSuperAdminEmail() || (isAuthenticated() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+    
+    // Admin Profiles (Strictly Owner and Authorized Admins)
+    match /admins/{adminId} {
+      allow read: if isAuthenticated() && (isOwner(adminId) || isAdmin());
+      allow write: if isAuthenticated() && (isOwner(adminId) && (isSuperAdminEmail() || isAdmin()));
+    }
     
     // User Profiles
     match /users/{userId} {
       allow read: if true;
-      allow write: if isOwner(userId);
+      allow write: if isOwner(userId) || isAdmin();
     }
     
     // Public Historical Knowledge Collections
@@ -34,7 +46,7 @@ service cloud.firestore {
     match /community_submissions/{submissionId} {
       allow read: if true;
       allow create: if isAuthenticated();
-      allow update, delete: if isAuthenticated() && (resource.data.user_id == request.auth.uid);
+      allow update, delete: if isAuthenticated() && (resource.data.user_id == request.auth.uid || isAdmin());
     }
     
     // Test collection for initial connection validation

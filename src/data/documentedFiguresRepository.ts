@@ -1,4 +1,5 @@
 import type { HistoricalFigure, LanguageCode } from '../types/index.ts';
+import { KAKATIYA_RULER_FIGURES } from './kakatiyaDynastyData.ts';
 
 export interface MultilingualString {
   en: string;
@@ -1821,7 +1822,8 @@ export const DOCUMENTED_FIGURES_REPO: DocumentedFigureData[] = [
       'Tabaqat-i-Nasiri of Minhaj-i-Siraj (Contemporary Persian Chronicle of Jajnagar Wars).',
       'P.K. Ray, "Konarak: The Sun Temple".'
     ]
-  }
+  },
+  ...KAKATIYA_RULER_FIGURES
 ];
 
 export function getLocalizedFigure(fig: DocumentedFigureData, lang: LanguageCode): HistoricalFigure {

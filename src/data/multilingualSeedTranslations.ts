@@ -1,4 +1,10 @@
 import type { LanguageCode } from '../types/index.ts';
+import {
+  KAKATIYA_GENEALOGY_TRANSLATIONS,
+  KAKATIYA_TIMELINE_TRANSLATIONS,
+  KAKATIYA_LOCATION_TRANSLATIONS,
+  KAKATIYA_GALLERY_TRANSLATIONS
+} from './kakatiyaDynastyData.ts';
 
 export interface GenealogyNodeTranslation {
   name: string;
@@ -743,7 +749,8 @@ export const GENEALOGY_NODE_TRANSLATIONS: Record<string, Partial<Record<Language
       reign: '১৬শ – ১৮শ শতাব্দী',
       notes: 'গোদাবরী, কৃষ্ণা, রায়লসীমা ও মহীশূর অঞ্চলে বসতি স্থাপনকারী গজপতি সেনা পরিবারের ঐতিহ্যবাহী বংশধারা।'
     }
-  }
+  },
+  ...KAKATIYA_GENEALOGY_TRANSLATIONS
 };
 
 export const CLAIM_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, ClaimTranslation>>> = {
@@ -1678,7 +1685,8 @@ export const TIMELINE_EVENT_TRANSLATIONS: Record<string, Partial<Record<Language
       monuments_inscriptions: 'বারবাটী দুর্গের প্রাচীর।',
       uncertainty_notes: 'আকবরনামা ও মাদলা পাঞ্জিতে প্রমাণিত।'
     }
-  }
+  },
+  ...KAKATIYA_TIMELINE_TRANSLATIONS
 };
 
 export const LOCATION_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, LocationTranslation>>> = {
@@ -2071,7 +2079,8 @@ export const LOCATION_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, 
       archaeological_findings: 'প্রাচীন দ্বীপ প্রাচীর, শ্রী পেদ্দিন্টলাম্মা মন্দির ও গোকর্ণেশ্বর মন্দির।',
       inscriptions_found: ['চালুক্য ও গজপতি উপকূলীয় তাম্রশাসন', 'স্থানীয় কৈফিয়ত শিলালিপি']
     }
-  }
+  },
+  ...KAKATIYA_LOCATION_TRANSLATIONS
 };
 
 export const DOCUMENT_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, DocumentTranslation>>> = {
@@ -2298,5 +2307,6 @@ export const GALLERY_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, G
     mr: { title: 'कोल्लेतिकोटा जलदुर्ग आणि कोल्लेरू सरोवर', description: 'कोल्लेरूच्या पाण्यात वसलेला प्राचीन जलदुर्ग आणि माता पेद्दिंटलम्माचे पवित्र स्थान.' },
     or: { title: 'କୋଲ୍ଲେତିକୋଟା ଜଳଦୁର୍ଗ ଓ କୋଲ୍ଲେରୁ ହ୍ରଦ', description: 'କୋଲ୍ଲେରୁ ହ୍ରଦ ମଧ୍ୟରେ ଅବସ୍ଥିତ ପ୍ରାଚୀନ ଜଳଦୁର୍ଗ ଓ ମାତା ପେଦ୍ଦିଣ୍ଟଲମ୍ମାଙ୍କ ପବିତ୍ର ପୀଠ।' },
     bn: { title: 'কোল্লেতিকোটা জলদুর্গ ও কোল্লেরু হ্রদ', description: 'কোল্লেরু হ্রদের মাঝে প্রাচীন জলদুর্গ ও মা পেদ্দিন্টলাম্মার পবিত্র ধাম।' }
-  }
+  },
+  ...KAKATIYA_GALLERY_TRANSLATIONS
 };

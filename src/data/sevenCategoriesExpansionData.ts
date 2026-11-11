@@ -1,4 +1,5 @@
 import type { Article, LanguageCode, SourceReference } from '../types/index.ts';
+import { KAKATIYA_REFERENCE_ID_MAP } from './kakatiyaDynastyData.ts';
 
 const ARCHIVE_IMG = (file: string) =>
   `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
@@ -267,6 +268,7 @@ export const SEVEN_HISTORICAL_CATEGORIES: CanonicalHistoricalCategory[] = [
       'art_dyn_kadambas_banavasi',
       'art_dyn_badami_chalukyas',
       'art_dyn_vengi_chalukyas',
+      'art_dyn_kakatiya_orugallu',
       'art_dyn_siddhini_kings_verification',
       'art_lin_suryavamshi_kshatriyas',
       'art_lin_chandravamshi_kshatriyas',
@@ -793,7 +795,11 @@ export const PERMANENT_ARTICLE_REFERENCE_NUMBERS: Record<string, string> = {
   cat_kingdoms_maps: 'WP-0035',
   cat_historical_documentary: 'WP-0036',
   cat_historical_gallery: 'WP-0037',
-  cat_historical_figures: 'WP-0038'
+  cat_historical_figures: 'WP-0038',
+  page_website_directory: 'WP-0039',
+
+  // Kakatiya Dynasty (KD-0001 to KD-0033)
+  ...KAKATIYA_REFERENCE_ID_MAP
 };
 
 export function getPermanentReferenceNumber(itemId: string, categoryFallback?: string): string {
@@ -2158,9 +2164,20 @@ export const MYTHOLOGY_TO_HISTORY_STAGES: ChronologicalEpochStage[] = [
         epigraphicAnchor: 'Draksharama & Simhachalam Trilingual Epigraphs (SII Vol. IV & VI); Hanamkonda Thousand-Pillar Inscription (1163 CE)'
       }
     ],
-    keyMonumentsAndInscriptions: ['Brihadisvara Temple Thanjavur (1010 CE)', 'Shree Jagannatha Temple Puri & Korni Plates (1112 CE)', 'Konark Sun Temple (c. 1250 CE) & Kendupatna Plates (1295 CE)', 'Rani-ki-Vav & Sahasralinga Talav Patan (c. 1120 CE)'],
-    linkedArticleIds: ['art_dyn_imperial_cholas', 'art_dyn_chalukya_synthesis', 'art_dyn_eastern_gangas', 'art_dyn_siddhini_kings_verification', 'art_lin_suryavamshi_kings'],
-    linkedEventIds: ['ev_jasma_devi_1120', 'ev_siddharameshwara_1150']
+    keyMonumentsAndInscriptions: ['Brihadisvara Temple Thanjavur (1010 CE)', 'Shree Jagannatha Temple Puri & Korni Plates (1112 CE)', 'Konark Sun Temple (c. 1250 CE) & Kendupatna Plates (1295 CE)', 'Rani-ki-Vav & Sahasralinga Talav Patan (c. 1120 CE)', 'Thousand Pillar Temple Hanamkonda (1163 CE) & Ramappa Temple Palampet (1213 CE)'],
+    linkedArticleIds: ['art_dyn_imperial_cholas', 'art_dyn_chalukya_synthesis', 'art_dyn_eastern_gangas', 'art_dyn_kakatiya_orugallu', 'art_dyn_siddhini_kings_verification', 'art_lin_suryavamshi_kings'],
+    linkedEventIds: [
+      'ev_jasma_devi_1120',
+      'ev_siddharameshwara_1150',
+      'ev_kakatiya_emergence_1000',
+      'ev_kakatiya_independence_1163',
+      'ev_kakatiya_orugallu_capital_1195',
+      'ev_kakatiya_ganapati_reign_1199',
+      'ev_kakatiya_rudrama_reign_1262',
+      'ev_kakatiya_prataparudra_reign_1289',
+      'ev_kakatiya_delhi_sieges_1309',
+      'ev_kakatiya_fall_warangal_1323'
+    ]
   },
   {
     stageOrder: 7,

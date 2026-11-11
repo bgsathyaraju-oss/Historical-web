@@ -18,6 +18,7 @@ import { DYNASTY_TRANSLATIONS } from '../../server/contentTranslations';
 import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 import { ArticleDetailView } from '../components/ArticleDetailView';
 import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { KAKATIYA_DYNASTY_RECORD } from '../data/kakatiyaDynastyData';
 import { LanguageCode, Article } from '../types';
 
 interface GajapathiKingdomPageProps {
@@ -757,6 +758,15 @@ const CANONICAL_DYNASTIES_LIST: CanonicalDynastyInfo[] = [
     enOverview:
       'Documented genealogies and regional traditions of Gajapathi fortress commanders and Suryavamsha Odiyaraju Kshatriya families across Andhra Pradesh, Telangana, Karnataka, Tamil Nadu, Maharashtra, and Odisha.',
     rulers: ['Kumara Hamvira Deva', 'Prince Virabhadra Deva', 'Kolletikota Garrisons']
+  },
+  {
+    id: KAKATIYA_DYNASTY_RECORD.id,
+    period: KAKATIYA_DYNASTY_RECORD.period,
+    enName: KAKATIYA_DYNASTY_RECORD.name.en,
+    enCapital: KAKATIYA_DYNASTY_RECORD.capital.en,
+    enOrigin: KAKATIYA_DYNASTY_RECORD.origin_region.en,
+    enOverview: KAKATIYA_DYNASTY_RECORD.overview.en,
+    rulers: KAKATIYA_DYNASTY_RECORD.rulers
   }
 ];
 
@@ -791,6 +801,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         'art_dyn_kadambas_banavasi',
         'art_dyn_badami_chalukyas',
         'art_dyn_vengi_chalukyas',
+        'art_dyn_kakatiya_orugallu',
         'art_dyn_siddhini_kings_verification',
         'art_lin_suryavamshi_kshatriyas',
         'art_lin_chandravamshi_kshatriyas',
@@ -952,7 +963,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
       const dynImgMap: Record<string, string> = {
         dyn_suryavamsha_gajapathi: `${archiveBase}kapilendra_deva_portrait.jpg`,
         dyn_eastern_ganga: `${archiveBase}konark_sun_temple_structure.jpg`,
-        dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`
+        dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`,
+        dyn_kakatiya_orugallu: `${archiveBase}kondavidu_fort_hills.jpg`
       };
 
       return {
@@ -1238,7 +1250,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                 const dynImgMap: Record<string, string> = {
                   dyn_suryavamsha_gajapathi: `${archiveBase}kapilendra_deva_portrait.jpg`,
                   dyn_eastern_ganga: `${archiveBase}konark_sun_temple_structure.jpg`,
-                  dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`
+                  dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`,
+                  dyn_kakatiya_orugallu: `${archiveBase}kondavidu_fort_hills.jpg`
                 };
                 const dynThumb = dynImgMap[dyn.id] || `${archiveBase}barabati_fort_gateway.jpg`;
 

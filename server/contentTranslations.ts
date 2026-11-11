@@ -2,6 +2,12 @@ import type { LanguageCode, SourceReference } from '../src/types/index.ts';
 import { COMPLETE_ARTICLE_TRANSLATIONS_PART1 } from '../src/data/canonicalArticlesCompleteTranslationsPart1.ts';
 import { COMPLETE_ARTICLE_TRANSLATIONS_PART2 } from '../src/data/canonicalArticlesCompleteTranslationsPart2.ts';
 import { EXPANDED_ARTICLE_TRANSLATIONS } from '../src/data/expandedArticlesTranslations.ts';
+import {
+  KAKATIYA_ARTICLE_TRANSLATIONS,
+  KAKATIYA_INSCRIPTION_TRANSLATIONS,
+  KAKATIYA_MONUMENT_TRANSLATIONS,
+  KAKATIYA_DYNASTY_RECORD
+} from '../src/data/kakatiyaDynastyData.ts';
 
 export interface ContentTranslationMap {
   title: string;
@@ -14,7 +20,8 @@ export interface ContentTranslationMap {
 export const ARTICLE_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, ContentTranslationMap>>> = {
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART1,
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART2,
-  ...EXPANDED_ARTICLE_TRANSLATIONS
+  ...EXPANDED_ARTICLE_TRANSLATIONS,
+  ...KAKATIYA_ARTICLE_TRANSLATIONS
 };
 
 export interface EntityTranslation {
@@ -789,6 +796,50 @@ export const DYNASTY_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, E
       origin_region: 'ওড্র দেশীয় অভিবাসী ও ক্ষত্রিয় বসতি',
       overview: 'গজপতি সেনাপতি এবং দক্ষিণাঞ্চলে স্থাপিত সূর্যবংশীয় ক্ষত্রিয় পরিবারের ঐতিহ্যবাহী ইতিহাস।'
     }
+  },
+  dyn_kakatiya_orugallu: {
+    hi: {
+      name: KAKATIYA_DYNASTY_RECORD.name.hi,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.hi,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.hi,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.hi
+    },
+    te: {
+      name: KAKATIYA_DYNASTY_RECORD.name.te,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.te,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.te,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.te
+    },
+    kn: {
+      name: KAKATIYA_DYNASTY_RECORD.name.kn,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.kn,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.kn,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.kn
+    },
+    ta: {
+      name: KAKATIYA_DYNASTY_RECORD.name.ta,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.ta,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.ta,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.ta
+    },
+    mr: {
+      name: KAKATIYA_DYNASTY_RECORD.name.mr,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.mr,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.mr,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.mr
+    },
+    or: {
+      name: KAKATIYA_DYNASTY_RECORD.name.or,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.or,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.or,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.or
+    },
+    bn: {
+      name: KAKATIYA_DYNASTY_RECORD.name.bn,
+      capital: KAKATIYA_DYNASTY_RECORD.capital.bn,
+      origin_region: KAKATIYA_DYNASTY_RECORD.origin_region.bn,
+      overview: KAKATIYA_DYNASTY_RECORD.overview.bn
+    }
   }
 };
 
@@ -1113,7 +1164,8 @@ export const INSCRIPTION_TRANSLATIONS: Record<string, Partial<Record<LanguageCod
         'এপিগ্রাফিয়া অন্ধ্রিকা (Epigraphia Andhrica), খণ্ড II।'
       ]
     }
-  }
+  },
+  ...KAKATIYA_INSCRIPTION_TRANSLATIONS
 };
 
 export const MONUMENT_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, EntityTranslation>>> = {
@@ -1432,6 +1484,7 @@ export const MONUMENT_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, 
         'অন্ধ্রপ্রদেশ রাজ্য প্রত্নতত্ত্ব বিভাগ প্রতিবেদন'
       ]
     }
-  }
+  },
+  ...KAKATIYA_MONUMENT_TRANSLATIONS
 };
 

@@ -12,7 +12,7 @@ import {
   validatePasswordStrength
 } from '../auth.ts';
 import { getDb, saveDb, addAuditLog } from '../db.ts';
-import type { User, UserProfile, UserPreferences } from '../../src/types/index.ts';
+import type { User, UserRole, UserProfile, UserPreferences } from '../../src/types/index.ts';
 
 export const authRouter = Router();
 
@@ -470,3 +470,307 @@ authRouter.delete('/account', requireAuth, (req: AuthenticatedRequest, res: Resp
 
   return res.json({ message: 'Your account has been deleted in accordance with data privacy regulations.' });
 });
+
+// ============================================================================
+// ADMIN ACCOUNT REGISTRATION & LOGIN SYSTEM (OWNER-AUTHORIZED RBAC)
+// ============================================================================
+export const AUTHORIZED_OWNER_EMAIL = 'bgsathyaraju@gmail.com';
+
+// 1. Admin Bootstrap & Authorization Status
+authRouter.get('/admin/status', (_req: AuthenticatedRequest, res: Response) => {
+  const db = getDb();
+  const ownerUser = db.users.find(
+    u => u.email.toLowerCase() === AUTHORIZED_OWNER_EMAIL.toLowerCase()
+  );
+
+  return res.json({
+    owner_email: AUTHORIZED_OWNER_EMAIL,
+    is_owner_registered: !!ownerUser,
+    owner_status: ownerUser ? ownerUser.status : 'not_registered',
+    total_admins: db.users.filter(u => ['super_admin', 'admin'].includes(u.role)).length
+  });
+});
+
+// 2. Admin Eligibility Verification
+authRouter.post('/admin/check-eligibility', (req: AuthenticatedRequest, res: Response) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email address is required.' });
+  }
+
+  const normalized = email.toLowerCase().trim();
+  const isOwner = normalized === AUTHORIZED_OWNER_EMAIL.toLowerCase();
+
+  // If already authenticated as super_admin, can invite secondary admins
+  const isSuperAdminCaller = req.user?.role === 'super_admin';
+
+  if (!isOwner && !isSuperAdminCaller) {
+    return res.status(403).json({
+      eligible: false,
+      error: 'Administrative account creation is strictly restricted to the verified website owner (bgsathyaraju@gmail.com). Public visitors cannot self-assign administrative roles.'
+    });
+  }
+
+  const db = getDb();
+  const existing = db.users.find(u => u.email.toLowerCase() === normalized);
+  if (existing) {
+    return res.status(409).json({
+      eligible: false,
+      already_registered: true,
+      error: 'An account with this email address already exists. Please proceed to the Admin Login page.'
+    });
+  }
+
+  return res.json({
+    eligible: true,
+    email: normalized,
+    role: isOwner ? 'super_admin' : 'admin'
+  });
+});
+
+// 3. Admin Account Creation (Form fields in exact order: 1. First Name, 2. Last Name,
+//    3. Email Address, 4. Mobile Number, 5. City, 6. State, 7. Country,
+//    8. Create Password, 9. Re-Enter Password, 10. Create Account button)
+authRouter.post('/admin/register', (req: AuthenticatedRequest, res: Response) => {
+  const {
+    first_name,
+    last_name,
+    email,
+    mobile_number,
+    city,
+    state,
+    country,
+    password,
+    confirm_password
+  } = req.body;
+
+  // Validate exact required fields
+  if (!first_name || !last_name || !email || !mobile_number || !city || !state || !country || !password || !confirm_password) {
+    return res.status(400).json({
+      error: 'Please fill in all required fields in the Admin Account Registration form.'
+    });
+  }
+
+  // 1 & 2. Name validation
+  if (first_name.trim().length < 2) {
+    return res.status(400).json({ error: 'First Name must be at least 2 characters.' });
+  }
+  if (last_name.trim().length < 1) {
+    return res.status(400).json({ error: 'Last Name is required.' });
+  }
+
+  // 3. Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Please enter a valid email address.' });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+  const isOwner = normalizedEmail === AUTHORIZED_OWNER_EMAIL.toLowerCase();
+  const isSuperAdminCaller = req.user?.role === 'super_admin';
+
+  // Critical Admin Authorization: Only website owner or active super_admin can register an admin
+  if (!isOwner && !isSuperAdminCaller) {
+    return res.status(403).json({
+      error: 'Access Denied: Administrative account creation is strictly restricted to the verified website owner (bgsathyaraju@gmail.com). Public visitors cannot self-assign administrative roles.'
+    });
+  }
+
+  // 4. Mobile Number validation with international country code
+  const phoneClean = mobile_number.trim();
+  const phoneRegex = /^\+?[1-9]\d{0,3}[-\s]?\d{4,14}$/;
+  if (!phoneRegex.test(phoneClean) || phoneClean.replace(/\D/g, '').length < 8) {
+    return res.status(400).json({
+      error: 'Please enter a valid mobile number with international country code (e.g., +91 9876543210 or +1 555-0199).'
+    });
+  }
+
+  // 5, 6, 7. Location validation
+  if (city.trim().length < 2) {
+    return res.status(400).json({ error: 'City is required (minimum 2 characters).' });
+  }
+  if (state.trim().length < 2) {
+    return res.status(400).json({ error: 'State is required (minimum 2 characters).' });
+  }
+  if (country.trim().length < 2) {
+    return res.status(400).json({ error: 'Country is required (minimum 2 characters).' });
+  }
+
+  // 8 & 9. Password confirmation & strength
+  if (password !== confirm_password) {
+    return res.status(400).json({ error: 'Passwords do not match. Please re-enter your password.' });
+  }
+
+  const passCheck = validatePasswordStrength(password);
+  if (!passCheck.valid) {
+    return res.status(400).json({ error: passCheck.reason });
+  }
+
+  // Prevent duplicate registrations
+  const db = getDb();
+  const existingUser = db.users.find(u => u.email.toLowerCase() === normalizedEmail);
+  if (existingUser) {
+    return res.status(409).json({
+      error: 'An account with this email address already exists. Please proceed to the Admin Login page.'
+    });
+  }
+
+  const adminId = 'adm_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+  const passwordHash = bcrypt.hashSync(password, 10);
+  const assignedRole: UserRole = isOwner ? 'super_admin' : 'admin';
+
+  const newAdminUser: User = {
+    id: adminId,
+    email: normalizedEmail,
+    role: assignedRole,
+    status: 'active',
+    email_verified: true, // Owner/Admin is verified on bootstrap
+    created_at: new Date().toISOString()
+  };
+
+  const fullName = `${first_name.trim()} ${last_name.trim()}`;
+  const newProfile: UserProfile = {
+    user_id: adminId,
+    full_name: fullName,
+    gender: 'Prefer not to say',
+    country: country.trim(),
+    state_or_province: state.trim(),
+    district: city.trim(),
+    city_town_village: city.trim(),
+    organization: 'Suryavamsha Odiyaraju Kshatriya Archival Council',
+    current_work: isOwner ? 'Website Owner & Archival Custodian' : 'Archival Administrator',
+    biography: isOwner
+      ? 'Primary Website Owner, Archival Custodian & Epigraphic Researcher for the Suryavamsha Odiyaraju Kshatriya Royal Heritage Portal.'
+      : 'Authorized Archival & Editorial Administrator.',
+    areas_of_historical_interest: [
+      'Suryavamsha Gajapathi Dynasties',
+      'Kakatiya Dynasty History',
+      'Epigraphic Records & Archaeology',
+      'Community Heritage & Surnames'
+    ],
+    languages_known: ['English', 'Telugu', 'Kannada', 'Odia', 'Hindi'],
+    profile_visibility: 'members'
+  };
+
+  const newPreferences: UserPreferences = {
+    user_id: adminId,
+    preferred_language: 'en',
+    email_notifications: true,
+    show_original_quotes: true
+  };
+
+  db.users.push(newAdminUser);
+  db.user_passwords[adminId] = passwordHash;
+  db.profiles.push(newProfile);
+  db.preferences.push(newPreferences);
+
+  addAuditLog(
+    adminId,
+    normalizedEmail,
+    'ADMIN_ACCOUNT_CREATED',
+    'users',
+    adminId,
+    `Admin account successfully created for ${fullName} (${assignedRole}) with mobile ${phoneClean}`
+  );
+  saveDb(db);
+
+  const sessionToken = createSession(adminId);
+  res.cookie('auth_token', sessionToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
+  return res.status(201).json({
+    message: 'Admin account created successfully! Welcome to the Archival Administration Panel.',
+    token: sessionToken,
+    user: {
+      ...newAdminUser,
+      profile: newProfile,
+      preferences: newPreferences,
+      mobile_number: phoneClean
+    }
+  });
+});
+
+// 4. Admin Login with strict administrative role guard
+authRouter.post('/admin/login', rateLimitLogin, (req: AuthenticatedRequest, res: Response) => {
+  const { email, password } = req.body;
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Please enter both Email Address and Password.' });
+  }
+
+  const db = getDb();
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = db.users.find(u => u.email.toLowerCase() === normalizedEmail);
+
+  if (!user) {
+    registerFailedLogin(ip);
+    return res.status(401).json({ error: 'Invalid email credentials or password.' });
+  }
+
+  if (user.status === 'suspended') {
+    return res.status(403).json({
+      error: 'This administrative account has been suspended. Please contact the primary website owner.'
+    });
+  }
+
+  const passwordHash = db.user_passwords[user.id];
+  if (!passwordHash || !bcrypt.compareSync(password, passwordHash)) {
+    registerFailedLogin(ip);
+    return res.status(401).json({ error: 'Invalid email credentials or password.' });
+  }
+
+  // Strict Admin Role Guard
+  const adminRoles: UserRole[] = [
+    'super_admin',
+    'admin',
+    'historical_editor',
+    'research_reviewer',
+    'translator',
+    'community_moderator'
+  ];
+
+  if (!adminRoles.includes(user.role)) {
+    registerFailedLogin(ip);
+    return res.status(403).json({
+      error: 'Access Denied: This account is registered as a Member and does not possess Administrative privileges. Please log in through the Member Portal.'
+    });
+  }
+
+  resetLoginAttempts(ip);
+  const sessionToken = createSession(user.id);
+
+  res.cookie('auth_token', sessionToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
+  addAuditLog(
+    user.id,
+    user.email,
+    'ADMIN_LOGIN',
+    'sessions',
+    sessionToken,
+    `Admin ${user.email} (${user.role}) logged in successfully from ${ip}.`
+  );
+
+  const profile = db.profiles.find(p => p.user_id === user.id);
+  const preferences = db.preferences.find(pr => pr.user_id === user.id);
+
+  return res.json({
+    message: 'Welcome to the Archival Administration Panel.',
+    token: sessionToken,
+    user: {
+      ...user,
+      profile,
+      preferences
+    }
+  });
+});
+

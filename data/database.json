@@ -415,6 +415,46 @@
       "status": "active",
       "email_verified": true,
       "created_at": "2026-11-03T10:46:24.220Z"
+    },
+    {
+      "id": "usr_1794430106243_5aza",
+      "email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-11-11T20:48:26.366Z"
+    },
+    {
+      "id": "usr_1794430266969_lbww",
+      "email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-11-11T20:51:07.093Z"
+    },
+    {
+      "id": "usr_1794430315105_ini1",
+      "email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-11-11T20:51:55.207Z"
+    },
+    {
+      "id": "usr_1794432030936_sbao",
+      "email": "attacker.1794432030817@test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": false,
+      "created_at": "2026-11-11T21:20:31.078Z"
+    },
+    {
+      "id": "usr_1794432150362_e919",
+      "email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "role": "member",
+      "status": "active",
+      "email_verified": true,
+      "created_at": "2026-11-11T21:22:30.458Z"
     }
   ],
   "user_passwords": {
@@ -469,7 +509,12 @@
     "usr_1793694503321_wh7l": "$2b$10$po829mY0U9UYozJj5DNvDOvLdHlHCpnedm4CZS2APO7E65vLlPMLa",
     "usr_1793695817022_h4fe": "$2b$10$Cw.V5iyqgL6bRL5BunvzAeEZB.h4fkJ456I7HBvYYvxqczBfizf66",
     "usr_1793695910692_r2z9": "$2b$10$ZomFIqqsKBLCigtUGy35aO1nUB23j/1B3pqi6SPOMZvk9mRjugLBm",
-    "usr_1793702784056_syma": "$2b$10$QpDt/m.1ob9DWJktKjbIMeMHkpVmswwiMyRgrNjGsukQeu1G4d1Ga"
+    "usr_1793702784056_syma": "$2b$10$QpDt/m.1ob9DWJktKjbIMeMHkpVmswwiMyRgrNjGsukQeu1G4d1Ga",
+    "usr_1794430106243_5aza": "$2b$10$57Bih72GLqSiG6x2l4U2puEtS0BxpybIyvvb.U2/a/A63SH9mJ1ee",
+    "usr_1794430266969_lbww": "$2b$10$4myX8cXo4.3B5HbOCUwsIuCFrUkhkKOBaVVThe.04Nq8y5V0Bvrb.",
+    "usr_1794430315105_ini1": "$2b$10$5nijUVwXIAyPsb0.TGXzreCMWb4lf4RFNqmOhPBTA6g4cQJOYgP9O",
+    "usr_1794432030936_sbao": "$2b$10$Rx.rA.6D4CXRG4l/Ma1FievX/M8Hw.6hurOzG2/DFfBdLWGeNxmpq",
+    "usr_1794432150362_e919": "$2b$10$teg.xHB8rneN6cur/aPz2OKHNGLJKPpOwLeQxv3YRmlaMnqt4VU3e"
   },
   "profiles": [
     {
@@ -1293,6 +1338,79 @@
       "areas_of_historical_interest": [],
       "languages_known": [],
       "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1794430106243_5aza",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1794430106583_7d07d5b4bed06d3c.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1794430266969_lbww",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1794430267368_3df3d3b701df8747.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1794430315105_ini1",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1794430315445_aa5373ab1b41e207.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1794432030936_sbao",
+      "full_name": "Attacker Self Assign",
+      "gender": "Male",
+      "date_of_birth": "1990-01-01",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
+    },
+    {
+      "user_id": "usr_1794432150362_e919",
+      "full_name": "Test Kshatriya Researcher",
+      "gender": "Male",
+      "date_of_birth": "1990-05-15",
+      "country": "India",
+      "state_or_province": "Odisha",
+      "district": "Puri",
+      "city_town_village": "Puri",
+      "profile_photo_url": "/uploads/photo_profile_avatar_1794432150737_c9c4376e722353f9.png",
+      "profession": "Epigraphist & Genealogist",
+      "areas_of_historical_interest": [],
+      "languages_known": [],
+      "profile_visibility": "members"
     }
   ],
   "preferences": [
@@ -1604,6 +1722,36 @@
     },
     {
       "user_id": "usr_1793702784056_syma",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1794430106243_5aza",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1794430266969_lbww",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1794430315105_ini1",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1794432030936_sbao",
+      "preferred_language": "en",
+      "email_notifications": true,
+      "show_original_quotes": true
+    },
+    {
+      "user_id": "usr_1794432150362_e919",
       "preferred_language": "en",
       "email_notifications": true,
       "show_original_quotes": true
@@ -2878,7 +3026,16 @@
         }
       ],
       "original_content": "The historical designation Odra Desha (also recorded in Sanskrit epigraphs as Audra, and in medieval Chinese pilgrimage chronicles as Wu-T'u) represents one of the foundational territorial components of eastern India. While modern popular discourse sometimes conflates Odra, Kalinga, Utkala, and Kosala as synonymous, rigorous historical examination reveals distinct geopolitical, linguistic, and dynastic trajectories that gradually coalesced under imperial Ganga and Gajapathi hegemony.\n\nAncient Epigraphic References:\nEarly epigraphic mentions of the Odras appear in the accounts of Pliny (referring to the Oretes), classical Buddhist texts, and later Puranic rosters. In the 7th century CE, the Chinese pilgrim Xuanzang visited the kingdom of Wu-T'u, describing it as an agrarian land with deep Buddhist and Brahmanical institutions, possessing a coastline with the thriving port of Charitra (Che-li-ta-lo).\n\nTerritorial Boundaries:\nIn its core historical definition, Odra Desha encompassed the fertile deltaic and riverine basin of the Mahanadi, Kathajodi, Brahmani, and Baitarani rivers, flanked by the Eastern Ghats to the west and the Bay of Bengal to the east. To the north lay Utkala (stretching toward the Subarnarekha and lower Bengal), while to the south lay Kalinga, centered along the coastal strip between the Rishikulya and the Godavari.\n\nThe Rise to Imperial Prominence:\nUnder the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cuttack), situated at the bifurcation of the Mahanadi and Kathajodi rivers in the heart of Odra Desha, served as the supreme capital of an empire extending across peninsular India. Royal inscriptions of Kapilendra Deva emphasize his suzerainty over the \"Odra-rajya\", demonstrating that by the late medieval era, Odra had become the political core of the realm.",
-      "translations": {}
+      "translations": {
+        "bn": {
+          "title": "ওড্র দেশের রাজকীয় ইতিহাস ও ভূগোল (অনুবাদ পরীক্ষা)",
+          "content": "গবেষণামূলক বিশ্লেষণ অনুসারে ওড্র দেশ প্রাচ্য ভারতের অন্যতম প্রধান সার্বভৌম অঞ্চল ছিল।",
+          "summary": "প্রাচীন ওড্র দেশের ঐতিহাসিক বিশ্লেষণ এবং সীমানা পর্যালোচনা।",
+          "status": "pending",
+          "translator_name": "সূর্যবংশ গবেষক পরিষদ",
+          "last_updated": "2026-11-11T21:22:31.153Z"
+        }
+      }
     },
     {
       "id": "art_gajapathi_kapilendra",
@@ -3535,6 +3692,30 @@
       "user_id": "usr_1793702784056_syma",
       "expires_at": 1793706384652,
       "used": true
+    },
+    {
+      "token": "rst_f1d13080ba188168332b2b4524fc071d23b8bfaa90a0a280",
+      "user_id": "usr_1794430106243_5aza",
+      "expires_at": 1794433706619,
+      "used": true
+    },
+    {
+      "token": "rst_b95555ac2628aafb43637534b0770919aa62654023aa1cfd",
+      "user_id": "usr_1794430266969_lbww",
+      "expires_at": 1794433867403,
+      "used": true
+    },
+    {
+      "token": "rst_7fbbc852bef228b4039ac2f21f490d5a45965e25251ab500",
+      "user_id": "usr_1794430315105_ini1",
+      "expires_at": 1794433915476,
+      "used": true
+    },
+    {
+      "token": "rst_0b92a8a5a483b0e3f0103b5d45fb552380c0de4971b5bffd",
+      "user_id": "usr_1794432150362_e919",
+      "expires_at": 1794435750774,
+      "used": true
     }
   ],
   "email_verifications": [
@@ -3831,9 +4012,493 @@
       "user_id": "usr_1793702784056_syma",
       "expires_at": 1793789184617,
       "used": true
+    },
+    {
+      "token": "eml_ae2c5c741ec5a3de37a4a5f92b1c5f5d190e88523674cc3f",
+      "user_id": "usr_1794430106243_5aza",
+      "expires_at": 1794516506599,
+      "used": true
+    },
+    {
+      "token": "eml_0002324a7d6a6bc346ecb7928ff946f5534bc51a98c866d4",
+      "user_id": "usr_1794430266969_lbww",
+      "expires_at": 1794516667384,
+      "used": true
+    },
+    {
+      "token": "eml_76f140f0666c2fa98b9d4058b4c4a7986f8a0117aa43161d",
+      "user_id": "usr_1794430315105_ini1",
+      "expires_at": 1794516715458,
+      "used": true
+    },
+    {
+      "token": "eml_069b13c601cd5be5b8d822ad3a2bd495dbd1c30f917144d0",
+      "user_id": "usr_1794432150362_e919",
+      "expires_at": 1794518550754,
+      "used": true
     }
   ],
   "audit_logs": [
+    {
+      "id": "log_1794432151663_1nzz9",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "ADMIN_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_163fa5be0ea3684ebf907f5cf26106fc7cbbdfc057cdeb81163cc8d36991de0d",
+      "details": "Admin admin@suryavamsha-heritage.org (super_admin) logged in successfully from 127.0.0.1.",
+      "timestamp": "2026-11-11T21:22:31.663Z"
+    },
+    {
+      "id": "log_1794432151091_4mxx1",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_39796dcfb38c10fb6d6433356c53b554ba615f2d20e70125063ec11e33263ede",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T21:22:31.091Z"
+    },
+    {
+      "id": "log_1794432150985_xvb4w",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_a73c0545db563b6004d7c61e6b025d9cd2b1e4d2bf94c168ce05a6af4a88c0e1",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T21:22:30.985Z"
+    },
+    {
+      "id": "log_1794432150881_ynvwt",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1794432150362_e919",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-11-11T21:22:30.881Z"
+    },
+    {
+      "id": "log_1794432150777_yjxs0",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_0b92a8a5a483b0e3f0103b5d45fb552380c0de4971b5bffd",
+      "details": "Password reset requested.",
+      "timestamp": "2026-11-11T21:22:30.777Z"
+    },
+    {
+      "id": "log_1794432150767_p17hp",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1794432150362_e919",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-11-11T21:22:30.767Z"
+    },
+    {
+      "id": "log_1794432150757_szyq4",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_069b13c601cd5be5b8d822ad3a2bd495dbd1c30f917144d0",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-11-11T21:22:30.757Z"
+    },
+    {
+      "id": "log_1794432150748_lyq5a",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1794432150362_e919",
+      "details": "User updated profile details.",
+      "timestamp": "2026-11-11T21:22:30.748Z"
+    },
+    {
+      "id": "log_1794432150737_vnoj1",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1794432150737_c9c4376e722353f9.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-11-11T21:22:30.737Z"
+    },
+    {
+      "id": "log_1794432150724_7k4h7",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_c1e1cc31a0f9173be913cfff40fd397a7f8d84a75254bd19b4dc4fb569021cef",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T21:22:30.724Z"
+    },
+    {
+      "id": "log_1794432150458_fmooo",
+      "user_id": "usr_1794432150362_e919",
+      "user_email": "test.researcher.1794432150289@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1794432150362_e919",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-11-11T21:22:30.458Z"
+    },
+    {
+      "id": "log_1794432046696_vq9gz",
+      "user_id": "usr_member_001",
+      "user_email": "researcher.odra@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_528ed97961b94ab8630dd744ee64ebb5807cb7a0318402ea6da3a5762db06b72",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T21:20:46.696Z"
+    },
+    {
+      "id": "log_1794432031078_n9tvv",
+      "user_id": "usr_1794432030936_sbao",
+      "user_email": "attacker.1794432030817@test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1794432030936_sbao",
+      "details": "New account registered: Attacker Self Assign",
+      "timestamp": "2026-11-11T21:20:31.078Z"
+    },
+    {
+      "id": "log_1794430316369_o3qwb",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "ADMIN_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_4e064aab4e639b1042b6ec6abee3f1313f4350e2d07cf9ee8fedf19d14ab1348",
+      "details": "Admin admin@suryavamsha-heritage.org (super_admin) logged in successfully from 127.0.0.1.",
+      "timestamp": "2026-11-11T20:51:56.369Z"
+    },
+    {
+      "id": "log_1794430315793_cklxw",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_dbb6784b3da395506f279b3b970df9abda55dab0272af4bf773ef1328a203014",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:51:55.793Z"
+    },
+    {
+      "id": "log_1794430315686_jzj8x",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_3d6598f130fa52d8ebcf0c4263dd195b8fbd383170f36f0dcdb5d46d3f255ab5",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:51:55.686Z"
+    },
+    {
+      "id": "log_1794430315584_aew65",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1794430315105_ini1",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-11-11T20:51:55.584Z"
+    },
+    {
+      "id": "log_1794430315479_2ku64",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_7fbbc852bef228b4039ac2f21f490d5a45965e25251ab500",
+      "details": "Password reset requested.",
+      "timestamp": "2026-11-11T20:51:55.479Z"
+    },
+    {
+      "id": "log_1794430315470_lfmud",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1794430315105_ini1",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-11-11T20:51:55.470Z"
+    },
+    {
+      "id": "log_1794430315461_mkh6p",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_76f140f0666c2fa98b9d4058b4c4a7986f8a0117aa43161d",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-11-11T20:51:55.461Z"
+    },
+    {
+      "id": "log_1794430315453_htn9v",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1794430315105_ini1",
+      "details": "User updated profile details.",
+      "timestamp": "2026-11-11T20:51:55.453Z"
+    },
+    {
+      "id": "log_1794430315445_if7c7",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1794430315445_aa5373ab1b41e207.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-11-11T20:51:55.445Z"
+    },
+    {
+      "id": "log_1794430315436_7zwkl",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_bec0dc91f6479ff4873ff9f88ab5414f06a68f44dc04a48fc57e3013bc7f487a",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:51:55.436Z"
+    },
+    {
+      "id": "log_1794430315207_eak5c",
+      "user_id": "usr_1794430315105_ini1",
+      "user_email": "test.researcher.1794430315035@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1794430315105_ini1",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-11-11T20:51:55.207Z"
+    },
+    {
+      "id": "log_1794430268331_38d5l",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "ADMIN_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_4bde4966b72359d4c399b7c0282b622a4c3daa0c0ebe4c5fddf5afaa0709dc4f",
+      "details": "Admin admin@suryavamsha-heritage.org (super_admin) logged in successfully from 127.0.0.1.",
+      "timestamp": "2026-11-11T20:51:08.331Z"
+    },
+    {
+      "id": "log_1794430267721_c2ch3",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_f0347b92df4f5e73e5a54b8828ff72bcf33897e4ffaa68b728b192376aafcef8",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:51:07.721Z"
+    },
+    {
+      "id": "log_1794430267614_rvo2a",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_cba3b100f8f3e19f6a12cd22e2b83a38a1ecf58d13a61620e4e3460cd3026835",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:51:07.614Z"
+    },
+    {
+      "id": "log_1794430267509_iezl9",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1794430266969_lbww",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-11-11T20:51:07.509Z"
+    },
+    {
+      "id": "log_1794430267406_pbpvs",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_b95555ac2628aafb43637534b0770919aa62654023aa1cfd",
+      "details": "Password reset requested.",
+      "timestamp": "2026-11-11T20:51:07.406Z"
+    },
+    {
+      "id": "log_1794430267396_k7ehs",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1794430266969_lbww",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-11-11T20:51:07.396Z"
+    },
+    {
+      "id": "log_1794430267386_och9f",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_0002324a7d6a6bc346ecb7928ff946f5534bc51a98c866d4",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-11-11T20:51:07.386Z"
+    },
+    {
+      "id": "log_1794430267377_ksxz0",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1794430266969_lbww",
+      "details": "User updated profile details.",
+      "timestamp": "2026-11-11T20:51:07.377Z"
+    },
+    {
+      "id": "log_1794430267368_ezj47",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1794430267368_3df3d3b701df8747.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-11-11T20:51:07.368Z"
+    },
+    {
+      "id": "log_1794430267357_pzmc2",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_bd2779446ec26ff007104f6785000fd3dfe67a1aabf98fa7d8c44087080a69ca",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:51:07.357Z"
+    },
+    {
+      "id": "log_1794430267094_0ocj7",
+      "user_id": "usr_1794430266969_lbww",
+      "user_email": "test.researcher.1794430266816@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1794430266969_lbww",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-11-11T20:51:07.094Z"
+    },
+    {
+      "id": "log_1794430148470_9xorv",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "ADMIN_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_d385768c7a83e8bd585cb68d5c119dbcc66cb5b99cb372a6b05b910a5d267cf0",
+      "details": "Admin admin@suryavamsha-heritage.org (super_admin) logged in successfully from 127.0.0.1.",
+      "timestamp": "2026-11-11T20:49:08.470Z"
+    },
+    {
+      "id": "log_1794430106940_n2vlg",
+      "user_id": "usr_admin_001",
+      "user_email": "admin@suryavamsha-heritage.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_ffb55bdc26cb398986cba6f4e31a8650afb2d22d7a5cb3ef271b2f98d3842a2f",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:48:26.940Z"
+    },
+    {
+      "id": "log_1794430106828_aecsi",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_78c514c1cf3560167bcff4145992fb28e8c55fcbf2fb42c46099219fdb5b4eb4",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:48:26.828Z"
+    },
+    {
+      "id": "log_1794430106727_d3164",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_COMPLETED",
+      "target_entity": "users",
+      "target_id": "usr_1794430106243_5aza",
+      "details": "Password successfully reset.",
+      "timestamp": "2026-11-11T20:48:26.727Z"
+    },
+    {
+      "id": "log_1794430106622_exr6d",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "PASSWORD_RESET_REQUESTED",
+      "target_entity": "password_resets",
+      "target_id": "rst_f1d13080ba188168332b2b4524fc071d23b8bfaa90a0a280",
+      "details": "Password reset requested.",
+      "timestamp": "2026-11-11T20:48:26.622Z"
+    },
+    {
+      "id": "log_1794430106613_7b1qn",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "EMAIL_VERIFIED",
+      "target_entity": "users",
+      "target_id": "usr_1794430106243_5aza",
+      "details": "Email address successfully verified.",
+      "timestamp": "2026-11-11T20:48:26.613Z"
+    },
+    {
+      "id": "log_1794430106602_xx5qm",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "EMAIL_VERIFICATION_REQUESTED",
+      "target_entity": "email_verifications",
+      "target_id": "eml_ae2c5c741ec5a3de37a4a5f92b1c5f5d190e88523674cc3f",
+      "details": "Email verification token generated.",
+      "timestamp": "2026-11-11T20:48:26.602Z"
+    },
+    {
+      "id": "log_1794430106594_fhe5r",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "PROFILE_UPDATED",
+      "target_entity": "profiles",
+      "target_id": "usr_1794430106243_5aza",
+      "details": "User updated profile details.",
+      "timestamp": "2026-11-11T20:48:26.594Z"
+    },
+    {
+      "id": "log_1794430106583_i3vp0",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "FILE_UPLOADED",
+      "target_entity": "uploads",
+      "target_id": "photo_profile_avatar_1794430106583_7d07d5b4bed06d3c.png",
+      "details": "Uploaded photo (image/png, 70 bytes)",
+      "timestamp": "2026-11-11T20:48:26.583Z"
+    },
+    {
+      "id": "log_1794430106573_zbkfd",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "USER_LOGIN",
+      "target_entity": "sessions",
+      "target_id": "sess_485d45ba16287f85235fe5f3707558c1637c82b5fd35d0b2fcd9a24df8082746",
+      "details": "Member logged in successfully.",
+      "timestamp": "2026-11-11T20:48:26.573Z"
+    },
+    {
+      "id": "log_1794430106366_qq446",
+      "user_id": "usr_1794430106243_5aza",
+      "user_email": "test.researcher.1794430106157@suryavamsha-test.org",
+      "action": "USER_REGISTERED",
+      "target_entity": "users",
+      "target_id": "usr_1794430106243_5aza",
+      "details": "New account registered: Test Kshatriya Researcher",
+      "timestamp": "2026-11-11T20:48:26.366Z"
+    },
     {
       "id": "log_1793702785066_58hd5",
       "user_id": "usr_admin_001",
@@ -8373,386 +9038,6 @@
       "target_id": "rst_06c078558003c7ca009ece883201c8b7896a225370ef157f",
       "details": "Password reset requested.",
       "timestamp": "2026-10-22T15:03:09.490Z"
-    },
-    {
-      "id": "log_1792681389483_743os",
-      "user_id": "usr_1792681389038_itlf",
-      "user_email": "test.researcher.1792681388909@suryavamsha-test.org",
-      "action": "EMAIL_VERIFIED",
-      "target_entity": "users",
-      "target_id": "usr_1792681389038_itlf",
-      "details": "Email address successfully verified.",
-      "timestamp": "2026-10-22T15:03:09.483Z"
-    },
-    {
-      "id": "log_1792681389475_98ank",
-      "user_id": "usr_1792681389038_itlf",
-      "user_email": "test.researcher.1792681388909@suryavamsha-test.org",
-      "action": "EMAIL_VERIFICATION_REQUESTED",
-      "target_entity": "email_verifications",
-      "target_id": "eml_8def66d03ae289024e1bb7723b18a2dfb480396ae9914035",
-      "details": "Email verification token generated.",
-      "timestamp": "2026-10-22T15:03:09.475Z"
-    },
-    {
-      "id": "log_1792681389469_9j017",
-      "user_id": "usr_1792681389038_itlf",
-      "user_email": "test.researcher.1792681388909@suryavamsha-test.org",
-      "action": "PROFILE_UPDATED",
-      "target_entity": "profiles",
-      "target_id": "usr_1792681389038_itlf",
-      "details": "User updated profile details.",
-      "timestamp": "2026-10-22T15:03:09.469Z"
-    },
-    {
-      "id": "log_1792681389462_7uxvx",
-      "user_id": "usr_1792681389038_itlf",
-      "user_email": "test.researcher.1792681388909@suryavamsha-test.org",
-      "action": "FILE_UPLOADED",
-      "target_entity": "uploads",
-      "target_id": "photo_profile_avatar_1792681389462_29e1da8c80214213.png",
-      "details": "Uploaded photo (image/png, 70 bytes)",
-      "timestamp": "2026-10-22T15:03:09.462Z"
-    },
-    {
-      "id": "log_1792681389451_97x47",
-      "user_id": "usr_1792681389038_itlf",
-      "user_email": "test.researcher.1792681388909@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_fd688ec332dc31dca6be33be4c52cbb0eefcc1eb522ee0dca876fbbd167cc33a",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T15:03:09.451Z"
-    },
-    {
-      "id": "log_1792681389194_uju3m",
-      "user_id": "usr_1792681389038_itlf",
-      "user_email": "test.researcher.1792681388909@suryavamsha-test.org",
-      "action": "USER_REGISTERED",
-      "target_entity": "users",
-      "target_id": "usr_1792681389038_itlf",
-      "details": "New account registered: Test Kshatriya Researcher",
-      "timestamp": "2026-10-22T15:03:09.194Z"
-    },
-    {
-      "id": "log_1792680486626_1ow4i",
-      "user_id": "usr_admin_001",
-      "user_email": "admin@suryavamsha-heritage.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_1678a5f76211c352d98c7416dabd016b7e8f82a024cebe5096fbf1e13b2cef9e",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:48:06.626Z"
-    },
-    {
-      "id": "log_1792680486508_paio5",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_0066b072211d6897f8d8f85f701b466b4be1808073f6b9538ff3409d98105273",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:48:06.508Z"
-    },
-    {
-      "id": "log_1792680486368_r49sf",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "PASSWORD_RESET_COMPLETED",
-      "target_entity": "users",
-      "target_id": "usr_1792680485807_i2h8",
-      "details": "Password successfully reset.",
-      "timestamp": "2026-10-22T14:48:06.368Z"
-    },
-    {
-      "id": "log_1792680486249_ezsyd",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "PASSWORD_RESET_REQUESTED",
-      "target_entity": "password_resets",
-      "target_id": "rst_b267d7c8a944f0997e72b410c4c320de670e549926673b82",
-      "details": "Password reset requested.",
-      "timestamp": "2026-10-22T14:48:06.249Z"
-    },
-    {
-      "id": "log_1792680486241_bc56o",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "EMAIL_VERIFIED",
-      "target_entity": "users",
-      "target_id": "usr_1792680485807_i2h8",
-      "details": "Email address successfully verified.",
-      "timestamp": "2026-10-22T14:48:06.241Z"
-    },
-    {
-      "id": "log_1792680486233_m5vlr",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "EMAIL_VERIFICATION_REQUESTED",
-      "target_entity": "email_verifications",
-      "target_id": "eml_9008237e61333c7fa788cd7f96d2a91833a254315fe11cc8",
-      "details": "Email verification token generated.",
-      "timestamp": "2026-10-22T14:48:06.233Z"
-    },
-    {
-      "id": "log_1792680486227_naxmd",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "PROFILE_UPDATED",
-      "target_entity": "profiles",
-      "target_id": "usr_1792680485807_i2h8",
-      "details": "User updated profile details.",
-      "timestamp": "2026-10-22T14:48:06.227Z"
-    },
-    {
-      "id": "log_1792680486220_actj4",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "FILE_UPLOADED",
-      "target_entity": "uploads",
-      "target_id": "photo_profile_avatar_1792680486220_8887d1b1df80daea.png",
-      "details": "Uploaded photo (image/png, 70 bytes)",
-      "timestamp": "2026-10-22T14:48:06.220Z"
-    },
-    {
-      "id": "log_1792680486209_j9vlg",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_11c6382767575099170f674f1d8f4669566b09fc6d37f327534c36ca6904fa9d",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:48:06.209Z"
-    },
-    {
-      "id": "log_1792680485936_1o61v",
-      "user_id": "usr_1792680485807_i2h8",
-      "user_email": "test.researcher.1792680485677@suryavamsha-test.org",
-      "action": "USER_REGISTERED",
-      "target_entity": "users",
-      "target_id": "usr_1792680485807_i2h8",
-      "details": "New account registered: Test Kshatriya Researcher",
-      "timestamp": "2026-10-22T14:48:05.936Z"
-    },
-    {
-      "id": "log_1792680011768_zw7su",
-      "user_id": "usr_admin_001",
-      "user_email": "admin@suryavamsha-heritage.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_a03f4558843db56bb55e989e5e429f65c02d7bd8f94bb93defb279dd22a74c3a",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:40:11.768Z"
-    },
-    {
-      "id": "log_1792680011641_ln8tg",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_1b8e52a8f66ebb29e0d0d8a3bc701c80a0e0f82663fa01932c38094e2b1abb41",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:40:11.641Z"
-    },
-    {
-      "id": "log_1792680011526_jd7ge",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "PASSWORD_RESET_COMPLETED",
-      "target_entity": "users",
-      "target_id": "usr_1792680010998_sgkt",
-      "details": "Password successfully reset.",
-      "timestamp": "2026-10-22T14:40:11.526Z"
-    },
-    {
-      "id": "log_1792680011410_780fd",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "PASSWORD_RESET_REQUESTED",
-      "target_entity": "password_resets",
-      "target_id": "rst_4b33aa1b950c7490e8d14036dba9a2eda98ba9a92b9e59b7",
-      "details": "Password reset requested.",
-      "timestamp": "2026-10-22T14:40:11.410Z"
-    },
-    {
-      "id": "log_1792680011403_smmg7",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "EMAIL_VERIFIED",
-      "target_entity": "users",
-      "target_id": "usr_1792680010998_sgkt",
-      "details": "Email address successfully verified.",
-      "timestamp": "2026-10-22T14:40:11.403Z"
-    },
-    {
-      "id": "log_1792680011396_gnl44",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "EMAIL_VERIFICATION_REQUESTED",
-      "target_entity": "email_verifications",
-      "target_id": "eml_90f6cb862337f21b9190f45b3d788f6ce80535824035f7f0",
-      "details": "Email verification token generated.",
-      "timestamp": "2026-10-22T14:40:11.396Z"
-    },
-    {
-      "id": "log_1792680011391_53867",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "PROFILE_UPDATED",
-      "target_entity": "profiles",
-      "target_id": "usr_1792680010998_sgkt",
-      "details": "User updated profile details.",
-      "timestamp": "2026-10-22T14:40:11.391Z"
-    },
-    {
-      "id": "log_1792680011385_7rcsg",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "FILE_UPLOADED",
-      "target_entity": "uploads",
-      "target_id": "photo_profile_avatar_1792680011385_3322aa27cfb102f6.png",
-      "details": "Uploaded photo (image/png, 70 bytes)",
-      "timestamp": "2026-10-22T14:40:11.385Z"
-    },
-    {
-      "id": "log_1792680011374_w7vtx",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_1089d78f280a80966c292bd0f0e7d5e4300af74371b9f17bdda663c2e41e1f4a",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:40:11.374Z"
-    },
-    {
-      "id": "log_1792680011130_cpkrb",
-      "user_id": "usr_1792680010998_sgkt",
-      "user_email": "test.researcher.1792680010882@suryavamsha-test.org",
-      "action": "USER_REGISTERED",
-      "target_entity": "users",
-      "target_id": "usr_1792680010998_sgkt",
-      "details": "New account registered: Test Kshatriya Researcher",
-      "timestamp": "2026-10-22T14:40:11.130Z"
-    },
-    {
-      "id": "log_1792678782251_7y2jx",
-      "user_id": "usr_admin_001",
-      "user_email": "admin@suryavamsha-heritage.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_6c206245246f7d1ca03f3b5ffb660ee142d5f60e94f8eeb948033a3308576da3",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:19:42.251Z"
-    },
-    {
-      "id": "log_1792678782125_g7m3k",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_acefa296d8602d6c5a4aa4b3264e6e03b22e1a0a21f1a104d4fcb3fe90e883e3",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:19:42.125Z"
-    },
-    {
-      "id": "log_1792678782011_mgxuy",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "PASSWORD_RESET_COMPLETED",
-      "target_entity": "users",
-      "target_id": "usr_1792678781484_r0st",
-      "details": "Password successfully reset.",
-      "timestamp": "2026-10-22T14:19:42.011Z"
-    },
-    {
-      "id": "log_1792678781890_iyq4s",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "PASSWORD_RESET_REQUESTED",
-      "target_entity": "password_resets",
-      "target_id": "rst_aae81c320ccd7d1d577361dad029e9c27b89cd09a26d3b15",
-      "details": "Password reset requested.",
-      "timestamp": "2026-10-22T14:19:41.890Z"
-    },
-    {
-      "id": "log_1792678781884_juuzb",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "EMAIL_VERIFIED",
-      "target_entity": "users",
-      "target_id": "usr_1792678781484_r0st",
-      "details": "Email address successfully verified.",
-      "timestamp": "2026-10-22T14:19:41.884Z"
-    },
-    {
-      "id": "log_1792678781876_5p4ou",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "EMAIL_VERIFICATION_REQUESTED",
-      "target_entity": "email_verifications",
-      "target_id": "eml_11a56fc0f932d88e81a3ad7818d20ea7bae268bdffaada3d",
-      "details": "Email verification token generated.",
-      "timestamp": "2026-10-22T14:19:41.876Z"
-    },
-    {
-      "id": "log_1792678781870_d02xq",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "PROFILE_UPDATED",
-      "target_entity": "profiles",
-      "target_id": "usr_1792678781484_r0st",
-      "details": "User updated profile details.",
-      "timestamp": "2026-10-22T14:19:41.870Z"
-    },
-    {
-      "id": "log_1792678781863_ebewi",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "FILE_UPLOADED",
-      "target_entity": "uploads",
-      "target_id": "photo_profile_avatar_1792678781863_316cdfb74cc2290a.png",
-      "details": "Uploaded photo (image/png, 70 bytes)",
-      "timestamp": "2026-10-22T14:19:41.863Z"
-    },
-    {
-      "id": "log_1792678781853_odm4u",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "USER_LOGIN",
-      "target_entity": "sessions",
-      "target_id": "sess_7f7521a3b639ad3988b3ee6968c558259ccd2f1ffb9a77873d91aceb7976f0fa",
-      "details": "Member logged in successfully.",
-      "timestamp": "2026-10-22T14:19:41.853Z"
-    },
-    {
-      "id": "log_1792678781610_eu90g",
-      "user_id": "usr_1792678781484_r0st",
-      "user_email": "test.researcher.1792678781366@suryavamsha-test.org",
-      "action": "USER_REGISTERED",
-      "target_entity": "users",
-      "target_id": "usr_1792678781484_r0st",
-      "details": "New account registered: Test Kshatriya Researcher",
-      "timestamp": "2026-10-22T14:19:41.610Z"
-    },
-    {
-      "id": "log_seed_01",
-      "user_id": "usr_admin_001",
-      "user_email": "admin@suryavamsha-heritage.org",
-      "action": "SYSTEM_INITIALIZATION",
-      "target_entity": "database",
-      "target_id": "root",
-      "details": "Historical database initialized with authentic epigraphic records, verified figures, and multi-script multilingual schema.",
-      "timestamp": "2026-01-10T00:00:00.000Z"
-    },
-    {
-      "id": "log_seed_02",
-      "user_id": "usr_editor_001",
-      "user_email": "historian.editor@suryavamsha-heritage.org",
-      "action": "VERIFY_INSCRIPTION",
-      "target_entity": "inscriptions",
-      "target_id": "insc_veligalani_1458",
-      "details": "Veligalani copper-plate grant verified against Epigraphia Indica Vol. XXXIII.",
-      "timestamp": "2026-01-16T12:00:00.000Z"
     }
   ]
 }

@@ -208,6 +208,7 @@ interface HeaderLocalizedStrings {
   privacyLabel: string;
   accessibilityLabel: string;
   designSystemLabel: string;
+  pageDirectoryLabel: string;
 }
 
 const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
@@ -233,7 +234,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'Disclaimer & Terms of Use',
     privacyLabel: 'Privacy Policy',
     accessibilityLabel: 'Accessibility Statement',
-    designSystemLabel: 'Royal UI Component System'
+    designSystemLabel: 'Royal UI Component System',
+    pageDirectoryLabel: 'Website Page Directory'
   },
   hi: {
     portalMainTitle: 'सूर्यवंश ओडियाराजु क्षत्रिय',
@@ -257,7 +259,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'अस्वीकरण एवं उपयोग की शर्तें',
     privacyLabel: 'गोपनीयता नीति',
     accessibilityLabel: 'सुलभता विवरण',
-    designSystemLabel: 'राजकीय UI डिज़ाइन प्रणाली'
+    designSystemLabel: 'राजकीय UI डिज़ाइन प्रणाली',
+    pageDirectoryLabel: 'वेबसाइट पृष्ठ निर्देशिका'
   },
   te: {
     portalMainTitle: 'సూర్యవంశ ఒడియరాజు క్షత్రియ',
@@ -281,7 +284,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'నిరాకరణ & వినియోగ నిబంధనలు',
     privacyLabel: 'గోప్యతా విధానం',
     accessibilityLabel: 'యాక్సెసిబిలిటీ ప్రకటన',
-    designSystemLabel: 'రాయల్ UI డిజైన్ సిస్టమ్'
+    designSystemLabel: 'రాయల్ UI డిజైన్ సిస్టమ్',
+    pageDirectoryLabel: 'వెబ్‌సైట్ పేజీల డైరెక్టరీ'
   },
   kn: {
     portalMainTitle: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ',
@@ -305,7 +309,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'ಹಕ್ಕು ನಿರಾಕರಣೆ ಮತ್ತು ಬಳಕೆಯ ನಿಯಮಗಳು',
     privacyLabel: 'ಗೌಪ್ಯತಾ ನೀತಿ',
     accessibilityLabel: 'ಪ್ರವೇಶಸಾಧ್ಯತೆಯ ಹೇಳಿಕೆ',
-    designSystemLabel: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ'
+    designSystemLabel: 'ರಾಯಲ್ UI ವಿನ್ಯಾಸ ವ್ಯವಸ್ಥೆ',
+    pageDirectoryLabel: 'ವೆಬ್‌ಸೈಟ್ ಪುಟಗಳ ನಿರ್ದೇಶಿಕೆ'
   },
   ta: {
     portalMainTitle: 'சூரியவம்ச ஒடியராஜு சத்திரிய',
@@ -329,7 +334,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'பொறுப்புத் துறப்பு & பயன்பாட்டு விதிகள்',
     privacyLabel: 'தனியுரிமைக் கொள்கை',
     accessibilityLabel: 'அணுகல்தன்மை அறிக்கை',
-    designSystemLabel: 'அரச UI வடிவமைப்பு அமைப்பு'
+    designSystemLabel: 'அரச UI வடிவமைப்பு அமைப்பு',
+    pageDirectoryLabel: 'வலைத்தளப் பக்கங்களின் அடைவு'
   },
   mr: {
     portalMainTitle: 'सूर्यवंश ओडियाराजु क्षत्रिय',
@@ -353,7 +359,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'अस्वीकरण आणि वापराच्या अटी',
     privacyLabel: 'गोपनीयता धोरण',
     accessibilityLabel: 'सुलभता विधान',
-    designSystemLabel: 'शाही UI डिझाइन प्रणाली'
+    designSystemLabel: 'शाही UI डिझाइन प्रणाली',
+    pageDirectoryLabel: 'वेबसाइट पृष्ठ निर्देशिका'
   },
   or: {
     portalMainTitle: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ',
@@ -377,7 +384,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'ଅସ୍ୱୀକରଣ ଓ ବ୍ୟବହାର ସର୍ତ୍ତାବଳୀ',
     privacyLabel: 'ଗୋପନୀୟତା ନୀତି',
     accessibilityLabel: 'ସୁଗମ୍ୟତା ବିବରଣୀ',
-    designSystemLabel: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍'
+    designSystemLabel: 'ରାଜକୀୟ UI ଡିଜାଇନ୍ ସିଷ୍ଟମ୍',
+    pageDirectoryLabel: 'ୱେବସାଇଟ୍ ପୃଷ୍ଠା ନିର୍ଦ୍ଦେଶିକା'
   },
   bn: {
     portalMainTitle: 'সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয়',
@@ -401,7 +409,8 @@ const NAVBAR_I18N: Record<string, HeaderLocalizedStrings> = {
     termsLabel: 'দাবিত্যাগ ও ব্যবহারের শর্তাবলী',
     privacyLabel: 'গোপনীয়তা নীতি',
     accessibilityLabel: 'অ্যাক্সেসিবিলিটি বিবৃতি',
-    designSystemLabel: 'রাজকীয় UI ডিজাইন সিস্টেম'
+    designSystemLabel: 'রাজকীয় UI ডিজাইন সিস্টেম',
+    pageDirectoryLabel: 'ওয়েবসাইট পৃষ্ঠা নির্দেশিকা'
   }
 };
 
@@ -460,6 +469,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
       label: t.nav.home || 'Home',
       iconWebp: ASSET_WEBP('logo-sun-emblem.webp'),
       icon: Home
+    },
+    {
+      id: 'page-directory',
+      path: '/page-directory',
+      label: navUi.pageDirectoryLabel,
+      iconWebp: ASSET_WEBP('icon-geography.webp'),
+      icon: Compass
     },
     {
       id: 'community-heritage',
@@ -693,6 +709,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
           path: '/design-system',
           label: navUi.designSystemLabel,
           icon: Layers
+        },
+        {
+          path: '/page-directory',
+          label: navUi.pageDirectoryLabel,
+          icon: Compass
         }
       ]
     }
@@ -775,21 +796,32 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, onOpenS
         =================================================================== */}
         <div className="royal-gold-bar w-full px-2 sm:px-6 lg:px-8 py-1.5">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-1.5 sm:gap-2 min-w-0">
-            {/* LEFT: Hamburger Menu Button */}
-            <button
-              type="button"
-              onClick={() => setDrawerOpen(prev => !prev)}
-              className="royal-btn-maroon min-h-[34px] px-2 sm:px-3.5 py-1 rounded-lg shadow-sm flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-serif font-extrabold leading-[1.25] transition-all cursor-pointer shrink-0"
-              aria-label={drawerOpen ? navUi.closeMenuLabel : navUi.menuLabel}
-              aria-expanded={drawerOpen}
-            >
-              {drawerOpen ? (
-                <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              ) : (
-                <Menu className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              )}
-              <span className="whitespace-nowrap">{navUi.menuLabel}</span>
-            </button>
+            {/* LEFT: Hamburger Menu Button + Public Website Page Directory Link */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(prev => !prev)}
+                className="royal-btn-maroon min-h-[34px] px-2 sm:px-3.5 py-1 rounded-lg shadow-sm flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-serif font-extrabold leading-[1.25] transition-all cursor-pointer shrink-0"
+                aria-label={drawerOpen ? navUi.closeMenuLabel : navUi.menuLabel}
+                aria-expanded={drawerOpen}
+              >
+                {drawerOpen ? (
+                  <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                ) : (
+                  <Menu className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                )}
+                <span className="whitespace-nowrap">{navUi.menuLabel}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigateTo('/page-directory')}
+                className="hidden sm:inline-flex royal-btn-ivory min-h-[34px] px-2.5 sm:px-3.5 py-1 rounded-lg shadow-sm items-center gap-1.5 text-[11px] sm:text-xs font-serif font-extrabold leading-[1.25] transition-all cursor-pointer shrink-0"
+              >
+                <Compass className="w-3.5 h-3.5 shrink-0 text-[#761824]" />
+                <span className="whitespace-nowrap">{navUi.pageDirectoryLabel}</span>
+              </button>
+            </div>
 
             {/* RIGHT TOP CORNER OF YELLOW BAR: 1. Member Login, 2. Register Account, 3. Small Search Icon */}
             <div className="flex items-center justify-end gap-1 sm:gap-2 ml-auto min-w-0 shrink-0">

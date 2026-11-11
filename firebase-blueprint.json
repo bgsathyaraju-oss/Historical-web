@@ -12,6 +12,24 @@
       },
       "required": ["id", "email", "role"]
     },
+    "AdminProfile": {
+      "title": "AdminProfile",
+      "description": "Authorized administrator account and role profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "first_name": { "type": "string" },
+        "last_name": { "type": "string" },
+        "mobile_number": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "country": { "type": "string" },
+        "role": { "type": "string", "enum": ["super_admin", "admin"] },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "email", "first_name", "last_name", "role"]
+    },
     "HistoricalArticle": {
       "title": "HistoricalArticle",
       "description": "Documented historical article",
@@ -27,6 +45,10 @@
     }
   },
   "firestore": {
+    "/admins/{adminId}": {
+      "schema": "AdminProfile",
+      "description": "Authorized administrator profiles"
+    },
     "/users/{userId}": {
       "schema": "UserProfile",
       "description": "User account collection"

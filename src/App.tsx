@@ -116,6 +116,12 @@ const AccessibilityStatementPage = lazy(() =>
 const AdminDashboardPage = lazy(() =>
   import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage }))
 );
+const AdminLoginPage = lazy(() =>
+  import('./pages/AdminLoginPage').then(m => ({ default: m.AdminLoginPage }))
+);
+const AdminRegisterPage = lazy(() =>
+  import('./pages/AdminRegisterPage').then(m => ({ default: m.AdminRegisterPage }))
+);
 const UiDesignSystemPage = lazy(() =>
   import('./pages/UiDesignSystemPage').then(m => ({ default: m.UiDesignSystemPage }))
 );
@@ -133,6 +139,11 @@ const CommunitySurnamesPage = lazy(() =>
 const NorthIndianCommunitySurnamesPage = lazy(() =>
   import('./pages/NorthIndianCommunitySurnamesPage').then(m => ({
     default: m.NorthIndianCommunitySurnamesPage
+  }))
+);
+const WebsitePageDirectoryPage = lazy(() =>
+  import('./pages/WebsitePageDirectoryPage').then(m => ({
+    default: m.WebsitePageDirectoryPage
   }))
 );
 
@@ -419,9 +430,19 @@ function AppContent() {
         return <AccessibilityStatementPage />;
       case '/admin':
         return <AdminDashboardPage onNavigate={navigateTo} />;
+      case '/admin-login':
+      case '/admin/login':
+        return <AdminLoginPage onNavigate={navigateTo} />;
+      case '/admin-register':
+      case '/admin/register':
+        return <AdminRegisterPage onNavigate={navigateTo} />;
       case '/design-system':
       case '/ui-components':
         return <UiDesignSystemPage onNavigate={navigateTo} />;
+      case '/page-directory':
+      case '/website-page-directory':
+      case '/sitemap':
+        return <WebsitePageDirectoryPage onNavigate={navigateTo} />;
       default:
         return <HomePage onNavigate={navigateTo} onOpenSearch={() => setSearchModalOpen(true)} />;
     }

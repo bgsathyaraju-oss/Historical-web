@@ -33,6 +33,14 @@ import {
   REVIEWED_STATUS_BY_LANG,
   CLAIM_STATUS_BY_LANG
 } from './phase3MetadataTranslations.ts';
+import {
+  KAKATIYA_GENEALOGY_NODE,
+  KAKATIYA_TIMELINE_EVENTS,
+  KAKATIYA_LOCATIONS,
+  KAKATIYA_INSCRIPTIONS,
+  KAKATIYA_MONUMENTS,
+  KAKATIYA_GALLERY_ITEM
+} from './kakatiyaDynastyData.ts';
 
 export const CANONICAL_GENEALOGY: GenealogyNode[] = [
   {
@@ -66,7 +74,7 @@ export const CANONICAL_GENEALOGY: GenealogyNode[] = [
     generation: 0,
     relationship_type: 'traditional_account',
     parent_id: 'gen_maharshi_bhagiratha',
-    children: ['gen_kapilendra'],
+    children: ['gen_kapilendra', 'gen_kakatiya_lineage'],
     sources: ['Valmiki Ramayana', 'Raghuvamsha of Kalidasa', 'Gajapathi Royal Inscriptions'],
     notes: 'The paramount sovereign exemplar of the Suryavamsha solar lineage, formally invoked by the Gajapathi emperors of Odisha.'
   },
@@ -140,7 +148,8 @@ export const CANONICAL_GENEALOGY: GenealogyNode[] = [
     parent_id: 'gen_hamvira',
     sources: ['Local Kaifiyats (Mackenzie Manuscripts)', 'Family Palm-leaf Vamsavalis', 'Oral Lineage Traditions'],
     notes: 'Traditional descent linking warrior families settled around Godavari, Krishna, Rayalaseema, and Mysore outposts to Gajapathi contingents. Categorized as Traditional Lineage in scholarly analysis.'
-  }
+  },
+  KAKATIYA_GENEALOGY_NODE
 ];
 
 export const CANONICAL_TIMELINE_EVENTS: HistoricalEvent[] = [
@@ -275,7 +284,8 @@ export const CANONICAL_TIMELINE_EVENTS: HistoricalEvent[] = [
     monuments_inscriptions: 'Barabati fortification battlements.',
     primary_sources: 'Akbarnama; Madala Panji; Riyaz-us-Salatin.',
     uncertainty_notes: 'Widely verified by Mughal and regional Odia chronicles.'
-  }
+  },
+  ...KAKATIYA_TIMELINE_EVENTS
 ];
 
 const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
@@ -352,7 +362,8 @@ export const CANONICAL_LOCATIONS: HistoricalLocation[] = [
     archaeological_findings: 'Ancient defensive island ramparts, boat landing jetties, medieval stone temple of Sri Peddintlamma Thalli, and Sri Gokarneshwara Swamy temple precinct.',
     inscriptions_found: ['Chalukya and Gajapathi coastal delta copper-plate records', 'Local Kaifiyat inscriptions'],
     image_url: ARCHIVE_IMG('kolleru_lake_citadel.jpg')
-  }
+  },
+  ...KAKATIYA_LOCATIONS
 ];
 
 export const CANONICAL_INSCRIPTIONS: InscriptionRecord[] = [
@@ -409,7 +420,8 @@ export const CANONICAL_INSCRIPTIONS: InscriptionRecord[] = [
       'Epigraphia Andhrica, Vol. II.'
     ],
     verification_status: 'Reviewed'
-  }
+  },
+  ...KAKATIYA_INSCRIPTIONS
 ];
 
 export const CANONICAL_MONUMENTS: TempleMonument[] = [
@@ -464,7 +476,8 @@ export const CANONICAL_MONUMENTS: TempleMonument[] = [
       'Imperial Gazetteer of India, Vol. XV',
       'Andhra Pradesh State Archaeology & Endowments Reports'
     ]
-  }
+  },
+  ...KAKATIYA_MONUMENTS
 ];
 
 export const CANONICAL_DOCUMENTS: HistoricalDocument[] = [
@@ -598,7 +611,8 @@ export const CANONICAL_GALLERY: GalleryItem[] = [
     image_url: ARCHIVE_IMG('kolletikota_island_panorama.jpg'),
     alt_text: 'Vast freshwater lake expanses of Kolleti Sarasu surrounding the fortified island sanctuary of Kolletikota',
     description: 'The ancient water citadel (Jala Durga) and sacred abode of Sri Peddintlamma Thalli amidst the serene waters of Kolleru.'
-  }
+  },
+  KAKATIYA_GALLERY_ITEM
 ];
 
 export const CANONICAL_CLAIMS: HistoricalClaim[] = [

@@ -1,5 +1,9 @@
 import type { Article, LanguageCode } from '../types/index.ts';
 import type { ArticleStructuredMetadata } from './sevenCategoriesExpansionData.ts';
+import {
+  KAKATIYA_MAIN_ARTICLE,
+  KAKATIYA_MAIN_ARTICLE_STRUCTURED_METADATA
+} from './kakatiyaDynastyData.ts';
 
 const ARCHIVE_IMG = (file: string) =>
   `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
@@ -1378,14 +1382,16 @@ In compliance with scholarly museum standards, every visual asset in the Histori
 - Imperial Cholas: Seated / leaping Vyaghra (Tiger) flanked by two fishes and a bow (documented on the Uttaramerur and Leiden seals).
 - Pallavas of Kanchipuram: Vrishabha (Recumbent Bull) and Simha (Lion).
 - Kadambas of Banavasi: Simha (Lion) and Padma (Lotus punch-mark).`
-  }
+  },
+  KAKATIYA_MAIN_ARTICLE
 ];
 
 /**
- * Complete Structured Metadata Map for all 24 Canonical & Expanded Articles
- * (6 original articles + 18 expanded articles) providing Sections A, F, and G data.
+ * Complete Structured Metadata Map for all 25 Canonical & Expanded Articles
+ * (6 original articles + 18 expanded articles + 1 Kakatiya Dynasty monograph) providing Sections A, F, and G data.
  */
 export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMetadata> = {
+  art_dyn_kakatiya_orugallu: KAKATIYA_MAIN_ARTICLE_STRUCTURED_METADATA,
   art_odra_desha_history: {
     refNumber: 'KM-0001',
     articleId: 'art_odra_desha_history',

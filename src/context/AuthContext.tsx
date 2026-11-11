@@ -6,6 +6,9 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   register: (data: any) => Promise<{ success: boolean; error?: string }>;
+  adminLogin: (email: string, pass: string) => Promise<{ success: boolean; error?: string; user?: User }>;
+  adminRegister: (data: any) => Promise<{ success: boolean; error?: string; user?: User }>;
+  checkAdminEligibility: (email: string) => Promise<{ eligible: boolean; error?: string; role?: string }>;
   logout: () => Promise<void>;
   updateProfile: (profileData: Partial<UserProfile>) => Promise<{ success: boolean; error?: string }>;
   refreshUser: () => Promise<void>;
@@ -73,6 +76,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const adminLogin = async (email: string, pass: string) => {
+    try {
+      const res = await fetch('/api/auth/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Admin login failed.' };
+      }
+      setUser(data.user);
+      return { success: true, user: data.user };
+    } catch (err: any) {
+      return { success: false, error: 'Network error during admin login.' };
+    }
+  };
+
+  const adminRegister = async (formData: any) => {
+    try {
+      const res = await fetch('/api/auth/admin/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Admin account creation failed.' };
+      }
+      setUser(data.user);
+      return { success: true, user: data.user };
+    } catch (err: any) {
+      return { success: false, error: 'Network error during admin account creation.' };
+    }
+  };
+
+  const checkAdminEligibility = async (email: string) => {
+    try {
+      const res = await fetch('/api/auth/admin/check-eligibility', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { eligible: false, error: data.error || 'Not authorized for admin registration.' };
+      }
+      return { eligible: true, role: data.role };
+    } catch {
+      return { eligible: false, error: 'Network error verifying admin eligibility.' };
+    }
+  };
+
   const logout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
@@ -111,6 +167,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         login,
         register,
+        adminLogin,
+        adminRegister,
+        checkAdminEligibility,
         logout,
         updateProfile,
         refreshUser: fetchCurrentUser
