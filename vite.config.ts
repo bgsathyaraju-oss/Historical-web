@@ -30,6 +30,7 @@ export default defineConfig(() => {
     // Tailwind v4 plugin MUST precede @vitejs/plugin-react
     plugins: [tailwindcss(), react(), androidWebViewCssCompatPlugin()],
     resolve: {
+      dedupe: ['react', 'react-dom'],
       alias: [
         {
           find: /^@\/src\/(.*)/,
@@ -47,6 +48,21 @@ export default defineConfig(() => {
           find: '@',
           replacement: path.resolve(import.meta.dirname || process.cwd(), 'src'),
         },
+      ],
+    },
+    optimizeDeps: {
+      entries: ['index.html', 'src/**/*.{ts,tsx}'],
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        'lucide-react',
+        'jspdf',
+        'firebase/app',
+        'firebase/auth',
+        'firebase/firestore',
       ],
     },
     build: {

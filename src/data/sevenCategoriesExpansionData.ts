@@ -6,7 +6,7 @@ const ARCHIVE_IMG = (file: string) =>
 const ASSET_IMG = (file: string) =>
   `${(import.meta as any).env?.BASE_URL || '/'}${file.replace(/^\//, '')}`;
 
-export type CanonicalCategoryCode = 'HT' | 'IA' | 'RD' | 'KM' | 'HD' | 'HG' | 'HF';
+export type CanonicalCategoryCode = 'HT' | 'IA' | 'RD' | 'KM' | 'HD' | 'HG' | 'HF' | 'TM';
 
 export interface CanonicalHistoricalCategory {
   code: CanonicalCategoryCode;

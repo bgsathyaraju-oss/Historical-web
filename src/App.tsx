@@ -244,7 +244,8 @@ function resolveRouteAndItemFromUrl(rawPath: string, rawSearch: string): {
     if (
       normalized === '/documentary' ||
       normalized === '/research' ||
-      normalized === '/articles'
+      normalized === '/articles' ||
+      normalized === '/odra-desha'
     ) {
       queryItem = resolveCanonicalArticleId(queryItem);
     }
@@ -345,7 +346,7 @@ function AppContent() {
       case '/documentary':
         return <HistoricalDocumentaryPage initialArticleId={searchParam} onNavigate={navigateTo} />;
       case '/odra-desha':
-        return <OdraDeshaPage onNavigate={navigateTo} />;
+        return <OdraDeshaPage onNavigate={navigateTo} initialItemId={searchParam} />;
       case '/kalinga-war':
       case '/ashoka-kalinga-war':
         return <KalingaWarPage onNavigate={navigateTo} />;

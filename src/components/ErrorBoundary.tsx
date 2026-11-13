@@ -66,6 +66,28 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
+    const msg = error?.message || '';
+    const isStaleChunkOrHookError =
+      msg.includes("Cannot read properties of null (reading 'use") ||
+      msg.includes('Invalid hook call') ||
+      msg.includes('Failed to fetch dynamically imported module') ||
+      msg.includes('Importing a module script failed');
+
+    if (isStaleChunkOrHookError && typeof window !== 'undefined') {
+      try {
+        const reloadKey = 'suryavamsha_vite_hash_recovery';
+        const lastReload = Number(sessionStorage.getItem(reloadKey) || '0');
+        const now = Date.now();
+        if (now - lastReload > 10000) {
+          sessionStorage.setItem(reloadKey, String(now));
+          window.location.reload();
+          return;
+        }
+      } catch {
+        // Ignore storage restrictions
+      }
+    }
+
     logSafePortalError('ReactErrorBoundary', error, errorInfo?.componentStack);
   }
 
@@ -78,9 +100,9 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   handleReload = (): void => {
     try {
-      window.location.href = '/';
-    } catch {
       window.location.reload();
+    } catch {
+      window.location.href = '/';
     }
   };
 

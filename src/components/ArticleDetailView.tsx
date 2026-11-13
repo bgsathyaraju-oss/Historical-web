@@ -83,6 +83,74 @@ export interface MonographEnrichment {
 }
 
 export const MONOGRAPH_ENRICHMENT_MAP: Record<string, MonographEnrichment> = {
+  mon_konark_sun: {
+    historicalPeriod: {
+      en: '13th Century CE (c. 1238 – 1264 CE; Eastern Ganga to Suryavamshi Gajapathi Eras)',
+      hi: '13वीं शताब्दी ई. (लगभग 1238 – 1264 ई.; पूर्वी गंग से सूर्यवंशी गजपति युग)',
+      te: '13వ శతాబ్దం (సుమారు క్రీ.శ. 1238 – 1264; తూర్పు గంగ నుండి సూర్యవంశ గజపతి యుగం)',
+      kn: '13ನೇ ಶತಮಾನ (ಸುಮಾರು ಕ್ರಿ.ಶ. 1238 – 1264; ಪೂರ್ವ ಗಂಗ ಮತ್ತು ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಯುಗ)',
+      ta: '13-ஆம் நூற்றாண்டு (சுமார் பொ.ஊ. 1238 – 1264; கீழைக் கங்கர் முதல் சூர்யவம்ச கஜபதிகள் வரை)',
+      mr: '१३ वे शतक (सुमारे इ.स. १२३८ – १२६४; पूर्व गंग ते सूर्यवंशी गजपती काळ)',
+      or: '୧୩ଶ ଶତାବ୍ଦୀ (ପ୍ରାୟ ୧୨୩୮ – ୧୨୬୪ ଖ୍ରୀ.ଅ.; ପୂର୍ବ ଗଙ୍ଗରୁ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ଯୁଗ)',
+      bn: '১৩শ শতাব্দী (আনুমানিক ১২৩৮ – ১২৬৪ খ্রি.; পূর্ব গঙ্গ থেকে সূর্যবংশীয় গজপতি যুগ)'
+    },
+    subjectCategories: ['Temples & Monuments', 'Kalinga Architecture & Solar Astronomy', 'Eastern Ganga & Suryavamshi Gajapathi Heritage', 'Baya Chakada Chronicles & Epigraphy'],
+    figureIds: ['fig_langula_narasimha', 'fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva'],
+    inscriptionIds: ['insc_lingaraja_1452', 'insc_veligalani_1458', 'insc_simhachalam_prataparudra'],
+    documentIds: ['doc_madala_panji', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_02', 'evt_03', 'evt_04', 'evt_07']
+  },
+  mon_meghanada_pacheri: {
+    historicalPeriod: {
+      en: '15th Century CE (c. 1448 – 1452 CE; 15th Anka of Suryavamshi Gajapathi Emperor Kapilendra Deva)',
+      hi: '15वीं शताब्दी ई. (लगभग 1448 – 1452 ई.; सूर्यवंशी गजपति सम्राट कपिलेन्द्र देव का 15वाँ अंक वर्ष)',
+      te: '15వ శతాబ్దం (సుమారు సా.శ. 1448 – 1452; సూర్యవంశీ గజపతి చక్రవర్తి కపిలేంద్ర దేవుని 15వ అంక సంవత్సరం)',
+      kn: '15ನೇ ಶತಮಾನ (ಸುಮಾರು ಕ್ರಿ.ಶ. 1448 – 1452; ಸೂರ್ಯವಂಶಿ ಗಜಪತಿ ಸಾಮ್ರಾಟ ಕಪಿಲೇಂದ್ರ ದೇವನ 15ನೇ ಅಂಕ ವರ್ಷ)',
+      ta: '15-ஆம் நூற்றாண்டு (சுமார் கி.பி. 1448 – 1452; சூர்யவம்சி கஜபதி பேரரசர் கபிலேந்திர தேவரின் 15-வது அங்க ஆண்டு)',
+      mr: '१५ वे शतक (सुमारे इ.स. १४४८ – १४५२; सूर्यवंशी गजपती सम्राट कपिलेन्द्र देवाचे १५ वे अंक वर्ष)',
+      or: '୧୫ଶ ଶତାବ୍ଦୀ (ପ୍ରାୟ ୧୪୪୮ – ୧୪୫୨ ଖ୍ରୀ.ଅ.; ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ୧୫ଶ ଅଙ୍କ)',
+      bn: '১৫শ শতাব্দী (আনুমানিক ১৪৪৮ – ১৪৫২ খ্রি.; সূর্যবংশী গজপতি সম্রাট কপিলেন্দ্র দেবের ১৫শ অঙ্ক বর্ষ)'
+    },
+    subjectCategories: ['Temples & Monuments', 'Kalinga Sacred-Military Fortification', 'Sri Jagannatha Temple Puri & Chari-Dwara', 'Suryavamshi Gajapathi Epigraphy & Madala Panji'],
+    figureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva', 'fig_anantavarman_chodaganga'],
+    inscriptionIds: ['insc_lingaraja_1452', 'insc_veligalani_1458', 'insc_simhachalam_1459'],
+    documentIds: ['doc_madala_panji', 'doc_veligalani_grant', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_02', 'evt_03', 'evt_05', 'evt_07', 'evt_09']
+  },
+  mon_draksharama_mandapa: {
+    historicalPeriod: {
+      en: '9th to 16th Century CE (c. 892–921 CE Vengi Chalukya Foundation to 15th Century Reddi & Suryavamshi Gajapathi Era)',
+      hi: '9वीं से 16वीं शताब्दी ई. (लगभग 892–921 ई. वेंगी चालुक्य निर्माण से 15वीं शताब्दी रेड्डी एवं सूर्यवंशी गजपति युग)',
+      te: '9వ నుండి 16వ శతాబ్దం (సుమారు సా.శ. 892–921 వేంగి చాళుక్య నిర్మాణం నుండి 15వ శతాబ్దపు రెడ్డి & సూర్యవంశీ గజపతి యుగం)',
+      kn: '9ನೇ ಶತಮಾನದಿಂದ 16ನೇ ಶತಮಾನ (ಸುಮಾರು ಕ್ರಿ.ಶ. 892–921 ವೇಂಗಿ ಚಾಲುಕ್ಯ ನಿರ್ಮಾಣದಿಂದ 15ನೇ ಶತಮಾನದ ರೆಡ್ಡಿ ಮತ್ತು ಸೂರ್ಯವಂಶಿ ಗಜಪತಿ ಯುಗ)',
+      ta: '9 முதல் 16-ஆம் நூற்றாண்டு (சுமார் கி.பி. 892–921 வேங்கி சாளுக்கிய கட்டுமானம் முதல் 15-ஆம் நூற்றாண்டு ரெட்டி & சூர்யவம்சி கஜபதி காலம்)',
+      mr: '९ वे ते १६ वे शतक (सुमारे इ.स. ८९२–९२१ वेंगी चालुक्य निर्मिती ते १५ व्या शतकातील रेड्डी व सूर्यवंशी गजपती काळ)',
+      or: '୯ମ ରୁ ୧୬ଶ ଶତାବ୍ଦୀ (ପ୍ରାୟ ୮୯୨–୯୨୧ ଖ୍ରୀ.ଅ. ବେଙ୍ଗୀ ଚାଲୁକ୍ୟ ନିର୍ମାଣରୁ ୧୫ଶ ଶତାବ୍ଦୀର ରେଡ୍ଡୀ ଓ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ଯୁଗ)',
+      bn: '৯ম থেকে ১৬শ শতাব্দী (আনুমানিক ৮৯২–৯২১ খ্রি. বেঙ্গী চালুক্য নির্মাণ থেকে ১৫শ শতাব্দীর রেড্ডি ও সূর্যবংশী গজপতি যুগ)'
+    },
+    subjectCategories: ['Temples & Monuments', 'Pancharama Kshetra & Manikyamba Shakti Peetha', 'Vengi-Chalukya Dvi-Tala Architecture', 'South Indian Inscriptions Vol. IV (800+ Epigraphs)'],
+    figureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_hamvira_deva', 'fig_anantavarman_chodaganga'],
+    inscriptionIds: ['insc_veligalani_1458', 'insc_simhachalam_1459', 'insc_korni_copper_plates'],
+    documentIds: ['doc_veligalani_grant', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_02', 'evt_03', 'evt_04', 'evt_06', 'evt_08']
+  },
+  mon_kolletikota_peddintlamma: {
+    historicalPeriod: {
+      en: '7th to 16th Century CE & Living Tradition (Vengi Chalukya Kolanu-Nadu, 15th Century Gajapathi Jala-Durga & Phalguna Jatara)',
+      hi: '7वीं से 16वीं शताब्दी ई. एवं जीवंत परंपरा (वेंगी चालुक्य कोलनु-नाडु, 15वीं शताब्दी गजपति जल-दुर्ग एवं फाल्गुन जातरा)',
+      te: '7వ నుండి 16వ శతాబ్దం & సజీవ సంప్రదాయం (వేంగి చాళుక్య కొలను-నాడు, 15వ శతాబ్దపు గజపతి జల-దుర్గం & ఫాల్గుణ జాతర)',
+      kn: '7ನೇ ಶತಮಾನದಿಂದ 16ನೇ ಶತಮಾನ ಮತ್ತು ಜೀವಂತ ಸಂಪ್ರದಾಯ (ವೇಂಗಿ ಚಾಲುಕ್ಯ ಕೊಲನು-ನಾಡು, 15ನೇ ಶತಮಾನದ ಗಜಪತಿ ಜಲ-ದುರ್ಗ ಮತ್ತು ಫಾಲ್ಗುಣ ಜಾತ್ರೆ)',
+      ta: '7 முதல் 16-ஆம் நூற்றாண்டு & வாழும் மரபு (வேங்கி சாளுக்கிய கொலனு-நாடு, 15-ஆம் நூற்றாண்டு கஜபதி நீர்க்கோட்டை & பங்குனி ஜாத்திரை)',
+      mr: '७ वे ते १६ वे शतक आणि जिवंत परंपरा (वेंगी चालुक्य कोलनु-नाडू, १५ व्या शतकातील गजपती जल-दुर्ग व फाल्गुन जत्रा)',
+      or: '୭ମ ରୁ ୧୬ଶ ଶତାବ୍ଦୀ ଓ ଜୀବନ୍ତ ପରମ୍ପରା (ବେଙ୍ଗୀ ଚାଲୁକ୍ୟ କୋଲାନୁ-ନାଡୁ, ୧୫ଶ ଶତାବ୍ଦୀର ଗଜପତି ଜଳ-ଦୁର୍ଗ ଓ ଫାଲ୍ଗୁନ ଯାତ୍ରା)',
+      bn: '৭ম থেকে ১৬শ শতাব্দী ও জীবন্ত ঐতিহ্য (বেঙ্গী চালুক্য কোলানু-নাড়ু, ১৫শ শতাব্দীর গজপতি জল-দুর্গ ও ফাল্গুন যাত্রা)'
+    },
+    subjectCategories: ['Temples & Monuments', 'Kautilyan Antardvipa Jala-Durga (Island Fortress)', 'Sri Peddintlamma (Jaladurga) & Gokarneswara Cult', 'Langula Gajapathi / Kapilendra Deva Garrison History'],
+    figureIds: ['fig_kolletikota_peddintlamma', 'fig_kapilendra_deva', 'fig_hamvira_deva', 'fig_langula_narasimha'],
+    inscriptionIds: ['insc_veligalani_1458', 'insc_potavaram_1489', 'insc_kondapalli_1519'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji'],
+    timelineIds: ['evt_04', 'evt_06', 'evt_08', 'evt_09']
+  },
   art_odra_desha_history: {
     historicalPeriod: {
       en: 'Classical Antiquity to 16th Century CE (c. 3rd Century BCE – 1568 CE)',
@@ -200,6 +268,91 @@ export const MONOGRAPH_ENRICHMENT_MAP: Record<string, MonographEnrichment> = {
     figureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
     inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_korni_copper_plates', 'insc_kendupatna_plates', 'insc_veligalani_1458', 'insc_lingaraja_1452'],
     documentIds: ['doc_veligalani_grant', 'doc_madala_panji', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_01', 'evt_02', 'evt_03', 'evt_05', 'evt_06', 'evt_09']
+  },
+  'region-odra': {
+    historicalPeriod: {
+      en: 'Classical, Early Medieval & Imperial Gajapathi Period (c. 4th Century BCE – 1568 CE)',
+      hi: 'शास्त्रीय, प्रारंभिक मध्यकालीन एवं गजपति साम्राज्य काल (लगभग चौथी शताब्दी ई.पू. – 1568 ई.)',
+      te: 'శాస్త్రీయ, ప్రారంభ మధ్యయుగ & గజపతి సామ్రాజ్య కాలం (క్రీ.పూ. 4వ శతాబ్దం – క్రీ.శ. 1568)',
+      kn: 'ಶಾಸ್ತ್ರೀಯ, ಆರಂಭಿಕ ಮಧ್ಯಕಾಲೀನ ಮತ್ತು ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಕಾಲ (ಕ್ರಿ.ಪೂ. 4ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568)',
+      ta: 'செவ்வியல், தொடக்க இடைக்கால மற்றும் கஜபதி பேரரசு காலம் (பொ.ஊ.மு. 4-ஆம் நூற்றாண்டு – பொ.ஊ. 1568)',
+      mr: 'अभिजात, प्रारंभिक मध्ययुगीन आणि गजपती साम्राज्य काळ (इ.स.पू. ४ थे शतक – इ.स. १५६८)',
+      or: 'ଶାସ୍ତ୍ରୀୟ, ପ୍ରାରମ୍ଭିକ ମଧ୍ୟଯୁଗୀୟ ଓ ଗଜପତି ସାମ୍ରାଜ୍ୟ କାଳ (ଖ୍ରୀ.ପୂ. ୪ର୍ଥ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮)',
+      bn: 'ধ্রুপদী, প্রারମ୍ଭিক মধ্যযুগীয় ও গজপতি সাম্রাজ্য কাল (খ্রি.পূ. ৪র্থ শতাব্দী – ১৫৬৮ খ্রিস্টাব্দ)'
+    },
+    subjectCategories: ['Odra Desha Regional History (OD-0001)', 'Mahanadi–Brahmani–Baitarani Heartland', 'Kataka & Barabati Fort'],
+    figureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva', 'fig_anantavarman_chodaganga'],
+    inscriptionIds: ['insc_veligalani_1458', 'insc_lingaraja_1452', 'insc_kendupatna_plates'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji', 'doc_sarasvati_vilasa'],
+    timelineIds: ['evt_02', 'evt_03', 'evt_05', 'evt_06', 'evt_09']
+  },
+  'region-utkala': {
+    historicalPeriod: {
+      en: 'Buddhist Antiquity, Bhauma-Kara, Somavamshi & Imperial Ganga-Gajapathi Era (6th Century BCE – 1568 CE)',
+      hi: 'बौद्ध प्राचीनता, भौम-कर, सोमवंशी एवं गंग-गजपति साम्राज्य काल (छठी शताब्दी ई.पू. – 1568 ई.)',
+      te: 'బౌద్ధ ప్రాచీనత, భౌమ-కర, సోమవంశ & గంగ-గజపతి సామ్రాజ్య కాలం (క్రీ.పూ. 6వ శతాబ్దం – క్రీ.శ. 1568)',
+      kn: 'ಬೌದ್ಧ ಪ್ರಾಚೀನತೆ, ಭೌಮ-ಕರ, ಸೋಮವಂಶಿ ಮತ್ತು ಗಂಗ-ಗಜಪತಿ ಕಾಲ (ಕ್ರಿ.ಪೂ. 6ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568)',
+      ta: 'பௌத்த தொன்மை, பௌம-கர, சோமவம்ச மற்றும் கங்க-கஜபதி காலம் (பொ.ஊ.மு. 6-ஆம் நூற்றாண்டு – பொ.ஊ. 1568)',
+      mr: 'बौद्ध प्राचीनता, भौम-कर, सोमवंशी आणि गंग-गजपती काळ (इ.स.पू. ६ वे शतक – इ.स. १५६८)',
+      or: 'ବୌଦ୍ଧ ପ୍ରାଚୀନତା, ଭୌମ-କର, ସୋମବଂଶୀ ଓ ଗଙ୍ଗ-ଗଜପତି କାଳ (ଖ୍ରୀ.ପୂ. ୬ଷ୍ଠ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮)',
+      bn: 'বৌদ্ধ প্রাচীনত্ব, ভৌম-কর, সোমবংশী ও গঙ্গ-গজপতি কাল (খ্রি.পূ. ৬ষ্ঠ শতাব্দী – ১৫৬৮ খ্রিস্টাব্দ)'
+    },
+    subjectCategories: ['Odra Desha Regional History (OD-0002)', 'Utkala Mandala & Viraja Kshetra (Jajpur)', 'Bhauma-Kara & Somavamshi Synthesis'],
+    figureIds: ['fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva'],
+    inscriptionIds: ['insc_korni_copper_plates', 'insc_kendupatna_plates', 'insc_lingaraja_1452'],
+    documentIds: ['doc_madala_panji', 'doc_veligalani_grant'],
+    timelineIds: ['evt_03', 'evt_04', 'evt_05', 'evt_06']
+  },
+  'region-kalinga': {
+    historicalPeriod: {
+      en: 'Mauryan (261 BCE), Mahameghavahana (Kharavela), Mathara, Eastern Ganga & Gajapathi Era (5th Century BCE – 1568 CE)',
+      hi: 'मौर्य (261 ई.पू.), महामेघवाहन (खारवेल), माठर, पूर्वी गंग एवं गजपति काल (पांचवीं शताब्दी ई.पू. – 1568 ई.)',
+      te: 'మౌర్య (261 BCE), మహామేఘవాహన (ఖారవేలుడు), మాఠర, తూర్పు గంగ & గజపతి కాలం (క్రీ.పూ. 5వ శతాబ్దం – క్రీ.శ. 1568)',
+      kn: 'ಮೌರ್ಯ (261 BCE), ಮಹಾಮೇಘವಾಹನ (ಖಾರವೇಲ), ಮಾಠರ, ಪೂರ್ವ ಗಂಗ ಮತ್ತು ಗಜಪತಿ ಕಾಲ (ಕ್ರಿ.ಪೂ. 5ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568)',
+      ta: 'மௌரிய (பொ.ஊ.மு. 261), மகாமேகவாகன (காரவேலன்), மாடர, கீழைக் கங்க மற்றும் கஜபதி காலம் (பொ.ஊ.மு. 5-ஆம் நூற்றாண்டு – பொ.ஊ. 1568)',
+      mr: 'मौर्य (२६१ इ.स.पू.), महामेघवाहन (खारवेल), माठर, पूर्व गंग आणि गजपती काळ (इ.स.पू. ५ वे शतक – इ.स. १५६८)',
+      or: 'ମୌର୍ଯ୍ୟ (୨୬୧ ଖ୍ରୀ.ପୂ.), ମହାମେଘବାହନ (ଖାରବେଳ), ମାଠର, ପୂର୍ବ ଗଙ୍ଗ ଓ ଗଜପତି କାଳ (ଖ୍ରୀ.ପୂ. ୫ମ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮)',
+      bn: 'মৌর্য (২৬১ খ্রি.পূ.), মহামেঘবাহন (খারবেল), মাঠর, পূর্ব গঙ্গ ও গজপতি কাল (খ্রি.পূ. ৫ম শতাব্দী – ১৫৬৮ খ্রিস্টাব্দ)'
+    },
+    subjectCategories: ['Odra Desha Regional History (OD-0003)', 'Kalinga Rashtra (Mahendragiri to Godavari)', 'Emperor Kharavela & Maritime Sadhabas'],
+    figureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva'],
+    inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_korni_copper_plates', 'insc_simhachalam_1448', 'insc_srikurmam_1470'],
+    documentIds: ['doc_hathigumpha_estampage', 'doc_madala_panji'],
+    timelineIds: ['evt_01', 'evt_02', 'evt_03', 'evt_04', 'evt_06']
+  },
+  'region-trikalinga': {
+    historicalPeriod: {
+      en: 'Atavika/Mahakantara, Nala, Sarabhapuriya, Somavamshi, Eastern Ganga & Gajapathi Era (4th Century BCE – 16th Century CE)',
+      hi: 'आटविक/महाकांतर, नल, शरभपुरीय, सोमवंशी, पूर्वी गंग एवं गजपति काल (चौथी शताब्दी ई.पू. – 16वीं शताब्दी ई.)',
+      te: 'ఆటవిక/మహాకాంతార, నల, శరభపురీయ, సోమవంశ, తూర్పు గంగ & గజపతి కాలం (క్రీ.పూ. 4వ శతాబ్దం – క్రీ.శ. 16వ శతాబ్దం)',
+      kn: 'ಆಟವಿಕ/ಮಹಾಕಾಂತಾರ, ನಲ, ಶರಭಪುರೀಯ, ಸೋಮವಂಶಿ, ಪೂರ್ವ ಗಂಗ ಮತ್ತು ಗಜಪತಿ ಕಾಲ (ಕ್ರಿ.ಪೂ. 4ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 16ನೇ ಶತಮಾನ)',
+      ta: 'ஆடவிக/மகாகாந்தார, நள, சரபபுரிய, சோமவம்ச, கீழைக் கங்க மற்றும் கஜபதி காலம் (பொ.ஊ.மு. 4-ஆம் நூற்றாண்டு – பொ.ஊ. 16-ஆம் நூற்றாண்டு)',
+      mr: 'आटविक/महाकांतर, नल, शरभपुरीय, सोमवंशी, पूर्व गंग आणि गजपती काळ (इ.स.पू. ४ थे शतक – इ.स. १६ वे शतक)',
+      or: 'ଆଟବିକ/ମହାକାନ୍ତାର, ନଳ, ଶରଭପୁରୀୟ, ସୋମବଂଶୀ, ପୂର୍ବ ଗଙ୍ଗ ଓ ଗଜପତି କାଳ (ଖ୍ରୀ.ପୂ. ୪ର୍ଥ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୬ଶ ଶତାବ୍ଦୀ)',
+      bn: 'আটবিক/মহাকান্তার, নল, শরভপুরীয়, সোমবংশী, পূর্ব গঙ্গ ও গজপতি কাল (খ্রি.পূ. ৪র্থ শতাব্দী – ১৬শ শতাব্দী)'
+    },
+    subjectCategories: ['Odra Desha Regional History (OD-0004)', 'Trikalinga & Dakshina Kosala Highlands', 'Trikalingadhipati Imperial Sovereignty'],
+    figureIds: ['fig_anantavarman_chodaganga', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
+    inscriptionIds: ['insc_korni_copper_plates', 'insc_kendupatna_plates', 'insc_veligalani_1458'],
+    documentIds: ['doc_veligalani_grant', 'doc_madala_panji'],
+    timelineIds: ['evt_03', 'evt_04', 'evt_05', 'evt_06']
+  },
+  'odra-epigraphic-evolution': {
+    historicalPeriod: {
+      en: 'Two Millennia of Paleography & Royal Charters (c. 261 BCE – 1568 CE)',
+      hi: 'दो सहस्राब्दियों का पुरालेख एवं राजपत्र इतिहास (लगभग 261 ई.पू. – 1568 ई.)',
+      te: 'రెండు సహస్రాబ్దాల శాసన & లిపి పరిణామ చరిత్ర (క్రీ.పూ. 261 – క్రీ.శ. 1568)',
+      kn: 'ಎರಡು ಸಹಸ್ರಮಾನಗಳ ಶಾಸನ ಮತ್ತು ಲಿಪಿ ವಿಕಾಸ (ಕ್ರಿ.ಪೂ. 261 – ಕ್ರಿ.ಶ. 1568)',
+      ta: 'இரண்டாயிரம் ஆண்டுகால கல்வெட்டு மற்றும் எழுத்துமுறை வரலாறு (பொ.ஊ.மு. 261 – பொ.ஊ. 1568)',
+      mr: 'दोन सहस्रकांचा शिलालेख आणि लिपी विकास (इ.स.पू. २६१ – इ.स. १५६८)',
+      or: 'ଦୁଇ ସହସ୍ରାବ୍ଦର ଶିଳାଲେଖ ଓ ଲିପି ବିବର୍ତ୍ତନ (ଖ୍ରୀ.ପୂ. ୨୬୧ – ଖ୍ରୀ.ଅ. ୧୫୬୮)',
+      bn: 'দুই সহস্রাব্দের শিলালিপি ও লিপি বিবর্তন (খ্রি.পূ. ২৬১ – ১৫৬৮ খ্রিস্টাব্দ)'
+    },
+    subjectCategories: ['Odra Desha Regional History (OD-0005)', 'Hathigumpha, Soro & Xuanzang (Wu-Tu) Records', 'Veligalani & Kataka Royal Charters'],
+    figureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
+    inscriptionIds: ['insc_hathigumpha_kharavela', 'insc_korni_copper_plates', 'insc_kendupatna_plates', 'insc_veligalani_1458', 'insc_lingaraja_1452'],
+    documentIds: ['doc_hathigumpha_estampage', 'doc_veligalani_grant', 'doc_madala_panji', 'doc_sarasvati_vilasa'],
     timelineIds: ['evt_01', 'evt_02', 'evt_03', 'evt_05', 'evt_06', 'evt_09']
   }
 };
@@ -988,14 +1141,15 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   }
 
   const getDirectMonographUrl = (autoPrint = false): string => {
+    const paramKey = basePath === '/odra-desha' ? 'id' : 'article';
     try {
       const url = new URL(window.location.origin + basePath);
-      url.searchParams.set('article', article.id);
+      url.searchParams.set(paramKey, article.id);
       url.searchParams.set('lang', language);
       if (autoPrint) url.searchParams.set('autoprint', '1');
       return url.toString();
     } catch {
-      return `${window.location.origin}${basePath}?article=${encodeURIComponent(article.id)}&lang=${encodeURIComponent(language)}${autoPrint ? '&autoprint=1' : ''}`;
+      return `${window.location.origin}${basePath}?${paramKey}=${encodeURIComponent(article.id)}&lang=${encodeURIComponent(language)}${autoPrint ? '&autoprint=1' : ''}`;
     }
   };
 

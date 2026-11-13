@@ -427,54 +427,74 @@ export const CANONICAL_INSCRIPTIONS: InscriptionRecord[] = [
 export const CANONICAL_MONUMENTS: TempleMonument[] = [
   {
     id: 'mon_meghanada_pacheri',
-    name: 'Meghanada Pacheri (Puri Outer Fortress Wall)',
-    location: 'Sri Jagannatha Temple, Puri',
+    name: 'Meghanada Pacheri (Outer Fortress Rampart of Sri Jagannatha Temple, Puri)',
+    location: 'Sri Jagannatha Temple, Nilachala, Puri',
     state: 'Odisha',
-    patron_ruler: 'Kapilendra Deva',
-    century: '15th Century CE (c. 1448 CE)',
-    architectural_style: 'Kalinga Fortified Temple Masonry',
-    historical_significance: 'Kapilendra Deva constructed this massive, fortified outer stone boundary wall (665 feet by 640 feet, 20 feet high with crenellations) to protect the sanctum of Lord Jagannatha from seaborne and external raids.',
+    patron_ruler: 'Suryavamshi Gajapathi Emperor Kapilendra Deva (15th Anka, c. 1448–1452 CE)',
+    century: '15th Century CE (c. 1448–1452 CE)',
+    architectural_style: 'Kalinga Sacred-Military Fortification (Laterite & Khondalite Masonry with Sarasundari Merlons)',
+    historical_significance: 'Colossal outer fortified stone enclosure wall (665 ft × 640 ft, 20–24 ft high, 6 ft thick) commissioned by Suryavamshi Gajapathi Emperor Kapilendra Deva around the inner Kurma Bedha of Sri Jagannatha Temple, Puri. Pierced by the four cardinal gateways (Singhadwara, Ashwadwara, Vyaghradwara, and Hastidwara) and engineered both to attenuate the roar of the Bay of Bengal surf and to defend the state deity (Rashtra-Devata) against external military incursions.',
     image_url: ARCHIVE_IMG('meghanada_pacheri_puri.jpg'),
-    sources: ['Madala Panji Records', 'Archaeological Survey of India Puri Conservation Reports']
+    sources: [
+      'Madala Panji (Rajabhoga Itihasa — Reign of Gajapati Kapilendra Deva, ed. Prof. A.B. Mohanty, 1940)',
+      'Inscriptions of the Temple of Jagannatha at Puri (Jaya-Vijaya & Singhadwara Edicts, M. Chakravarti & Dr. K.B. Tripathi)',
+      'Raja Rajendralala Mitra, The Antiquities of Orissa, Vol. II (1880, pp. 102–118)',
+      'L.S.S. O\'Malley, Bengal District Gazetteers: Puri (1908)',
+      'Archaeological Survey of India (ASI) Puri Structural Conservation Reports (1975–1998)'
+    ]
   },
   {
     id: 'mon_konark_sun',
     name: 'Sun Temple of Konark (Arka Kshetra)',
     location: 'Konark, Puri District',
     state: 'Odisha',
-    patron_ruler: 'Narasimhadeva I (Ganga Dynasty)',
+    patron_ruler: 'King Langula Narasimhadeva I (Eastern Ganga Dynasty) & Later Suryavamshi Gajapathi Protection',
     century: '13th Century CE (c. 1250 CE)',
-    architectural_style: 'Classical Kalinga (Rekha & Bhadra Deula)',
-    historical_significance: 'Masterpiece of eastern Indian architecture representing the chariot of the Sun God. Re-protected and maintained by later Suryavamshi Gajapathis who traced their solar lineage to the deity.',
+    architectural_style: 'Classical Kalinga (Rekha & Bhadra Deula / Cosmic Ratha)',
+    historical_significance: 'Masterpiece of eastern Indian architecture representing the celestial chariot of the Sun God, featuring 24 intricately carved astronomical sundial wheels and 7 Vedic steeds. Commissioned by King Langula Narasimhadeva I following northern military campaigns in Bengal and reverently protected by later Suryavamshi Gajapathi emperors as an ancestral solar bastion.',
     image_url: ARCHIVE_IMG('konark_sun_temple_structure.jpg'),
-    sources: ['Baya Chakada Palm-leaf Architectural Chronicles', 'UNESCO World Heritage Dossier']
+    sources: [
+      'Baya Chakada Palm-leaf Architectural Chronicles (trans. Alice Boner et al.)',
+      'Kendupatna Copper Plate Inscription of Narasimhadeva II (1295 CE)',
+      'Ain-i-Akbari by Abul Fazl (c. 1595 CE)',
+      'Archaeological Survey of India Memoir No. 44 by Dr. Debala Mitra',
+      'UNESCO World Heritage Inscription Dossier No. 242 (1984)'
+    ]
   },
   {
     id: 'mon_draksharama_mandapa',
-    name: 'Draksharama Bheemeshwara Royal Mandapa',
-    location: 'Draksharama, Konaseema District',
+    name: 'Draksharama Sri Bhimeswara Swamy Temple & Royal Mandapa (Dakshinakashi / Pancharama Kshetra)',
+    location: 'Draksharama, Dr. B.R. Ambedkar Konaseema / East Godavari District',
     state: 'Andhra Pradesh',
-    patron_ruler: 'Kapilendra Deva & Purushottama Deva',
-    century: '15th Century CE',
-    architectural_style: 'Eastern Chalukya-Gajapathi Synthesis',
-    historical_significance: 'Prominent Shaivite pilgrim shrine in coastal Andhra where Gajapathi rulers established grand pillared halls and recorded victorious campaigns on stone pillars.',
+    patron_ruler: 'Eastern Chalukya Monarch Chalukya Bhima I (c. 892–921 CE); Expanded by Velanati Chodas, Reddi Kings & Suryavamshi Gajapathi Emperors Kapilendra Deva and Purushottama Deva',
+    century: '9th to 15th Century CE (Foundation c. 892–921 CE; Gajapathi Era 1448–1515 CE)',
+    architectural_style: 'Vengi-Chalukya Two-Storeyed (Dvi-Tala) Sanctum with Chola-Reddi-Gajapathi Pillared Mandapas',
+    historical_significance: 'Foremost of the five Pancharama Shaiva Kshetras and seat of Goddess Sri Manikyamba (12th Ashtadasha Maha Shakti Peetha). Built c. 892–921 CE by Vengi Chalukya king Chalukya Bhima I with a unique two-storeyed (Dvi-tala) sanctum housing a 14-foot crystal-limestone Spatika Linga, 108-pillared cloister, and over 800 stone inscriptions spanning the Eastern Chalukyas, Cholas, Eastern Gangas (1128 CE), Kakatiyas, Reddis, and Suryavamshi Gajapathis.',
     image_url: ARCHIVE_IMG('draksharama_temple.jpg'),
-    sources: ['South Indian Inscriptions Vol. IV', 'Andhra Historical Research Society Journal']
+    sources: [
+      'South Indian Inscriptions, Vol. IV (Draksharama Bhimesvara Temple Inscriptions, Nos. 1006–1384, ASI, 1923)',
+      'Dr. N. Venkataramanayya, The Eastern Chalukyas of Vengi (1950)',
+      'Mallampalli Somasekhara Sarma, History of the Reddi Kingdoms (1948)',
+      'Prof. R. Subrahmanyam, The Suryavamsi Gajapatis of Orissa (1957)',
+      'Kavisarvabhauma Srinatha, Bhimesvara Puranamu (c. 1430 CE)'
+    ]
   },
   {
     id: 'mon_kolletikota_peddintlamma',
-    name: 'Sri Kolletikota Peddintlamma Temple & Island Water Fort',
-    location: 'Kolletikota, Kolleru Lake (Kaikaluru, Eluru District)',
+    name: 'Sri Kolletikota Peddintlamma Temple & The Aquatic Island Fortress (Jala-Durga) of Kolleti Sarasu',
+    location: 'Kolletikota Island, Kolleru Lake (Kaikaluru / Akividu Belt, Eluru District)',
     state: 'Andhra Pradesh',
-    patron_ruler: 'Gajapathi Imperial Garrisons & Odiyaraju Chieftains',
-    century: 'Medieval Era (c. 11th–16th Century CE)',
-    architectural_style: 'Island Citadel & Coastal Jala-Durga Temple Architecture',
-    historical_significance: 'Historic island fortress sanctuary situated in the middle of Kolleti Sarasu (Kolleru Lake). The temple of Sri Peddintlamma Thalli along with the ancient Gokarneshwara Swamy Shiva shrine formed the sacred and defensive citadel of Gajapathi and Odiyaraju Kshatriya warriors, guarded by natural marshlands and navigated via native boat flotillas.',
+    patron_ruler: 'Kolanu Chiefs of Sarasipuri, Kakatiya & Reddi Rulers, and Suryavamshi Gajapathi Emperor Kapilendra Deva (Langula Gajapathi Garrison Tradition)',
+    century: '7th to 16th Century CE (Gajapathi Garrison Era 1448–1515 CE & Living Tradition)',
+    architectural_style: 'Kautilyan Antardvipa Jala-Durga (Island Water-Fortress) & Coastal Shakta-Shaiva Shrine',
+    historical_significance: 'Premier medieval Antardvipa Jala-Durga (aquatic island fortress) situated at the center of Kolleru Lake (Kolleti Sarasu / Kolanu-Nadu) between the Godavari and Krishna deltas. Guarded by deep waters, earthen-laterite ramparts, and submerged stone causeways, it served as the strategic island citadel of the Kolanu Chiefs, Kakatiyas, and 15th-century Suryavamshi Gajapathi garrisons, consecrated to the warrior-mother deity Sri Peddintlamma Talli (Jaladurga) and Lord Sri Gokarneswara Swamy.',
     image_url: ARCHIVE_IMG('peddintlamma_temple_kolletikota.jpg'),
     sources: [
-      'Mackenzie Manuscripts (Kaikaluru & Kolletikota Kaifiyats)',
-      'Imperial Gazetteer of India, Vol. XV',
-      'Andhra Pradesh State Archaeology & Endowments Reports'
+      'Gordon Mackenzie, A Manual of the Kistna District in the Presidency of Madras (1883, pp. 210–218)',
+      'Mackenzie Manuscripts: Local Kaifiyats of Kolletikota, Kaikaluru, and Eluru (c. 1800–1815 CE)',
+      'South Indian Inscriptions (Vols. IV, V & X — Epigraphs of Kolanu-Nadu / Sarasipuri)',
+      'Prof. R. Subrahmanyam, The Suryavamsi Gajapatis of Orissa (1957)',
+      'Kautilya\'s Arthashastra (Book II, Chapter 3: Durganivesha — Audaka/Antardvipa Jala-Durga)'
     ]
   },
   ...KAKATIYA_MONUMENTS

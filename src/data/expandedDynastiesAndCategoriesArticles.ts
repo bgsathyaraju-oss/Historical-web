@@ -1391,6 +1391,358 @@ In compliance with scholarly museum standards, every visual asset in the Histori
  * (6 original articles + 18 expanded articles + 1 Kakatiya Dynasty monograph) providing Sections A, F, and G data.
  */
 export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMetadata> = {
+  mon_konark_sun: {
+    refNumber: 'TM-0002',
+    articleId: 'mon_konark_sun',
+    categoryCode: 'TM',
+    categoryName: {
+      en: 'Temples & Monuments',
+      hi: 'मंदिर एवं ऐतिहासिक स्मारक',
+      te: 'దేవాలయాలు & చారిత్రక స్మారకాలు',
+      kn: 'ದೇವಾಲಯಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಸ್ಮಾರಕಗಳು',
+      ta: 'கோயில்கள் மற்றும் வரலாற்று நினைவுச்சின்னங்கள்',
+      mr: 'मंदिरे आणि ऐतिहासिक स्मारके',
+      or: 'ମନ୍ଦିର ଓ ଐତିହାସିକ ସ୍ଥାପତ୍ୟ',
+      bn: 'মন্দির ও ঐতিহাসিক স্থাপত্য'
+    },
+    subcategoryName: {
+      en: 'Kalinga Deula Architecture & Solar Astronomy',
+      hi: 'कलिंग देउल स्थापत्य एवं सौर खगोलशास्त्र',
+      te: 'కళింగ దేఉల శిల్పకళ & సౌర ఖగోళశాస్త్రం',
+      kn: 'ಕಳಿಂಗ ದೇಉಲ ವಾಸ್ತುಶಿಲ್ಪ ಮತ್ತು ಸೌರ ಖಗೋಳಶಾಸ್ತ್ರ',
+      ta: 'கலிங்க தேஉல கட்டிடக்கலை & சூரிய வானியல்',
+      mr: 'कलिंग देउल स्थापत्य आणि सौर खगोलशास्त्र',
+      or: 'କଳିଙ୍ଗ ଦେଉଳ ସ୍ଥାପତ୍ୟ ଓ ସୌର ଖଗୋଳ ବିଜ୍ଞାନ',
+      bn: 'কলিঙ্গ দেউল স্থাপত্য ও সৌর জ্যোতির্বিজ্ঞান'
+    },
+    historicalPeriod: {
+      en: '13th Century CE (c. 1238 – 1264 CE; Ganga-Gajapathi Eras)',
+      hi: '13वीं शताब्दी ई. (लगभग 1238 – 1264 ई.; गंग-गजपति युग)',
+      te: '13వ శతాబ్దం (సుమారు క్రీ.శ. 1238 – 1264; గంగ-గజపతి యుగాలు)',
+      kn: '13ನೇ ಶತಮಾನ (ಸುಮಾರು ಕ್ರಿ.ಶ. 1238 – 1264; ಗಂಗ-ಗಜಪತಿ ಯುಗ)',
+      ta: '13-ஆம் நூற்றாண்டு (சுமார் பொ.ஊ. 1238 – 1264; கங்க-கஜபதி காலங்கள்)',
+      mr: '१३ वे शतक (सुमारे इ.स. १२३८ – १२६४; गंग-गजपती युग)',
+      or: '୧୩ଶ ଶତାବ୍ଦୀ (ପ୍ରାୟ ୧୨୩୮ – ୧୨୬୪ ଖ୍ରୀ.ଅ.; ଗଙ୍ଗ-ଗଜପତି ଯୁଗ)',
+      bn: '১৩শ শতাব্দী (আনুমানিক ১২৩৮ – ১২৬৪ খ্রি.; গঙ্গ-গজপতি যুগ)'
+    },
+    approxDateRange: {
+      en: 'c. 1238 – 1264 CE (Foundation c. 1250 CE)',
+      hi: 'लगभग 1238 – 1264 ई. (प्रतिष्ठा लगभग 1250 ई.)',
+      te: 'సుమారు క్రీ.శ. 1238 – 1264 (ప్రతిష్ఠ సుమారు క్రీ.శ. 1250)',
+      kn: 'ಸುಮಾರು ಕ್ರಿ.ಶ. 1238 – 1264 (ಪ್ರತಿಷ್ಠಾಪನೆ ಸುಮಾರು ಕ್ರಿ.ಶ. 1250)',
+      ta: 'சுமார் பொ.ஊ. 1238 – 1264 (நிறுவுதல் சுமார் பொ.ஊ. 1250)',
+      mr: 'सुमारे इ.स. १२३८ – १२६४ (प्रतिष्ठापना सुमारे इ.स. १२५०)',
+      or: 'ପ୍ରାୟ ୧୨୩୮ – ୧୨୬୪ ଖ୍ରୀ.ଅ. (ପ୍ରତିଷ୍ଠା ପ୍ରାୟ ୧୨୫୦ ଖ୍ରୀ.ଅ.)',
+      bn: 'আনুমানিক ১২৩৮ – ১২৬৪ খ্রি. (প্রতিষ্ঠা আনুমানিক ১২৫০ খ্রি.)'
+    },
+    geographicalLocation: {
+      en: 'Konark, Puri District, Odisha (Bay of Bengal Marine Corridor)',
+      hi: 'कोणार्क, पुरी जिला, ओडिशा (बंगाल की खाड़ी तटीय गलियारा)',
+      te: 'కోణార్క్, పూరీ జిల్లా, ఒడిశా (బంగాళాఖాతం సముద్ర తీర ప్రాంతం)',
+      kn: 'ಕೋಣಾರ್ಕ್, ಪುರಿ ಜಿಲ್ಲೆ, ಒಡಿಶಾ (ಬಂಗಾಳ ಕೊಲ್ಲಿ ಕರಾವಳಿ ಕಾರಿಡಾರ್)',
+      ta: 'கொனார்க், பூரி மாவட்டம், ஒடிசா (வங்காள விரிகுடா கடற்கரை பாதை)',
+      mr: 'कोणार्क, पुरी जिल्हा, ओडिशा (बंगालचा उपसागर सागरी कॉरिडॉर)',
+      or: 'କୋଣାର୍କ, ପୁରୀ ଜିଲ୍ଲା, ଓଡ଼ିଶା (ବଙ୍ଗୋପସାଗର ଉପକୂଳ କରିଡର)',
+      bn: 'কোণার্ক, পুরী জেলা, উড়িষ্যা (বঙ্গোপসাগর উপকূলবর্তী করিডোর)'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Sun Temple of Konark — 13th Century Kalinga Architectural Masterpiece',
+      caption: 'The surviving Jagamohana (Porch) and stone wheels of the Sun Temple, commissioned by King Langula Narasimhadeva I (c. 1250 CE).',
+      period: '13th Century CE (c. 1250 CE)',
+      sourceOrProvenance: 'Archaeological Survey of India (ASI Memoir No. 44) & Historical Archive',
+      credit: 'Archaeological Survey of India & Archival Repository',
+      altText: 'Sun Temple of Konark showing Jagamohana and sculpted celestial chariot wheels',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_03_odra_kshatriya',
+        canonicalTerm: 'Odra-Kshatriya / Odiyaraju / VaddeRajulu',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '13th – 16th Century CE',
+        relationshipSummary: {
+          en: 'Royal Ganga and Gajapathi military and administrative patronage of the Arka Kshetra complex, corroborated by Kendupatna and Veligalani charters.',
+          hi: 'अर्का क्षेत्र परिसर का गंग एवं गजपति सैन्य एवं प्रशासनिक संरक्षण, केंडुपटना और वेलीगलानी ताम्रपत्रों द्वारा समर्थित।',
+          te: 'కేందుపట్న మరియు వెలిగలని తామ్రశాసనాల ద్వారా ధృవీకరించబడిన అర్క క్షేత్ర సముదాయానికి గంగ మరియు గజపతి రాజపోషణ.',
+          kn: 'ಕೇಂದುಪಟ್ನ ಮತ್ತು ವೆಲಿಗಲಾನಿ ಶಾಸನಗಳಿಂದ ದೃಢಪಟ್ಟ ಅರ್ಕ ಕ್ಷೇತ್ರ ಸಂಕೀರ್ಣಕ್ಕೆ ಗಂಗ ಮತ್ತು ಗಜಪತಿ ರಾಜಾಶ್ರಯ.',
+          ta: 'கேந்துபட்னா மற்றும் வெலிகலானி செப்பேடுகளால் உறுதிப்படுத்தப்பட்ட அர்க்க க்ஷேத்திரத்திற்கான கங்க மற்றும் கஜபதி அரச ஆதரவு.',
+          mr: 'केंदुपटना आणि वेलीगलानी ताम्रपटांद्वारे प्रमाणित अर्क क्षेत्र संकुलाला गंग आणि गजपतींचे राजाश्रय.',
+          or: 'କେନ୍ଦୁପଟଣା ଓ ଭେଲିଗଲାନି ତାମ୍ରଫଳକ ଦ୍ୱାରା ପ୍ରମାଣିତ ଅର୍କ କ୍ଷେତ୍ର ପ୍ରତି ଗଙ୍ଗ ଓ ଗଜପତି ରାଜପୃଷ୍ଠପୋଷକତା।',
+          bn: 'কেন্দুপাটনা ও ভেলিগালানি তাম্রশাসন দ্বারা প্রমাণিত অর্ক ক্ষেত্র কমপ্লেক্সের প্রতি গঙ্গ ও গজপতি রাজকীয় পৃষ্ঠপোষকতা।'
+        },
+        supportingRef: '[src_konark_02] Kendupatna Copper Plates (1295 CE); [src_konark_07] K.S. Behera (1996)',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_03_odra_kshatriya'
+      }
+    ],
+    relatedArticleIds: ['art_gajapathi_kapilendra', 'art_odra_desha_history', 'art_epigraphic_evolution_odra'],
+    relatedFigureIds: ['fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_anantavarman_chodaganga'],
+    relatedDynastyNames: ['Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
+  },
+  mon_meghanada_pacheri: {
+    refNumber: 'TM-0001',
+    articleId: 'mon_meghanada_pacheri',
+    categoryCode: 'TM',
+    categoryName: {
+      en: 'Temples & Monuments',
+      hi: 'मंदिर एवं ऐतिहासिक स्मारक',
+      te: 'దేవాలయాలు & చారిత్రక స్మారకాలు',
+      kn: 'ದೇವಾಲಯಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಸ್ಮಾರಕಗಳು',
+      ta: 'கோயில்கள் மற்றும் வரலாற்று நினைவுச்சின்னங்கள்',
+      mr: 'मंदिरे आणि ऐतिहासिक स्मारके',
+      or: 'ମନ୍ଦିର ଓ ଐତିହାସିକ ସ୍ଥାପତ୍ୟ',
+      bn: 'মন্দির ও ঐতিহাসিক স্থাপত্য'
+    },
+    subcategoryName: {
+      en: 'Kalinga Sacred-Military Fortification & Enclosure Architecture',
+      hi: 'कलिंग दुर्ग-मंदिर स्थापत्य एवं बाह्य प्राचीर',
+      te: 'కళింగ దుర్గ-ఆలయ ప్రాకార నిర్మాణ శైలి',
+      kn: 'ಕಳಿಂಗ ಕೋಟೆ-ದೇವಾಲಯ ಪ್ರಾಕಾರ ವಾಸ್ತುಶಿಲ್ಪ',
+      ta: 'கலிங்க கோட்டை-கோயில் மதில் கட்டிடக்கலை',
+      mr: 'कलिंग दुर्ग-मंदिर तटबंदी स्थापत्य',
+      or: 'କଳିଙ୍ଗ ଦୁର୍ଗ-ମନ୍ଦିର ପ୍ରାଚୀର ସ୍ଥାପତ୍ୟ',
+      bn: 'কলিঙ্গ দুর্গ-মন্দির প্রাচীর স্থাপত্য'
+    },
+    historicalPeriod: {
+      en: '15th Century CE (Suryavamshi Gajapathi Imperial Era)',
+      hi: '15वीं शताब्दी ई. (सूर्यवंशी गजपति साम्राज्य काल)',
+      te: '15వ శతాబ్దం (సూర్యవంశీ గజపతి సామ్రాజ్య యుగం)',
+      kn: '15ನೇ ಶತಮಾನ (ಸೂರ್ಯವಂಶಿ ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯ ಯುಗ)',
+      ta: '15-ஆம் நூற்றாண்டு (சூர்யவம்சி கஜபதி பேரரசு காலம்)',
+      mr: '१५ वे शतक (सूर्यवंशी गजपती साम्राज्य काळ)',
+      or: '୧୫ଶ ଶତାବ୍ଦୀ (ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସାମ୍ରାଜ୍ୟ ଯୁଗ)',
+      bn: '১৫শ শতাব্দী (সূর্যবংশী গজপতি সাম্রাজ্য যুগ)'
+    },
+    approxDateRange: {
+      en: 'c. 1448 – 1452 CE (15th Anka of Emperor Kapilendra Deva)',
+      hi: 'लगभग 1448 – 1452 ई. (सम्राट कपिलेन्द्र देव का 15वाँ अंक वर्ष)',
+      te: 'సుమారు సా.శ. 1448 – 1452 (కపిలేంద్ర దేవ చక్రవర్తి 15వ అంక సంవత్సరం)',
+      kn: 'ಸುಮಾರು ಕ್ರಿ.ಶ. 1448 – 1452 (ಸಾಮ್ರಾಟ ಕಪಿಲೇಂದ್ರ ದೇವನ 15ನೇ ಅಂಕ ವರ್ಷ)',
+      ta: 'சுமார் கி.பி. 1448 – 1452 (பேரரசர் கபிலேந்திர தேவரின் 15-வது அங்க ஆண்டு)',
+      mr: 'सुमारे इ.स. १४४८ – १४५२ (सम्राट कपिलेन्द्र देवाचे १५ वे अंक वर्ष)',
+      or: 'ପ୍ରାୟ ୧୪୪୮ – ୧୪୫୨ ଖ୍ରୀ.ଅ. (ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ୧୫ଶ ଅଙ୍କ)',
+      bn: 'আনুমানিক ১৪৪৮ – ১৪৫২ খ্রি. (সম্রাট কপিলেন্দ্র দেবের ১৫শ অঙ্ক বর্ষ)'
+    },
+    geographicalLocation: {
+      en: 'Nilachala (Shankha Kshetra), Puri, Puri District, Odisha',
+      hi: 'नीलाचल (शंख क्षेत्र), पुरी, पुरी जिला, ओडिशा',
+      te: 'నీలాచలం (శంఖ క్షేత్రం), పూరీ, పూరీ జిల్లా, ఒడిశా',
+      kn: 'ನೀಲಾಚಲ (ಶಂಖ ಕ್ಷೇತ್ರ), ಪುರಿ, ಪುರಿ ಜಿಲ್ಲೆ, ಒಡಿಶಾ',
+      ta: 'நீலாச்சலம் (சங்க க்ஷேத்திரம்), புரி, புரி மாவட்டம், ஒடிசா',
+      mr: 'नीलाचल (शंख क्षेत्र), पुरी, पुरी जिल्हा, ओडिशा',
+      or: 'ନୀଳାଚଳ (ଶଙ୍ଖ କ୍ଷେତ୍ର), ପୁରୀ, ପୁରୀ ଜିଲ୍ଲା, ଓଡ଼ିଶା',
+      bn: 'নীলাচল (শঙ্খ ক্ষেত্র), পুরী, পুরী জেলা, ওড়িশা'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Meghanada Pacheri & Eastern Singhadwara of Sri Jagannatha Temple, Puri',
+      caption: 'The 665 ft × 640 ft fortified outer stone enclosure (Meghanada Pacheri) with Sarasundari battlements, commissioned by Emperor Kapilendra Deva (c. 1448–1452 CE).',
+      period: '15th Century CE (c. 1448–1452 CE)',
+      sourceOrProvenance: 'Madala Panji Chronicles & Archaeological Survey of India (Bhubaneswar Circle)',
+      credit: 'Archaeological Survey of India & Archival Repository',
+      altText: 'Meghanada Pacheri fortress wall and Singhadwara at Sri Jagannatha Temple, Puri',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_03_odra_kshatriya',
+        canonicalTerm: 'Odra-Kshatriya / Suryavamshi Gajapathi / Odiyaraju',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '15th – 18th Century CE',
+        relationshipSummary: {
+          en: 'Constructed by Suryavamshi Gajapathi Emperor Kapilendra Deva and defended across three centuries by Odra-Kshatriya garrisons, corroborated by the Madala Panji and Jaya-Vijaya doorway inscriptions.',
+          hi: 'सूर्यवंशी गजपति सम्राट कपिलेन्द्र देव द्वारा निर्मित और ओड्र-क्षत्रिय सैनिकों द्वारा रक्षित, मादला पांजी एवं जय-विजय द्वार शिलालेखों द्वारा प्रमाणित।',
+          te: 'సూర్యవంశీ గజపతి చక్రవర్తి కపిలేంద్ర దేవునిచే నిర్మించబడి, ఓడ్ర-క్షత్రియ రక్షక దళాలచే సంరక్షించబడిన దుర్గ ప్రాకారం—మాదళ పంజి మరియు జయ-విజయ ద్వార శాసనాల ద్వారా ధృవీకరించబడింది.',
+          kn: 'ಸೂರ್ಯವಂಶಿ ಗಜಪತಿ ಸಾಮ್ರಾಟ ಕಪಿಲೇಂದ್ರ ದೇವನಿಂದ ನಿರ್ಮಿಸಲ್ಪಟ್ಟು ಓಡ್ರ-ಕ್ಷತ್ರಿಯ ಸೈನಿಕರಿಂದ ರಕ್ಷಿಸಲ್ಪಟ್ಟ ಕೋಟೆ ಗೋಡೆ—ಮಾದಲಾ ಪಂಜಿ ಮತ್ತು ಜಯ-ವಿಜಯ ದ್ವಾರ ಶಾಸನಗಳಿಂದ ದೃಢಪಟ್ಟಿದೆ.',
+          ta: 'சூர்யவம்சி கஜபதி பேரரசர் கபிலேந்திர தேவரால் கட்டப்பட்டு ஒட்டர-க்ஷத்ரிய வீரர்களால் பாதுகாக்கப்பட்ட கோட்டை மதில்—மாதளா பஞ்சி மற்றும் ஜெய-விஜய வாயில் கல்வெட்டுகளால் உறுதிப்படுத்தப்பட்டது.',
+          mr: 'सूर्यवंशी गजपती सम्राट कपिलेन्द्र देवाने बांधलेली आणि ओड्र-क्षत्रिय सैन्याकडून रक्षिलेली तटबंदी—मादला पांजी व जय-विजय द्वार शिलालेखांद्वारे प्रमाणित.',
+          or: 'ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ଦ୍ୱାରା ନିର୍ମିତ ଓ ଓଡ଼ିଆ କ୍ଷତ୍ରିୟ ସୈନ୍ୟଙ୍କ ଦ୍ୱାରା ରକ୍ଷିତ—ମାଦଳା ପାଞ୍ଜି ଓ ଜୟ-ବିଜୟ ଦ୍ୱାର ଶିଳାଲେଖ ଦ୍ୱାରା ପ୍ରମାଣିତ।',
+          bn: 'সূর্যবংশী গজপতি সম্রাট কপিলেন্দ্র দেব কর্তৃক নির্মিত এবং ওড্র-ক্ষত্রিয় বাহিনী দ্বারা রক্ষিত—মাদলা পাঞ্জি ও জয়-বিজয় দ্বার শিলালিপি দ্বারা প্রমাণিত।'
+        },
+        supportingRef: '[src_mp_01] Madala Panji (Rajabhoga Itihasa); [src_mp_02] R. Subrahmanyam (1957)',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_03_odra_kshatriya'
+      }
+    ],
+    relatedArticleIds: ['mon_konark_sun', 'art_gajapathi_kapilendra', 'art_dyn_eastern_gangas'],
+    relatedFigureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva', 'fig_anantavarman_chodaganga'],
+    relatedDynastyNames: ['Suryavamsha Gajapathi Dynasty', 'Eastern Ganga Dynasty']
+  },
+  mon_draksharama_mandapa: {
+    refNumber: 'TM-0003',
+    articleId: 'mon_draksharama_mandapa',
+    categoryCode: 'TM',
+    categoryName: {
+      en: 'Temples & Monuments',
+      hi: 'मंदिर एवं ऐतिहासिक स्मारक',
+      te: 'దేవాలయాలు & చారిత్రక స్మారకాలు',
+      kn: 'ದೇವಾಲಯಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಸ್ಮಾರಕಗಳು',
+      ta: 'கோயில்கள் மற்றும் வரலாற்று நினைவுச்சின்னங்கள்',
+      mr: 'मंदिरे आणि ऐतिहासिक स्मारके',
+      or: 'ମନ୍ଦିର ଓ ଐତିହାସିକ ସ୍ଥାପତ୍ୟ',
+      bn: 'মন্দির ও ঐতিহাসিক স্থাপত্য'
+    },
+    subcategoryName: {
+      en: 'Vengi-Chalukya Dvi-Tala Architecture & Pancharama Epigraphy',
+      hi: 'वेंगी-चालुक्य द्वितल स्थापत्य एवं पंचाराम अभिलेख',
+      te: 'వేంగి-చాళుక్య ద్వితల నిర్మాణ శైలి & పంచారామ శాసన సంపద',
+      kn: 'ವೇಂಗಿ-ಚಾಲುಕ್ಯ ದ್ವಿತಲ ವಾಸ್ತುಶಿಲ್ಪ ಮತ್ತು ಪಂಚಾರಾಮ ಶಾಸನಗಳು',
+      ta: 'வேங்கி-சாளுக்கிய த்விதள கட்டிடக்கலை & பஞ்சாராமக் கல்வெட்டுகள்',
+      mr: 'वेंगी-चालुक्य द्वितल स्थापत्य आणि पंचाराम शिलालेख',
+      or: 'ବେଙ୍ଗୀ-ଚାଲୁକ୍ୟ ଦ୍ୱિતଳ ସ୍ଥାପତ୍ୟ ଓ ପଞ୍ଚାରାମ ଶିଳାଲେଖ',
+      bn: 'বেঙ্গী-চালুক্য দ্বিতল স্থাপত্য ও পঞ্চরাম শিলালিপি'
+    },
+    historicalPeriod: {
+      en: '9th to 16th Century CE (Vengi Chalukya, Chola, Reddi & Gajapathi Eras)',
+      hi: '9वीं से 16वीं शताब्दी ई. (वेंगी चालुक्य, चोल, रेड्डी एवं गजपति युग)',
+      te: '9వ నుండి 16వ శతాబ్దం వరకు (వేంగి చాళుక్య, చోళ, రెడ్డి & గజపతి యుగాలు)',
+      kn: '9ನೇ ಶತಮಾನದಿಂದ 16ನೇ ಶತಮಾನ (ವೇಂಗಿ ಚಾಲುಕ್ಯ, ಚೋಳ, ರೆಡ್ಡಿ ಮತ್ತು ಗಜಪತಿ ಯುಗ)',
+      ta: '9 முதல் 16-ஆம் நூற்றாண்டு வரை (வேங்கி சாளுக்கிய, சோழ, ரெட்டி & கஜபதி காலங்கள்)',
+      mr: '९ वे ते १६ वे शतक (वेंगी चालुक्य, चोल, रेड्डी आणि गजपती काळ)',
+      or: '୯ମ ରୁ ୧୬ଶ ଶତାବ୍ଦୀ (ବେଙ୍ଗୀ ଚାଲୁକ୍ୟ, ଚୋଳ, ରେଡ୍ଡୀ ଓ ଗଜପତି ଯୁଗ)',
+      bn: '৯ম থেকে ১৬শ শতাব্দী (বেঙ্গী চালুক্য, চোল, রেড্ডি ও গজপতি যুগ)'
+    },
+    approxDateRange: {
+      en: 'c. 892 – 921 CE (Chalukya Bhima I Foundation; Gajapathi Endowments 1448–1515 CE)',
+      hi: 'लगभग 892 – 921 ई. (चालुक्य भीम प्रथम द्वारा निर्माण; गजपति अनुदान 1448–1515 ई.)',
+      te: 'సుమారు సా.శ. 892 – 921 (మొదటి చాళుక్య భీముని నిర్మాణం; గజపతి శాసనాలు సా.శ. 1448–1515)',
+      kn: 'ಸುಮಾರು ಕ್ರಿ.ಶ. 892 – 921 (ಮೊದಲನೇ ಚಾಲುಕ್ಯ ಭೀಮನ ನಿರ್ಮಾಣ; ಗಜಪತಿ ದಾನಗಳು ಕ್ರಿ.ಶ. 1448–1515)',
+      ta: 'சுமார் கி.பி. 892 – 921 (முதலாம் சாளுக்கிய பீமன் கட்டுமானம்; கஜபதி கொடைகள் கி.பி. 1448–1515)',
+      mr: 'सुमारे इ.स. ८९२ – ९२१ (पहिला चालुक्य भीम निर्मिती; गजपती दानधर्म इ.स. १४४८–१५१५)',
+      or: 'ପ୍ରାୟ ୮୯୨ – ୯୨୧ ଖ୍ରୀ.ଅ. (ପ୍ରଥମ ଚାଲୁକ୍ୟ ଭୀମଙ୍କ ନିର୍ମାଣ; ଗଜପତି ଦାନ ୧୪୪୮–୧୫୧୫ ଖ୍ରୀ.ଅ.)',
+      bn: 'আনুমানিক ৮৯২ – ৯২১ খ্রি. (প্রথম চালুক্য ভীমের নির্মাণ; গজপতি অনুদান ১৪৪৮–১৫১৫ খ্রি.)'
+    },
+    geographicalLocation: {
+      en: 'Draksharama (Dakshinakashi), Konaseema / East Godavari District, Andhra Pradesh',
+      hi: 'द्राक्षाराम (दक्षिणकाशी), कोनसीमा / पूर्वी गोदावरी जिला, आंध्र प्रदेश',
+      te: 'ద్రాక్షారామం (దక్షిణకాశీ), కోనసీమ / తూర్పు గోదావరి జిల్లా, ఆంధ్రప్రదేశ్',
+      kn: 'ದ್ರಾಕ್ಷಾರಾಮ (ದಕ್ಷಿಣಕಾಶಿ), ಕೋನಸೀಮಾ / ಪೂರ್ವ ಗೋದಾವರಿ ಜಿಲ್ಲೆ, ಆಂಧ್ರಪ್ರದೇಶ',
+      ta: 'திராக்ஷாராமம் (தக்ஷிணகாசி), கோனசீமா / கிழக்கு கோதாவரி மாவட்டம், ஆந்திரப் பிரதேசம்',
+      mr: 'द्राक्षाराम (दक्षिणकाशी), कोनसीमा / पूर्व गोदावरी जिल्हा, आंध्र प्रदेश',
+      or: 'ଦ୍ରାକ୍ଷାରାମ (ଦକ୍ଷିଣକାଶୀ), କୋనସୀମା / ପୂର୍ବ ଗୋଦାବରୀ ଜିଲ୍ଲା, ଆନ୍ଧ୍ରପ୍ରଦେଶ',
+      bn: 'দ্রাক্ষারাম (দক্ষিণকাশী), কোনসীমা / পূর্ব গোদাবরী জেলা, অন্ধ্রপ্রদেশ'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Sri Bhimeswara Swamy Temple & Royal Mandapa at Draksharama (Pancharama Kshetra)',
+      caption: 'The two-storeyed (Dvi-tala) sanctum, 108-pillared cloister, and royal mandapas bearing over 800 medieval inscriptions at Draksharama.',
+      period: '9th – 15th Century CE',
+      sourceOrProvenance: 'Archaeological Survey of India (South Indian Inscriptions, Vol. IV)',
+      credit: 'Archaeological Survey of India & Archival Repository',
+      altText: 'Draksharama Sri Bhimeswara Swamy Temple gopuram, prakara, and pillared mandapa',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_04_odiyaraju',
+        canonicalTerm: 'Odiyaraju / OddeRajulu / Suryavamshi Gajapathi',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '12th – 16th Century CE',
+        relationshipSummary: {
+          en: 'Corroborated by Eastern Ganga (1128 CE) and Suryavamshi Gajapathi (1448–1515 CE) royal inscriptions at Draksharama during the rule over Rajamahendravaram Dandapata.',
+          hi: 'राजमहेंद्रवरम दंडपाट के शासन के दौरान द्राक्षाराम में पूर्वी गंग (1128 ई.) और सूर्यवंशी गजपति (1448–1515 ई.) के राजकीय शिलालेखों द्वारा प्रमाणित।',
+          te: 'రాజమహేంద్రవరం దండపాట పాలనలో ద్రాక్షారామంలో తూర్పు గాంగ (సా.శ. 1128) మరియు సూర్యవంశీ గజపతి (సా.శ. 1448–1515) రాజశాసనాల ద్వారా ధృవీకరించబడింది.',
+          kn: 'ರಾಜಮಹೇಂದ್ರವರಂ ದಂಡಪಾಟ ಆಳ್ವಿಕೆಯಲ್ಲಿ ದ್ರಾಕ್ಷಾರಾಮದಲ್ಲಿರುವ ಪೂರ್ವ ಗಂಗ (ಕ್ರಿ.ಶ. 1128) ಮತ್ತು ಸೂರ್ಯವಂಶಿ ಗಜಪತಿ (ಕ್ರಿ.ಶ. 1448–1515) ಶಾಸನಗಳಿಂದ ದೃಢಪಟ್ಟಿದೆ.',
+          ta: 'இராஜமகேந்திரவரம் தண்டபாட ஆட்சியின் போது திராக்ஷாராமத்தில் பொறிக்கப்பட்ட கீழைக் கங்க (கி.பி. 1128) மற்றும் சூர்யவம்சி கஜபதி (கி.பி. 1448–1515) கல்வெட்டுகளால் உறுதிப்படுத்தப்பட்டது.',
+          mr: 'राजमहेंद्रवरम दंडपाट राजवटीत द्राक्षाराम येथील पूर्व गंग (इ.स. ११२८) आणि सूर्यवंशी गजपती (इ.स. १४४८–१५१५) शिलालेखांद्वारे प्रमाणित.',
+          or: 'ରାଜମହେନ୍ଦ୍ରବରମ୍ ଦଣ୍ଡপাট ଶାସନ କାଳରେ ଦ୍ରାକ୍ଷାରାମରେ ଥିବା ପୂର୍ବ ଗଙ୍ଗ (୧୧୨୮ ଖ୍ରୀ.ଅ.) ଓ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି (୧୪୪୮–୧୫୧୫ ଖ୍ରୀ.ଅ.) ଶିଳାଲେଖ ଦ୍ୱାରା ପ୍ରମାଣିତ।',
+          bn: 'রাজমহেন্দ্রবরম দণ্ডপাট শাসনকালে দ্রাক্ষারামে উৎকীর্ণ পূর্ব গঙ্গ (১১২৮ খ্রি.) ও সূর্যবংশী গজপতি (১৪৪৮–১৫১৫ খ্রি.) শিলালিপি দ্বারা প্রমাণিত।'
+        },
+        supportingRef: '[src_drk_01] South Indian Inscriptions, Vol. IV (1923); [src_drk_04] R. Subrahmanyam (1957)',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_04_odiyaraju'
+      }
+    ],
+    relatedArticleIds: ['art_gajapathi_kapilendra', 'art_epigraphic_evolution_odra', 'mon_kolletikota_peddintlamma'],
+    relatedFigureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_anantavarman_chodaganga'],
+    relatedDynastyNames: ['Eastern Chalukyas of Vengi', 'Suryavamsha Gajapathi Dynasty', 'Eastern Ganga Dynasty', 'Kakatiya Dynasty']
+  },
+  mon_kolletikota_peddintlamma: {
+    refNumber: 'TM-0004',
+    articleId: 'mon_kolletikota_peddintlamma',
+    categoryCode: 'TM',
+    categoryName: {
+      en: 'Temples & Monuments',
+      hi: 'मंदिर एवं ऐतिहासिक स्मारक',
+      te: 'దేవాలయాలు & చారిత్రక స్మారకాలు',
+      kn: 'ದೇವಾಲಯಗಳು ಮತ್ತು ಐತಿಹಾಸಿಕ ಸ್ಮಾರಕಗಳು',
+      ta: 'கோயில்கள் மற்றும் வரலாற்று நினைவுச்சின்னங்கள்',
+      mr: 'मंदिरे आणि ऐतिहासिक स्मारके',
+      or: 'ମନ୍ଦିର ଓ ଐତିହାସିକ ସ୍ଥାପତ୍ୟ',
+      bn: 'মন্দির ও ঐতিহাসিক স্থাপত্য'
+    },
+    subcategoryName: {
+      en: 'Kautilyan Antardvipa Jala-Durga (Island Fortress) & Shakta-Shaiva Shrine',
+      hi: 'कौटिल्यीय अंतर्द्वीप जल-दुर्ग एवं शाक्त-शैव तीर्थ',
+      te: 'కౌటిల్యుని అంతర్ద్వీప జల-దుర్గం & శక్తి-శైవ క్షేత్రం',
+      kn: 'ಕೌಟಿಲ್ಯನ ಅಂತರ್ದ್ವೀಪ ಜಲ-ದುರ್ಗ ಮತ್ತು ಶಾಕ್ತ-ಶೈವ ಕ್ಷೇತ್ರ',
+      ta: 'கௌடில்யரின் அந்தர்த்வீப ஜல-துர்க்கம் & சாக்த-சைவத் தலம்',
+      mr: 'कौटिल्यीय अंतर्द्वीप जल-दुर्ग आणि शाक्त-शैव तीर्थक्षेत्र',
+      or: 'କୌଟିଲ୍ୟଙ୍କ ଅନ୍ତର୍ଦ୍ୱୀପ ଜଳ-ଦୁର୍ଗ ଓ ଶାକ୍ତ-ଶୈବ ପୀଠ',
+      bn: 'কৌটিল্যীয় অন্তর্দ্বীপ জল-দুর্গ ও শাক্ত-শৈব তীর্থ'
+    },
+    historicalPeriod: {
+      en: '7th to 16th Century CE (Vengi Chalukya, Kolanu Chiefs, Kakatiya & Suryavamshi Gajapathi Eras)',
+      hi: '7वीं से 16वीं शताब्दी ई. (वेंगी चालुक्य, कोलनु सामंत, काकतीय एवं सूर्यवंशी गजपति युग)',
+      te: '7వ నుండి 16వ శతాబ్దం వరకు (వేంగి చాళుక్య, కొలను రాజులు, కాకతీయ & సూర్యవంశీ గజపతి యుగాలు)',
+      kn: '7ನೇ ಶತಮಾನದಿಂದ 16ನೇ ಶತಮಾನ (ವೇಂಗಿ ಚಾಲುಕ್ಯ, ಕೊಲನು ಸಾಮಂತರು, ಕಾಕತೀಯ ಮತ್ತು ಸೂರ್ಯವಂಶಿ ಗಜಪತಿ ಯುಗ)',
+      ta: '7 முதல் 16-ஆம் நூற்றாண்டு வரை (வேங்கி சாளுக்கிய, கொலனு மன்னர்கள், காகதிய & சூர்யவம்சி கஜபதி காலங்கள்)',
+      mr: '७ वे ते १६ वे शतक (वेंगी चालुक्य, कोलनु सामंत, काकतीय आणि सूर्यवंशी गजपती काळ)',
+      or: '୭ମ ରୁ ୧୬ଶ ଶତାବ୍ଦୀ (ବେଙ୍ଗୀ ଚାଲୁକ୍ୟ, କୋଲାନୁ ସାମନ୍ତ, କାକତୀୟ ଓ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ଯୁଗ)',
+      bn: '৭ম থেকে ১৬শ শতাব্দী (বেঙ্গী চালুক্য, কোলানু সামন্ত, কাকতীয় ও সূর্যবংশী গজপতি যুগ)'
+    },
+    approxDateRange: {
+      en: 'c. 11th – 16th Century CE (Gajapathi Garrison Era 1448–1515 CE & Living Phalguna Jatara)',
+      hi: 'लगभग 11वीं – 16वीं शताब्दी ई. (गजपति जल-दुर्ग काल 1448–1515 ई. एवं जीवंत फाल्गुन जातरा)',
+      te: 'సుమారు సా.శ. 11వ – 16వ శతాబ్దం (గజపతి జల-దుర్గ పాలన సా.శ. 1448–1515 & సజీవ ఫాల్గుణ జాతర)',
+      kn: 'ಸುಮಾರು ಕ್ರಿ.ಶ. 11ನೇ – 16ನೇ ಶತಮಾನ (ಗಜಪತಿ ಜಲ-ದುರ್ಗ ಆಳ್ವಿಕೆ ಕ್ರಿ.ಶ. 1448–1515 ಮತ್ತು ಫಾಲ್ಗುಣ ಜಾತ್ರೆ)',
+      ta: 'சுமார் கி.பி. 11 – 16-ஆம் நூற்றாண்டு (கஜபதி நீர்க்கோட்டை காலம் கி.பி. 1448–1515 & பங்குனி ஜாத்திரை)',
+      mr: 'सुमारे इ.स. ११ वे – १६ वे शतक (गजपती जल-दुर्ग काळ इ.स. १४४८–१५१५ व फाल्गुन जत्रा)',
+      or: 'ପ୍ରାୟ ୧୧ଶ – ୧୬ଶ ଶତାବ୍ଦୀ (ଗଜପତି ଜଳ-ଦୁର୍ଗ ଶାସନ ୧୪୪୮–୧୫୧୫ ଖ୍ରୀ.ଅ. ଓ ଫାଲ୍ଗୁନ ଯାତ୍ରା)',
+      bn: 'আনুমানিক ১১শ – ১৬শ শতাব্দী (গজপতি জল-দুর্গ শাসন ১৪৪৮–১৫১৫ খ্রি. ও ফাল্গুন যাত্রা)'
+    },
+    geographicalLocation: {
+      en: 'Kolletikota Island, Kolleru Lake (Kolleti Sarasu), Kaikaluru / Akividu Belt, Eluru District, Andhra Pradesh',
+      hi: 'कोल्लेटिकोटा द्वीप, कोल्लेरु झील (कोल्लेटि सरसु), एलुरु जिला, आंध्र प्रदेश',
+      te: 'కొల్లేటికోట ద్వీపం, కొల్లేరు సరస్సు (కొల్లేటి సరస్సు), ఏలూరు జిల్లా, ఆంధ్రప్రదేశ్',
+      kn: 'ಕೊಲ್ಲೇಟಿಕೋಟ ದ್ವೀಪ, ಕೊಲ್ಲೇರು ಸರೋವರ (ಕೊಲ್ಲೇಟಿ ಸರಸು), ಏಲೂರು ಜಿಲ್ಲೆ, ಆಂಧ್ರಪ್ರದೇಶ',
+      ta: 'கொல்லேடிகோட்டா தீவு, கொல்லேரு ஏரி (கொல்லேடி சரசு), ஏலூரு மாவட்டம், ஆந்திரப் பிரதேசம்',
+      mr: 'कोल्लेटिकोटा बेट, कोल्लेरू सरोवर (कोल्लेटि सरसू), एलुरू जिल्हा, आंध्र प्रदेश',
+      or: 'କୋଲ୍ଲେଟିକୋଟା ଦ୍ୱୀପ, କୋଲ୍ଲେରୁ ହ୍ରଦ (କୋଲ୍ଲେଟି ସରସ୍ୱ), ଏଲୁରୁ ଜିଲ୍ଲା, ଆନ୍ଧ୍ରପ୍ରଦେଶ',
+      bn: 'কোল্লেটিকোটা দ্বীপ, কোল্লেরু হ্রদ (কোল্লেটি সরসু), এলুরু জেলা, অন্ধ্রপ্রদেশ'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Sri Kolletikota Peddintlamma Temple & Island Jala-Durga of Kolleti Sarasu',
+      caption: 'Sanctum of Sri Peddintlamma Talli (Jaladurga) at the center of the historic Kolletikota island fortress in Kolleru Lake.',
+      period: '11th – 16th Century CE & Living Shrine',
+      sourceOrProvenance: 'Mackenzie Kaifiyats (1815), Kistna District Manual (1883) & AP Endowments Archives',
+      credit: 'Archival Sanctuary & Temple Documentation',
+      altText: 'Sri Kolletikota Peddintlamma Temple at Kolletikota island in Kolleru Lake',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_04_odiyaraju',
+        canonicalTerm: 'Odiyaraju / OddeRajulu / VaddeRajulu',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '15th – 20th Century CE',
+        relationshipSummary: {
+          en: 'Documented in the Kistna District Manual (1883) and Mackenzie Kaifiyats as the island fortress garrison of Langula Gajapathi / Kapilendra Deva and the sacred Kuladevata shrine of coastal Andhra Odiyaraju and OddeRajulu families.',
+          hi: 'कृष्णा डिस्ट्रिक्ट मैनुअल (1883) और मैकेंजी कैफियतों में लांगूल गजपति / कपिलेन्द्र देव के द्वीप जल-दुर्ग और ओडियाराजू व ओड्डेराजुलु परिवारों की कुलदेवी के रूप में प्रलेखित।',
+          te: 'కృష్ణా జిల్లా మాన్యువల్ (1883) మరియు మెకంజీ కైఫియత్‌లలో లాంగూల గజపతి / కపిలేంద్ర దేవుని జల-దుర్గంగా మరియు ఒడియరాజు, ఒడ్డెరాజుల కులదేవత పీఠంగా నమోదైంది.',
+          kn: 'ಕೃಷ್ಣಾ ಡಿಸ್ಟ್ರಿಕ್ಟ್ ಮ್ಯಾನ್ಯುಯಲ್ (1883) ಮತ್ತು ಮೆಕೆಂಜಿ ಕೈಫಿಯತ್‌ಗಳಲ್ಲಿ ಲಾಂಗೂಲ ಗಜಪತಿ / ಕಪಿಲೇಂದ್ರ ದೇವನ ಜಲ-ದುರ್ಗವಾಗಿ ಮತ್ತು ಒಡಿಯರಾಜು ಕುಟುಂಬಗಳ ಕುಲದೇವತೆಯಾಗಿ ದಾಖಲಾಗಿದೆ.',
+          ta: 'கிருஷ்ணா மாவட்ட கையேடு (1883) மற்றும் மெக்கன்சி கைஃபியத்துகளில் லாங்கூல கஜபதி / கபிலேந்திர தேவரின் நீர்க்கோட்டையாகவும் ஒடியராஜு குடும்பங்களின் குலதெய்வமாகவும் ஆவணப்படுத்தப்பட்டுள்ளது.',
+          mr: 'कृष्णा डिस्ट्रिक्ट मॅन्युअल (१८८३) आणि मॅकेंझी कैफियतींमध्ये लांगूल गजपती / कपिलेन्द्र देवाचा जल-दुर्ग आणि ओडियाराजू कुटुंबांची कुलदेवता म्हणून नोंदवलेले.',
+          or: 'କୃଷ୍ଣା ଡିଷ୍ଟ୍ରିକ୍ଟ ମାନୁଆଲ୍ (୧୮୮୩) ଓ ମାକେଞ୍ଜି କୈଫିୟତରେ ଲାଙ୍ଗୁଳା ଗଜପତି / କପିଳେନ୍ଦ୍ର ଦେବଙ୍କ ଜଳ-ଦୁର୍ଗ ଏବଂ ଓଡ଼ିଆରାଜୁ ପରିବାରଙ୍କ କୁଳଦେବୀ ଭାବେ ଲିପିବଦ୍ଧ।',
+          bn: 'কৃষ্ণা ডিস্ট্রিক্ট ম্যানুয়াল (১৮৮৩) ও ম্যাকেঞ্জি কৈফিয়তে লাঙ্গুল গজপতি / কপিলেন্দ্র দেবের জল-দুর্গ এবং ওড়িয়ারাজু পরিবারগুলোর কুলদেবী হিসেবে নথিভুক্ত।'
+        },
+        supportingRef: '[src_kkp_01] Gordon Mackenzie, Manual of the Kistna District (1883), pp. 210–218; [src_kkp_06] Mackenzie Kaifiyats',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_04_odiyaraju'
+      }
+    ],
+    relatedArticleIds: ['art_kolletikota_peddintlamma_lake', 'art_gajapathi_kapilendra', 'mon_draksharama_mandapa'],
+    relatedFigureIds: ['fig_kolletikota_peddintlamma', 'fig_kapilendra_deva', 'fig_hamvira_deva', 'fig_langula_narasimha_deva'],
+    relatedDynastyNames: ['Suryavamsha Gajapathi Dynasty', 'Eastern Chalukyas of Vengi', 'Kakatiya Dynasty']
+  },
   art_dyn_kakatiya_orugallu: KAKATIYA_MAIN_ARTICLE_STRUCTURED_METADATA,
   art_odra_desha_history: {
     refNumber: 'KM-0001',
@@ -2119,6 +2471,446 @@ export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMe
       }
     ],
     relatedArticleIds: ['art_ia_south_indian_epigraphy_corpus', 'art_odra_desha_history', 'art_gajapathi_kapilendra'],
+    relatedFigureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
+    relatedDynastyNames: ['Mahameghavahana Dynasty', 'Bhauma-Kara Dynasty', 'Somavamshi Dynasty', 'Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
+  },
+  'region-odra': {
+    refNumber: 'OD-0001',
+    articleId: 'region-odra',
+    categoryCode: 'HG',
+    categoryName: {
+      en: 'Odra Desha Regional & Geopolitical Monographs',
+      hi: 'ओड्र देश क्षेत्रीय एवं भू-राजनीतिक शोध-ग्रंथ',
+      te: 'ఓడ్ర దేశ ప్రాంతీయ & భౌగోళిక-రాజకీయ పరిశోధనా వ్యాసాలు',
+      kn: 'ಓಡ್ರ ದೇಶ ಪ್ರಾದೇಶಿಕ ಮತ್ತು ಭೌಗೋಳಿಕ-ರಾಜಕೀಯ ಸಂಶೋಧನಾ ಲೇಖನಗಳು',
+      ta: 'ஒட்டர தேச பிராந்திய மற்றும் புவிசார் அரசியல் ஆய்வுக் கட்டுரைகள்',
+      mr: 'ओड्र देश प्रादेशिक आणि भू-राजकीय संशोधन ग्रंथ',
+      or: 'ଓଡ଼୍ର ଦେଶ ଆଞ୍ଚଳିକ ଓ ଭୂ-ରାଜନୈତିକ ଗବେଷଣା ପ୍ରବନ୍ଧ',
+      bn: 'ওড্র দেশ আঞ্চলিক ও ভূ-রাজনৈতিক গবেষণা নিবন্ধ'
+    },
+    subcategoryName: {
+      en: 'Core Odra Desha (Mahanadi–Brahmani–Baitarani Deltaic Heartland)',
+      hi: 'मूल ओड्र देश (महानदी–ब्राह्मणी–बैतरणी डेल्टा हृदयभूमि)',
+      te: 'మూల ఓడ్ర దేశం (మహానది–బ్రాహ్మణి–బైతరణి డెల్టా కేంద్రభూమి)',
+      kn: 'ಮೂಲ ಓಡ್ರ ದೇಶ (ಮಹಾನದಿ–ಬ್ರಾಹ್ಮಣಿ–ಬೈತರಣಿ ಮುಖಜ ಭೂಮಿ)',
+      ta: 'மூல ஒட்டர தேசம் (மகாநதி–பிராம்மணி–பைதரணி டெல்டா மையப்பகுதி)',
+      mr: 'मूळ ओड्र देश (महानदी–ब्राह्मणी–बैतरणी त्रिभुज हृदयभूमी)',
+      or: 'ମୂଳ ଓଡ଼୍ର ଦେଶ (ମହାନଦୀ–ବ୍ରାହ୍ମଣୀ–ବୈତରଣୀ ତ୍ରିକୋଣଭୂମି ହୃଦୟସ୍ଥଳୀ)',
+      bn: 'মূল ওড্র দেশ (মহানদী–ব্রাহ্মণী–বৈতরণী বদ্বীপ হৃদয়ভূমি)'
+    },
+    historicalPeriod: {
+      en: 'Classical, Early Medieval & Imperial Gajapathi Period',
+      hi: 'शास्त्रीय, प्रारंभिक मध्यकालीन एवं गजपति साम्राज्य काल',
+      te: 'శాస్త్రీయ, ప్రారంభ మధ్యయుగ & గజపతి సామ్రాజ్య కాలం',
+      kn: 'ಶಾಸ್ತ್ರೀಯ, ಆರಂಭಿಕ ಮಧ್ಯಕಾಲೀನ ಮತ್ತು ಗಜಪತಿ ಸಾಮ್ರಾಜ್ಯದ ಕಾಲ',
+      ta: 'செவ்வியல், தொடக்க இடைக்கால மற்றும் கஜபதி பேரரசு காலம்',
+      mr: 'अभिजात, प्रारंभिक मध्ययुगीन आणि गजपती साम्राज्य काळ',
+      or: 'ଶାସ୍ତ୍ରୀୟ, ପ୍ରାରମ୍ଭିକ ମଧ୍ୟଯୁଗୀୟ ଓ ଗଜପତି ସାମ୍ରାଜ୍ୟ କାଳ',
+      bn: 'ধ্রুপদী, প্রারମ୍ଭিক মধ্যযুগীয় ও গজপতি সাম্রাজ্য কাল'
+    },
+    approxDateRange: {
+      en: 'c. 4th Century BCE – 1568 CE',
+      hi: 'लगभग चौथी शताब्दी ई.पू. – 1568 ई.',
+      te: 'క్రీ.పూ. 4వ శతాబ్దం – క్రీ.శ. 1568',
+      kn: 'ಕ್ರಿ.ಪೂ. 4ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568',
+      ta: 'பொ.ஊ.மு. 4-ஆம் நூற்றாண்டு – பொ.ஊ. 1568',
+      mr: 'इ.स.पू. ४ थे शतक – इ.स. १५६८',
+      or: 'ଖ୍ରୀ.ପୂ. ୪ର୍ଥ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮',
+      bn: 'খ্রি.পূ. ৪র্থ শতাব্দী – ১৫৬৮ খ্রিস্টাব্দ'
+    },
+    geographicalLocation: {
+      en: 'Mahanadi, Brahmani & Baitarani Deltaic Heartland (Cuttack, Puri, Khordha, Dhenkanal, Jajpur, Odisha)',
+      hi: 'महानदी, ब्राह्मणी एवं बैतरणी डेल्टा हृदयभूमि (कटक, पुरी, खोर्धा, ढेंकानाल, जाजपुर, ओडिशा)',
+      te: 'మహానది, బ్రాహ్మణి & బైతరణి డెల్టా కేంద్రభూమి (కటక్, పూరీ, ఖోర్ధా, ధెంకనాల్, జాజ్‌పూర్, ఒడిశా)',
+      kn: 'ಮಹಾನದಿ, ಬ್ರಾಹ್ಮಣಿ ಮತ್ತು ಬೈತರಣಿ ಮುಖಜ ಭೂಮಿ (ಕಟಕ್, ಪುರಿ, ಖೋರ್ಧಾ, ಧೆಂಕನಾಲ್, ಜಾಜ್‌ಪುರ, ಒಡಿಶಾ)',
+      ta: 'மகாநதி, பிராம்மணி மற்றும் பைதரணி டெல்டா மையப்பகுதி (கட்டாக், பூரி, கோர்தா, தேன்கனல், ஜாஜ்பூர், ஒடிசா)',
+      mr: 'महानदी, ब्राह्मणी आणि बैतरणी त्रिभुज प्रदेश (कटक, पुरी, खोर्धा, ढेंकानाल, जाजपूर, ओडिशा)',
+      or: 'ମହାନଦୀ, ବ୍ରାହ୍ମଣୀ ଓ ବୈତରଣୀ ତ୍ରିକୋଣଭୂମି (କଟକ, ପୁରୀ, ଖୋର୍ଦ୍ଧା, ଢେଙ୍କାନାଳ, ଯାଜପୁର, ଓଡ଼ିଶା)',
+      bn: 'মহানদী, ব্রাহ্মণী ও বৈতরণী বদ্বীপ অঞ্চল (কটক, পুরী, খোর্ধা, ঢেঙ্কানাল, জাজপুর, ওড়িশা)'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Core Odra Desha (OD-0001): Mahanadi–Brahmani–Baitarani Heartland & Barabati Citadel',
+      caption: 'Core Odra Desha (OD-0001): The Mahanadi–Brahmani–Baitarani riverine heartland, Barabati Fort (Kataka), and sacred temple complexes of coastal Odisha.',
+      period: 'c. 4th Century BCE – 1568 CE',
+      sourceOrProvenance: 'Archaeological Survey of India (ASI) & Odisha State Museum Archival Collection',
+      credit: 'Archival Heritage Photography',
+      altText: 'Core Odra Desha riverine and temple heritage in the Mahanadi delta, Odisha',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_01_od',
+        canonicalTerm: 'Od / Oad / Odra Kshatriya (Homeland Ethnonym)',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '6th – 16th Century CE',
+        relationshipSummary: {
+          en: 'Directly attested in Soro Copper Plates ("Odra-vishaya"), Tirumalai Inscription ("Odda-vishaya"), and Veligalani Grant ("Odra-rajya").',
+          hi: 'सोरो ताम्रपत्र ("ओड्र-विषय"), तिरुमलै शिलालेख ("ओड्ड-विषय") और वेलिगलनी अनुदान ("ओड्र-राज्य") में प्रत्यक्ष रूप से प्रमाणित।',
+          te: 'సోరో తామ్రశాసనాలు ("ఓడ్ర-విషయ"), తిరుమలై శాసనం ("ఒడ్డ-విషయ") మరియు వెలిగలని శాసనం ("ఓడ్ర-రాజ్య")లో ప్రత్యక్షంగా ధృవీకరించబడింది.',
+          kn: 'ಸೋರೋ ತಾಮ್ರಶಾಸನ ("ಓಡ್ರ-ವಿಷಯ"), ತಿರುಮಲೈ ಶಾಸನ ("ಒಡ್ಡ-ವಿಷಯ") ಮತ್ತು ವೆಲಿಗಲನಿ ಶಾಸನದಲ್ಲಿ ("ಓಡ್ರ-ರಾಜ್ಯ") ನೇರವಾಗಿ ದೃಢೀಕರಿಸಲಾಗಿದೆ.',
+          ta: 'சோரோ செப்பேடுகள் ("ஒட்டர-விஷய"), திருமலை கல்வெட்டு ("ஒட்ட-விஷய") மற்றும் வெலிகலானி செப்பேட்டில் ("ஒட்டர-ராஜ்ய") நேரடியாக உறுதிப்படுத்தப்பட்டுள்ளது.',
+          mr: 'सोरो ताम्रपट ("ओड्र-विषय"), तिरुमलै शिलालेख ("ओड्ड-विषय") आणि वेलिगलनी ताम्रपटात ("ओड्र-राज्य") थेट प्रमाणित.',
+          or: 'ସୋରୋ ତାମ୍ରଶାସନ ("ଓଡ଼୍ର-ବିଷୟ"), ତିରୁମଲାଇ ଶିଳାଲେଖ ("ଓଡ଼-ବିଷୟ") ଓ ଭେଲିଗାଲାନି ଶାସନରେ ("ଓଡ଼୍ର-ରାଜ୍ୟ") ପ୍ରମାଣିତ।',
+          bn: 'সোরো তাম্রশাসন ("ওড্র-বিষয়"), তিরুমালাই শিলালিপি ("ওড্ড-বিষয়") ও ভেলিগালানি শাসনে ("ওড্র-রাজ্য") সরাসরি প্রমাণিত।'
+        },
+        supportingRef: '[src_od1_01] Soro Plates (EI Vol. XXIII); [src_od1_05] Veligalani Grant (1458 CE)',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_01_od'
+      }
+    ],
+    relatedArticleIds: ['region-utkala', 'region-kalinga', 'region-trikalinga', 'odra-epigraphic-evolution', 'art_odra_desha_history', 'art_gajapathi_kapilendra'],
+    relatedFigureIds: ['fig_kapilendra_deva', 'fig_purushottama_deva', 'fig_prataparudra_deva', 'fig_anantavarman_chodaganga'],
+    relatedDynastyNames: ['Bhauma-Kara Dynasty', 'Somavamshi Dynasty', 'Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
+  },
+  'region-utkala': {
+    refNumber: 'OD-0002',
+    articleId: 'region-utkala',
+    categoryCode: 'HG',
+    categoryName: {
+      en: 'Odra Desha Regional & Geopolitical Monographs',
+      hi: 'ओड्र देश क्षेत्रीय एवं भू-राजनीतिक शोध-ग्रंथ',
+      te: 'ఓడ్ర దేశ ప్రాంతీయ & భౌగోళిక-రాజకీయ పరిశోధనా వ్యాసాలు',
+      kn: 'ಓಡ್ರ ದೇಶ ಪ್ರಾದೇಶಿಕ ಮತ್ತು ಭೌಗೋಳಿಕ-ರಾಜಕೀಯ ಸಂಶೋಧನಾ ಲೇಖನಗಳು',
+      ta: 'ஒட்டர தேச பிராந்திய மற்றும் புவிசார் அரசியல் ஆய்வுக் கட்டுரைகள்',
+      mr: 'ओड्र देश प्रादेशिक आणि भू-राजकीय संशोधन ग्रंथ',
+      or: 'ଓଡ଼୍ର ଦେଶ ଆଞ୍ଚଳିକ ଓ ଭୂ-ରାଜନୈତିକ ଗବେଷଣା ପ୍ରବନ୍ଧ',
+      bn: 'ওড্র দেশ আঞ্চলিক ও ভূ-রাজনৈতিক গবেষণা নিবন্ধ'
+    },
+    subcategoryName: {
+      en: 'Utkala Mandala (Northern Coastal & Subarnarekha–Baitarani Corridor)',
+      hi: 'उत्कल मंडल (उत्तरी तटीय एवं सुवर्णरेखा–बैतरणी गलियारा)',
+      te: 'ఉత్కళ మండలం (ఉత్తర తీర & సువర్ణరేఖ–బైతరణి కారిడార్)',
+      kn: 'ಉತ್ಕಲ ಮಂಡಲ (ಉತ್ತರ ಕರಾವಳಿ ಮತ್ತು ಸುವರ್ಣರೇಖಾ–ಬೈತರಣಿ ಕಾರಿಡಾರ್)',
+      ta: 'உத்கல மண்டலம் (வடக்கு கடற்கரை மற்றும் சுவர்ணரேகா–பைதரணி வழித்தடம்)',
+      mr: 'उत्कल मंडळ (उत्तर किनारपट्टी आणि सुवर्णरेखा–बैतरणी कॉरिडॉर)',
+      or: 'ଉତ୍କଳ ମଣ୍ଡଳ (ଉତ୍ତର ଉପକୂଳ ଓ ସୁବର୍ଣ୍ଣରେଖା–ବୈତରଣୀ କରିଡର)',
+      bn: 'উৎকল মণ্ডল (উত্তর উপকূল ও সুবর্ণরেখা–বৈতরণী করিডোর)'
+    },
+    historicalPeriod: {
+      en: 'Buddhist Antiquity, Bhauma-Kara, Somavamshi & Imperial Ganga-Gajapathi Era',
+      hi: 'बौद्ध प्राचीनता, भौम-कर, सोमवंशी एवं गंग-गजपति साम्राज्य काल',
+      te: 'బౌద్ధ ప్రాచీనత, భౌమ-కర, సోమవంశ & గంగ-గజపతి సామ్రాజ్య కాలం',
+      kn: 'ಬೌದ್ಧ ಪ್ರಾಚೀನತೆ, ಭೌಮ-ಕರ, ಸೋಮವಂಶಿ ಮತ್ತು ಗಂಗ-ಗಜಪತಿ ಕಾಲ',
+      ta: 'பௌத்த தொன்மை, பௌம-கர, சோமவம்ச மற்றும் கங்க-கஜபதி காலம்',
+      mr: 'बौद्ध प्राचीनता, भौम-कर, सोमवंशी आणि गंग-गजपती काळ',
+      or: 'ବୌଦ୍ଧ ପ୍ରାଚୀନତା, ଭୌମ-କର, ସୋମବଂଶୀ ଓ ଗଙ୍ଗ-ଗଜପତି କାଳ',
+      bn: 'বৌদ্ধ প্রাচীনত্ব, ভৌম-কর, সোমবংশী ও গঙ্গ-গজপতি কাল'
+    },
+    approxDateRange: {
+      en: 'c. 6th Century BCE – 1568 CE (Modern Utkala Dibasa 1936 CE)',
+      hi: 'लगभग छठी शताब्दी ई.पू. – 1568 ई. (आधुनिक उत्कल दिवस 1936 ई.)',
+      te: 'క్రీ.పూ. 6వ శతాబ్దం – క్రీ.శ. 1568 (ఆధునిక ఉత్కళ దివస్ 1936)',
+      kn: 'ಕ್ರಿ.ಪೂ. 6ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568 (ಆಧುನಿಕ ಉತ್ಕಲ ದಿವಸ 1936)',
+      ta: 'பொ.ஊ.மு. 6-ஆம் நூற்றாண்டு – பொ.ஊ. 1568 (உத்கல தினம் 1936)',
+      mr: 'इ.स.पू. ६ वे शतक – इ.स. १५६८ (उत्कल दिवस १९३६)',
+      or: 'ଖ୍ରୀ.ପୂ. ୬ଷ୍ଠ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮ (ଉତ୍କଳ ଦିବସ ୧୯୩୬)',
+      bn: 'খ্রি.পূ. ৬ষ্ঠ শতাব্দী – ১৫৬৮ খ্রিস্টাব্দ (উৎকল দিবস ১৯৩৬)'
+    },
+    geographicalLocation: {
+      en: 'Subarnarekha, Burhabalanga & Baitarani Valleys (Jajpur / Viraja Kshetra, Balasore, Bhadrak, Mayurbhanj, Keonjhar, Odisha)',
+      hi: 'सुवर्णरेखा, बुढ़ाबलंग एवं बैतरणी घाटी (जाजपुर / विरजा क्षेत्र, बालासोर, भद्रक, मयूरभंज, क्योंझर, ओडिशा)',
+      te: 'సువర్ణరేఖ, బుఢాబలంగ & బైతరణి లోయలు (జాజ్‌పూర్ / విరజా క్షేత్రం, బాలాసోర్, భద్రక్, మయూర్‌భంజ్, కియోంజర్, ఒడిశా)',
+      kn: 'ಸುವರ್ಣರೇಖಾ, ಬುಢಾಬಲಂಗ ಮತ್ತು ಬೈತರಣಿ ಕಣಿವೆಗಳು (ಜಾಜ್‌ಪುರ / ವಿರಜಾ ಕ್ಷೇತ್ರ, ಬಾಲಾಸೋರ್, ಭದ್ರಕ್, ಮಯೂರ್‌ಭಂಜ್, ಒಡಿಶಾ)',
+      ta: 'சுவர்ணரேகா, புதாபலங்கா மற்றும் பைதரணி பள்ளத்தாக்குகள் (ஜாஜ்பூர் / விரஜா க்ஷேத்திரம், பாலாசோர், பத்ரக், மயூர்பஞ்ச், ஒடிசா)',
+      mr: 'सुवर्णरेखा, बुढाबलंग आणि बैतरणी खोरे (जाजपूर / विरजा क्षेत्र, बालासोर, भद्रक, मयूरभंज, ओडिशा)',
+      or: 'ସୁବର୍ଣ୍ଣରେଖା, ବୁଢ଼ାବଳଙ୍ଗ ଓ ବୈତରଣୀ ଉପତ୍ୟକା (ଯାଜପୁର / ବିରଜା କ୍ଷେତ୍ର, ବାଲେଶ୍ୱର, ଭଦ୍ରକ, ମୟୂରଭଞ୍ଜ, କେନ୍ଦୁଝର, ଓଡ଼ିଶା)',
+      bn: 'সুবর্ণরেখা, বুঢ়াবলঙ্গ ও বৈতরণী উপত্যকা (জাজপুর / বিরজা ক্ষেত্র, বালেশ্বর, ভদ্রক, ময়ূরভঞ্জ, কেওনঝড়, ওড়িশা)'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Utkala Mandala (OD-0002): Sacred Architecture of Viraja Kshetra & Northern Utkala',
+      caption: 'Utkala Mandala (OD-0002): Sacred temple and monolithic pillar architecture of Viraja Kshetra (Jajpur) and the northern Utkala corridor.',
+      period: '6th Century BCE – 1568 CE',
+      sourceOrProvenance: 'Archaeological Survey of India (ASI) — Bhubaneswar Circle & Viraja Kshetra Archive',
+      credit: 'Archival Heritage Photography',
+      altText: 'Sacred temple architecture of Utkala Mandala and Viraja Kshetra',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'syn_odisha_kshatriya',
+        canonicalTerm: 'Utkala / Odisha Kshatriya & Shilpa-Durga Guilds',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '7th – 16th Century CE',
+        relationshipSummary: {
+          en: 'Attested in Midnapore Plates ("Utkala-desha"), Bhauma-Kara charters of Guhadevapataka (Jajpur), and Korni Plates (1112 CE).',
+          hi: 'मिदनापुर ताम्रपत्र ("उत्कल-देश"), गुहदेवपाटक (जाजपुर) के भौम-कर चार्टर और कोर्णी ताम्रपत्र (1112 ई.) में प्रमाणित।',
+          te: 'మిడ్నాపూర్ తామ్రశాసనాలు ("ఉత్కళ-దేశ"), గుహదేవపాటక (జాజ్‌పూర్) భౌమ-కర శాసనాలు మరియు కోర్ణి శాసనాలలో (1112 CE) నమోదైంది.',
+          kn: 'ಮಿದ್ನಾಪುರ ಶಾಸನ ("ಉತ್ಕಲ-ದೇಶ"), ಗುಹದೇವಪಾಟಕ (ಜಾಜ್‌ಪುರ) ಭೌಮ-ಕರ ಶಾಸನಗಳು ಮತ್ತು ಕೋರ್ಣಿ ಶಾಸನಗಳಲ್ಲಿ (1112 CE) ದೃಢಪಟ್ಟಿದೆ.',
+          ta: 'மித்னாபூர் செப்பேடுகள் ("உத்கல-தேச"), குஹதேவபாடக (ஜாஜ்பூர்) பௌம-கர சாசனங்கள் மற்றும் கோர்னி செப்பேடுகளில் (1112 CE) பதிவாகியுள்ளது.',
+          mr: 'मिदनापूर ताम्रपट ("उत्कल-देश"), गुहदेवपाटक (जाजपूर) भौम-कर ताम्रपट आणि कोर्णी ताम्रपटात (१११२ ई.) प्रमाणित.',
+          or: 'ମିଦନାପୁର ତାମ୍ରଶାସନ ("ଉତ୍କଳ-ଦେଶ"), ଗୁହଦେବପାଟକ (ଯାଜପୁର) ଭୌମ-କର ଶାସନ ଓ କୋର୍ଣ୍ଣି ଶାସନରେ (୧୧୧୨ ଖ୍ରୀ.) ପ୍ରମାଣିତ।',
+          bn: 'মেদিনীপুর তাম্রশাসন ("উৎকল-দেশ"), গুহদেবপাটক (জাজপুর) ভৌম-কর শাসন ও কোর্ণি শাসনে (১১১২ খ্রি.) প্রমাণিত।'
+        },
+        supportingRef: '[src_od2_01] Midnapore Plates; [src_od2_02] Bhauma-Kara Inscriptions; [src_od2_05] Korni Plates (1112 CE)',
+        targetRoute: '/community-heritage?tab=synonyms&id=syn_odisha_kshatriya'
+      }
+    ],
+    relatedArticleIds: ['region-odra', 'region-kalinga', 'region-trikalinga', 'odra-epigraphic-evolution', 'mon_konark_sun', 'mon_meghanada_pacheri'],
+    relatedFigureIds: ['fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva'],
+    relatedDynastyNames: ['Bhauma-Kara Dynasty', 'Adi-Bhanja Dynasty of Khijingakotta', 'Somavamshi Dynasty', 'Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
+  },
+  'region-kalinga': {
+    refNumber: 'OD-0003',
+    articleId: 'region-kalinga',
+    categoryCode: 'HG',
+    categoryName: {
+      en: 'Odra Desha Regional & Geopolitical Monographs',
+      hi: 'ओड्र देश क्षेत्रीय एवं भू-राजनीतिक शोध-ग्रंथ',
+      te: 'ఓడ్ర దేశ ప్రాంతీయ & భౌగోళిక-రాజకీయ పరిశోధనా వ్యాసాలు',
+      kn: 'ಓಡ್ರ ದೇಶ ಪ್ರಾದೇಶಿಕ ಮತ್ತು ಭೌಗೋಳಿಕ-ರಾಜಕೀಯ ಸಂಶೋಧನಾ ಲೇಖನಗಳು',
+      ta: 'ஒட்டர தேச பிராந்திய மற்றும் புவிசார் அரசியல் ஆய்வுக் கட்டுரைகள்',
+      mr: 'ओड्र देश प्रादेशिक आणि भू-राजकीय संशोधन ग्रंथ',
+      or: 'ଓଡ଼୍ର ଦେଶ ଆଞ୍ଚଳିକ ଓ ଭୂ-ରାଜନୈତିକ ଗବେଷଣା ପ୍ରବନ୍ଧ',
+      bn: 'ওড্র দেশ আঞ্চলিক ও ভূ-রাজনৈতিক গবেষণা নিবন্ধ'
+    },
+    subcategoryName: {
+      en: 'Kalinga Rashtra (Mahendragiri to Godavari Maritime Seaboard)',
+      hi: 'कलिंग राष्ट्र (महेंद्रगिरि से गोदावरी समुद्री तट)',
+      te: 'కళింగ రాష్ట్రం (మహేంద్రగిరి నుండి గోదావరి సముద్ర తీర ప్రాంతం)',
+      kn: 'ಕಳಿಂಗ ರಾಷ್ಟ್ರ (ಮಹೇಂದ್ರಗಿರಿಯಿಂದ ಗೋದಾವರಿ ಕಡಲತೀರ)',
+      ta: 'கலிங்க ராಷ್ಟ್ರம் (மகேந்திரகிரி முதல் கோதாவரி கடற்கரை வரை)',
+      mr: 'कलिंग राष्ट्र (महेंद्रगिरी ते गोदावरी सागरी किनारपट्टी)',
+      or: 'କଳିଙ୍ଗ ରାଷ୍ଟ୍ର (ମହେନ୍ଦ୍ରଗିରିରୁ ଗୋଦାବରୀ ସାମୁଦ୍ରିକ ଉପକୂଳ)',
+      bn: 'কলিঙ্গ রাষ্ট্র (মহেন্দ্রগিরি থেকে গোদাবরী সামুদ্রিক উপকূল)'
+    },
+    historicalPeriod: {
+      en: 'Mauryan (261 BCE), Mahameghavahana (Kharavela), Mathara, Eastern Ganga & Gajapathi Era',
+      hi: 'मौर्य (261 ई.पू.), महामेघवाहन (खारवेल), माठर, पूर्वी गंग एवं गजपति काल',
+      te: 'మౌర్య (261 BCE), మహామేఘవాహన (ఖారవేలుడు), మాఠర, తూర్పు గంగ & గజపతి కాలం',
+      kn: 'ಮೌರ್ಯ (261 BCE), ಮಹಾಮೇಘವಾಹನ (ಖಾರವೇಲ), ಮಾಠರ, ಪೂರ್ವ ಗಂಗ ಮತ್ತು ಗಜಪತಿ ಕಾಲ',
+      ta: 'மௌரிய (பொ.ஊ.மு. 261), மகாமேகவாகன (காரவேலன்), மாடர, கீழைக் கங்க மற்றும் கஜபதி காலம்',
+      mr: 'मौर्य (२६१ इ.स.पू.), महामेघवाहन (खारवेल), माठर, पूर्व गंग आणि गजपती काळ',
+      or: 'ମୌର୍ଯ୍ୟ (୨୬୧ ଖ୍ରୀ.ପୂ.), ମହାମେଘବାହନ (ଖାରବେଳ), ମାଠର, ପୂର୍ବ ଗଙ୍ଗ ଓ ଗଜପତି କାଳ',
+      bn: 'মৌর্য (২৬১ খ্রি.পূ.), মহামেঘবাহন (খারবেল), মাঠর, পূর্ব গঙ্গ ও গজপতি কাল'
+    },
+    approxDateRange: {
+      en: 'c. 5th Century BCE – 1568 CE',
+      hi: 'लगभग पांचवीं शताब्दी ई.पू. – 1568 ई.',
+      te: 'క్రీ.పూ. 5వ శతాబ్దం – క్రీ.శ. 1568',
+      kn: 'ಕ್ರಿ.ಪೂ. 5ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 1568',
+      ta: 'பொ.ஊ.மு. 5-ஆம் நூற்றாண்டு – பொ.ஊ. 1568',
+      mr: 'इ.स.पू. ५ वे शतक – इ.स. १५६८',
+      or: 'ଖ୍ରୀ.ପୂ. ୫ମ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୫୬୮',
+      bn: 'খ্রি.পূ. ৫ম শতাব্দী – ১৫৬৮ খ্রিস্টাব্দ'
+    },
+    geographicalLocation: {
+      en: 'Mahanadi–Rishikulya to Vamsadhara–Nagavali–Godavari Seaboard (Mahendragiri, Ganjam, Srikakulam, Mukhalingam, Vizianagaram, Visakhapatnam / Simhachalam)',
+      hi: 'महानदी–ऋषिकुल्या से वंशधारा–नागावली–गोदावरी तट (महेंद्रगिरि, गंजाम, श्रीकाकुलम, मुखलिंगम, विजयनगरम, विशाखापत्तनम / सिंहाचलम)',
+      te: 'మహానది–ఋషికుల్య నుండి వంశధార–నాగావళి–గోదావరి తీరం (మహేంద్రగిరి, గంజాం, శ్రీకాకుళం, ముఖలింగం, విజయనగరం, విశాఖపట్నం / సింహాచలం)',
+      kn: 'ಮಹಾನದಿ–ಋಷಿಕುಲ್ಯದಿಂದ ವಂಶಧಾರಾ–ನಾಗಾವಳಿ–ಗೋದಾವರಿ ಕರಾವಳಿ (ಮಹೇಂದ್ರಗಿರಿ, ಗಂಜಾಂ, ಶ್ರೀಕಾಕುಳಂ, ಮುಖಲಿಂಗಂ, ವಿಶಾಖಪಟ್ಟಣಂ / ಸಿಂಹಾಚಲಂ)',
+      ta: 'மகாநதி–ரிஷிகுல்யா முதல் வம்சதாரா–நாகாவளி–கோதாவரி கடற்கரை (மகேந்திரகிரி, கஞ்சாம், ஸ்ரீகாகுளம், முகலிங்கம், விசாகப்பட்டினம் / சிம்மாசலம்)',
+      mr: 'महानदी–ऋषिकुल्या ते वंशधारा–नागावली–गोदावरी किनारपट्टी (महेंद्रगिरी, गंजाम, श्रीकाकुलम, मुखलिंगम, विशाखापट्टणम / सिंहाचलम)',
+      or: 'ମହାନଦୀ–ଋଷିକୁଲ୍ୟାରୁ ବଂଶଧାରା–ନାଗାବଳୀ–ଗୋଦାବରୀ ଉପକୂଳ (ମହେନ୍ଦ୍ରଗିରି, ଗଞ୍ଜାମ, ଶ୍ରୀକାକୁଲମ, ମୁଖଲିଙ୍ଗମ, ବିଶାଖାପାଟଣା / ସିଂହାଚଳମ)',
+      bn: 'মহানদী–ঋষিকুল্যা থেকে বংশধারা–নাগাবলী–গোদাবরী উপকূল (মহেন্দ্রগিরি, গঞ্জাম, শ্রীকাকুলাম, মুখলিঙ্গম, বিশাখাপত্তনম / সিংহাচলম)'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Kalinga Rashtra (OD-0003): Kalinganagara (Mukhalingam) & Maritime Seaboard Heritage',
+      caption: 'Kalinga Rashtra (OD-0003): Ancient Kalinganagara (Mukhalingam), Mahendragiri, and the maritime and temple heritage of the Kalinga seaboard.',
+      period: '5th Century BCE – 1568 CE',
+      sourceOrProvenance: 'Archaeological Survey of India (ASI) — Dhauli, Udayagiri, Mukhalingam & Simhachalam Archives',
+      credit: 'Archival Heritage Photography',
+      altText: 'Ancient Kalinga temple and maritime heritage along the eastern seaboard',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_14_gajapathulu',
+        canonicalTerm: 'Kalinga–Odra Kshatriya / Vadde-Gajapathirajulu / Odderajulu',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '1st Century BCE – 16th Century CE',
+        relationshipSummary: {
+          en: 'Attested in Hathigumpha Inscription of Kharavela, Eastern Ganga charters of Kalinganagara (498–1434 CE), and Simhachalam/Srikurmam Gajapathi records.',
+          hi: 'खारवेल के हाथीगुम्फा शिलालेख, कलिंगनगर के पूर्वी गंग ताम्रपत्रों (498–1434 ई.) और सिंहाचलम/श्रीकूर्मम गजपति अभिलेखों में प्रमाणित।',
+          te: 'ఖారవేలుని హాథీగుంఫా శాసనం, కళింగనగర తూర్పు గంగ శాసనాలు (498–1434 CE) మరియు సింహాచలం/శ్రీకూర్మం గజపతి రికార్డులలో నమోదైంది.',
+          kn: 'ಖಾರವೇಲನ ಹಾಥಿಗುಂಫಾ ಶಾಸನ, ಕಳಿಂಗನಗರದ ಪೂರ್ವ ಗಂಗ ಶಾಸನಗಳು (498–1434 CE) ಮತ್ತು ಸಿಂಹಾಚಲಂ/ಶ್ರೀಕೂರ್ಮಂ ದಾಖಲೆಗಳಲ್ಲಿ ದೃಢಪಟ್ಟಿದೆ.',
+          ta: 'காரவேலனின் ஹதிகும்பா கல்வெட்டு, கலிங்கநகர கீழைக் கங்க செப்பேடுகள் (498–1434 CE) மற்றும் சிம்மாசலம்/ஸ்ரீகூர்மம் ஆவணங்களில் உறுதிப்படுத்தப்பட்டுள்ளது.',
+          mr: 'खारवेलाचा हाथीगुम्फा शिलालेख, कलिंगनगरचे पूर्व गंग ताम्रपट (४९८–१४३४ ई.) आणि सिंहाचलम/श्रीकूर्मम नोंदींमध्ये प्रमाणित.',
+          or: 'ଖାରବେଳଙ୍କ ହାତୀଗୁମ୍ଫା ଶିଳାଲେଖ, କଳିଙ୍ଗନଗରର ପୂର୍ବ ଗଙ୍ଗ ତାମ୍ରଶାସନ (୪୯୮–୧୪୩୪ ଖ୍ରୀ.) ଓ ସିଂହାଚଳମ/ଶ୍ରୀକୂର୍ମମ ଅଭିଲେଖରେ ପ୍ରମାଣିତ।',
+          bn: 'খারবেলের হাতিগুম্ফা শিলালিপি, কলিঙ্গনগরের পূর্ব গঙ্গ তাম্রশাসন (৪৯৮–১৪৩৪ খ্রি.) ও সিংহাচলম/শ্রীকূর্মম নথিতে প্রমাণিত।'
+        },
+        supportingRef: '[src_od3_02] Hathigumpha Inscription; [src_od3_03] Inscriptions of Orissa Vol. II; [src_od3_05] SII Vols. V & VI',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_14_gajapathulu'
+      }
+    ],
+    relatedArticleIds: ['region-odra', 'region-utkala', 'region-trikalinga', 'odra-epigraphic-evolution', 'art_odra_desha_history', 'mon_draksharama_mandapa'],
+    relatedFigureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva'],
+    relatedDynastyNames: ['Mahameghavahana Dynasty', 'Mathara Dynasty', 'Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
+  },
+  'region-trikalinga': {
+    refNumber: 'OD-0004',
+    articleId: 'region-trikalinga',
+    categoryCode: 'HG',
+    categoryName: {
+      en: 'Odra Desha Regional & Geopolitical Monographs',
+      hi: 'ओड्र देश क्षेत्रीय एवं भू-राजनीतिक शोध-ग्रंथ',
+      te: 'ఓడ్ర దేశ ప్రాంతీయ & భౌగోళిక-రాజకీయ పరిశోధనా వ్యాసాలు',
+      kn: 'ಓಡ್ರ ದೇಶ ಪ್ರಾದೇಶಿಕ ಮತ್ತು ಭೌಗೋಳಿಕ-ರಾಜಕೀಯ ಸಂಶೋಧನಾ ಲೇಖನಗಳು',
+      ta: 'ஒட்டர தேச பிராந்திய மற்றும் புவிசார் அரசியல் ஆய்வுக் கட்டுரைகள்',
+      mr: 'ओड्र देश प्रादेशिक आणि भू-राजकीय संशोधन ग्रंथ',
+      or: 'ଓଡ଼୍ର ଦେଶ ଆଞ୍ଚଳିକ ଓ ଭୂ-ରାଜନୈତିକ ଗବେଷଣା ପ୍ରବନ୍ଧ',
+      bn: 'ওড্র দেশ আঞ্চলিক ও ভূ-রাজনৈতিক গবেষণা নিবন্ধ'
+    },
+    subcategoryName: {
+      en: 'Trikalinga & Dakshina Kosala (Western Highland & Riverine Frontier)',
+      hi: 'त्रिकलिंग एवं दक्षिण कोसल (पश्चिमी उच्चभूमि एवं नदी सीमांत)',
+      te: 'త్రికళింగ & దక్షిణ కోసల (పశ్చిమ పీఠభూమి & నదీ సరిహద్దు ప్రాంతం)',
+      kn: 'ತ್ರಿಕಳಿಂಗ ಮತ್ತು ದಕ್ಷಿಣ ಕೋಸಲ (ಪಶ್ಚಿಮ ಪ್ರಸ್ಥಭೂಮಿ ಮತ್ತು ನದಿ ಗಡಿ ಪ್ರದೇಶ)',
+      ta: 'திரிகலிங்கம் மற்றும் தட்சிண கோசலம் (மேற்கு உயர்நிலம் மற்றும் ஆற்று எல்லை)',
+      mr: 'त्रिकलिंग आणि दक्षिण कोसल (पश्चिम पठारी व नदी सीमांत प्रदेश)',
+      or: 'ତ୍ରିକଳିଙ୍ଗ ଓ ଦକ୍ଷିଣ କୋଶଳ (ପଶ୍ଚିମ ମାଳଭୂମି ଓ ନଦୀ ସୀମାନ୍ତ ଅଞ୍ଚଳ)',
+      bn: 'ত্রিকলিঙ্গ ও দক্ষিণ কোশল (পশ্চিম মালভূমি ও নদী সীমান্ত অঞ্চল)'
+    },
+    historicalPeriod: {
+      en: 'Atavika/Mahakantara, Nala, Sarabhapuriya, Somavamshi, Eastern Ganga & Chauhan-Gajapathi Era',
+      hi: 'आटविक/महाकांतर, नल, शरभपुरीय, सोमवंशी, पूर्वी गंग एवं चौहान-गजपति काल',
+      te: 'ఆటవిక/మహాకాంతార, నల, శరభపురీయ, సోమవంశ, తూర్పు గంగ & చౌహాన్-గజపతి కాలం',
+      kn: 'ಆಟವಿಕ/ಮಹಾಕಾಂತಾರ, ನಲ, ಶರಭಪುರೀಯ, ಸೋಮವಂಶಿ, ಪೂರ್ವ ಗಂಗ ಮತ್ತು ಚೌಹಾಣ್-ಗಜಪತಿ ಕಾಲ',
+      ta: 'ஆடவிக/மகாகாந்தார, நள, சரபபுரிய, சோமவம்ச, கீழைக் கங்க மற்றும் சௌஹான்-கஜபதி காலம்',
+      mr: 'आटविक/महाकांतर, नल, शरभपुरीय, सोमवंशी, पूर्व गंग आणि चौहान-गजपती काळ',
+      or: 'ଆଟବିକ/ମହାକାନ୍ତାର, ନଳ, ଶରଭପୁରୀୟ, ସୋମବଂଶୀ, ପୂର୍ବ ଗଙ୍ଗ ଓ ଚୌହାନ-ଗଜପତି କାଳ',
+      bn: 'আটবিক/মহাকান্তার, নল, শরভপুরীয়, সোমবংশী, পূর্ব গঙ্গ ও চৌহান-গজপতি কাল'
+    },
+    approxDateRange: {
+      en: 'c. 4th Century BCE – 16th Century CE (Trikalingadhipati Title from 537 CE)',
+      hi: 'लगभग चौथी शताब्दी ई.पू. – 16वीं शताब्दी ई. (537 ई. से त्रिकलिंगाधिपति उपाधि)',
+      te: 'క్రీ.పూ. 4వ శతాబ్దం – క్రీ.శ. 16వ శతాబ్దం (537 CE నుండి త్రికళింగాధిపతి బిరుదు)',
+      kn: 'ಕ್ರಿ.ಪೂ. 4ನೇ ಶತಮಾನ – ಕ್ರಿ.ಶ. 16ನೇ ಶತಮಾನ (537 CE ಯಿಂದ ತ್ರಿಕಳಿಂಗಾಧಿಪತಿ ಬಿರುದು)',
+      ta: 'பொ.ஊ.மு. 4-ஆம் நூற்றாண்டு – பொ.ஊ. 16-ஆம் நூற்றாண்டு (537 CE முதல் திரிகலிங்காதிபதி பட்டம்)',
+      mr: 'इ.स.पू. ४ थे शतक – इ.स. १६ वे शतक (५३७ ई. पासून त्रिकलिंगाधिपती पदवी)',
+      or: 'ଖ୍ରୀ.ପୂ. ୪ର୍ଥ ଶତାବ୍ଦୀ – ଖ୍ରୀ.ଅ. ୧୬ଶ ଶତାବ୍ଦୀ (୫୩୭ ଖ୍ରୀ.ରୁ ତ୍ରିକଳିଙ୍ଗାଧିପତି ଉପାଧି)',
+      bn: 'খ্রি.পূ. ৪র্থ শতাব্দী – ১৬শ শতাব্দী (৫৩৭ খ্রি. থেকে ত্রিকলিঙ্গাধিপতি উপাধি)'
+    },
+    geographicalLocation: {
+      en: 'Tel, Indravati & Upper Mahanadi Valleys (Kalahandi, Koraput, Bolangir, Sonepur, Sambalpur, Boudh & Bastar–Chhattisgarh)',
+      hi: 'तेल, इंद्रावती एवं ऊपरी महानदी घाटी (कालाहांडी, कोरापुट, बोलांगीर, सोनपुर, संबलपुर, बौध एवं बस्तर–छत्तीसगढ़)',
+      te: 'తేల్, ఇంద్రావతి & ఎగువ మహానది లోయలు (కలహండి, కోరాపుట్, బోలంగీర్, సోనేపూర్, సంబల్‌పూర్, బౌధ్ & బస్తర్–ఛత్తీస్‌గఢ్)',
+      kn: 'ತೇಲ್, ಇಂದ್ರಾವತಿ ಮತ್ತು ಮೇಲ್ಮಹಾನದಿ ಕಣಿವೆಗಳು (ಕಲಹಂಡಿ, ಕೋರಾಪುಟ್, ಬೋಲಂಗೀರ್, ಸೋನೆಪುರ, ಸಂಬಲ್‌ಪುರ, ಬೌಧ್ ಮತ್ತು ಬಸ್ತರ್)',
+      ta: 'தேல், இந்திராவதி மற்றும் மேல் மகாநதி பள்ளத்தாக்குகள் (கலஹண்டி, கோராபுட், போலங்கீர், சோன்பூர், சம்பல்பூர், பௌத் மற்றும் பஸ்தர்)',
+      mr: 'तेल, इंद्रावती आणि अप्पर महानदी खोरे (कालाहांडी, कोरापुट, बोलांगीर, सोनपूर, संबलपूर, बौध आणि बस्तर–छत्तीसगड)',
+      or: 'ତେଲ, ଇନ୍ଦ୍ରାବତୀ ଓ ଉପର ମହାନଦୀ ଉପତ୍ୟକା (କଳାହାଣ୍ଡି, କୋରାପୁଟ, ବଲାଙ୍ଗୀର, ସୋନପୁର, ସମ୍ବଲପୁର, ବୌଦ୍ଧ ଓ ବସ୍ତର–ଛତିଶଗଡ଼)',
+      bn: 'তেল, ইন্দ্রাবতী ও উচ্চ মহানদী উপত্যকা (কালাহান্ডি, কোরাপুট, বলাঙ্গির, সোনপুর, সম্বলপুর, বৌধ ও বস্তার–ছত্তিশগড়)'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Trikalinga & Dakshina Kosala (OD-0004): Tel–Upper Mahanadi Highland Citadel & Temple Heritage',
+      caption: 'Trikalinga & Dakshina Kosala (OD-0004): Highland fortresses, brick and hypaethral Yogini temples of the Tel–Upper Mahanadi valley (Kalahandi, Bolangir, Sonepur, Sambalpur, Koraput).',
+      period: '4th Century BCE – 16th Century CE',
+      sourceOrProvenance: 'Archaeological Survey of India (ASI) — Asurgarh, Ranipur-Jharial & Sonepur Archival Collection',
+      credit: 'Archival Heritage Photography',
+      altText: 'Trikalinga and Dakshina Kosala temple and fort heritage in western Odisha',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_03_odra_kshatriya',
+        canonicalTerm: 'Trikalingadhipati Royal Protocol & Highland Odra-Kosala Fort Guilds',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '537 CE – 16th Century CE',
+        relationshipSummary: {
+          en: 'Directly attested in Jirjingi Plates of Indravarman I (537 CE), Somavamshi charters of Sonepur/Bolangir (882–1040 CE), and Chatesvara Inscription (1220 CE).',
+          hi: 'इंद्रवर्मन प्रथम के जिरजिंगी ताम्रपत्र (537 ई.), सोनपुर/बोलांगीर के सोमवंशी चार्टर (882–1040 ई.) और चाटेश्वर शिलालेख (1220 ई.) में प्रमाणित।',
+          te: 'ఇంద్రవర్మన్ I యొక్క జిర్జింగి తామ్రశాసనం (537 CE), సోనేపూర్/బోలంగీర్ సోమవంశ శాసనాలు (882–1040 CE) మరియు చాటేశ్వర శాసనంలో (1220 CE) ధృవీకరించబడింది.',
+          kn: 'ಇಂದ್ರವರ್ಮನ್ I ರ ಜಿರ್ಜಿಂಗಿ ಶಾಸನ (537 CE), ಸೋನೆಪುರ/ಬೋಲಂಗೀರ್ ಸೋಮವಂಶಿ ಶಾಸನಗಳು (882–1040 CE) ಮತ್ತು ಚಾಟೇಶ್ವರ ಶಾಸನದಲ್ಲಿ (1220 CE) ದೃಢಪಟ್ಟಿದೆ.',
+          ta: 'இந்திரவர்மன் I-இன் ஜிர்ஜிங்கி செப்பேடு (537 CE), சோன்பூர்/போலங்கீர் சோமவம்ச சாசனங்கள் (882–1040 CE) மற்றும் சாடேஸ்வர கல்வெட்டில் (1220 CE) உறுதிப்படுத்தப்பட்டுள்ளது.',
+          mr: 'इंद्रवर्मन प्रथमचा जिरजिंगी ताम्रपट (५३७ ई.), सोनपूर/बोलांगीरचे सोमवंशी ताम्रपट (८८२–१०४० ई.) आणि चाटेश्वर शिलालेखात (१२२० ई.) प्रमाणित.',
+          or: 'ଇନ୍ଦ୍ରବର୍ମନ ୧ମଙ୍କ ଜିରଜିଙ୍ଗି ତାମ୍ରଶାସନ (୫୩୭ ଖ୍ରୀ.), ସୋନପୁର/ବଲାଙ୍ଗୀର ସୋମବଂଶୀ ଶାସନ (୮୮୨–୧୦୪୦ ଖ୍ରୀ.) ଓ ଚାଟେଶ୍ୱର ଶିଳାଲେଖରେ (୧୨୨୦ ଖ୍ରୀ.) ପ୍ରମାଣିତ।',
+          bn: 'ইন্দ্রবর্মন ১ম-এর জিরজিঙ্গি তাম্রশাসন (৫৩৭ খ্রি.), সোনপুর/বলাঙ্গির সোমবংশী শাসন (৮৮২–১০৪০ খ্রি.) ও চাটেশ্বর শিলালিপিতে (১২২০ খ্রি.) প্রমাণিত।'
+        },
+        supportingRef: '[src_od4_01] Jirjingi Plates (537 CE, EI Vol. XXV); [src_od4_02] Inscriptions of Orissa Vol. IV',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_03_odra_kshatriya'
+      }
+    ],
+    relatedArticleIds: ['region-odra', 'region-utkala', 'region-kalinga', 'odra-epigraphic-evolution', 'art_odra_desha_history', 'art_dyn_eastern_gangas'],
+    relatedFigureIds: ['fig_anantavarman_chodaganga', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
+    relatedDynastyNames: ['Nala Dynasty', 'Sarabhapuriya Dynasty', 'Panduvamshi & Somavamshi Dynasty', 'Eastern Ganga Dynasty', 'Chauhan Dynasty of Patna-Sambalpur', 'Suryavamsha Gajapathi Dynasty']
+  },
+  'odra-epigraphic-evolution': {
+    refNumber: 'OD-0005',
+    articleId: 'odra-epigraphic-evolution',
+    categoryCode: 'IA',
+    categoryName: {
+      en: 'Odra Desha Regional & Geopolitical Monographs',
+      hi: 'ओड्र देश क्षेत्रीय एवं भू-राजनीतिक शोध-ग्रंथ',
+      te: 'ఓడ్ర దేశ ప్రాంతీయ & భౌగోళిక-రాజకీయ పరిశోధనా వ్యాసాలు',
+      kn: 'ಓಡ್ರ ದೇಶ ಪ್ರಾದೇಶಿಕ ಮತ್ತು ಭೌಗೋಳಿಕ-ರಾಜಕೀಯ ಸಂಶೋಧನಾ ಲೇಖನಗಳು',
+      ta: 'ஒட்டர தேச பிராந்திய மற்றும் புவிசார் அரசியல் ஆய்வுக் கட்டுரைகள்',
+      mr: 'ओड्र देश प्रादेशिक आणि भू-राजकीय संशोधन ग्रंथ',
+      or: 'ଓଡ଼୍ର ଦେଶ ଆଞ୍ଚଳିକ ଓ ଭୂ-ରାଜନୈତିକ ଗବେଷଣା ପ୍ରବନ୍ଧ',
+      bn: 'ওড্র দেশ আঞ্চলিক ও ভূ-রাজনৈতিক গবেষণা নিবন্ধ'
+    },
+    subcategoryName: {
+      en: 'Epigraphic Evolution of the Odra Identity (Hathigumpha to Kataka Edicts)',
+      hi: 'ओड्र पहचान का अभिलेखीय विकास (हाथीगुम्फा से कटक राज्यादेश तक)',
+      te: 'ఓడ్ర గుర్తింపు యొక్క శాసన పరిణామ క్రమం (హాథీగుంఫా నుండి కటక్ శాసనాల వరకు)',
+      kn: 'ಓಡ್ರ ಗುರುತಿನ ಶಾಸನ ವಿಕಾಸ (ಹಾಥಿಗುಂಫಾದಿಂದ ಕಟಕ್ ಶಾಸನಗಳವರೆಗೆ)',
+      ta: 'ஒட்டர அடையாளத்தின் கல்வெட்டு பரிணாமம் (ஹதிகும்பா முதல் கட்டாக் சாசனங்கள் வரை)',
+      mr: 'ओड्र अस्मितेचा शिलालेखीय विकास (हाथीगुम्फा ते कटक राजाज्ञा)',
+      or: 'ଓଡ଼୍ର ପରିଚୟର ଶିଳାଲେଖ କ୍ରମବିକାଶ (ହାତୀଗୁମ୍ଫାରୁ କଟକ ରାଜାଜ୍ଞା ପର୍ଯ୍ୟନ୍ତ)',
+      bn: 'ওড্র পরিচয়ের শিলালিপি বিবর্তন (হাতিগুম্ফা থেকে কটক রাজাজ্ঞা পর্যন্ত)'
+    },
+    historicalPeriod: {
+      en: 'Two Millennia of Paleography & Imperial Charters',
+      hi: 'दो सहस्राब्दियों का पुरालेख एवं राजपत्र इतिहास',
+      te: 'రెండు సహస్రాబ్దాల శాసన & లిపి పరిణామ చరిత్ర',
+      kn: 'ಎರಡು ಸಹಸ್ರಮಾನಗಳ ಶಾಸನ ಮತ್ತು ಲಿಪಿ ವಿಕಾಸ',
+      ta: 'இரண்டாயிரம் ஆண்டுகால கல்வெட்டு மற்றும் எழுத்துமுறை வரலாறு',
+      mr: 'दोन सहस्रकांचा शिलालेख आणि लिपी विकास',
+      or: 'ଦୁଇ ସହସ୍ରାବ୍ଦର ଶିଳାଲେଖ ଓ ଲିପି ବିବର୍ତ୍ତନ',
+      bn: 'দুই সহস্রাব্দের শিলালিপি ও লিপি বিবর্তন'
+    },
+    approxDateRange: {
+      en: 'c. 261 BCE – 1568 CE',
+      hi: 'लगभग 261 ई.पू. – 1568 ई.',
+      te: 'క్రీ.పూ. 261 – క్రీ.శ. 1568',
+      kn: 'ಕ್ರಿ.ಪೂ. 261 – ಕ್ರಿ.ಶ. 1568',
+      ta: 'பொ.ஊ.மு. 261 – பொ.ஊ. 1568',
+      mr: 'इ.स.पू. २६१ – इ.स. १५६८',
+      or: 'ଖ୍ରୀ.ପୂ. ୨୬୧ – ଖ୍ରୀ.ଅ. ୧୫୬୮',
+      bn: 'খ্রি.পূ. ২৬১ – ১৫৬৮ খ্রিস্টাব্দ'
+    },
+    geographicalLocation: {
+      en: 'Udayagiri (Hathigumpha), Soro, Kataka (Cuttack), Puri, Simhachalam, Tirumalai & Kondavidu (Veligalani)',
+      hi: 'उदयगिरि (हाथीगुम्फा), सोरो, कटक, पुरी, सिंहाचलम, तिरुमलै एवं कोंडावीडु (वेलिगलनी)',
+      te: 'ఉదయగిరి (హాథీగుంఫా), సోరో, కటక్, పూరీ, సింహాచలం, తిరుమలై & కొండవీడు (వెలిగలని)',
+      kn: 'ಉದಯಗಿರಿ (ಹಾಥಿಗುಂಫಾ), ಸೋರೋ, ಕಟಕ್, ಪುರಿ, ಸಿಂಹಾಚಲಂ, ತಿರುಮಲೈ ಮತ್ತು ಕೊಂಡವೀಡು (ವೆಲಿಗಲನಿ)',
+      ta: 'உதயகிரி (ஹதிகும்பா), சோரோ, கட்டாக், பூரி, சிம்மாசலம், திருமலை மற்றும் கொண்டவீடு (வெலிகலானி)',
+      mr: 'उदयगिरी (हाथीगुम्फा), सोरो, कटक, पुरी, सिंहाचलम, तिरुमलै आणि कोंडावीडु (वेलिगलनी)',
+      or: 'ଉଦୟଗିରି (ହାତୀଗୁମ୍ଫା), ସୋରୋ, କଟକ, ପୁରୀ, ସିଂହାଚଳମ, ତିରୁମଲାଇ ଓ କୋଣ୍ଡାଭିଡୁ (ଭେଲିଗାଲାନି)',
+      bn: 'উদয়গিরি (হাতিগুম্ফা), সোরো, কটক, পুরী, সিংহাচলম, তিরুমালাই ও কোন্ডাভিডু (ভেলিগালানি)'
+    },
+    epistemicClassification: 'Verified Epigraphic & Archaeological Evidence',
+    imageProvenance: {
+      title: 'Epigraphic Evolution of the Odra Identity (OD-0005): Hathigumpha Inscription at Udayagiri',
+      caption: 'Epigraphic Evolution of the Odra Identity (OD-0005): The 1st-century BCE Hathigumpha Inscription of Emperor Kharavela at Udayagiri, Bhubaneswar.',
+      period: 'c. 261 BCE – 1568 CE',
+      sourceOrProvenance: 'Archaeological Survey of India (ASI) — Epigraphy Branch (Epigraphia Indica Vols. XX, XXIII, XXVIII, XXXIII)',
+      credit: 'Archival Lithic Epigraphy Photography',
+      altText: 'Hathigumpha Brahmi rock inscription at Udayagiri hill, Bhubaneswar',
+      visualType: 'Archival Photograph / Epigraphic Facsimile'
+    },
+    communityCrossReferences: [
+      {
+        communityId: 'comm_dir_01_od',
+        canonicalTerm: 'Odra-Vishaya -> Odda-Vishaya -> Odra-Rajya -> Od / Oad / Odde / VaddeRaju',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '1st Century BCE – 16th Century CE',
+        relationshipSummary: {
+          en: 'Traces the unbroken 2,000-year epigraphic chain from Oretes/Odra-Magadhi to Soro Plates ("Odra-vishaya"), Tirumalai ("Odda-vishaya"), and Veligalani ("Odra-rajya").',
+          hi: 'ओरेतेस/ओड्र-मागधी से सोरो ताम्रपत्र ("ओड्र-विषय"), तिरुमलै ("ओड्ड-विषय") और वेलिगलनी ("ओड्र-राज्य") तक 2,000 वर्षों की अटूट अभिलेखीय श्रृंखला।',
+          te: 'ఓరెటెస్/ఓడ్ర-మాగధి నుండి సోరో తామ్రశాసనాలు ("ఓడ్ర-విషయ"), తిరుమలై ("ఒడ్డ-విషయ") మరియు వెలిగలని ("ఓడ్ర-రాజ్య") వరకు 2,000 ఏళ్ల నిరంతర శాసన పరంపర.',
+          kn: 'ಒರೆಟೆಸ್/ಓಡ್ರ-ಮಾಗಧಿಯಿಂದ ಸೋರೋ ಶಾಸನ ("ಓಡ್ರ-ವಿಷಯ"), ತಿರುಮಲೈ ("ಒಡ್ಡ-ವಿಷಯ") ಮತ್ತು ವೆಲಿಗಲನಿ ("ಓಡ್ರ-ರಾಜ್ಯ") ವರೆಗಿನ 2,000 ವರ್ಷಗಳ ನಿರಂತರ ಶಾಸನ ಸರಪಳಿ.',
+          ta: 'ஒரெடெஸ்/ஒட்டர-மாகதி முதல் சோரோ செப்பேடுகள் ("ஒட்டர-விஷய"), திருமலை ("ஒட்ட-விஷய") மற்றும் வெலிகலானி ("ஒட்டர-ராஜ்ய") வரையிலான 2,000 ஆண்டுகால கல்வெட்டுத் தொடர்ச்சி.',
+          mr: 'ओरेतेस/ओड्र-मागधी पासून सोरो ताम्रपट ("ओड्र-विषय"), तिरुमलै ("ओड्ड-विषय") आणि वेलिगलनी ("ओड्र-राज्य") पर्यंतची २,००० वर्षांची अखंड शिलालेख साखळी.',
+          or: 'ଓରେଟେସ/ଓଡ଼୍ର-ମାଗଧୀରୁ ସୋରୋ ତାମ୍ରଶାସନ ("ଓଡ଼୍ର-ବିଷୟ"), ତିରୁମଲାଇ ("ଓଡ଼-ବିଷୟ") ଓ ଭେଲିଗାଲାନି ("ଓଡ଼୍ର-ରାଜ୍ୟ") ପର୍ଯ୍ୟନ୍ତ ୨,୦୦୦ ବର୍ଷର ଅଖଣ୍ଡ ଶିଳାଲେଖ ଧାରା।',
+          bn: 'ওরেটেস/ওড্র-মাগধী থেকে সোরো তাম্রশাসন ("ওড্র-বিষয়"), তিরুমালাই ("ওড্ড-বিষয়") ও ভেলিগালানি ("ওড্র-রাজ্য") পর্যন্ত ২,০০০ বছরের অবিচ্ছিন্ন শিলালিপি ধারা।'
+        },
+        supportingRef: '[src_od5_02] Soro Plates; [src_od5_03] Xuanzang (639 CE); [src_od5_04] Tirumalai (1024 CE); [src_od5_06] Veligalani (1458 CE)',
+        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_01_od'
+      }
+    ],
+    relatedArticleIds: ['region-odra', 'region-utkala', 'region-kalinga', 'region-trikalinga', 'art_epigraphic_evolution_odra', 'art_odra_desha_history'],
     relatedFigureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
     relatedDynastyNames: ['Mahameghavahana Dynasty', 'Bhauma-Kara Dynasty', 'Somavamshi Dynasty', 'Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
   }

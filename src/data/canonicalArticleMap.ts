@@ -83,6 +83,47 @@ export const LEGACY_ARTICLE_ID_ALIASES: Record<string, string> = {
   curated_kalinga_war_261bce: 'art_odra_desha_history',
   art_dyn_western_chalukyas: 'art_dyn_chalukya_synthesis',
   art_dyn_siddhini_kings: 'art_dyn_siddhini_kings_verification',
+  'TM-0001': 'mon_meghanada_pacheri',
+  'tm-0001': 'mon_meghanada_pacheri',
+  'tm_0001': 'mon_meghanada_pacheri',
+  'mon_meghanada_pacheri': 'mon_meghanada_pacheri',
+  'TM-0002': 'mon_konark_sun',
+  'tm-0002': 'mon_konark_sun',
+  'tm_0002': 'mon_konark_sun',
+  'mon_konark_sun': 'mon_konark_sun',
+  'TM-0003': 'mon_draksharama_mandapa',
+  'tm-0003': 'mon_draksharama_mandapa',
+  'tm_0003': 'mon_draksharama_mandapa',
+  'mon_draksharama_mandapa': 'mon_draksharama_mandapa',
+  'TM-0004': 'mon_kolletikota_peddintlamma',
+  'tm-0004': 'mon_kolletikota_peddintlamma',
+  'tm_0004': 'mon_kolletikota_peddintlamma',
+  'mon_kolletikota_peddintlamma': 'mon_kolletikota_peddintlamma',
+  'OD-0001': 'region-odra',
+  'od-0001': 'region-odra',
+  'od_0001': 'region-odra',
+  'region-odra': 'region-odra',
+  'region_odra': 'region-odra',
+  'OD-0002': 'region-utkala',
+  'od-0002': 'region-utkala',
+  'od_0002': 'region-utkala',
+  'region-utkala': 'region-utkala',
+  'region_utkala': 'region-utkala',
+  'OD-0003': 'region-kalinga',
+  'od-0003': 'region-kalinga',
+  'od_0003': 'region-kalinga',
+  'region-kalinga': 'region-kalinga',
+  'region_kalinga': 'region-kalinga',
+  'OD-0004': 'region-trikalinga',
+  'od-0004': 'region-trikalinga',
+  'od_0004': 'region-trikalinga',
+  'region-trikalinga': 'region-trikalinga',
+  'region_trikalinga': 'region-trikalinga',
+  'OD-0005': 'odra-epigraphic-evolution',
+  'od-0005': 'odra-epigraphic-evolution',
+  'od_0005': 'odra-epigraphic-evolution',
+  'odra-epigraphic-evolution': 'odra-epigraphic-evolution',
+  'odra_epigraphic_evolution': 'odra-epigraphic-evolution',
   ...MONO_SECTION_TO_CANONICAL_ARTICLE_MAP,
 };
 
@@ -162,7 +203,20 @@ export function resolveCanonicalNavigationTarget(rawUrl: string): string {
       const articleParam = parsed.searchParams.get('article') || parsed.searchParams.get('id');
       if (articleParam) {
         const canonicalArtId = resolveCanonicalArticleId(articleParam);
+        if (canonicalArtId.startsWith('region-') || canonicalArtId === 'odra-epigraphic-evolution') {
+          return `/odra-desha?id=${encodeURIComponent(canonicalArtId)}`;
+        }
         return `/documentary?article=${encodeURIComponent(canonicalArtId)}`;
+      }
+      return pathname;
+    }
+
+    // 1b. Odra Desha regional & epigraphic monographs (OD-0001 .. OD-0005)
+    if (pathname === '/odra-desha') {
+      const idParam = parsed.searchParams.get('id') || parsed.searchParams.get('article');
+      if (idParam) {
+        const canonicalOdId = resolveCanonicalArticleId(idParam);
+        return `/odra-desha?id=${encodeURIComponent(canonicalOdId)}`;
       }
       return pathname;
     }

@@ -898,6 +898,7 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
   // 1. All 25 Canonical + Expanded Historical Articles
   const allArticles = getAllArticles('en');
   for (const art of allArticles) {
+    if (art.id.startsWith('mon_') || art.id.startsWith('region-') || art.id === 'odra-epigraphic-evolution') continue;
     const refId = getReferenceIdByInternalId(art.id);
     const prefix = (refId.split('-')[0] as ReferencePrefixCode) || 'HD';
     const prefixMeta = GLOBAL_PREFIX_REGISTRY[prefix] || GLOBAL_PREFIX_REGISTRY.HD;
@@ -1329,12 +1330,37 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
   }
 
   // 13. 5 Odra Desha Territorial & Epigraphic Dossiers (OD-0001 .. OD-0005)
-  const odraItems: Array<{ id: string; ref: string; title: string }> = [
-    { id: 'region-odra', ref: 'OD-0001', title: 'Core Odra Desha (Mahanadi–Brahmani–Baitarani Deltaic Heartland)' },
-    { id: 'region-utkala', ref: 'OD-0002', title: 'Utkala Mandala (Northern Coastal & Subarnarekha Corridor)' },
-    { id: 'region-kalinga', ref: 'OD-0003', title: 'Kalinga Rashtra (Mahendragiri to Godavari Maritime Seaboard)' },
-    { id: 'region-trikalinga', ref: 'OD-0004', title: 'Trikalinga & Dakshina Kosala (Western Highland & Riverine Frontier)' },
-    { id: 'odra-epigraphic-evolution', ref: 'OD-0005', title: 'Epigraphic Evolution of Odra Nomenclature (Hathigumpha to Kataka Edicts)' }
+  const odraItems: Array<{ id: string; ref: string; title: string; related: string[] }> = [
+    {
+      id: 'region-odra',
+      ref: 'OD-0001',
+      title: 'OD-0001 | Core Odra Desha (Mahanadi–Brahmani–Baitarani Deltaic Heartland): Primordial Origins, Riverine Statecraft, and Sovereign Core of the Suryavamsha Gajapathi Empire',
+      related: ['region-utkala', 'region-kalinga', 'region-trikalinga', 'odra-epigraphic-evolution', 'art_odra_desha_history', 'art_gajapathi_kapilendra']
+    },
+    {
+      id: 'region-utkala',
+      ref: 'OD-0002',
+      title: 'OD-0002 | Utkala Mandala (Northern Coastal & Subarnarekha–Baitarani Corridor): Viraja Kshetra, Bhauma-Kara & Somavamshi Synthesis, and Sacred Solar Architecture',
+      related: ['region-odra', 'region-kalinga', 'region-trikalinga', 'odra-epigraphic-evolution', 'mon_konark_sun', 'mon_meghanada_pacheri']
+    },
+    {
+      id: 'region-kalinga',
+      ref: 'OD-0003',
+      title: 'OD-0003 | Kalinga Rashtra (Mahendragiri to Godavari Maritime Seaboard): Ancient Kalinganagari, Emperor Kharavela’s Resurgence, and Trans-Oceanic Maritime Networks',
+      related: ['region-odra', 'region-utkala', 'region-trikalinga', 'odra-epigraphic-evolution', 'art_odra_desha_history', 'mon_draksharama_mandapa']
+    },
+    {
+      id: 'region-trikalinga',
+      ref: 'OD-0004',
+      title: 'OD-0004 | Trikalinga & Dakshina Kosala (Western Highland & Riverine Frontier): Trikalingadhipati Imperial Sovereignty across Kalinga, Utkala, and Kosala',
+      related: ['region-odra', 'region-utkala', 'region-kalinga', 'odra-epigraphic-evolution', 'art_odra_desha_history', 'art_dyn_eastern_gangas']
+    },
+    {
+      id: 'odra-epigraphic-evolution',
+      ref: 'OD-0005',
+      title: 'OD-0005 | Epigraphic Evolution of the Odra Identity (Hathigumpha to Kataka Edicts): Classical Attestations, Xuanzang’s Wu-T’u Chronicle, and Gajapathi Copper-Plate Charters',
+      related: ['region-odra', 'region-utkala', 'region-kalinga', 'region-trikalinga', 'art_epigraphic_evolution_odra', 'art_odra_desha_history']
+    }
   ];
   for (const od of odraItems) {
     addRecord({
@@ -1344,11 +1370,11 @@ export function getGlobalContentReferenceRegistry(): GlobalReferenceRecord[] {
       contentTitle: od.title,
       contentCategory: 'Odra Desha Regional History',
       internalRecordId: od.id,
-      dataSourceFile: 'src/pages/OdraDeshaPage.tsx',
+      dataSourceFile: 'src/data/articlesRepository.ts',
       availableLanguages: ALL_EIGHT_LANGUAGES,
-      relatedContentIds: ['art_odra_desha_history'],
+      relatedContentIds: od.related,
       creationDate: '2026-01-22',
-      lastUpdatedDate: '2026-11-11',
+      lastUpdatedDate: '2026-11-12',
       recordStatus: 'Active & Verified',
       canonicalRoute: `/odra-desha?id=${encodeURIComponent(od.id)}`,
       prefix: 'OD'

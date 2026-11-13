@@ -2,6 +2,15 @@ import type { LanguageCode, SourceReference } from '../src/types/index.ts';
 import { COMPLETE_ARTICLE_TRANSLATIONS_PART1 } from '../src/data/canonicalArticlesCompleteTranslationsPart1.ts';
 import { COMPLETE_ARTICLE_TRANSLATIONS_PART2 } from '../src/data/canonicalArticlesCompleteTranslationsPart2.ts';
 import { EXPANDED_ARTICLE_TRANSLATIONS } from '../src/data/expandedArticlesTranslations.ts';
+import { MON_KONARK_SUN_ARTICLE_TRANSLATIONS } from '../src/data/monKonarkSunArticleTranslations.ts';
+import { MON_MEGHANADA_PACHERI_ARTICLE_TRANSLATIONS } from '../src/data/monMeghanadaPacheriArticleTranslations.ts';
+import { MON_DRAKSHARAMA_MANDAPA_ARTICLE_TRANSLATIONS } from '../src/data/monDraksharamaMandapaArticleTranslations.ts';
+import { MON_KOLLETIKOTA_PEDDINTLAMMA_ARTICLE_TRANSLATIONS } from '../src/data/monKolletikotaPeddintlammaArticleTranslations.ts';
+import { OD_REGION_ODRA_ARTICLE_TRANSLATIONS } from '../src/data/odRegionOdraArticleTranslations.ts';
+import { OD_REGION_UTKALA_ARTICLE_TRANSLATIONS } from '../src/data/odRegionUtkalaArticleTranslations.ts';
+import { OD_REGION_KALINGA_ARTICLE_TRANSLATIONS } from '../src/data/odRegionKalingaArticleTranslations.ts';
+import { OD_REGION_TRIKALINGA_ARTICLE_TRANSLATIONS } from '../src/data/odRegionTrikalingaArticleTranslations.ts';
+import { OD_EPIGRAPHIC_EVOLUTION_ARTICLE_TRANSLATIONS } from '../src/data/odEpigraphicEvolutionArticleTranslations.ts';
 import {
   KAKATIYA_ARTICLE_TRANSLATIONS,
   KAKATIYA_INSCRIPTION_TRANSLATIONS,
@@ -18,6 +27,15 @@ export interface ContentTranslationMap {
 }
 
 export const ARTICLE_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, ContentTranslationMap>>> = {
+  mon_meghanada_pacheri: MON_MEGHANADA_PACHERI_ARTICLE_TRANSLATIONS,
+  mon_konark_sun: MON_KONARK_SUN_ARTICLE_TRANSLATIONS,
+  mon_draksharama_mandapa: MON_DRAKSHARAMA_MANDAPA_ARTICLE_TRANSLATIONS,
+  mon_kolletikota_peddintlamma: MON_KOLLETIKOTA_PEDDINTLAMMA_ARTICLE_TRANSLATIONS,
+  'region-odra': OD_REGION_ODRA_ARTICLE_TRANSLATIONS,
+  'region-utkala': OD_REGION_UTKALA_ARTICLE_TRANSLATIONS,
+  'region-kalinga': OD_REGION_KALINGA_ARTICLE_TRANSLATIONS,
+  'region-trikalinga': OD_REGION_TRIKALINGA_ARTICLE_TRANSLATIONS,
+  'odra-epigraphic-evolution': OD_EPIGRAPHIC_EVOLUTION_ARTICLE_TRANSLATIONS,
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART1,
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART2,
   ...EXPANDED_ARTICLE_TRANSLATIONS,
@@ -1246,71 +1264,99 @@ export const MONUMENT_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, 
       name: 'కోణార్క్ సూర్య దేవాలయం (అర్క క్షేత్రం)',
       location: 'కోణార్క్, పూరి జిల్లా',
       state: 'ఒడిశా',
-      patron_ruler: 'మొదటి నరసింహదేవుడు (తూర్పు గంగ వంశం) & సూర్యవంశ గజపతుల సంరక్షణ',
+      patron_ruler: 'మొదటి లాంగుళ నరసింహదేవుడు (తూర్పు గంగ వంశం) & సూర్యవంశ గజపతుల సంరక్షణ',
       century: '13వ శతాబ్దం (సుమారు క్రీ.శ. 1250)',
       architectural_style: 'శాస్త్రీయ కళింగ శైలి (రేఖ & భద్ర దేఉల)',
-      historical_significance: 'సూర్య భగవానుని దివ్య రథంగా నిర్మించబడిన తూర్పు భారత శిల్పకళా ఖండం. తమ సూర్యవంశ మూలాలకు ప్రతీకగా గజపతి చక్రవర్తులు దీనిని సంరక్షించారు.',
-      sources: ['బయ చకడ తాళపత్ర వాస్తు రికార్డులు', 'యునెస్కో (UNESCO) ప్రపంచ వారసత్వ పత్రాలు']
+      historical_significance: 'సూర్య భగవానుని దివ్య రథంగా 24 ఖగోళ సూర్య గడియార చక్రాలు మరియు 7 అశ్వాలతో నిర్మించబడిన తూర్పు భారత శిల్పకళా ఖండం. తూర్పు గంగ చక్రవర్తి లాంగుళ నరసింహదేవుడు బెంగాల్ విజయాల అనంతరం నిర్మించగా, తరువాతి సూర్యవంశ గజపతి చక్రవర్తులు తమ కులదైవ పీఠంగా సంరక్షించారు.',
+      sources: [
+        'బయ చకడ తాళపత్ర వాస్తు రికార్డులు',
+        'రెండవ నరసింహదేవుని కేందుపట్న తామ్రశాసనం (క్రీ.శ. 1295)',
+        'యునెస్కో (UNESCO) ప్రపంచ వారసత్వ పత్రాలు'
+      ]
     },
     or: {
       name: 'କୋଣାର୍କ ସୂର୍ଯ୍ୟ ମନ୍ଦିର (ଅର୍କ କ୍ଷେତ୍ର)',
       location: 'କୋଣାର୍କ, ପୁରୀ ଜିଲ୍ଲା',
       state: 'ଓଡ଼ିଶା',
-      patron_ruler: 'ପ୍ରଥମ ନରସିଂହ ଦେବ (ଗଙ୍ଗ ବଂଶ) ଓ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି',
+      patron_ruler: 'ପ୍ରଥମ ଲାଙ୍ଗୁଳା ନରସିଂହ ଦେବ (ଗଙ୍ଗ ବଂଶ) ଓ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି',
       century: '୧୩ଶ ଶତାବ୍ଦୀ (ପ୍ରାୟ ୧୨୫୦ ଖ୍ରୀଷ୍ଟାବ୍ଦ)',
       architectural_style: 'ଶାସ୍ତ୍ରୀୟ କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ (ରେଖା ଓ ଭଦ୍ର ଦେଉଳ)',
-      historical_significance: 'ସୂର୍ଯ୍ୟ ଦେବତାଙ୍କ ରଥ ଆକାରରେ ନିର୍ମିତ ବିଶ୍ୱପ୍ରସିଦ୍ଧ କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ, ଯାହାକୁ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସମ୍ରାଟମାନେ ନିଜ କୁଳଦେବତାଙ୍କ ପୀଠ ରୂପେ ସୁରକ୍ଷା ଦେଇଥିଲେ।',
-      sources: ['ବାୟା ଚକଡ଼ା ତାଳପତ୍ର ସ୍ଥାପତ୍ୟ ପୋଥି', 'ୟୁନେସ୍କୋ (UNESCO) ବିଶ୍ୱ ଐତିହ୍ୟ ଦଲିଲ']
+      historical_significance: 'ସୂର୍ଯ୍ୟ ଦେବତାଙ୍କ ରଥ ଆକାରରେ ୨୪ଟି ଖଗୋଳୀୟ ଚକ୍ର ଓ ୭ଟି ଅଶ୍ୱ ସହ ନିର୍ମିତ ବିଶ୍ୱପ୍ରସିଦ୍ଧ କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ। ବଙ୍ଗ ବିଜୟ ପରେ ଲାଙ୍ଗୁଳା ନରସିଂହ ଦେବଙ୍କ ଦ୍ୱାରା ନିର୍ମିତ ଏବଂ ପରବର୍ତ୍ତୀ ସମୟରେ ସୂର୍ଯ୍ୟବଂଶୀ ଗଜପତି ସମ୍ରାଟମାନେ ନିଜ କୁଳଦେବତାଙ୍କ ପୀଠ ରୂପେ ଏହାକୁ ସୁରକ୍ଷା ଦେଇଥିଲେ।',
+      sources: [
+        'ବାୟା ଚକଡ଼ା ତାଳପତ୍ର ସ୍ଥାପତ୍ୟ ପୋଥି',
+        'ଦ୍ୱିତୀୟ ନରସିଂହ ଦେବଙ୍କ କେନ୍ଦୁପାଟଣା ତାମ୍ରଶାସନ (୧୨୯୫ ଖ୍ରୀଷ୍ଟାବ୍ଦ)',
+        'ୟୁନେସ୍କୋ (UNESCO) ବିଶ୍ୱ ଐତିହ୍ୟ ଦଲିଲ'
+      ]
     },
     hi: {
       name: 'कोणार्क सूर्य मंदिर (अर्क क्षेत्र)',
       location: 'कोणार्क, पुरी जिला',
       state: 'ओडिशा',
-      patron_ruler: 'नरसिंहदेव प्रथम (गंग वंश) एवं सूर्यवंशी गजपति संरक्षण',
+      patron_ruler: 'लांगुला नरसिंहदेव प्रथम (गंग वंश) एवं सूर्यवंशी गजपति संरक्षण',
       century: '13वीं शताब्दी ई. (लगभग 1250 ई.)',
       architectural_style: 'शास्त्रीय कलिंग स्थापत्य (रेखा एवं भद्र देउल)',
-      historical_significance: 'सूर्य देव के दिव्य रथ के रूप में निर्मित पूर्वी भारतीय स्थापत्य की सर्वोच्च कृति, जिसका संरक्षण सूर्यवंशी गजपति सम्राटों ने अपने कुलदेवता के रूप में किया।',
-      sources: ['बया चकड़ा ताड़पत्र स्थापत्य इतिवृत्त', 'यूनेस्को (UNESCO) विश्व धरोहर दस्तावेज़']
+      historical_significance: 'भगवान सूर्य के दिव्य रथ के रूप में 24 खगोलीय धूपघड़ी पहियों एवं 7 अश्वों से सुसज्जित पूर्वी भारतीय स्थापत्य की सर्वोच्च कृति। बंगाल विजय के उपरांत लांगुला नरसिंहदेव प्रथम द्वारा निर्मित और बाद में सूर्यवंशी गजपति सम्राटों द्वारा कुलदेवता धाम के रूप में संरक्षित।',
+      sources: [
+        'बया चकड़ा ताड़पत्र स्थापत्य इतिवृत्त',
+        'नरसिंहदेव द्वितीय का केंदुपटना ताम्रपत्र (1295 ई.)',
+        'यूनेस्को (UNESCO) विश्व धरोहर दस्तावेज़'
+      ]
     },
     kn: {
       name: 'ಕೋಣಾರ್ಕ್ ಸೂರ್ಯ ದೇವಾಲಯ (ಅರ್ಕ ಕ್ಷೇತ್ರ)',
       location: 'ಕೋಣಾರ್ಕ್, ಪುರಿ ಜಿಲ್ಲೆ',
       state: 'ಒಡಿಶಾ',
-      patron_ruler: 'ಮೊದಲನೇ ನರಸಿಂಹದೇವ ಮತ್ತು ಸೂರ್ಯವಂಶ ಗಜಪತಿಗಳ ಸಂರಕ್ಷಣೆ',
+      patron_ruler: 'ಮೊದಲನೇ ಲಾಂಗುಳ ನರಸಿಂಹದೇವ ಮತ್ತು ಸೂರ್ಯವಂಶ ಗಜಪತಿಗಳ ಸಂರಕ್ಷಣೆ',
       century: '13ನೇ ಶತಮಾನ (ಸುಮಾರು ಕ್ರಿ.ಶ. 1250)',
       architectural_style: 'ಶಾಸ್ತ್ರೀಯ ಕಳಿಂಗ ವಾಸ್ತುಶಿಲ್ಪ (ರೇಖಾ ಮತ್ತು ಭದ್ರ ದೇಉಲ)',
-      historical_significance: 'ಸೂರ್ಯದೇವನ ರಥದ ರೂಪದಲ್ಲಿ ನಿರ್ಮಿಸಲಾದ ವಿಶ್ವಪ್ರಸಿದ್ಧ ಕಳಿಂಗ ವಾಸ್ತುಶಿಲ್ಪದ ಮೇರುಕೃತಿ; ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಅರಸರು ಇದನ್ನು ತಮ್ಮ ಕುಲದೇವತಾ ಕ್ಷೇತ್ರವಾಗಿ ಸಂರಕ್ಷಿಸಿದರು.',
-      sources: ['ಬಯಾ ಚಕಡಾ ತಾಳೆಗರಿ ವಾಸ್ತುಶಿಲ್ಪ ದಾಖಲೆಗಳು', 'ಯುನೆಸ್ಕೋ (UNESCO) ವಿಶ್ವ ಪರಂಪರೆಯ ದಾಖಲೆ']
+      historical_significance: 'ಸೂರ್ಯದೇವನ ರಥದ ರೂಪದಲ್ಲಿ 24 ಖಗೋಳ ನೆರಳು ಗಡಿಯಾರ ಚಕ್ರಗಳು ಮತ್ತು 7 ಕುದುರೆಗಳೊಂದಿಗೆ ನಿರ್ಮಿಸಲಾದ ವಿಶ್ವಪ್ರಸಿದ್ಧ ಕಳಿಂಗ ವಾಸ್ತುಶಿಲ್ಪದ ಶಿಖರ. ಬಂಗಾಳ ವಿಜಯದ ನಂತರ ಲಾಂಗುಳ ನರಸಿಂಹದೇವರಿಂದ ನಿರ್ಮಿತವಾಗಿ, ಸೂರ್ಯವಂಶ ಗಜಪತಿ ಅರಸರಿಂದ ಕುಲದೈವವಾಗಿ ಸಂರಕ್ಷಿಸಲ್ಪಟ್ಟಿತು.',
+      sources: [
+        'ಬಯಾ ಚಕಡಾ ತಾಳೆಗರಿ ವಾಸ್ತುಶಿಲ್ಪ ದಾಖಲೆಗಳು',
+        'ಎರಡನೇ ನರಸಿಂಹದೇವರ ಕೇಂದುಪಟ್ನ ತಾಮ್ರಶಾಸನ (ಕ್ರಿ.ಶ. 1295)',
+        'ಯುನೆಸ್ಕೋ (UNESCO) ವಿಶ್ವ ಪರಂಪರೆಯ ದಾಖಲೆ'
+      ]
     },
     ta: {
       name: 'கொனார்க் சூரியக் கோயில் (அர்க்க க்ஷேத்திரம்)',
       location: 'கொனார்க், புரி மாவட்டம்',
       state: 'ஒடிசா',
-      patron_ruler: 'முதலாம் நரசிம்மதேவர் மற்றும் சூரியவம்ச கஜபதிகள்',
+      patron_ruler: 'முதலாம் லாங்குள நரசிம்மதேவர் மற்றும் சூரியவம்ச கஜபதிகள்',
       century: '13-ஆம் நூற்றாண்டு (சுமார் கி.பி. 1250)',
       architectural_style: 'செவ்வியல் கலிங்க கட்டிடக்கலை (ரேகா & பத்ர தேஉல)',
-      historical_significance: 'சூரிய பகவானின் தேராக வடிவமைக்கப்பட்ட கிழக்கு இந்தியக் கட்டிடக்கலையின் சிகரம்; சூரியவம்ச கஜபதி மன்னர்களால் போற்றிப் பாதுகாக்கப்பட்டது.',
-      sources: ['பயா சகடா ஓலைச்சுவடி கட்டிடக்கலை ஆவணங்கள்', 'யுனெஸ்கோ (UNESCO) உலக பாரம்பரிய ஆவணம்']
+      historical_significance: 'சூரிய பகவானின் தேராக 24 வானியல் நிழல் கடிகாரச் சக்கரங்கள் மற்றும் 7 குதிரைகளுடன் வடிவமைக்கப்பட்ட கிழக்கு இந்தியக் கட்டிடக்கலையின் சிகரம். வங்காள வெற்றிக்குப் பின் கங்க மன்னர் லாங்குள நரசிம்மதேவரால் கட்டப்பட்டு, சூரியவம்ச கஜபதி மன்னர்களால் குலதெய்வமாகப் போற்றிப் பாதுகாக்கப்பட்டது.',
+      sources: [
+        'பயா சகடா ஓலைச்சுவடி கட்டிடக்கலை ஆவணங்கள்',
+        'இரண்டாம் நரசிம்மதேவரின் கேந்துபட்னா செப்பேடு (பொ.ஊ. 1295)',
+        'யுனெஸ்கோ (UNESCO) உலக பாரம்பரிய ஆவணம்'
+      ]
     },
     mr: {
       name: 'कोणार्क सूर्य मंदिर (अर्क क्षेत्र)',
       location: 'कोणार्क, पुरी जिल्हा',
       state: 'ओडिशा',
-      patron_ruler: 'नरसिंहदेव प्रथम आणि सूर्यवंशी गजपती संरक्षण',
+      patron_ruler: 'लांगुला नरसिंहदेव प्रथम आणि सूर्यवंशी गजपती संरक्षण',
       century: '१३ वे शतक (सुमारे इ.स. १२५०)',
       architectural_style: 'अभिजात कलिंग स्थापत्य (रेखा व भद्र देउल)',
-      historical_significance: 'सूर्यदेवाच्या रथाच्या रूपात कोरलेले जागतिक दर्जाचे स्थापत्य, ज्याचे सूर्यवंशी गजपती सम्राटांनी रक्षण केले.',
-      sources: ['बया चकडा ताडपत्र स्थापत्य नोंदी', 'युनेस्को (UNESCO) जागतिक वारसा दस्तऐवज']
+      historical_significance: 'सूर्यदेवाच्या रथाच्या रूपात २४ खगोलीय सूर्यघड्याळ चाके आणि ७ घोड्यांसह कोरलेले जागतिक दर्जाचे स्थापत्य. बंगाल विजयानंतर लांगुला नरसिंहदेवांनी बांधलेले आणि नंतर सूर्यवंशी गजपती सम्राटांनी कुलदैवत म्हणून संरक्षित केलेले तीर्थक्षेत्र.',
+      sources: [
+        'बया चकडा ताडपत्र स्थापत्य नोंदी',
+        'नरसिंहदेव द्वितीय यांचा केंदुपटना ताम्रपट (१२९५)',
+        'युनेस्को (UNESCO) जागतिक वारसा दस्तऐवज'
+      ]
     },
     bn: {
       name: 'কোণার্ক সূর্য মন্দির (অর্ক ক্ষেত্র)',
       location: 'কোণার্ক, পুরী জেলা',
       state: 'উড়িষ্যা',
-      patron_ruler: 'প্রথম নরসিংহদেব (গঙ্গ বংশ) ও সূর্যবংশীয় গজপতি সংরক্ষণ',
+      patron_ruler: 'প্রথম লাঙ্গুলা নরসিংহদেব (গঙ্গ বংশ) ও সূর্যবংশীয় গজপতি সংরক্ষণ',
       century: '১৩শ শতাব্দী (আনুমানিক ১২৫০ খ্রিস্টাব্দ)',
       architectural_style: 'ধ্রুপদী কলিঙ্গ স্থাপত্য (রেখা ও ভদ্র দেউল)',
-      historical_significance: 'সূর্যদেবের রথের আদলে নির্মিত পূর্ব ভারতীয় স্থাপত্যের শ্রেষ্ঠ নিদর্শন, যা সূর্যবংশীয় গজপতিরা সংরক্ষণ করেছিলেন।',
-      sources: ['বায়া চকড়া তালপাতার স্থাপত্য পুঁথি', 'ইউনেস্কো (UNESCO) বিশ্ব ঐতিহ্য দলিল']
+      historical_significance: 'সূর্যদেবের রথের আদলে ২৪টি জ্যোতির্বিজ্ঞানসম্মত রথচক্র ও ৭টি ঘোড়া সহ নির্মিত পূর্ব ভারতীয় স্থাপত্যের শ্রেষ্ঠ নিদর্শন। বাংলা বিজয়ের পর প্রথম লাঙ্গুলা নরসিংহদেব কর্তৃক নির্মিত এবং পরবর্তীতে সূর্যবংশীয় গজপতি রাজাদের দ্বারা কুলদেবতা রূপে সংরক্ষিত।',
+      sources: [
+        'বায়া চকড়া তালপাতার স্থাপত্য পুঁথি',
+        'দ্বিতীয় নরসিংহদেবের কেন্দুপাটনা তাম্রশাসন (১২৯৫ খ্রিস্টাব্দ)',
+        'ইউনেস্কো (UNESCO) বিশ্ব ঐতিহ্য দলিল'
+      ]
     }
   },
   mon_draksharama_mandapa: {
