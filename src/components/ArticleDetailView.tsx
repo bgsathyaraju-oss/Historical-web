@@ -55,6 +55,7 @@ import {
 } from '../data/archivalSeedData';
 import { ARTICLE_STRUCTURED_METADATA_MAP } from '../data/expandedDynastiesAndCategoriesArticles';
 import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { getProfessionalHeritageCategoriesForArticle } from '../data/gajapathiMonarchsAndInscriptionsArticles';
 import { ReferenceIdBadge } from './ReferenceIdBadge';
 
 export interface ArticleDetailViewProps {
@@ -1080,10 +1081,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
 
   // Cross-reference Historical Personalities involved in this Monograph
   const allFigures = getAllDocumentedFigures(language);
+  const structuredFigures = structuredMeta?.relatedFigureIds?.length
+    ? structuredMeta.relatedFigureIds
+        .map(fid => allFigures.find(f => f.id === fid))
+        .filter((f): f is NonNullable<typeof f> => Boolean(f))
+    : [];
   const involvedFigures = enrichment
     ? enrichment.figureIds
         .map(fid => allFigures.find(f => f.id === fid))
         .filter((f): f is NonNullable<typeof f> => Boolean(f))
+    : structuredFigures.length > 0
+    ? structuredFigures
     : allFigures.slice(0, 4);
 
   // Cross-reference Corroborating Inscriptions
@@ -1114,15 +1122,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
         .filter((e): e is NonNullable<typeof e> => Boolean(e))
     : allTimelineEvents.slice(0, 4);
 
-  // Related Articles (with small thumbnails)
+  // Related Articles (prioritizing structuredMeta.relatedArticleIds when present)
+  const preferredRelatedIds = new Set(structuredMeta?.relatedArticleIds || []);
   const relatedArticles = allArticles
     .filter(a => a.id !== article.id)
     .sort((a, b) => {
+      const aPreferred = preferredRelatedIds.has(a.id) ? 2 : 0;
+      const bPreferred = preferredRelatedIds.has(b.id) ? 2 : 0;
+      if (bPreferred !== aPreferred) return bPreferred - aPreferred;
       const aMatch = a.category === article.category || a.tags.some(t => article.tags.includes(t)) ? 1 : 0;
       const bMatch = b.category === article.category || b.tags.some(t => article.tags.includes(t)) ? 1 : 0;
       return bMatch - aMatch;
     })
-    .slice(0, 3);
+    .slice(0, 4);
 
   // Previous / Next Monograph navigation
   const currentIdx = allArticles.findIndex(a => a.id === article.id);
@@ -1141,7 +1153,17 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
   }
 
   const getDirectMonographUrl = (autoPrint = false): string => {
-    const paramKey = basePath === '/odra-desha' ? 'id' : 'article';
+    const isDossierId =
+      article.id.startsWith('dyn_') ||
+      article.id.startsWith('admin-') ||
+      article.id.startsWith('fig_') ||
+      article.id.startsWith('insc_') ||
+      article.id === 'military-gajasena' ||
+      article.id === 'culture-renaissance';
+    const paramKey =
+      basePath === '/odra-desha' || (basePath === '/gajapathi-kings' && isDossierId)
+        ? 'id'
+        : 'article';
     try {
       const url = new URL(window.location.origin + basePath);
       url.searchParams.set(paramKey, article.id);
@@ -1531,30 +1553,102 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <span className="text-[var(--profile-title-box-text)] font-bold mr-1.5">{ui.artifactLabel}</span>
-                  {structuredMeta?.imageProvenance
+                  {language === 'en' && structuredMeta?.imageProvenance
                     ? structuredMeta.imageProvenance.caption
                     : `${displayTitle} — ${historicalPeriod}`}
                 </div>
                 {structuredMeta?.imageProvenance && (
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FFFCF5] text-[#54351F] border border-[#A87924]">
                     {structuredMeta.imageProvenance.visualType === 'Archival Photograph / Epigraphic Facsimile'
-                      ? translateText('Archival / Epigraphic Photography')
+                      ? ({
+                          en: 'Archival / Epigraphic Photography',
+                          hi: 'अभिलेखीय / पुरातात्विक छायाचित्र',
+                          te: 'పురావస్తు / శాసన ఛాయాచిత్రం',
+                          kn: 'ಪುರಾತತ್ವ / ಶಾಸನ ಛಾಯಾಚಿತ್ರ',
+                          ta: 'தொல்லியல் / கல்வெட்டுப் புகைப்படம்',
+                          mr: 'पुरातत्वीय / शिलालेखीय छायाचित्र',
+                          or: 'ପ୍ରତ୍ନତାତ୍ତ୍ୱିକ / ଶିଳାଲେଖ ଫଟୋଚିତ୍ର',
+                          bn: 'প্রত্নতাত্ত্বিক / শিলালিপি আলোকচিত্র'
+                        }[language] || 'Archival / Epigraphic Photography')
                       : structuredMeta.imageProvenance.visualType === 'Cartographic Reconstruction'
-                      ? translateText('Historical Cartographic Reconstruction')
-                      : translateText('Symbolic / Traditional Artistic Illustration')}
+                      ? ({
+                          en: 'Historical Cartographic Reconstruction',
+                          hi: 'ऐतिहासिक मानचित्र पुनर्निर्माण',
+                          te: 'చారిత్రక పట పునర్నిర్మాణం',
+                          kn: 'ಐತಿಹಾಸಿಕ ಭೂಪಟ ಪುನರ್నిర్మాణ',
+                          ta: 'வரலாற்று வரைபட மீள்கட்டமைப்பு',
+                          mr: 'ऐतिहासिक नकाशा पुनर्निर्माण',
+                          or: 'ଐତିହାସିକ ମାନଚିତ୍ର ପୁନର୍നിର୍ମାଣ',
+                          bn: 'ঐতিহাসিক মানচিত্র পুনর্নির্মাণ'
+                        }[language] || 'Historical Cartographic Reconstruction')
+                      : ({
+                          en: 'Symbolic / Traditional Artistic Illustration',
+                          hi: 'पारंपरिक एवं प्रतीकात्मक चित्रण',
+                          te: 'సాంప్రదాయ & ప్రతీకాత్మక చిత్రణ',
+                          kn: 'ಸಾಂಪ್ರದಾಯಿಕ ಮತ್ತು ಸಾಂಕೇತಿಕ ಚಿತ್ರಣ',
+                          ta: 'பாரம்பரிய மற்றும் குறியீட்டு ஓவியம்',
+                          mr: 'पारंपरिक आणि प्रतीकात्मक चित्रण',
+                          or: 'ପାରମ୍ପରିକ ଓ ପ୍ରତୀକାତ୍ମକ ଚିତ୍ରଣ',
+                          bn: 'ঐতিহ্যবাহী ও প্রতীকী চিত্রণ'
+                        }[language] || 'Symbolic / Traditional Artistic Illustration')}
                   </span>
                 )}
               </div>
               {structuredMeta?.imageProvenance && (
                 <div className="text-[11px] opacity-95 pt-1 border-t border-[var(--profile-title-box-border)]/40 flex flex-wrap gap-x-4 gap-y-1">
                   <span>
-                    <strong>{translateText('Period:')}</strong> {structuredMeta.imageProvenance.period}
+                    <strong>{ui.periodLabel}:</strong>{' '}
+                    {language === 'en' ? structuredMeta.imageProvenance.period : historicalPeriod}
                   </span>
                   <span>
-                    <strong>{translateText('Provenance:')}</strong> {structuredMeta.imageProvenance.sourceOrProvenance}
+                    <strong>
+                      {{
+                        en: 'Provenance:',
+                        hi: 'स्रोत / उद्गम:',
+                        te: 'మూలం / సేకరణ:',
+                        kn: 'ಮೂಲ / ಸಂಗ್ರಹ:',
+                        ta: 'மூலம் / ஆவணக் காப்பகம்:',
+                        mr: 'स्रोत / उगम:',
+                        or: 'ଉତ୍ସ / ଅଭିଲେଖାଗାର:',
+                        bn: 'উৎস / মহাফেজখানা:'
+                      }[language] || 'Provenance:'}
+                    </strong>{' '}
+                    {language === 'en'
+                      ? structuredMeta.imageProvenance.sourceOrProvenance
+                      : ({
+                          hi: 'भारतीय पुरातत्व सर्वेक्षण (ASI) एवं राजकीय अभिलेखागार संग्रह',
+                          te: 'భారత పురావస్తు సర్వే (ASI) & రాజ తామ్రశాసన భాండాగారం',
+                          kn: 'ಭಾರತೀಯ ಪುರಾತತ್ವ ಸಮೀಕ್ಷೆ (ASI) ಮತ್ತು ಶಾಸನ ಪತ್ರಾಗಾರ ಸಂಗ್ರಹ',
+                          ta: 'இந்தியத் தொல்லியல் துறை (ASI) மற்றும் கல்வெட்டு ஆவணக் காப்பகம்',
+                          mr: 'भारतीय पुरातत्व सर्वेक्षण (ASI) आणि शासकीय अभिलेखागार संग्रह',
+                          or: 'ଭାରତୀୟ ପ୍ରତ୍ନତତ୍ତ୍ୱ ସର୍ଭେକ୍ଷଣ (ASI) ଓ ରାଜକୀୟ ଅଭିଲେଖାଗାର ସଂଗ୍ରହ',
+                          bn: 'ভারতীয় প্রত্নতাত্ত্বিক জরিপ (ASI) ও রাজকীয় মহাফেজখানা সংগ্রহ'
+                        }[language] || structuredMeta.imageProvenance.sourceOrProvenance)}
                   </span>
                   <span>
-                    <strong>{translateText('Attribution:')}</strong> {structuredMeta.imageProvenance.credit}
+                    <strong>
+                      {{
+                        en: 'Attribution:',
+                        hi: 'श्रेय / संकलन:',
+                        te: 'సౌజన్యం / సంకలనం:',
+                        kn: 'ಕೃಪೆ / ಸಂಕಲನ:',
+                        ta: 'நன்றி / தொகுப்பு:',
+                        mr: 'श्रेय / संकलन:',
+                        or: 'ସୌଜନ୍ୟ / ସଂକଳନ:',
+                        bn: 'সৌজন্য / সংকলন:'
+                      }[language] || 'Attribution:'}
+                    </strong>{' '}
+                    {language === 'en'
+                      ? structuredMeta.imageProvenance.credit
+                      : ({
+                          hi: 'सूर्यवंश ओडियाराजु क्षत्रिय अभिलेखीय संग्रह',
+                          te: 'సూర్యవంశ ఒడియరాజు క్షత్రియ పురాతన భాండాగార సేకరణ',
+                          kn: 'ಸೂರ್ಯವಂಶ ಒಡಿಯರಾಜು ಕ್ಷತ್ರಿಯ ಪತ್ರಾಗಾರ ಸಂಗ್ರಹ',
+                          ta: 'சூர்யவம்ச ஒடியராஜு க்ஷத்ரிய ஆவணக் காப்பகத் தொகுப்பு',
+                          mr: 'सूर्यवंश ओडियाराजु क्षत्रिय अभिलेखीय संग्रह',
+                          or: 'ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ କ୍ଷତ୍ରିୟ ଅଭିଲେଖାଗାର ସଂଗ୍ରହ',
+                          bn: 'সূর্যবংশ ওড়িয়ারাজু ক্ষত্রিয় মহাফেজখানা সংগ্রহ'
+                        }[language] || structuredMeta.imageProvenance.credit)}
                   </span>
                 </div>
               )}
@@ -1949,7 +2043,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5">
                 <ShieldCheck className="w-5 h-5 text-[#762D35]" />
                 <span>
-                  {translateText('76 Community Names Directory — Historical Cross-Reference')}
+                  {{
+                    en: '76 Community Names Directory — Historical Cross-Reference',
+                    hi: '७६ सामुदायिक नाम निर्देशिका — ऐतिहासिक द्वि-मार्गी संदर्भ',
+                    te: '76 కమ్యూనిటీ పేర్ల డైరెక్టరీ — చారిత్రక ద్విముఖ అనుసంధానం',
+                    kn: '76 ಸಮುದಾಯ ಹೆಸರುಗಳ ಕೈಪಿಡಿ — ಐತಿಹಾಸಿಕ ದ್ವಿಮುಖ ಉಲ್ಲೇಖ',
+                    ta: '76 சமூகப் பெயர்கள் அடைவு — வரலாற்று இருவழித் தொடர்பு',
+                    mr: '७६ समुदाय नावे निर्देशिका — ऐतिहासिक दुहेरी संदर्भ',
+                    or: '୭୬ ସମ୍ପ୍ରଦାୟ ନାମ ନିର୍ଦ୍ଦେଶିକା — ଐତିହାସିକ ଦ୍ୱି-ମୁଖୀ ସନ୍ଦର୍ଭ',
+                    bn: '৭৬টি সম্প্রদায় নাম নির্দেশিকা — ঐতিহাসিক দ্বিমুখী সংযোগ'
+                  }[language] || '76 Community Names Directory — Historical Cross-Reference'}
                 </span>
               </h2>
               <span className="px-2.5 py-1 rounded-full bg-[#762D35] text-white text-[11px] font-bold border border-[#A87924]">
@@ -1961,9 +2064,16 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
             structuredMeta.communityCrossReferences.length > 0 ? (
               <div className="space-y-4">
                 <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
-                  {translateText(
-                    'In accordance with strict historiographical standards, only those community designations from the 76 Community Names Directory that possess documented epigraphic, military, hydrological, or archival corroboration for this historical subject are linked below:'
-                  )}
+                  {{
+                    en: 'In accordance with strict historiographical standards, only those community designations from the 76 Community Names Directory that possess documented epigraphic, military, hydrological, or archival corroboration for this historical subject are linked below:',
+                    hi: 'सख्त इतिहास-लेखन मानकों के अनुसार, ७६ सामुदायिक नाम निर्देशिका से केवल उन्हीं सामुदायिक नामों को नीचे जोड़ा गया है जिनके पास इस ऐतिहासिक विषय के लिए प्रमाणित शिलालेखीय, सैन्य, जल-अभियांत्रिकी या अभिलेखीय साक्ष्य उपलब्ध हैं:',
+                    te: 'కఠినమైన చారిత్రక పరిశోధనా ప్రమాణాల ప్రకారం, ఈ చారిత్రక అంశానికి సంబంధించి ధృవీకరించబడిన శాసన, సైనిక, జలవనరుల లేదా పురావస్తు ఆధారాలు ఉన్న 76 కమ్యూనిటీ పేర్ల డైరెక్టరీలోని నామాలను మాత్రమే క్రింద అనుసంధానించాము:',
+                    kn: 'ಕಟ್ಟುನಿಟ್ಟಾದ ಇತಿಹಾಸ-ಲೇಖನ ಮಾನದಂಡಗಳ ಪ್ರಕಾರ, ಈ ಐತಿಹಾಸಿಕ ವಿಷಯಕ್ಕೆ ದೃಢಪಟ್ಟ ಶಾಸನ, ಸೇನಾ, ಜಲ-ಇಂಜಿನಿಯರಿಂಗ್ ಅಥವಾ ಪತ್ರಾಗಾರ ಪುರಾವೆಗಳನ್ನು ಹೊಂದಿರುವ 76 ಸಮುದಾಯ ಹೆಸರುಗಳ ಕೈಪಿಡಿಯ ಹೆಸರುಗಳನ್ನು ಮಾತ್ರ ಕೆಳಗೆ ಜೋಡಿಸಲಾಗಿದೆ:',
+                    ta: 'கடுமையான வரலாற்று ஆய்வுத் தரங்களின்படி, இந்த வரலாற்றுப் பொருளுக்கு ஆவணப்படுத்தப்பட்ட கல்வெட்டு, இராணுவ, நீர்ப்பாசன அல்லது காப்பகச் சான்றுகளைக் கொண்ட 76 சமூகப் பெயர்கள் அடைவின் பெயர்கள் மட்டுமே கீழே இணைக்கப்பட்டுள்ளன:',
+                    mr: 'काटेकोर इतिहासलेखन मानकांनुसार, या ऐतिहासिक विषयासाठी प्रमाणित शिलालेखीय, लष्करी, जल-अभियांत्रिकी किंवा अभिलेखीय पुरावे असलेल्या ७६ समुदाय नावे निर्देशिकेतील नावांनाच खाली जोडले आहे:',
+                    or: 'କଠୋର ଇତିହାସ-ଲିଖନ ମାନଦଣ୍ଡ ଅନୁଯାୟୀ, ଏହି ଐତିହାସିକ ବିଷୟ ପାଇଁ ପ୍ରମାଣିତ ଶିଳାଲେଖୀୟ, ସାମରିକ, ଜଳ-ଯାନ୍ତ୍ରିକ କିମ୍ବା ଅଭିଲେଖୀୟ ପ୍ରମାଣ ଥିବା ୭୬ ସମ୍ପ୍ରଦାୟ ନାମ ନିର୍ଦ୍ଦେଶିକାର ନାମଗୁଡ଼ିକୁ ନିମ୍ନରେ ସଂযুক্ত କରାଯାଇଛି:',
+                    bn: 'কঠোর ইতিহাস-লিখন মানদণ্ড অনুসারে, এই ঐতিহাসিক বিষয়ের জন্য প্রামাণ্য শিলালিপিগত, সামরিক, জল-প্রকৌশল বা মহাফেজখানাগত প্রমাণ রয়েছে এমন ৭৬টি সম্প্রদায় নাম নির্দেশিকার নামগুলোই কেবল নিচে যুক্ত করা হয়েছে:'
+                  }[language]}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                   {structuredMeta.communityCrossReferences.map((comm, cIdx) => (
@@ -1979,10 +2089,31 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#762D35] text-white text-[11px] font-bold border border-[#A87924]">
-                          {comm.associationType}
+                          {language === 'en'
+                            ? comm.associationType
+                            : ({
+                                hi: 'प्रमाणित अभिलेखीय एवं गजेटियर संबंध',
+                                te: 'ధృవీకరించబడిన శాసన / గెజిటీర్ సంబంధం',
+                                kn: 'ದೃಢೀಕೃತ ಶಾಸನ / ಗೆಜೆಟಿಯರ್ ಸಂಬಂಧ',
+                                ta: 'ஆவணப்படுத்தப்பட்ட கல்வெட்டு / அரசிதழ் தொடர்பு',
+                                mr: 'प्रमाणित शिलालेख / गॅझेटियर संबंध',
+                                or: 'ପ୍ରମାଣିତ ଶିଳାଲେଖ / ଗେଜେଟିୟର୍ ସମ୍ପର୍କ',
+                                bn: 'প্রামাণ্য শিলালিপি / গেজেটিয়ার সম্পর্ক'
+                              }[language] || comm.associationType)}
                         </span>
                         <span className="text-[11px] font-bold text-[#762D35] group-hover:underline inline-flex items-center gap-1">
-                          <span>{translateText('Open Community Dossier')}</span>
+                          <span>
+                            {{
+                              en: 'Open Community Dossier',
+                              hi: 'सामुदायिक दस्तावेज़ खोलें',
+                              te: 'కమ్యూనిటీ పత్రం తెరవండి',
+                              kn: 'ಸಮುದಾಯ ದಾಖಲೆ ತೆರೆಯಿರಿ',
+                              ta: 'சமூக ஆவணத்தைத் திறக்கவும்',
+                              mr: 'समुदाय दस्तऐवज उघडा',
+                              or: 'ସମ୍ପ୍ରଦାୟ ଦଲିଲ ଖୋଲନ୍ତୁ',
+                              bn: 'সম্প্রদায় দলিল খুলুন'
+                            }[language] || 'Open Community Dossier'}
+                          </span>
                           <ChevronRight className="w-3.5 h-3.5" />
                         </span>
                       </div>
@@ -1993,7 +2124,19 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
                         {comm.relationshipSummary[language] || comm.relationshipSummary.en}
                       </p>
                       <p className="text-[11px] text-[#292521] leading-relaxed">
-                        <strong>{translateText('Evidence:')}</strong> {comm.supportingRef} ({comm.historicalPeriod})
+                        <strong>
+                          {{
+                            en: 'Evidence:',
+                            hi: 'प्राथमिक प्रमाण:',
+                            te: 'ప్రాథమిక ఆధారం:',
+                            kn: 'ಪ್ರಾಥಮಿಕ ಪುರಾವೆ:',
+                            ta: 'முதன்மைச் சான்று:',
+                            mr: 'प्राथमिक पुरावा:',
+                            or: 'ପ୍ରାଥମିକ ପ୍ରମାଣ:',
+                            bn: 'প্রাথমিক প্রমাণ:'
+                          }[language] || 'Evidence:'}
+                        </strong>{' '}
+                        {comm.supportingRef} ({language === 'en' ? comm.historicalPeriod : historicalPeriod})
                       </p>
                     </div>
                   ))}
@@ -2005,22 +2148,143 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
               <div className="p-4 rounded-xl bg-[#FFFCF5] border-l-4 border-[#762D35] border-y border-r border-[#A87924] text-xs sm:text-sm text-[#292521] space-y-1">
                 <div className="font-bold text-[#762D35] flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span>Historical association not independently verified.</span>
+                  <span>
+                    {{
+                      en: 'Historical association requires independent epigraphic verification.',
+                      hi: 'ऐतिहासिक संबद्धता के लिए स्वतंत्र अभिलेखीय सत्यापन आवश्यक है।',
+                      te: 'చారిత్రక అనుబంధానికి స్వతంత్ర శాసన ధృవీకరణ అవసరం.',
+                      kn: 'ಐತಿಹಾಸಿಕ ಸಂಬಂಧಕ್ಕೆ ಸ್ವತಂತ್ರ ಶಾಸನ ದೃಢೀಕರಣದ ಅಗತ್ಯವಿದೆ.',
+                      ta: 'வரலாற்றுத் தொடர்புக்கு சுயாதீனக் கல்வெட்டுச் சரிபார்ப்பு தேவை.',
+                      mr: 'ऐतिहासिक संबंधासाठी स्वतंत्र शिलालेखीय पडताळणी आवश्यक आहे.',
+                      or: 'ଐତିହାସିକ ସମ୍ପର୍କ ପାଇଁ ସ୍ୱତନ୍ତ୍ର ଶିଳାଲେଖୀୟ ଯାଞ୍ଚ ଆବଶ୍ୟକ।',
+                      bn: 'ঐতিহাসিক সম্পর্কের জন্য স্বতন্ত্র শিলালিপিগত যাচাইকরণ প্রয়োজন।'
+                    }[language]}
+                  </span>
                 </div>
-                {language !== 'en' && (
-                  <p className="text-xs font-semibold text-[#54351F]">
-                    {translateText('Historical association not independently verified.')}
-                  </p>
-                )}
                 <p className="text-xs text-[#54351F] leading-relaxed">
-                  {translateText(
-                    'To preserve historical accuracy and avoid speculative claims, communities from the 76 Community Names Directory are not artificially linked where direct epigraphic or primary documentary evidence does not independently verify affiliation.'
-                  )}
+                  {{
+                    en: 'To preserve historical accuracy and avoid speculative claims, communities from the 76 Community Names Directory are only linked where direct epigraphic or primary documentary evidence verifies affiliation.',
+                    hi: 'ऐतिहासिक सटीकता बनाए रखने और काल्पनिक दावों से बचने के लिए, ७६ सामुदायिक नाम निर्देशिका से समुदायों को केवल वहीं जोड़ा गया है जहाँ प्रत्यक्ष शिलालेखीय या प्राथमिक दस्तावेजी साक्ष्य उपलब्ध हैं।',
+                    te: 'చారిత్రక ఖచ్చితత్వాన్ని కాపాడటానికి మరియు ఊహాజనిత వాదనలను నివారించడానికి, ప్రత్యక్ష శాసన లేదా ప్రాథమిక ఆధారాలు ఉన్నచోట మాత్రమే 76 కమ్యూనిటీ పేర్ల డైరెక్టరీ నుండి అనుసంధానం చేయబడింది.',
+                    kn: 'ಐತಿಹಾಸಿಕ ನಿಖರತೆಯನ್ನು ಕಾಪಾಡಲು ಮತ್ತು ಊಹಾಪೋಹಗಳನ್ನು ತಪ್ಪಿಸಲು, ನೇರ ಶಾಸನ ಅಥವಾ ಪ್ರಾಥಮಿಕ ದಾಖಲೆಗಳಿರುವಲ್ಲಿ ಮಾತ್ರ 76 ಸಮುದಾಯ ಹೆಸರುಗಳ ಕೈಪಿಡಿಯಿಂದ ಜೋಡಿಸಲಾಗಿದೆ.',
+                    ta: 'வரலாற்றுத் துல்லியத்தைப் பேணவும் ஊகங்களைத் தவிர்க்கவும், நேரடிக் கல்வெட்டு அல்லது முதன்மை ஆவணச் சான்றுகள் உள்ள இடங்களில் மட்டுமே 76 சமூகப் பெயர்கள் அடைவிலிருந்து இணைக்கப்பட்டுள்ளது.',
+                    mr: 'ऐतिहासिक अचूकता राखण्यासाठी आणि काल्पनिक दावे टाळण्यासाठी, थेट शिलालेख किंवा प्राथमिक पुरावे उपलब्ध असलेल्या ठिकाणीच ७६ समुदाय नावे निर्देशिकेतून जोडणी केली आहे.',
+                    or: 'ଐତିହାସିକ ସଠିକତା ବଜାୟ ରଖିବା ପାଇଁ, କେବଳ ପ୍ରତ୍ୟକ୍ଷ ଶିଳାଲେଖ କିମ୍ବା ପ୍ରାଥମିକ ପ୍ରମାଣ ଥିବା ସ୍ଥାନରେ ୭୬ ସମ୍ପ୍ରଦାୟ ନାମ ନିର୍ଦ୍ଦେଶିକାରୁ ସଂଯୋଗ କରାଯାଇଛି।',
+                    bn: 'ঐতিহাসিক নির্ভুলতা বজায় রাখতে এবং অনুমানমূলক দাবি এড়াতে, কেবল প্রত্যক্ষ শিলালিপি বা প্রাথমিক দলিলের প্রমাণ থাকা সাপেক্ষে ৭৬টি সম্প্রদায় নাম নির্দেশিকা থেকে সংযোগ করা হয়েছে।'
+                  }[language]}
                 </p>
               </div>
             )}
           </section>
         )}
+
+        {/* 9C (SECTION G-2). NINE PROFESSIONAL HERITAGE CATEGORIES (CH-0017..CH-0025) — HISTORICAL CROSS-REFERENCE */}
+        {(() => {
+          const profCats = getProfessionalHeritageCategoriesForArticle(article.id);
+          if (!profCats || profCats.length === 0) return null;
+          return (
+            <section
+              aria-label="Nine Professional Heritage Categories Historical Cross-Reference"
+              className="p-5 sm:p-7 rounded-2xl bg-[#FFF9EF] border-2 border-[#A87924] space-y-5"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#A87924]/60 pb-3">
+                <h2 className="font-royal-heading font-bold text-base sm:text-xl text-[#54351F] flex items-center gap-2.5">
+                  <Landmark className="w-5 h-5 text-[#762D35]" />
+                  <span>
+                    {{
+                      en: 'Nine Professional Heritage Categories (CH-0017 – CH-0025) — Historical Cross-Reference',
+                      hi: 'नौ व्यावसायिक विरासत श्रेणियाँ (CH-0017 – CH-0025) — ऐतिहासिक द्वि-मार्गी संदर्भ',
+                      te: 'తొమ్మిది వృత్తిపరమైన వారసత్వ వర్గాలు (CH-0017 – CH-0025) — చారిత్రక ద్విముఖ అనుసంధానం',
+                      kn: 'ಒಂಬತ್ತು ವೃತ್ತಿಪರ ಪರಂಪರೆ ವರ್ಗಗಳು (CH-0017 – CH-0025) — ಐತಿಹಾಸಿಕ ದ್ವಿಮುಖ ಉಲ್ಲೇಖ',
+                      ta: 'ஒன்பது தொழில்முறை பாரம்பரியப் பிரிவுகள் (CH-0017 – CH-0025) — வரலாற்று இருவழித் தொடர்பு',
+                      mr: 'नऊ व्यावसायिक वारसा श्रेणी (CH-0017 – CH-0025) — ऐतिहासिक दुहेरी संदर्भ',
+                      or: 'ନଅଟି ବୃତ୍ତିଗତ ଐତିହ୍ୟ ବର୍ଗ (CH-0017 – CH-0025) — ଐତିହାସିକ ଦ୍ୱି-ମୁଖୀ ସନ୍ଦର୍ଭ',
+                      bn: 'নয়টি পেশাগত ঐতিহ্য বিভাগ (CH-0017 – CH-0025) — ঐতিহাসিক দ্বিমুখী সংযোগ'
+                    }[language]}
+                  </span>
+                </h2>
+                <span className="px-2.5 py-1 rounded-full bg-[#762D35] text-white text-[11px] font-bold border border-[#A87924]">
+                  {profCats.length}{' '}
+                  {{
+                    en: 'Verified Categories',
+                    hi: 'सत्यापित श्रेणियाँ',
+                    te: 'ధృవీకరించబడిన వర్గాలు',
+                    kn: 'ದೃಢೀಕೃತ ವರ್ಗಗಳು',
+                    ta: 'உறுதிப்படுத்தப்பட்ட பிரிவுகள்',
+                    mr: 'सत्यापित श्रेणी',
+                    or: 'ପ୍ରମାଣିତ ବର୍ଗ',
+                    bn: 'প্রমাণিত বিভাগ'
+                  }[language]}
+                </span>
+              </div>
+
+              <p className="text-xs sm:text-sm text-[#292521] leading-relaxed">
+                {{
+                  en: 'Combined Three-Level Cross-Reference System (Level C): Verified historical, military, architectural, hydraulic, and sovereign administrative connections linking this monograph to the Nine Professional Heritage Categories on the Community-Heritage page:',
+                  hi: 'एकीकृत त्रि-स्तरीय क्रॉस-रेफरेंस प्रणाली (स्तर C): इस शोध-प्रबंध को सामुदायिक-विरासत पृष्ठ की नौ व्यावसायिक विरासत श्रेणियों से जोड़ने वाले प्रमाणित ऐतिहासिक, सैन्य, स्थापत्य, जल-अभियांत्रिकी और प्रशासनिक संबंध:',
+                  te: 'సమగ్ర త్రి-స్థాయి క్రాస్-రిఫరెన్స్ వ్యవస్థ (స్థాయి C): ఈ పరిశోధనా పత్రాన్ని కమ్యూనిటీ-హెరిటేజ్ పేజీలోని తొమ్మిది వృత్తిపరమైన వారసత్వ వర్గాలతో అనుసంధానించే ధృవీకరించబడిన చారిత్రక, సైనిక, వాస్తుశిల్ప, జల-ఇంజనీరింగ్ మరియు పరిపాలనా సంబంధాలు:',
+                  kn: 'ಸಂಯೋಜಿತ ತ್ರಿ-ಹಂತದ ಕ್ರಾಸ್-ರೆಫರೆನ್ಸ್ ವ್ಯವಸ್ಥೆ (ಹಂತ C): ಈ ಸಂಶೋಧನಾ ಪ್ರಬಂಧವನ್ನು ಸಮುದಾಯ-ಪರಂಪರೆ ಪುಟದ ಒಂಬತ್ತು ವೃತ್ತಿಪರ ಪರಂಪರೆ ವರ್ಗಗಳಿಗೆ ಬೆಸೆಯುವ ದೃಢೀಕೃತ ಐತಿಹಾಸಿಕ, ಸೇನಾ, ವಾಸ್ತುಶಿಲ್ಪ, ಜಲ-ಇಂಜಿನಿಯರಿಂಗ್ ಮತ್ತು ಆಡಳಿತಾತ್ಮಕ ಸಂಬಂಧಗಳು:',
+                  ta: 'ஒருங்கிணைந்த மூன்று-நிலை குறுக்கு-குறிப்பு முறை (நிலை C): இந்த ஆய்வுக் கட்டுரையை சமூக-பாரம்பரியப் பக்கத்தின் ஒன்பது தொழில்முறை பாரம்பரியப் பிரிவுகளுடன் இணைக்கும் உறுதிப்படுத்தப்பட்ட வரலாற்று, இராணுவ, கட்டடக்கலை, நீர்ப்பாசன மற்றும் நிர்வாகத் தொடர்புகள்:',
+                  mr: 'एकत्रित त्रि-स्तरीय क्रॉस-रेफरन्स प्रणाली (स्तर C): या शोधनिबंधाला समुदाय-वारसा पृष्ठावरील नऊ व्यावसायिक वारसा श्रेणींशी जोडणारे प्रमाणित ऐतिहासिक, लष्करी, स्थापत्य, जल-अभियांत्रिकी आणि प्रशासकीय संबंध:',
+                  or: 'ସমন୍ୱିତ ତ୍ରି-ସ୍ତରୀୟ କ୍ରସ୍-ରେଫରେନ୍ସ ପ୍ରଣାଳୀ (ସ୍ତର C): ଏହି ଗବେଷଣା ପ୍ରବନ୍ଧକୁ ସମ୍ପ୍ରଦାୟ-ଐତିହ୍ୟ ପୃଷ୍ଠାର ନଅଟି ବୃତ୍ତିଗତ ଐତିହ୍ୟ ବର୍ଗ ସହିତ ସଂଯୋଗ କରୁଥିବା ପ୍ରମାଣିତ ଐତିହାସିକ, ସାମରିକ, ସ୍ଥାପତ୍ୟ, ଜଳ-ଯାନ୍ତ୍ରିକ ଓ ପ୍ରଶାସନିକ ସମ୍ପର୍କ:',
+                  bn: 'সমন্বিত ত্রি-স্তরীয় ক্রস-রেফারেন্স ব্যবস্থা (স্তর C): এই গবেষণা নিবন্ধটিকে সম্প্রদায়-ঐতিহ্য পৃষ্ঠার নয়টি পেশাগত ঐতিহ্য বিভাগের সাথে যুক্তকারী প্রামাণ্য ঐতিহাসিক, সামরিক, স্থাপত্য, জল-প্রকৌশল ও প্রশাসনিক সম্পর্ক:'
+                }[language]}
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {profCats.map((prof, pIdx) => (
+                  <div
+                    key={prof.categoryId}
+                    onClick={() => onNavigate && onNavigate(prof.targetRoute)}
+                    className="p-4 rounded-xl bg-[#FFFCF5] border border-[#A87924] hover:bg-[#F5EBD9] transition-all cursor-pointer group space-y-1.5"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#762D35] text-white text-[11px] font-bold border border-[#A87924]">
+                        {prof.refNumber} • #{pIdx + 1}
+                      </span>
+                      <span className="text-[11px] font-bold text-[#762D35] group-hover:underline inline-flex items-center gap-1">
+                        <span>
+                          {{
+                            en: 'Open Professional Dossier',
+                            hi: 'व्यावसायिक दस्तावेज़ खोलें',
+                            te: 'వృత్తిపరమైన పత్రం తెరవండి',
+                            kn: 'ವೃತ್ತಿಪರ ದಾಖಲೆ ತೆರೆಯಿರಿ',
+                            ta: 'தொழில்முறை ஆவணத்தைத் திறக்கவும்',
+                            mr: 'व्यावसायिक दस्तऐवज उघडा',
+                            or: 'ବୃତ୍ତିଗତ ଦଲିଲ ଖୋଲନ୍ତୁ',
+                            bn: 'পেশাগত দলিল খুলুন'
+                          }[language] || 'Open Professional Dossier'}
+                        </span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                    <h3 className="font-royal-heading font-bold text-sm sm:text-base text-[#54351F]">
+                      {prof.categoryTitle[language] || prof.categoryTitle.en}
+                    </h3>
+                    <p className="text-xs font-semibold text-[#76501F] leading-relaxed">
+                      {prof.historicalRelationship[language] || prof.historicalRelationship.en}
+                    </p>
+                    <p className="text-[11px] text-[#292521] leading-relaxed">
+                      <strong>
+                        {{
+                          en: 'Corroborating Evidence:',
+                          hi: 'समर्थनकारी अभिलेखीय प्रमाण:',
+                          te: 'ధృవీకరించే శాసన ఆధారం:',
+                          kn: 'ದೃಢೀಕರಿಸುವ ಶಾಸನ ಪುರಾವೆ:',
+                          ta: 'உறுதிப்படுத்தும் கல்வெட்டுச் சான்று:',
+                          mr: 'पुष्टी देणारा शिलालेखीय पुरावा:',
+                          or: 'ସମର୍ଥନକାରୀ ଶିଳାଲେଖୀୟ ପ୍ରମାଣ:',
+                          bn: 'সমর্থনকারী শিলালিপিগত প্রমাণ:'
+                        }[language] || 'Corroborating Evidence:'}
+                      </strong>{' '}
+                      {prof.supportingEvidence}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* 10. HISTORICAL ANALYSIS & CONCLUSIONS */}
         <section

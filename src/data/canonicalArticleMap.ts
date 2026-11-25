@@ -124,7 +124,101 @@ export const LEGACY_ARTICLE_ID_ALIASES: Record<string, string> = {
   'od_0005': 'odra-epigraphic-evolution',
   'odra-epigraphic-evolution': 'odra-epigraphic-evolution',
   'odra_epigraphic_evolution': 'odra-epigraphic-evolution',
+  'RD-0001': 'art_gajapathi_kapilendra',
+  'rd-0001': 'art_gajapathi_kapilendra',
+  'RD-0002': 'art_dyn_eastern_gangas',
+  'rd-0002': 'art_dyn_eastern_gangas',
+  'RD-0003': 'art_dyn_western_gangas',
+  'rd-0003': 'art_dyn_western_gangas',
+  'RD-0004': 'art_dyn_imperial_cholas',
+  'rd-0004': 'art_dyn_imperial_cholas',
+  'RD-0005': 'art_dyn_chalukya_synthesis',
+  'rd-0005': 'art_dyn_chalukya_synthesis',
+  'RD-0006': 'art_dyn_pallavas_kanchi',
+  'rd-0006': 'art_dyn_pallavas_kanchi',
+  'RD-0007': 'art_dyn_kadambas_banavasi',
+  'rd-0007': 'art_dyn_kadambas_banavasi',
+  'RD-0008': 'art_dyn_badami_chalukyas',
+  'rd-0008': 'art_dyn_badami_chalukyas',
+  'RD-0009': 'art_dyn_vengi_chalukyas',
+  'rd-0009': 'art_dyn_vengi_chalukyas',
+  'RD-0010': 'art_dyn_siddhini_kings_verification',
+  'rd-0010': 'art_dyn_siddhini_kings_verification',
+  'RD-0011': 'art_lin_suryavamshi_kshatriyas',
+  'rd-0011': 'art_lin_suryavamshi_kshatriyas',
+  'RD-0012': 'art_lin_chandravamshi_kshatriyas',
+  'rd-0012': 'art_lin_chandravamshi_kshatriyas',
+  'RD-0013': 'art_genealogy_methodology',
+  'rd-0013': 'art_genealogy_methodology',
+  'RD-0014': 'dyn_suryavamsha_gajapathi',
+  'rd-0014': 'dyn_suryavamsha_gajapathi',
+  'RD-0015': 'dyn_eastern_ganga',
+  'rd-0015': 'dyn_eastern_ganga',
+  'RD-0016': 'dyn_bhoi_mukunda',
+  'rd-0016': 'dyn_bhoi_mukunda',
+  'RD-0017': 'dyn_traditional_suryavamsha_lineages',
+  'rd-0017': 'dyn_traditional_suryavamsha_lineages',
+  'RD-0018': 'admin-mahapatras',
+  'rd-0018': 'admin-mahapatras',
+  'RD-0019': 'admin-nayakas',
+  'rd-0019': 'admin-nayakas',
+  'RD-0020': 'military-gajasena',
+  'rd-0020': 'military-gajasena',
+  'RD-0021': 'culture-renaissance',
+  'rd-0021': 'culture-renaissance',
+  'KD-0001': 'art_dyn_kakatiya_orugallu',
+  'kd-0001': 'art_dyn_kakatiya_orugallu',
+  'KD-0023': 'dyn_kakatiya_orugallu',
+  'kd-0023': 'dyn_kakatiya_orugallu',
+  'HF-0009': 'fig_anantavarman_chodaganga',
+  'hf-0009': 'fig_anantavarman_chodaganga',
+  'fig_chodaganga_deva': 'fig_anantavarman_chodaganga',
+  'HF-0010': 'fig_langula_narasimha',
+  'hf-0010': 'fig_langula_narasimha',
+  'fig_langula_narasimha_deva': 'fig_langula_narasimha',
+  'fig_narasimha_deva_i': 'fig_langula_narasimha',
+  'HF-0011': 'fig_kapilendra_deva',
+  'hf-0011': 'fig_kapilendra_deva',
+  'HF-0012': 'fig_hamvira_deva',
+  'hf-0012': 'fig_hamvira_deva',
+  'HF-0013': 'fig_purushottama_deva',
+  'hf-0013': 'fig_purushottama_deva',
+  'HF-0014': 'fig_prataparudra_deva',
+  'hf-0014': 'fig_prataparudra_deva',
+  'HF-0015': 'art_lin_suryavamshi_kings',
+  'hf-0015': 'art_lin_suryavamshi_kings',
+  'HF-0016': 'art_lin_chandravamshi_kings',
+  'hf-0016': 'art_lin_chandravamshi_kings',
+  'HF-0017': 'fig_mukunda_deva',
+  'hf-0017': 'fig_mukunda_deva',
+  'KM-0001': 'art_odra_desha_history',
+  'km-0001': 'art_odra_desha_history',
+  'KM-0002': 'art_kolletikota_peddintlamma_lake',
+  'km-0002': 'art_kolletikota_peddintlamma_lake',
+  'IA-0001': 'art_epigraphic_evolution_odra',
+  'ia-0001': 'art_epigraphic_evolution_odra',
+  'IA-0006': 'insc_lingaraja_1452',
+  'ia-0006': 'insc_lingaraja_1452',
+  'IA-0007': 'insc_veligalani_1458',
+  'ia-0007': 'insc_veligalani_1458',
+  'IA-0011': 'insc_simhachalam_prataparudra',
+  'ia-0011': 'insc_simhachalam_prataparudra',
+  'KD-0019': 'insc_anumakonda_1163',
+  'kd-0019': 'insc_anumakonda_1163',
+  'KD-0020': 'insc_motupalli_1244',
+  'kd-0020': 'insc_motupalli_1244',
+  'KD-0021': 'insc_malkapuram_1261',
+  'kd-0021': 'insc_malkapuram_1261',
+  'KD-0022': 'insc_chandupatla_1289',
+  'kd-0022': 'insc_chandupatla_1289',
   ...MONO_SECTION_TO_CANONICAL_ARTICLE_MAP,
+};
+
+export const LEGACY_COMMUNITY_DIR_ALIASES: Record<string, string> = {
+  comm_dir_01_vaddera: 'comm_dir_01_od',
+  comm_dir_04_odiyaraju: 'syn_odiyaraju_karnataka',
+  comm_dir_06_odderajulu: 'syn_odderajulu',
+  comm_dir_07_vadderajulu: 'comm_dir_13_vadderarajulu',
 };
 
 /**
@@ -177,13 +271,16 @@ export function resolveCanonicalArticleId(idOrSlug: string | null | undefined): 
 
 /**
  * Resolves any community synonym or directory ID to its canonical 11-section directory article ID
- * (if it is one of the 6 consolidated duplicate synonyms).
+ * (if it is one of the 6 consolidated duplicate synonyms or a legacy directory alias).
  */
 export function resolveCanonicalSynonymId(id: string | null | undefined): string {
   if (!id) return '';
   const trimmed = id.trim();
   if (DUP_SYNONYM_TO_CANONICAL_DIR_MAP[trimmed]) {
     return DUP_SYNONYM_TO_CANONICAL_DIR_MAP[trimmed];
+  }
+  if (LEGACY_COMMUNITY_DIR_ALIASES[trimmed]) {
+    return LEGACY_COMMUNITY_DIR_ALIASES[trimmed];
   }
   return trimmed;
 }
@@ -211,6 +308,21 @@ export function resolveCanonicalNavigationTarget(rawUrl: string): string {
       return pathname;
     }
 
+    // 1a. Gajapathi Kings dynastic & scholarly monograph links
+    if (pathname === '/gajapathi-kings') {
+      const articleParam = parsed.searchParams.get('article');
+      const idParam = parsed.searchParams.get('id');
+      if (articleParam) {
+        const canonicalArtId = resolveCanonicalArticleId(articleParam);
+        return `/gajapathi-kings?article=${encodeURIComponent(canonicalArtId)}`;
+      }
+      if (idParam) {
+        const canonicalId = resolveCanonicalArticleId(idParam);
+        return `/gajapathi-kings?id=${encodeURIComponent(canonicalId)}`;
+      }
+      return pathname;
+    }
+
     // 1b. Odra Desha regional & epigraphic monographs (OD-0001 .. OD-0005)
     if (pathname === '/odra-desha') {
       const idParam = parsed.searchParams.get('id') || parsed.searchParams.get('article');
@@ -224,7 +336,7 @@ export function resolveCanonicalNavigationTarget(rawUrl: string): string {
     // 2. Community Heritage tab links with short monograph or duplicate synonym IDs
     if (pathname === '/community-heritage' || pathname === '/historical-records' || pathname === '/historical-persons') {
       const tabParam = parsed.searchParams.get('tab');
-      const idParam = parsed.searchParams.get('id') || parsed.searchParams.get('figure');
+      const idParam = parsed.searchParams.get('id') || parsed.searchParams.get('article') || parsed.searchParams.get('figure');
 
       // Short monograph chapter -> Canonical full documentary article
       if (idParam && MONO_SECTION_TO_CANONICAL_ARTICLE_MAP[idParam]) {
@@ -232,10 +344,10 @@ export function resolveCanonicalNavigationTarget(rawUrl: string): string {
         return `/documentary?article=${encodeURIComponent(canonicalArtId)}`;
       }
 
-      // Short duplicate synonym -> Canonical 11-section directory article
-      if (idParam && DUP_SYNONYM_TO_CANONICAL_DIR_MAP[idParam]) {
-        const canonicalDirId = DUP_SYNONYM_TO_CANONICAL_DIR_MAP[idParam];
-        return `/community-heritage?tab=synonyms&id=${encodeURIComponent(canonicalDirId)}`;
+      // Short duplicate synonym or legacy alias -> Canonical directory/synonym article
+      if (idParam && (DUP_SYNONYM_TO_CANONICAL_DIR_MAP[idParam] || LEGACY_COMMUNITY_DIR_ALIASES[idParam])) {
+        const canonicalDirId = resolveCanonicalSynonymId(idParam);
+        return `/community-heritage?article=${encodeURIComponent(canonicalDirId)}`;
       }
 
       // Short historical figure card -> Canonical 10-section biography page in /kings-queens

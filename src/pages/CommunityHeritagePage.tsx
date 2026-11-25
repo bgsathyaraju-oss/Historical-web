@@ -4259,6 +4259,182 @@ export const CommunityHeritagePage: React.FC<CommunityHeritagePageProps> = ({
           )}
 
           {/* ====================================================================
+              SECTION 8B — TWO-WAY CROSS-REFERENCE: GAJAPATHI-KINGS & ROYAL DYNASTIES
+              ==================================================================== */}
+          <section className="bg-[#0e131f] border border-[#c99738]/40 rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg">
+            <div className="border-b border-stone-800 pb-3 space-y-1">
+              <h2 className="text-sm sm:text-base font-bold uppercase tracking-wider text-[#fae29c] font-royal-heading flex items-center gap-2">
+                <Crown className="w-4 h-4 text-[#d4af37]" />
+                <span>
+                  {language === 'te'
+                    ? 'ద్విముఖ క్రాస్-రిఫరెన్స్: గజపతి రాజులు & రాజవంశ చారిత్రక మోనోగ్రాఫ్‌లు'
+                    : language === 'hi'
+                    ? 'द्वि-दिशात्मक संदर्भ: गजपति राजा एवं राजवंश ऐतिहासिक मोनोग्राफ'
+                    : language === 'or'
+                    ? 'ଦ୍ୱିମୁଖୀ ସନ୍ଦର୍ଭ: ଗଜପତି ରାଜା ଓ ରାଜବଂଶ ଐତିହାସିକ ନିବନ୍ଧ'
+                    : language === 'kn'
+                    ? 'ದ್ವಿಮುಖ ಉಲ್ಲೇಖ: ಗಜಪತಿ ಅರಸರು ಮತ್ತು ರಾಜವಂಶದ ಐತಿಹಾಸಿಕ ಪ್ರಬಂಧಗಳು'
+                    : language === 'ta'
+                    ? 'இருவழி இணைப்பு: கஜபதி மன்னர்கள் & அரச வம்ச வரலாற்றுக் கட்டுரைகள்'
+                    : language === 'mr'
+                    ? 'द्वि-दिशात्मक संदर्भ: गजपती राजे आणि राजवंश ऐतिहासिक शोधनिबंध'
+                    : language === 'bn'
+                    ? 'দ্বিমুখী সংযোগ: গজপতি রাজা ও রাজবংশ ঐতিহাসিক নিবন্ধ'
+                    : 'Two-Way Cross-Reference: Gajapathi-Kings & Royal Dynasty Monographs'}
+                </span>
+              </h2>
+              <p className="text-xs text-stone-400">
+                {language === 'te'
+                  ? 'ఈ కమ్యూనిటీ-హెరిటేజ్ రికార్డుతో అనుసంధానించబడిన గజపతి-రాజుల శాసన మరియు రాజవంశ పరిశోధనా వ్యాసాలు:'
+                  : language === 'hi'
+                  ? 'इस सामुदायिक-विरासत रिकॉर्ड से जुड़े गजपति-राजाओं के अभिलेखीय और राजवंशीय शोध लेख:'
+                  : 'Direct verified cross-references connecting this Community-Heritage record to the Suryavamsha Gajapathi, Eastern Ganga, and Kakatiya Royal Dynasty monographs:'}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              {[
+                {
+                  refId: 'RD-0001',
+                  title:
+                    language === 'te'
+                      ? 'సమ్రాట్ కపిలేంద్ర దేవ గజపతి (1434–1466 CE)'
+                      : language === 'hi'
+                      ? 'सम्राट कपिलेन्द्र देव गजपति (१४३४–१४६६ ई.)'
+                      : language === 'or'
+                      ? 'ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବ ଗଜପତି (୧୪୩୪–୧୪୬୬ ଖ୍ରୀ.ଅ.)'
+                      : 'Samrat Kapilendra Deva Gajapathi (1434–1466 CE)',
+                  sub: 'Suryavamsha Gajapathi Founder • Kataka, Kalinga & Deccan Campaigns',
+                  route: '/gajapathi-kings?article=art_gajapathi_kapilendra'
+                },
+                {
+                  refId: 'RD-0014',
+                  title:
+                    language === 'te'
+                      ? 'సూర్యవంశ గజపతి సామ్రాజ్య రాజవంశం (1434–1541 CE)'
+                      : language === 'hi'
+                      ? 'सूर्यवंश गजपति साम्राज्य राजवंश (१४३४–१५४१ ई.)'
+                      : language === 'or'
+                      ? 'ସୂର୍ଯ୍ୟବଂଶ ଗଜପତି ସାମ୍ରାଜ୍ୟ ରାଜବଂଶ (୧୪୩୪–୧୫୪୧ ଖ୍ରୀ.ଅ.)'
+                      : 'Suryavamsha Gajapathi Imperial Dynasty (1434–1541 CE)',
+                  sub: 'Navakoti Karnata Kalabargesvara • Imperial Trikalinga Polity',
+                  route: '/gajapathi-kings?id=dyn_suryavamsha_gajapathi'
+                },
+                {
+                  refId: 'RD-0015',
+                  title:
+                    language === 'te'
+                      ? 'సామ్రాజ్య తూర్పు గంగ (చోడగంగ) రాజవంశం (498–1434 CE)'
+                      : language === 'hi'
+                      ? 'साम्राज्यिक पूर्वी गंग (चोडगंग) राजवंश (४९८–१४३४ ई.)'
+                      : language === 'or'
+                      ? 'ସାମ୍ରାଜ୍ୟିକ ପୂର୍ବ ଗଙ୍ଗ (ଚୋଡ଼ଗଙ୍ଗ) ରାଜବଂଶ (୪୯୮–୧୪୩୪ ଖ୍ରୀ.ଅ.)'
+                      : 'Imperial Eastern Ganga (Chodaganga) Dynasty (498–1434 CE)',
+                  sub: 'Kalinganagara to Kataka • Puri Jagannath & Konark Sun Temple',
+                  route: '/gajapathi-kings?id=dyn_eastern_ganga'
+                },
+                {
+                  refId: 'RD-0017',
+                  title:
+                    language === 'te'
+                      ? 'దక్షిణ సూర్యవంశ ఒడియరాజు / వడ్డెర / ఒడ్డర్ నాయక వంశాలు'
+                      : language === 'hi'
+                      ? 'दक्षिणी सूर्यवंश ओडियाराजु / वड्डेरा / ओड्डर नायक वंश'
+                      : language === 'or'
+                      ? 'ଦକ୍ଷିଣ ସୂର୍ଯ୍ୟବଂଶ ଓଡ଼ିଆରାଜୁ / ଭଦ୍ଦେରା / ଓଡ଼ର ନାୟକ ବଂଶ'
+                      : 'Southern Suryavamsha Odiyaraju / Vaddera / Odder Nayaka Lineages',
+                  sub: '14th–18th Century CE • Hill Fortresses & Hydraulic Engineering',
+                  route: '/gajapathi-kings?id=dyn_traditional_suryavamsha_lineages'
+                },
+                {
+                  refId: 'RD-0019',
+                  title:
+                    language === 'te'
+                      ? 'నాయకులు & దుర్గాధిపతులు (160+ గిరి-దుర్గాలు & జల-దుర్గాలు)'
+                      : language === 'hi'
+                      ? 'नायक एवं दुर्गपति (१६०+ गिरि-दुर्ग एवं जल-दुर्ग प्रणाली)'
+                      : language === 'or'
+                      ? 'ନାୟକ ଓ ଦୁର୍ଗପତି (୧୬୦+ ଗିରି-ଦୁର୍ଗ ଓ ଜଳ-ଦୁର୍ଗ ପ୍ରଣାଳୀ)'
+                      : 'Nayakas & Durgapatis (160+ Giri-Durga & Jala-Durga Fortresses)',
+                  sub: 'Barabati, Kondapalli, Kondavidu & Udayagiri Garrison Architecture',
+                  route: '/gajapathi-kings?id=admin-nayakas'
+                },
+                {
+                  refId: 'KD-0001',
+                  title:
+                    language === 'te'
+                      ? 'అనుమకొండ & ఓరుగల్లు కాకతీయ సామ్రాజ్య రాజవంశం (956–1323 CE)'
+                      : language === 'hi'
+                      ? 'अनमकोंडा एवं ओरुगल्लु का काकतीय साम्राज्य राजवंश (९५६–१३२३ ई.)'
+                      : language === 'or'
+                      ? 'ଅନୁମକୋଣ୍ଡା ଓ ଓରୁଗଲ୍ଲୁର କାକତୀୟ ସାମ୍ରାଜ୍ୟ ରାଜବଂଶ (୯୫୬–୧୩୨୩ ଖ୍ରୀ.ଅ.)'
+                      : 'Kakatiya Imperial Dynasty of Orugallu (956–1323 CE)',
+                  sub: '77-Nayankara Polity, Chain-Tank Irrigation & UNESCO Ramappa Temple',
+                  route: '/gajapathi-kings?article=art_dyn_kakatiya_orugallu'
+                },
+                {
+                  refId: 'HF-0011',
+                  title:
+                    language === 'te'
+                      ? 'గజపతి చక్రవర్తి కపిలేంద్ర దేవ — సార్వభౌమ జీవిత చరిత్ర'
+                      : language === 'hi'
+                      ? 'गजपति सम्राट कपिलेन्द्र देव — सार्वभौम जीवनी मोनोग्राफ'
+                      : language === 'or'
+                      ? 'ଗଜପତି ସମ୍ରାଟ କପିଳେନ୍ଦ୍ର ଦେବ — ସାର୍ବଭୌମ ଜୀବନୀ ନିବନ୍ଧ'
+                      : 'Gajapathi Emperor Kapilendra Deva — Sovereign Biographical Monograph',
+                  sub: 'Category 1A Documented Monarchs • Kataka to Kaveri Campaigns',
+                  route: '/gajapathi-kings?id=fig_kapilendra_deva'
+                },
+                {
+                  refId: 'IA-0007',
+                  title:
+                    language === 'te'
+                      ? 'వెలిగలని తామ్రశాసనం (1458 CE — సంస్కృత, ఒడియా & తెలుగు)'
+                      : language === 'hi'
+                      ? 'वेलिगलनि ताम्रपत्र अभिलेख (१४५८ ई. — संस्कृत, ओड़िया एवं तेलुगु)'
+                      : language === 'or'
+                      ? 'ବେলিଗলନି ତାମ୍ରଶାସନ (୧୪୫୮ ଖ୍ରୀ.ଅ. — ସଂସ୍କୃତ, ଓଡ଼ିଆ ଓ ତେଲୁଗୁ)'
+                      : 'Veligalani Trilingual Copper-Plate Charter (1458 CE)',
+                  sub: 'Category 1D Primary Epigraphy • Epigraphia Indica Vol. XXXIII',
+                  route: '/gajapathi-kings?id=insc_veligalani_1458'
+                },
+                {
+                  refId: 'RD-0020',
+                  title:
+                    language === 'te'
+                      ? 'సైనిక వ్యవస్థ & గజసేన (యుద్ధ గజ దళం & పైకా పదాతిదళం)'
+                      : language === 'hi'
+                      ? 'सैन्य संगठन एवं गजसेना (युद्ध हाथी वाहिनी एवं पाइक सेना)'
+                      : language === 'or'
+                      ? 'ସାମରିକ ସଂଗଠନ ଓ ଗଜସେନା (ଯୁଦ୍ଧ ହସ୍ତୀ ବାହିନୀ ଓ ପାଇକ ବାହିନୀ)'
+                      : 'Military Organisation & The Gajasena (War Elephant Corps & Paika Infantry)',
+                  sub: 'Category 3 Imperial Military • Harihara Chaturanga & Siege Pioneer Corps',
+                  route: '/gajapathi-kings?id=military-gajasena'
+                }
+              ].map(item => (
+                <button
+                  key={item.refId}
+                  type="button"
+                  onClick={() => onNavigate(item.route)}
+                  className="royal-related-link-btn text-left p-3.5 rounded-xl flex flex-col justify-between gap-2 transition-all cursor-pointer group"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded bg-[#580014] text-[#fcedc7] border border-[#d4af37]/50">
+                        {item.refId}
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 text-[#54351F] group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                    <h3 className="text-xs sm:text-sm font-bold text-[#54351F] font-royal-heading leading-snug">
+                      {item.title}
+                    </h3>
+                    <p className="text-[11px] text-[#54351F]/85 leading-relaxed">{item.sub}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* ====================================================================
               SECTION 9 — ARTICLE FOOTER: RELATED ARTICLES (WITH SMALL THUMBNAILS),
               RELATED KEYWORDS, HASHTAGS, AND BACK / HOME / PRINT / SHARE CONTROLS
               ==================================================================== */}

@@ -2,6 +2,7 @@ import type { Article, LanguageCode, SourceReference } from '../types/index.ts';
 import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations.ts';
 import { resolveCanonicalArticleId } from './canonicalArticleMap.ts';
 import { EXPANDED_HISTORICAL_ARTICLES, ARTICLE_STRUCTURED_METADATA_MAP } from './expandedDynastiesAndCategoriesArticles.ts';
+import { GAJAPATHI_KINGS_DOSSIER_ARTICLES } from './gajapathiKingsDossierArticles.ts';
 
 const ARCHIVE_IMG = (file: string) => `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
 
@@ -57,14 +58,14 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
     slug: 'rise-of-kapilendra-deva-suryavamsha-empire',
     category: 'Gajapathi Kingdom & Empire',
     original_language: 'en',
-    original_title: 'Kapilendra Deva and the Zenith of the Suryavamshi Gajapathi Empire (1434–1466 CE)',
-    summary: 'A critical archival investigation into the accession, military reorganization, and trans-regional expansion of the founder of the Suryavamshi Gajapathi dynasty.',
+    original_title: 'RD-0001 | Kapilendra Deva and the Zenith of the Suryavamshi Gajapathi Empire (1434–1466 CE)',
+    summary: 'A critical archival investigation into the accession, military reorganization, trilingual administration, and trans-regional expansion of Samrat Kapilendra Deva (1434–1466 CE), founder of the Suryavamshi Gajapathi Empire from the Hooghly River to the Kaveri delta.',
     author_name: 'Dr. Anasuya Mohapatra-Raju',
     publication_date: '2026-02-02',
     verification_status: 'Published',
     evidence_category: 'verified_archaeological',
     featured_image: ARCHIVE_IMG('kapilendra_deva_lingaraja.jpg'),
-    tags: ['Kapilendra Deva', 'Suryavamsha', 'Military History', 'Inscriptions', 'Cuttack'],
+    tags: ['RD-0001', 'Kapilendra Deva', 'Suryavamsha', 'Military History', 'Inscriptions', 'Cuttack', 'Veligalani Grant', 'Odiyaraju'],
     sources: [
       {
         id: 'src_03',
@@ -73,7 +74,7 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
         author_or_authority: 'Kapilendra Deva / Court of Kataka (ed. D.C. Sircar)',
         publication_or_location: 'Epigraphia Indica, Vol. XXXIII, pp. 275–292',
         year_or_era: '1458 CE (Saka 1380)',
-        citation_details: 'Lines 1–45; Saka 1380 conversion to 1458 CE',
+        citation_details: 'Lines 1–45; Trilingual Sanskrit, Odia, and Telugu imperial grant recording the title Gajapathi Gaudesvara Navakoti Karnata Kalavargesvara',
         verified: true
       },
       {
@@ -83,7 +84,7 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
         author_or_authority: 'Dr. R. Subrahmanyam',
         publication_or_location: 'Waltair: Andhra University',
         year_or_era: '1957',
-        citation_details: 'Monograph No. 34, pp. 32, 62–65 (1434/35–1466/67 CE chronology)',
+        citation_details: 'Monograph No. 34, pp. 32–74 (Accession, campaigns, and 1434/35–1466/67 CE chronology)',
         verified: true
       },
       {
@@ -95,54 +96,148 @@ Under the Suryavamsha Gajapathis in the 15th century, Varanasi Kataka (modern Cu
         year_or_era: '1953',
         citation_details: 'pp. 49–53 (Analysis of overlapping Anka regnal reckonings placing final year at 1466/67 vs. 1468–1470 CE)',
         verified: true
+      },
+      {
+        id: 'src_04c',
+        source_type: 'Inscription',
+        title: 'Gopinathpur Stone Inscription & Warangal Fort Gate Inscription (1458 CE)',
+        author_or_authority: 'Journal of the Asiatic Society of Bengal / Corpus of Telingana Inscriptions',
+        publication_or_location: 'Calcutta & Hyderabad: Archaeological Survey of India',
+        year_or_era: '1458–1464 CE',
+        citation_details: 'Records genealogy of Kapilesvara Nayaka -> Jagesvara -> Kapilendra Deva and the capture of Orugallu (Warangal)',
+        verified: true
       }
     ],
-    original_content: `In 1434/1435 CE, following the political dissolution of the Later Ganga rule, Kapilendra Deva ascended the throne of Kataka. Unlike his predecessors who had adopted a predominantly defensive posture against aggressive neighbors, Kapilendra instituted a profound military reformation centered upon an elite elephant corps (Gaja-sena), robust archery divisions, and mobile cavalry.
+    original_content: `1. Article Identification & Historical Background
+Reference Number: RD-0001 | Record ID: art_gajapathi_kapilendra | Period: 1434/1435–1466/1467 CE | Imperial Seat: Abhinava Varanasi Kataka (Cuttack, Odisha).
+In 1434/1435 CE, following the political dissolution of the Later Eastern Ganga rule under Bhanudeva IV (Nissanka Bhanudeva), Samrat Kapilendra Deva ascended the imperial throne of Kataka and inaugurated the Suryavamsha Gajapathi Dynasty. Unlike his predecessors who had adopted a predominantly defensive posture against aggressive neighbors, Kapilendra instituted a sweeping military and administrative reformation centered upon an armored war-elephant corps (Gajasena), mobile cavalry, Paika shock infantry, and loyal provincial governors (Mahapatras, Parikshas, and Nayakas). Within three decades, he transformed Odisha-Kalinga from a besieged regional kingdom into the preeminent imperial power of eastern and peninsular India, stretching from the Hooghly River (Ganga) in Bengal to the Kaveri basin (Srirangam) in Tamil Nadu.
 
-The Southern Expeditions & Veligalani Charter (1458 CE / Saka 1380):
-Entrusting southern military operations to his capable eldest son, Kumara Hamvira Deva, the Gajapathi forces captured the strategic coastal forts of Kondavidu (1454 CE), Bellamkonda, Vinukonda, and Udayagiri. In the Veligalani Copper-Plate Grant dated Saka 1380 (1458 CE; Epigraphia Indica, Vol. XXXIII, pp. 275–292), Kapilendra Deva formally bears the imperial title "Gajapathi Gaudesvara Navakoti Karnata Kalavargesvara". Epigraphic evidence further confirms that by 1464 CE (Saka 1386), Gajapathi officers had established administrative endowments in Srirangam, Munnur, and Tiruvarur on the banks of the Kaveri.
+2. Lineage, Early Career & Epigraphic Genealogy
+The Gopinathpur Stone Inscription (composed by Gopinatha Mahapatra) and the Raghudevapura copper-plate charter (1456 CE) of Raghudeva Narendra Mahapatra provide authentic contemporary testimony regarding Kapilendra Deva's ancestry. Born into a martial Suryavamsha (Solar Kshatriya) lineage, his grandfather Kapilesvara was a distinguished Nayaka (fortress and military commander), and his father Jagesvara commanded extensive military estates alongside his brothers Balarama,ghanasyama, and Parasurama. Entering the Eastern Ganga military service as a young commander (Rauta / Mahasenapati), Kapilendra rose to supreme prominence when Bhanudeva IV was detained during a southern campaign, rallying the ministers and army of Kataka to secure the realm in 1434 CE.
 
-Administrative Integration & Scholarly Chronology of Final Regnal Year:
-Kapilendra did not merely conquer; he instituted administrative stability by replacing old feudal lords with loyal military commanders (Nayakas and Mahapatras). He lowered land assessments, regulated temple revenues (Lingaraja Temple proclamation, 1452 CE), and patronized Sarala Dasa, who composed the pioneering Odia Mahabharata. Regarding the close of his reign on the banks of the Krishna River, historians preserve two scholarly interpretations: Dr. R. Subrahmanyam (1957) and Dr. K.C. Panigrahi (1981) place his demise in late 1466 or early 1467 CE following his 14 December 1466 Puri Jagannatha temple record, whereas R.D. Banerji (1930) and Prof. Prabhat Mukherjee (1953) examine overlapping Anka regnal years with Purushottama Deva that extend nominal calculations to 1468 or 1469/1470 CE.`
+3. The Jagannatha Rauta Ideology & Puri Temple Proclamations (1435–1452 CE)
+Immediately upon his coronation, Kapilendra Deva anchored his sovereignty in the sacred authority of Lord Purushottama-Jagannatha of Puri. In his famous Odia proclamations engraved on the Jaya-Vijaya doorway of the Puri Jagannatha Temple (Anka Year 4 / 1436 CE) and at the Lingaraja Temple in Bhubaneswar (1452 CE), he styled himself the "Rauta" (Deputy) and supreme servant of Lord Jagannatha. He abolished the oppressive tax on salt and cowries (Lavana-Kar) to relieve his subjects, warned rebellious feudal Samantas that resistance to the crown constituted treason against Lord Jagannatha, and commissioned the monumental outer fortification wall (Meghanada Prachira) around the Puri temple complex.
+
+4. Northern Campaigns & Conquest of Gauda-Mandaran (1444–1450 CE)
+Securing the northern frontier against the Iliyas Shahi Sultanate of Bengal (led by Sultan Nasiruddin Mahmud Shah), Kapilendra Deva launched a decisive northern offensive across the Subarnarekha and Damodar rivers. Gajapathi armies captured the strategic frontier citadel of Mandaran (in Hooghly district) and consolidated control over Midnapore, Jaleswar, and Gauda borderlands—earning Kapilendra Deva the proud epigraphic title "Gaudesvara" (Sovereign of Gauda/Bengal), attested in his charters from 1450 CE onward.
+
+5. Annexation of Rajamahendravaram & Kondavidu Rajyas (1448–1454 CE)
+Turning southward across the Godavari River, Kapilendra Deva and his eldest son, Mahamandalesvara Kumara Hamvira Deva, dismantled the weakened Reddi kingdoms and expelled Vijayanagara garrisons from coastal Andhra. By 1448 CE, Rajamahendravaram (Rajahmundry) was integrated as an imperial Rajya under his nephew Raghudeva Narendra Mahapatra. By 1454 CE, Gajapathi forces crossed the Krishna River and captured the mighty hill fortress of Kondavidu, establishing a new southern viceroyalty encompassing Kondapalli, Bellamkonda, Vinukonda, Addanki, and Padaidu.
+
+6. Liberation of Orugallu (Warangal) & Defeat of the Bahmani Sultanate (1457–1461 CE)
+When Bahmani Sultan Ala-ud-din Ahmad Shah II and his successor Humayun Shah Zalim invaded Telangana and besieged Devarkonda (held by the Velama chiefs Lingamanedu), Kapilendra Deva dispatched Prince Hamvira Deva and Raghudeva Narendra at the head of the imperial Gajasena. In a crushing battle beneath Devarkonda (1457 CE), the Gajapathi elephant divisions routed the Bahmani army. On 22 February 1458 CE, Prince Hamvira Deva stormed and liberated the historic Kakatiya capital of Orugallu (Warangal) Fort, engraving his victory inscription directly on the southern gate of Warangal Fort and capturing Khammamet and Bhongir. Advancing up to the walls of Bidar (Kalaburagi), Kapilendra Deva assumed the title "Kalavaragesvara" (Lord of Kalaburagi/Gulbarga).
+
+7. The Veligalani Trilingual Grant (1458 CE) & Southern Zenith to Kanchi & Srirangam (1463–1464 CE)
+In Saka 1380 (1458 CE), while encamped on the banks of the Godavari, Kapilendra Deva issued the celebrated Veligalani Copper-Plate Grant (Epigraphia Indica, Vol. XXXIII, pp. 275–292), written in three scripts and languages—Sanskrit, Odia, and Telugu—proclaiming his full imperial style: "Gajapati Gaudesvara Navakoti Karnata Kalavaragesvara". Between 1460 and 1464 CE, Prince Hamvira Deva and his son Dakshina Kapilesvara Kumara Mahapatra pushed southward through Udayagiri (Nellore), Chandragiri, Kanchipuram, Tiruvannamalai, Munnur, and Tiruvarur, culminating in the Srirangam Ranganathaswamy Temple inscription (Saka 1386 / 1464 CE) on the Kaveri River.
+
+8. Administrative Integration, Literary Patronage & Adikavi Sarala Dasa
+Kapilendra Deva paired military conquest with administrative and cultural synthesis. He organized the empire into northern/central Dandapatas and southern Rajyas governed by Parikshas and Mahapatras, garrisoned over 160 Giri-Durga and Jala-Durga forts with hereditary Nayakas and Odra-Kshatriya/Odiyaraju soldiers, and himself composed the Sanskrit drama Parasurama Vijaya. Crucially, his reign witnessed the birth of classical Odia epic literature through Adikavi Sarala Dasa (Siddhesvara Parida), who composed the monumental 18-Parva Odia Mahabharata, Vilanka Ramayana, and Chandi Purana.
+
+9. Historiographical Analysis: Chronology of the Final Regnal Year & Source Verification
+In accordance with strict historiographical standards, this archive distinguishes between primary epigraphic records, traditional chronicles, and scholarly chronological debates:
+- Primary Epigraphy: Over sixty stone and copper-plate inscriptions (at Puri, Bhubaneswar, Simhachalam, Srikurmam, Veligalani, Warangal, Munnur, and Srirangam) establish the exact geographic and administrative reality of Kapilendra Deva's empire.
+- Scholarly Chronology of Final Regnal Year: Regarding the close of his reign on the banks of the Krishna River while marching south to suppress a frontier revolt, historians preserve two scholarly interpretations: Dr. R. Subrahmanyam (1957) and Dr. K.C. Panigrahi (1981) place his demise in late 1466 or early 1467 CE following his 14 December 1466 solar eclipse record at the Puri Jagannatha Temple, whereas R.D. Banerji (1930) and Prof. Prabhat Mukherjee (1953) analyze overlapping Anka regnal years with Purushottama Deva that extend nominal calculations to 1468 or 1469/1470 CE.
+- Community-Heritage Linkages: The permanent Gajapathi garrisons, Durgapatis, and stone-fortress engineers stationed across Rajahmundry, Kondapalli, Kondavidu, and Udayagiri under Kapilendra Deva formed the historical nucleus of the southern Odiyaraju (CH-0048), Odderajulu (CH-0006), Vadderarajulu (CH-0013), and Gajapathirajulu (CH-0005) communities.
+
+10. Conclusion
+Samrat Kapilendra Deva stands among the greatest empire-builders of medieval South Asia. By uniting the entire eastern corridor from the Hooghly to the Kaveri under an indigenous multilingual sovereign state, he created a political, architectural, and literary legacy that defines Odra-Kalinga and southern Suryavamsha heritage to this day.`
   },
   {
     id: 'art_genealogy_methodology',
     slug: 'royal-genealogy-methodological-distinction',
     category: 'Dynasties and Genealogy',
     original_language: 'en',
-    original_title: 'Methodological Standards: Distinguishing Epigraphic Lineages from Traditional Vamsavalis',
-    summary: 'Why rigorous historiography requires explicit demarcation between primary epigraphic records and post-medieval oral or traditional family claims.',
+    original_title: 'RD-0013 | Methodological Standards: Distinguishing Epigraphic Lineages from Traditional Vamsavalis',
+    summary: 'A comprehensive historiographical treatise establishing the methodological standards for evaluating royal Kshatriya genealogies, primary copper-plate charters (Tamrasasanas), stone prasastis, Mackenzie Kaifiyats, and community Vamsavalis across the Odra-Kalinga and South Indian Suryavamsha/Chandravamsha traditions.',
     author_name: 'G.Sathyanarayana Raju.Peetla.',
     publication_date: '2026-02-14',
     verification_status: 'Published',
     evidence_category: 'scholarly_interpretation',
     featured_image: ARCHIVE_IMG('copper_plate_charter.jpg'),
-    tags: ['Genealogy', 'Methodology', 'Oral Traditions', 'Epigraphy', 'Vamsavali'],
+    tags: ['RD-0013', 'Genealogy', 'Methodology', 'Oral Traditions', 'Epigraphy', 'Vamsavali', 'Tamrasasana', 'Kaifiyat'],
     sources: [
       {
         id: 'src_05',
         source_type: 'Peer-Reviewed Research',
-        title: 'Historical Methods in Indian Dynastic Genealogies',
+        title: 'Historical Methods in Indian Dynastic Genealogies (From Lineage to State & Time as a Metaphor of History)',
         author_or_authority: 'Prof. Romila Thapar',
-        publication_or_location: 'Oxford University Press',
-        year_or_era: '1996',
-        citation_details: 'From Lineage to State, pp. 120–145',
+        publication_or_location: 'New Delhi: Oxford University Press',
+        year_or_era: '1984 / 1996',
+        citation_details: 'pp. 120–162 (Structural analysis of Puranic Vamsanucharita vs. epigraphic Prasastis)',
+        verified: true
+      },
+      {
+        id: 'src_05b',
+        source_type: 'Scholarly Book',
+        title: 'Indian Epigraphy',
+        author_or_authority: 'Dr. D.C. Sircar',
+        publication_or_location: 'New Delhi: Motilal Banarsidass',
+        year_or_era: '1965',
+        citation_details: 'Chapters IV & V (Formularies of Tamrasasanas, genealogical preambles, and astronomical dating)',
+        verified: true
+      },
+      {
+        id: 'src_05c',
+        source_type: 'Scholarly Book',
+        title: 'Precolonial India in Practice: Society, Region, and Identity in Medieval Andhra',
+        author_or_authority: 'Prof. Cynthia Talbot',
+        publication_or_location: 'New York: Oxford University Press',
+        year_or_era: '2001',
+        citation_details: 'pp. 174–214 (Comparison of medieval stone inscriptions with 16th–18th century chronicles and Kaifiyats)',
+        verified: true
+      },
+      {
+        id: 'src_05d',
+        source_type: 'Scholarly Book',
+        title: 'Colonialism and Its Forms of Knowledge / Castes of Mind',
+        author_or_authority: 'Prof. Nicholas B. Dirks',
+        publication_or_location: 'Princeton: Princeton University Press',
+        year_or_era: '2001',
+        citation_details: 'Analysis of the Mackenzie Collection Kaifiyats and colonial ethnographic classification',
         verified: true
       }
     ],
-    original_content: `In researching royal Kshatriya lineages associated with the Suryavamsha Gajapathis and their diaspora across eastern and peninsular India, scholars encounter two distinct categories of data:
+    original_content: `1. Article Identification & Epistemic Purpose
+Reference Number: RD-0013 | Record ID: art_genealogy_methodology | Category: Royal Dynasties & Historiographical Methodology.
+In researching the royal dynasties of Odra-Kalinga, Andhra, Karnataka, and Tamil Nadu—including the Eastern Gangas, Western Gangas, Imperial Cholas, Chalukyas, Kakatiyas, and Suryavamsha Gajapathis—and their historical connections to living communities across peninsular India, scholars encounter multiple overlapping tiers of historical evidence. A truly authoritative digital archive must neither dismiss living community memory nor conflate late oral traditions with contemporary 12th- or 15th-century stone inscriptions. This monograph codifies the five-tier evidentiary methodology enforced across every article on the Gajapathi-Kings and Community-Heritage portals.
 
-1. Contemporary Primary Epigraphy:
-These comprise stone inscriptions and copper-plate charters incised during the actual lifetimes of the monarchs (such as the Veligalani grant of 1458 CE, the Lingaraja Temple inscription of 1452 CE, and the Simhachalam pillars). They provide indisputable chronological anchors, specific regnal years, and administrative details.
+2. Tier I: Contemporary Primary Epigraphy (Tamrasasanas & Silalekhas)
+The highest evidentiary standard in Indian historiography consists of inscriptions incised during the lifetime of the reigning sovereign or donor:
+- Royal Copper-Plate Charters (Tamrasasanas): Legal property documents bound by a royal seal ring (Lanchhana—such as the Varaha of the Chalukyas and Kakatiyas, the Vrishabha of the Eastern Gangas, or the Sword/Elephant emblems of the Gajapathis). Every charter contains a Sanskrit genealogical preamble (Prasasti) followed by an operative administrative grant in Sanskrit, Odia, Telugu, Kannada, or Tamil.
+- Lithic Temple & Fortress Inscriptions (Silalekhas): Engraved on temple walls (such as Simhachalam, Srikurmam, Puri, Mukhalingam, Draksharama, Hanamkonda, and Srirangam) or fortress gates (such as Warangal Fort, 1458 CE). Because these inscriptions include verifiable astronomical data (Saka year, Kaliyuga year, Anka regnal year, lunar eclipse, or solar sankranti), their dates can be astronomically verified to the exact day.
 
-2. Traditional Vamsavalis, Kaifiyats & Family Genealogies:
-Recorded in palm-leaf manuscripts (like the Madala Panji) or Mackenzie Collection local Kaifiyats collected in the late 18th and early 19th centuries, these documents preserve living memory and community traditions. While deeply valuable for understanding social identity, migrations, and honorific titles, they frequently conflate mythic ancestry with historical reigns or collapse multiple centuries into simplified ancestral links.
+3. Anatomy of a Dynastic Prasasti: Mythic Progenitors vs. Historical Generations
+As demonstrated by D.C. Sircar and Romila Thapar, medieval royal copper plates typically contain two distinct sections within their genealogy:
+- The Cosmological / Puranic Preamble: Tracing the dynasty's ultimate spiritual origin to Surya (Manu -> Ikshvaku -> Sagara -> Bhagiratha -> Rama) or Chandra (Atri -> Soma -> Pururavas -> Yayati -> Yadu/Puru). This section establishes cosmic and ritual legitimacy within the Dharmasastra framework.
+- The Historical Pedigree (Vamsavali Proper): Listing the immediate 3 to 15 historical generations of reigning kings, queens, marital alliances, and military victories. Only this second section provides verifiable calendrical chronology.
 
-Our Portal's Epistemic Protocol:
-To preserve unwavering historical credibility, our archive visually and textually differentiates every genealogical link into:
-- Verified Primary: Corroborated by independent contemporary epigraphs.
-- Scholarly Interpretation: Derived from sound comparative historical analysis.
-- Traditional Account: Recorded in community vamsavalis and oral memory, documented with care but without unsubstantiated historical claims.`
+4. Tier II: Contemporary Literary, Legal & Foreign Chronicles
+The second evidentiary tier comprises datable texts composed by court ministers, poets, and foreign observers during or shortly after the reign:
+- Indigenous Court Treatises: Such as Vidyadhara's Ekavali (Eastern Ganga), Jayapa Senani's Nrittaratnavali (Kakatiya), Prataparudra Deva's Sarasvativilasa, and Godavara Misra's Harihara Chaturanga (Gajapathi).
+- External & Foreign Chronicles: Including Minhaj-i-Siraj's Tabaqat-i-Nasiri (13th century), Ziauddin Barani, Abul Fazl's Akbarnama, and the eyewitness Portuguese narratives of Domingo Paes and Fernao Nuniz (c. 1520–1535 CE).
+
+5. Tier III: Temple Chronicles & Early Modern Archival Kaifiyats
+The third tier encompasses institutional chronicles compiled between the 16th and early 19th centuries:
+- The Madala Panji & Katakarajavamsavali: Palm-leaf chronicles of the Puri Jagannatha Temple preserving invaluable administrative lists, temple construction histories, and royal traditions of Odisha.
+- The Mackenzie Collection (Village Kaifiyats, 1800–1821 CE): Over 1,500 local histories recorded in Telugu, Kannada, Tamil, and Marathi by Colonel Colin Mackenzie's native scholars (led by the Kavali brothers). These Kaifiyats preserve authentic pre-colonial memories of local Palegars, fortress builders, tank construction, and southern Gajapathi ("Odda") garrisons.
+
+6. Tier IV: Community Vamsavalis,Bhat/Charan Records & Oral Traditions
+Across Andhra Pradesh, Telangana, Karnataka, Tamil Nadu, Odisha, and western India, hereditary genealogists (Bhats, Pichakuntla, Helavas, and Panjis) and community elders preserved oral and palm-leaf Vamsavalis of the Odiyaraju, Odderajulu, Vadderarajulu, Kalingarajulu, Gajapathirajulu, and Oad-Rajput lineages. While these narratives often telescope multiple centuries into a single heroic ancestor (such as King Odda Raju or Veerabhadra), they accurately preserve macro-historical truths: migration from Odra-Desha (Odisha), former military and fortress-engineering sovereignty, and adherence to Suryavamsha Kshatriya customs.
+
+7. Tier V: Colonial Census Reports & Ethnographic Gazetteers (1871–1931 CE)
+British colonial compendia—including Edgar Thurston's Castes and Tribes of Southern India (1909), R.V. Russell's Tribes and Castes of the Central Provinces (1916), C. Hayavadana Rao's Mysore Gazetteer, and Syed Siraj ul Hassan's Castes and Tribes of H.E.H. the Nizam's Dominions (1920)—provide indispensable demographic and ethnographic documentation of all 76 community synonyms. However, modern historians critically audit these colonial texts to strip away 19th-century colonial prejudices that reduced demilitarized Nayaka and Shilpi clans to purely manual labor categories.
+
+8. Rules for Evaluating Disputed or Unverified Historical Claims
+Whenever a dynasty name, regnal date, or lineage connection lacks direct contemporary epigraphic attestation—such as the phonetic variant "Siddhini Kings" (audited in RD-0010 as a transcription variant of Sendraka/Sinda/Siddhi-raja chiefs) or overlapping Anka regnal reckonings—this archive explicitly labels the point under "Disputed / Uncertain Historical Claims" rather than suppressing or inventing data.
+
+9. Application to Two-Way Community-Heritage Cross-Referencing
+Every cross-reference between a Royal Dynasty article on the Gajapathi-Kings page (RD-0001 through RD-0021, KD-0001, KD-0023) and a Community-Heritage record (CH-0001 through CH-0123) carries an explicit Association Type badge:
+- "Documented Epigraphic / Gazetteer Association": Verified by inscriptions, Mackenzie Kaifiyats, or published gazetteers.
+- "Scholarly Historiographical Synthesis": Established by peer-reviewed academic monographs.
+- "Traditional Lineage Claim": Preserved in respected community Vamsavalis and cultural heritage.
+
+10. Conclusion
+By uniting rigorous epigraphic verification with respectful documentation of archival Kaifiyats and community Vamsavalis, this methodological standard ensures that the Suryavamsha Gajapathi and Odra-Kalinga digital archive meets the highest standards of both academic scholarship and cultural preservation.`
   },
   {
     id: 'art_oad_rajputh_od_history',
@@ -2069,10 +2164,15 @@ export function getAllArticles(lang: LanguageCode = 'en'): Article[] {
   return CANONICAL_ARTICLES.map(a => getLocalizedArticle(a, lang));
 }
 
+export function getGajapathiKingsDossierArticles(lang: LanguageCode = 'en'): Article[] {
+  return GAJAPATHI_KINGS_DOSSIER_ARTICLES.map(a => getLocalizedArticle(a, lang));
+}
+
 export function getArticleByIdOrSlug(idOrSlug: string, lang: LanguageCode = 'en'): Article | null {
   const canonicalId = resolveCanonicalArticleId(idOrSlug);
   const normalizedQuery = (idOrSlug || '').trim().toUpperCase();
-  const found = CANONICAL_ARTICLES.find(a => {
+  const combinedPool = [...CANONICAL_ARTICLES, ...GAJAPATHI_KINGS_DOSSIER_ARTICLES];
+  const found = combinedPool.find(a => {
     const structMeta = ARTICLE_STRUCTURED_METADATA_MAP[a.id];
     return (
       a.id === canonicalId ||

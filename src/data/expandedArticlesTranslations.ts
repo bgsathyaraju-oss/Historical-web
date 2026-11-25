@@ -1,4 +1,8 @@
 import type { LanguageCode, SourceReference } from '../types/index.ts';
+import {
+  ensure10ChaptersNativeContent,
+  localizeAuthorName
+} from './gajapathiCompleteMultilingual10ChapterTranslations.ts';
 
 export interface ExpandedArticleTranslationEntry {
   title: string;
@@ -1420,3 +1424,48 @@ export const EXPANDED_ARTICLE_TRANSLATIONS: Record<
     }
   }
 };
+
+const EXPANDED_REF_IDS: Record<string, string> = {
+  art_dyn_eastern_gangas: 'RD-0002',
+  art_dyn_western_gangas: 'RD-0003',
+  art_dyn_imperial_cholas: 'RD-0004',
+  art_dyn_chalukya_synthesis: 'RD-0005',
+  art_dyn_pallavas_kanchi: 'RD-0006',
+  art_dyn_kadambas_banavasi: 'RD-0007',
+  art_dyn_badami_chalukyas: 'RD-0008',
+  art_dyn_vengi_chalukyas: 'RD-0009',
+  art_dyn_siddhini_kings_verification: 'RD-0010',
+  art_lin_suryavamshi_kshatriyas: 'RD-0011',
+  art_lin_chandravamshi_kshatriyas: 'RD-0012',
+  art_genealogy_methodology: 'RD-0013'
+};
+
+const NON_EN_LANGS: ('hi' | 'te' | 'kn' | 'ta' | 'mr' | 'or' | 'bn')[] = [
+  'hi',
+  'te',
+  'kn',
+  'ta',
+  'mr',
+  'or',
+  'bn'
+];
+
+for (const [articleId, langMap] of Object.entries(EXPANDED_ARTICLE_TRANSLATIONS)) {
+  const refNum = EXPANDED_REF_IDS[articleId] || 'RD-0002';
+  for (const lang of NON_EN_LANGS) {
+    const entry = langMap[lang];
+    if (entry) {
+      entry.content = ensure10ChaptersNativeContent(
+        entry.content,
+        articleId,
+        refNum,
+        lang,
+        entry.title,
+        entry.summary
+      );
+      if (entry.author_name) {
+        entry.author_name = localizeAuthorName(entry.author_name, lang);
+      }
+    }
+  }
+}

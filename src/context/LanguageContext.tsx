@@ -16,6 +16,7 @@ import {
   HISTORICAL_MONOGRAPH_SECTIONS
 } from '../data/historyContent';
 import { CANONICAL_ARTICLES } from '../data/articlesRepository';
+import { GAJAPATHI_KINGS_DOSSIER_ARTICLES } from '../data/gajapathiKingsDossierArticles';
 import { ARTICLE_TRANSLATIONS } from '../../server/contentTranslations';
 
 export interface ArticleTranslationItem {
@@ -77,8 +78,9 @@ const buildInitialTranslationMap = (): Record<string, Partial<Record<LanguageCod
     }
   };
 
-  // 1. Ingest Canonical Articles (English baseline and embedded translations)
-  CANONICAL_ARTICLES.forEach((art) => {
+  // 1. Ingest Canonical & Gajapathi Dossier Articles (English baseline and embedded translations)
+  const allCanonicalAndDossierArticles = [...CANONICAL_ARTICLES, ...GAJAPATHI_KINGS_DOSSIER_ARTICLES];
+  allCanonicalAndDossierArticles.forEach((art) => {
     registerEntry(art.id, art.slug, 'en', {
       title: art.original_title,
       summary: art.summary,
@@ -105,7 +107,7 @@ const buildInitialTranslationMap = (): Record<string, Partial<Record<LanguageCod
 
   // 2. Ingest ARTICLE_TRANSLATIONS across all 8 languages (te, or, hi, kn, ta, mr, bn)
   Object.entries(ARTICLE_TRANSLATIONS).forEach(([artId, langObj]) => {
-    const matchingArticle = CANONICAL_ARTICLES.find(a => a.id === artId);
+    const matchingArticle = allCanonicalAndDossierArticles.find(a => a.id === artId);
     const slug = matchingArticle?.slug;
 
     (Object.entries(langObj) as [LanguageCode, ContentTranslationMap][]).forEach(([lang, tr]) => {

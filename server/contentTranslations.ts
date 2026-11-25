@@ -17,6 +17,7 @@ import {
   KAKATIYA_MONUMENT_TRANSLATIONS,
   KAKATIYA_DYNASTY_RECORD
 } from '../src/data/kakatiyaDynastyData.ts';
+import { GAJAPATHI_KINGS_DOSSIER_TRANSLATIONS } from '../src/data/gajapathiKingsDossierArticles.ts';
 
 export interface ContentTranslationMap {
   title: string;
@@ -39,7 +40,8 @@ export const ARTICLE_TRANSLATIONS: Record<string, Partial<Record<LanguageCode, C
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART1,
   ...COMPLETE_ARTICLE_TRANSLATIONS_PART2,
   ...EXPANDED_ARTICLE_TRANSLATIONS,
-  ...KAKATIYA_ARTICLE_TRANSLATIONS
+  ...KAKATIYA_ARTICLE_TRANSLATIONS,
+  ...GAJAPATHI_KINGS_DOSSIER_TRANSLATIONS
 };
 
 export interface EntityTranslation {

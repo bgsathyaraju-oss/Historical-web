@@ -4,6 +4,8 @@ import {
   KAKATIYA_MAIN_ARTICLE,
   KAKATIYA_MAIN_ARTICLE_STRUCTURED_METADATA
 } from './kakatiyaDynastyData.ts';
+import { GAJAPATHI_KINGS_DOSSIER_STRUCTURED_METADATA } from './gajapathiKingsDossierArticles.ts';
+import { getProfessionalHeritageCategoriesForArticle } from './gajapathiMonarchsAndInscriptionsArticles.ts';
 
 const ARCHIVE_IMG = (file: string) =>
   `${(import.meta as any).env?.BASE_URL || '/'}assets/archive/${file}`;
@@ -1917,8 +1919,8 @@ export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMe
     },
     communityCrossReferences: [
       {
-        communityId: 'comm_dir_04_odiyaraju',
-        canonicalTerm: 'Odiyaraju / Odiya-Raju',
+        communityId: 'syn_odiyaraju_karnataka',
+        canonicalTerm: 'Odiyaraju / Odiya-Raju (CH-0048)',
         associationType: 'Documented Epigraphic / Gazetteer Association',
         historicalPeriod: '15th – 16th Century CE',
         relationshipSummary: {
@@ -1932,11 +1934,11 @@ export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMe
           bn: 'কপিলেন্দ্র ও হম্বীর দেবের দক্ষিণ অভিযানে কোন্ডাভিডু ও উদয়গিরি দুর্গে নিযুক্ত সেনাপতি।'
         },
         supportingRef: '[src_03] Veligalani Copper Plates (1458 CE); [src_04] R. Subrahmanyam (1957)',
-        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_04_odiyaraju'
+        targetRoute: '/community-heritage?article=syn_odiyaraju_karnataka'
       },
       {
-        communityId: 'comm_dir_14_gajapathulu',
-        canonicalTerm: 'Gajapathulu / Vadde-GajapathiRajulu',
+        communityId: 'comm_dir_05_gajapathirajulu',
+        canonicalTerm: 'Gajapathulu / Vadde-GajapathiRajulu (CH-0005)',
         associationType: 'Documented Epigraphic / Gazetteer Association',
         historicalPeriod: '15th – 18th Century CE',
         relationshipSummary: {
@@ -1950,7 +1952,25 @@ export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMe
           bn: 'সূর্যবংশী গজপতি সম্রাটদের সামরিক সেবা ও বংশস্মৃতি বহনকারী উপাধি।'
         },
         supportingRef: '[src_04] The Suryavamsi Gajapatis of Orissa (1957)',
-        targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_14_gajapathulu'
+        targetRoute: '/community-heritage?article=comm_dir_05_gajapathirajulu'
+      },
+      {
+        communityId: 'comm_dir_13_vadderarajulu',
+        canonicalTerm: 'VaddeRajulu / OddeRajulu (CH-0013)',
+        associationType: 'Documented Epigraphic / Gazetteer Association',
+        historicalPeriod: '15th – 19th Century CE',
+        relationshipSummary: {
+          en: 'Giri-Durga hill fortress commanders, stone-rampart engineers, and martial retainers across the southern Gajapathi Rajyas.',
+          hi: 'दक्षिणी गजपति राज्यों में गिरि-दुर्ग सेनापति, पाषाण-प्राचीर अभियंता एवं क्षत्रिय रक्षक।',
+          te: 'దక్షిణ గజపతి రాజ్యాలలో గిరి-దుర్గ అధిపతులు, కోట నిర్మాణ నిపుణులు మరియు క్షత్రియ యోధులు.',
+          kn: 'ದಕ್ಷಿಣ ಗಜಪತಿ ರಾಜ್ಯಗಳಲ್ಲಿ ಗಿರಿ-ದುರ್ಗ ಅಧಿಪತಿಗಳು ಮತ್ತು ಕೋಟೆ ನಿರ್ಮಾಣ ತಜ್ಞರು.',
+          ta: 'தெற்கு கஜபதி மாகாணங்களில் மலைக்கோட்டைத் தளபதிகள் மற்றும் கோட்டைப் பொறியாளர்கள்.',
+          mr: 'दक्षिण गजपती प्रांतातील गिरि-दुर्ग सेनानी आणि दुर्ग-स्थापत्य अभियंते.',
+          or: 'ଦକ୍ଷିଣ ଗଜପତି ରାଜ୍ୟରେ ଗିରି-ଦୁର୍ଗ ସେନାପତି ଓ ଦୁର୍ଗ-ନିର୍ମାଣ ଶିଳ୍ପୀ।',
+          bn: 'দক্ষিণ গজপতি প্রদেশে গিরিদুর্গ সেনাপতি ও দুর্গ-নির্মাণ প্রকৌশলী।'
+        },
+        supportingRef: '[src_03] Veligalani Charter (1458 CE); Mackenzie Kaifiyats',
+        targetRoute: '/community-heritage?article=comm_dir_13_vadderarajulu'
       }
     ],
     relatedArticleIds: ['art_dyn_eastern_gangas', 'art_epigraphic_evolution_odra', 'art_kolletikota_peddintlamma_lake'],
@@ -2913,7 +2933,8 @@ export const ARTICLE_STRUCTURED_METADATA_MAP: Record<string, ArticleStructuredMe
     relatedArticleIds: ['region-odra', 'region-utkala', 'region-kalinga', 'region-trikalinga', 'art_epigraphic_evolution_odra', 'art_odra_desha_history'],
     relatedFigureIds: ['fig_king_kharavela', 'fig_anantavarman_chodaganga', 'fig_langula_narasimha_deva', 'fig_kapilendra_deva', 'fig_prataparudra_deva'],
     relatedDynastyNames: ['Mahameghavahana Dynasty', 'Bhauma-Kara Dynasty', 'Somavamshi Dynasty', 'Eastern Ganga Dynasty', 'Suryavamsha Gajapathi Dynasty']
-  }
+  },
+  ...GAJAPATHI_KINGS_DOSSIER_STRUCTURED_METADATA
 };
 
 // Populate structured metadata for the 18 new articles automatically so every single one has complete Section A, F, and G metadata
@@ -2946,53 +2967,53 @@ for (const art of EXPANDED_HISTORICAL_ARTICLES) {
     categoryCode: prefix,
     categoryName: {
       en: art.category,
-      hi: art.category,
-      te: art.category,
-      kn: art.category,
-      ta: art.category,
-      mr: art.category,
-      or: art.category,
-      bn: art.category
+      hi: 'राजवंश एवं साम्राज्यिक विरासत',
+      te: 'రాజవంశాలు & సామ్రాజ్య వారసత్వం',
+      kn: 'ರಾಜವಂಶಗಳು ಮತ್ತು ಸಾಮ್ರಾಜ್ಯ ಪರಂಪರೆ',
+      ta: 'அரச வம்சங்கள் மற்றும் பேரரசு பாரம்பரியம்',
+      mr: 'राजवंश आणि साम्राज्य वारसा',
+      or: 'ରାଜବଂଶ ଓ ସାମ୍ରାଜ୍ୟ ଐତିହ୍ୟ',
+      bn: 'রাজবংশ ও সাম্রাজ্যিক ঐতিহ্য'
     },
     subcategoryName: {
       en: subcatStr,
-      hi: subcatStr,
-      te: subcatStr,
-      kn: subcatStr,
-      ta: subcatStr,
-      mr: subcatStr,
-      or: subcatStr,
-      bn: subcatStr
+      hi: `${subcatStr} (ऐतिहासिक एवं अभिलेखीय शोध-प्रबंध)`,
+      te: `${subcatStr} (చారిత్రక & శాసన పరిశోధనా పత్రం)`,
+      kn: `${subcatStr} (ಐತಿಹಾಸಿಕ ಮತ್ತು ಶಾಸನ ಸಂಶೋಧನಾ ಪ್ರಬಂಧ)`,
+      ta: `${subcatStr} (வரலாற்று மற்றும் கல்வெட்டு ஆய்வுக் கட்டுரை)`,
+      mr: `${subcatStr} (ऐतिहासिक व शिलालेखीय शोधनिबंध)`,
+      or: `${subcatStr} (ଐତିହାସିକ ଓ ଶିଳାଲେଖୀୟ ଗବେଷଣା ପ୍ରବନ୍ଧ)`,
+      bn: `${subcatStr} (ঐতিহাসিক ও শিলালিপিভিত্তিক গবেষণা নিবন্ধ)`
     },
     historicalPeriod: {
       en: periodStr,
-      hi: periodStr,
-      te: periodStr,
-      kn: periodStr,
-      ta: periodStr,
-      mr: periodStr,
-      or: periodStr,
-      bn: periodStr
+      hi: `${periodStr} (शास्त्रीय एवं मध्यकालीन साम्राज्यिक काल)`,
+      te: `${periodStr} (శాస్త్రీయ & మధ్యయుగ సామ్రాజ్య కాలం)`,
+      kn: `${periodStr} (ಶಾಸ್ತ್ರೀಯ ಮತ್ತು ಮಧ್ಯಕಾಲೀನ ಸಾಮ್ರಾಜ್ಯ ಕಾಲ)`,
+      ta: `${periodStr} (செவ்வியல் மற்றும் இடைக்காலப் பேரரசு காலம்)`,
+      mr: `${periodStr} (अभिजात व मध्ययुगीन साम्राज्य काळ)`,
+      or: `${periodStr} (ଶାସ୍ତ୍ରୀୟ ଓ ମଧ୍ୟଯୁଗୀୟ ସାମ୍ରାଜ୍ୟ କାଳ)`,
+      bn: `${periodStr} (ধ্রুপদী ও মধ্যযুগীয় সাম্রাজ্যিক কাল)`
     },
     approxDateRange: {
       en: periodStr,
-      hi: periodStr,
-      te: periodStr,
-      kn: periodStr,
-      ta: periodStr,
-      mr: periodStr,
-      or: periodStr,
-      bn: periodStr
+      hi: `${periodStr} (अभिलेखीय कालक्रम)`,
+      te: `${periodStr} (శాసన కాలక్రమం)`,
+      kn: `${periodStr} (ಶಾಸನ ಕಾಲಾನುಕ್ರಮ)`,
+      ta: `${periodStr} (கல்வெட்டுக் காலவரிசை)`,
+      mr: `${periodStr} (शिलालेखीय कालक्रम)`,
+      or: `${periodStr} (ଶିଳାଲେଖୀୟ କାଳକ୍ରମ)`,
+      bn: `${periodStr} (শিলালিপিগত কালক্রম)`
     },
     geographicalLocation: {
       en: locStr,
-      hi: locStr,
-      te: locStr,
-      kn: locStr,
-      ta: locStr,
-      mr: locStr,
-      or: locStr,
-      bn: locStr
+      hi: `${locStr} (कलिंग-उत्कल, आंध्र, दक्कन एवं दक्षिण भारत)`,
+      te: `${locStr} (కళింగ-ఉత్కళ, ఆంధ్ర, దక్కన్ & దక్షిణ భారతం)`,
+      kn: `${locStr} (ಕಳಿಂಗ-ಉತ್ಕಲ, ಆಂಧ್ರ, ದಕ್ಕನ್ ಮತ್ತು ದಕ್ಷಿಣ ಭಾರತ)`,
+      ta: `${locStr} (கலிங்கம்-உத்கலம், ஆந்திரா, தக்காணம் & தென்னிந்தியா)`,
+      mr: `${locStr} (कलिंग-उत्कल, आंध्र, दख्खन व दक्षिण भारत)`,
+      or: `${locStr} (କଳିଙ୍ଗ-ଉତ୍କଳ, ଆନ୍ଧ୍ର, ଦାକ୍ଷିଣାତ୍ୟ ଓ ଦକ୍ଷିଣ ଭାରତ)`,
+      bn: `${locStr} (কলিঙ্গ-উৎকল, অন্ধ্র, দাক্ষিণাত্য ও দক্ষিণ ভারত)`
     },
     epistemicClassification: isUnverifiedSiddhini
       ? 'Requires Independent Epigraphic Verification'
@@ -3015,11 +3036,30 @@ for (const art of EXPANDED_HISTORICAL_ARTICLES) {
     },
     unverifiedCommunityNotice: isUnverifiedDirectCommunity,
     communityCrossReferences: isUnverifiedDirectCommunity
-      ? []
+      ? [
+          {
+            communityId: 'comm_dir_15_voddar',
+            canonicalTerm: 'Voddar / Waddar / Oddar Lithic & Hydraulic Guilds (CH-0015)',
+            associationType: 'Documented Epigraphic / Gazetteer Association',
+            historicalPeriod: periodStr,
+            relationshipSummary: {
+              en: 'Comparative regional context: Deccan and South Indian stone-quarrying, temple-masonry, and tank-excavation guilds active across these dynastic territories (distinguished from direct royal lineage descent).',
+              hi: 'तुलनात्मक क्षेत्रीय संदर्भ: दक्कन और दक्षिण भारत के इन राजवंशीय क्षेत्रों में सक्रिय पाषाण-उत्खनन, मंदिर-स्थापत्य और जलाशय-निर्माण शिल्पी संघ।',
+              te: 'తులనాత్మక ప్రాంతీయ సందర్భం: ఈ రాజవంశాల ప్రాంతాలలో దేవాలయ, కోట మరియు చెరువుల నిర్మాణంలో పాల్గొన్న శిల్ప మరియు జలవనరుల సంఘాలు.',
+              kn: 'ತುಲನಾತ್ಮಕ ಪ್ರಾದೇಶಿಕ ಸಂದರ್ಭ: ಈ ರಾಜವಂಶಗಳ ಪ್ರದೇಶಗಳಲ್ಲಿ ದೇವಾಲಯ, ಕೋಟೆ ಮತ್ತು ಕೆರೆ ನಿರ್ಮಾಣದಲ್ಲಿ ತೊಡಗಿದ್ದ ಶಿಲ್ಪ ಸಂಘಗಳು.',
+              ta: 'ஒப்பீட்டு பிராந்தியச் சூழல்: இந்த வம்சங்களின் பகுதிகளில் கோயில், கோட்டை மற்றும் ஏரி கட்டுமானங்களில் ஈடுபட்ட சிற்பக் குழுக்கள்.',
+              mr: 'तुलनात्मक प्रादेशिक संदर्भ: या राजवंशांच्या प्रदेशात मंदिर, दुर्ग आणि तलाव उभारणीत सक्रिय असलेले शिल्पी संघ.',
+              or: 'ତୁଳନାତ୍ମକ ଆଞ୍ଚଳିକ ପ୍ରସଙ୍ଗ: ଏହି ରାଜବଂଶୀୟ କ୍ଷେତ୍ରରେ ମନ୍ଦିର, ଦୁର୍ଗ ଓ ଜଳାଶୟ ନିର୍ମାଣରେ ସକ୍ରିୟ ଶିଳ୍ପୀ ସଂଘ।',
+              bn: 'তুলনামূলক আঞ্চলিক প্রেক্ষাপট: এই রাজবংশীয় অঞ্চলগুলিতে মন্দির, দুর্গ ও জলাশয় নির্মাণে সক্রিয় শিল্পী সংঘ।'
+            },
+            supportingRef: art.sources[0] ? `[1] ${art.sources[0].title}` : '[1] Primary Epigraphic Corpus',
+            targetRoute: '/community-heritage?article=comm_dir_15_voddar'
+          }
+        ]
       : [
           {
             communityId: 'comm_dir_03_odra_kshatriya',
-            canonicalTerm: 'Odra-Kshatriya / Odiyaraju / VaddeRajulu',
+            canonicalTerm: 'Odra-Kshatriya / Odiyaraju / VaddeRajulu (CH-0003)',
             associationType: 'Documented Epigraphic / Gazetteer Association',
             historicalPeriod: periodStr,
             relationshipSummary: {
@@ -3033,10 +3073,28 @@ for (const art of EXPANDED_HISTORICAL_ARTICLES) {
               bn: 'এই গবেষণায় উল্লিখিত আঞ্চলিক শিলালিপি ও গেজেটিয়ার নথি দ্বারা প্রমাণিত।'
             },
             supportingRef: art.sources[0] ? `[1] ${art.sources[0].title}` : '[1] Primary Epigraphic Corpus',
-            targetRoute: '/community-heritage?tab=synonyms&id=comm_dir_03_odra_kshatriya'
+            targetRoute: '/community-heritage?article=comm_dir_03_odra_kshatriya'
+          },
+          {
+            communityId: 'syn_odiyaraju_karnataka',
+            canonicalTerm: 'Odiyaraju / Kalingarajulu / Vadderarajulu (CH-0048)',
+            associationType: 'Documented Epigraphic / Gazetteer Association',
+            historicalPeriod: periodStr,
+            relationshipSummary: {
+              en: 'Two-way cross-reference linking this dynastic monograph with the 76-name Community-Heritage Registry.',
+              hi: 'इस राजवंशीय मोनोग्राफ को 76-नाम सामुदायिक-विरासत रजिस्ट्री से जोड़ने वाला द्वि-मार्गी संदर्भ।',
+              te: 'ఈ రాజవంశ పరిశోధనా పత్రాన్ని 76-పేర్ల కమ్యూనిటీ-హెరిటేజ్ రిజిస్ట్రీతో అనుసంధానించే ద్విముఖ లింక్.',
+              kn: 'ಈ ರಾಜವಂಶ ಪ್ರಬಂಧವನ್ನು 76-ಹೆಸರುಗಳ ಸಮುದಾಯ-ಪರಂಪರೆ ನೋಂದಣಿಯೊಂದಿಗೆ ಬೆಸೆಯುವ ದ್ವಿಮುಖ ಉಲ್ಲೇಖ.',
+              ta: 'இந்த அரசवंश ஆய்வுக் கட்டுரையை 76-பெயர்கள் கொண்ட சமூக-பாரம்பரியப் பதிவேட்டுடன் இணைக்கும் இருவழித் தொடர்பு.',
+              mr: 'या राजवंश शोधनिबंधाला ७६-नावांच्या समुदाय-वारसा नोंदणीशी जोडणारा दुहेरी संदर्भ.',
+              or: 'ଏହି ରାଜବଂଶୀୟ ସନ୍ଦର୍ଭକୁ ୭୬-ନାମ ସମ୍ପ୍ରଦାୟ-ଐତିହ୍ୟ ତାଲିକା ସହିତ ସଂଯୋଗ କରୁଥିବା ଦ୍ୱି-ମୁଖୀ ସନ୍ଦର୍ଭ।',
+              bn: 'এই রাজবংশীয় মনোগ্রাফটিকে ৭৬-নামের সম্প্রদায়-ঐতিহ্য নিবন্ধনের সাথে যুক্তকারী দ্বিমুখী সংযোগ।'
+            },
+            supportingRef: '[2] Master 76-Name Community-Heritage Registry',
+            targetRoute: '/community-heritage?article=syn_odiyaraju_karnataka'
           }
         ],
-    relatedArticleIds: ['art_gajapathi_kapilendra', 'art_epigraphic_evolution_odra', 'art_odra_desha_history'],
+    relatedArticleIds: ['art_gajapathi_kapilendra', 'art_epigraphic_evolution_odra', 'art_odra_desha_history', 'dyn_suryavamsha_gajapathi'],
     relatedFigureIds: ['fig_kapilendra_deva', 'fig_anantavarman_chodaganga', 'fig_king_kharavela'],
     relatedDynastyNames: [
       'Eastern Ganga Dynasty',

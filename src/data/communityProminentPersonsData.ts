@@ -2360,7 +2360,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Archaeological Survey of India: Panagal (Panugal) Fort & Chhayasomeswara Inscriptions, Nalgonda',
       'Tangirala Venkata Subba Rao, "Telugu Veera Gathalu" (Heroic Ballads of Telugu Land), Andhra University'
     ],
-    imageUrl: ARCHIVE_IMG('rani_balanagamma_panagal.jpg')
+    imageUrl: `${(import.meta as any).env?.BASE_URL || '/'}assets/aistudio/IMG-20250928-WA0016_11b40d35.jpg`
   },
 
   // 18. Emperor Raja Bhoja
@@ -2604,7 +2604,7 @@ export const PROMINENT_PERSONS: ProminentPerson[] = [
       'Tangirala Venkata Subba Rao, "Telugu Veera Gathalu" (Heroic Ballads of Andhra), Andhra University Press',
       'Archaeological Survey of Andhra Pradesh: Panagal (Panugal) Fort Historical Archives'
     ],
-    imageUrl: ARCHIVE_IMG('balavaddiraju_hero_stone.jpg')
+    imageUrl: `${(import.meta as any).env?.BASE_URL || '/'}assets/aistudio/1795572184982_e4b2dd90.png`
   },
 
   // 20. G.Sathyanarayana Raju.Peetla.

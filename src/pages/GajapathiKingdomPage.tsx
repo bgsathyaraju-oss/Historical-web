@@ -12,12 +12,18 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { DOCUMENTED_FIGURES_REPO, DocumentedFigureData } from '../data/documentedFiguresRepository';
-import { getAllArticles } from '../data/articlesRepository';
+import {
+  getAllArticles,
+  getGajapathiKingsDossierArticles,
+  getArticleByIdOrSlug
+} from '../data/articlesRepository';
 import { getCanonicalInscriptions } from '../data/archivalSeedData';
 import { DYNASTY_TRANSLATIONS } from '../../server/contentTranslations';
 import { ContentDetailModal, ContentDetailItem } from '../components/ContentDetailModal';
 import { ArticleDetailView } from '../components/ArticleDetailView';
+import { ReferenceIdBadge } from '../components/ReferenceIdBadge';
 import { getPermanentReferenceNumber } from '../data/sevenCategoriesExpansionData';
+import { resolveCanonicalArticleId } from '../data/canonicalArticleMap';
 import { KAKATIYA_DYNASTY_RECORD } from '../data/kakatiyaDynastyData';
 import { LanguageCode, Article } from '../types';
 
@@ -805,6 +811,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         'art_dyn_siddhini_kings_verification',
         'art_lin_suryavamshi_kshatriyas',
         'art_lin_chandravamshi_kshatriyas',
+        'art_genealogy_methodology',
         'art_lin_suryavamshi_kings',
         'art_lin_chandravamshi_kings',
         'art_odra_desha_history',
@@ -814,48 +821,96 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
     );
   }, [language]);
 
+  const dossierArticles = useMemo(
+    () => getGajapathiKingsDossierArticles(language),
+    [language]
+  );
+
+  const allGajapathiMonographs = useMemo(
+    () => [...gajapathiArticles, ...dossierArticles],
+    [gajapathiArticles, dossierArticles]
+  );
+
   // Primary Gajapathi inscriptions localized in the current language
   const gajapathiInscriptions = useMemo(() => {
     return getCanonicalInscriptions(language);
   }, [language]);
 
-  // Open initial modal if navigated with ?figure=..., ?article=..., or ?id=...
-  useEffect(() => {
-    if (!initialItemId) return;
-    const mappedFigureId = LEGACY_FIGURE_ID_MAP[initialItemId] || initialItemId;
-    const foundMonarch = DOCUMENTED_FIGURES_REPO.find(f => f.id === mappedFigureId);
-    if (foundMonarch) {
-      setSelectedTarget({ type: 'monarch', id: foundMonarch.id });
-      return;
+  const openArticleOrDossierMonograph = (rawId: string) => {
+    const mappedRaw = LEGACY_FIGURE_ID_MAP[rawId] || rawId;
+    const resolvedId = resolveCanonicalArticleId(mappedRaw);
+    const matchingDossierTab = GAJAPATHI_DOSSIERS.find(d => d.id === resolvedId);
+    if (matchingDossierTab) {
+      setActiveTab(matchingDossierTab.tab);
     }
-    const foundDossier = GAJAPATHI_DOSSIERS.find(d => d.id === initialItemId);
+    setSelectedTarget({ type: 'article', id: resolvedId });
+    try {
+      const isDossierId =
+        resolvedId.startsWith('dyn_') ||
+        resolvedId.startsWith('admin-') ||
+        resolvedId.startsWith('fig_') ||
+        resolvedId.startsWith('insc_') ||
+        resolvedId === 'military-gajasena' ||
+        resolvedId === 'culture-renaissance';
+      const paramKey = isDossierId ? 'id' : 'article';
+      const url = new URL(window.location.href);
+      url.searchParams.delete('article');
+      url.searchParams.delete('id');
+      url.searchParams.delete('figure');
+      url.searchParams.set(paramKey, resolvedId);
+      window.history.pushState({}, '', `${url.pathname}${url.search}`);
+    } catch {
+      // ignore history errors
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Open initial monograph if navigated with ?figure=..., ?article=..., or ?id=...
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const queryTarget =
+      initialItemId ||
+      searchParams.get('article') ||
+      searchParams.get('id') ||
+      searchParams.get('figure');
+    if (!queryTarget) return;
+
+    const mappedFigureId = LEGACY_FIGURE_ID_MAP[queryTarget] || queryTarget;
+    const resolvedArtId = resolveCanonicalArticleId(mappedFigureId);
+
+    const foundDossier = GAJAPATHI_DOSSIERS.find(d => d.id === resolvedArtId);
     if (foundDossier) {
       setActiveTab(foundDossier.tab);
-      setSelectedTarget({ type: 'dossier', id: foundDossier.id });
+      setSelectedTarget({ type: 'article', id: foundDossier.id });
       return;
     }
-    const foundDynasty = CANONICAL_DYNASTIES_LIST.find(d => d.id === initialItemId);
+
+    const foundDynasty = CANONICAL_DYNASTIES_LIST.find(d => d.id === resolvedArtId);
     if (foundDynasty) {
-      setSelectedTarget({ type: 'dynasty', id: foundDynasty.id });
+      setSelectedTarget({ type: 'article', id: foundDynasty.id });
       return;
     }
-    const allArts = getAllArticles(language);
-    const foundArt = allArts.find(a => a.id === initialItemId || a.slug === initialItemId);
+
+    const foundArt = getArticleByIdOrSlug(resolvedArtId, language);
     if (foundArt) {
       setSelectedTarget({ type: 'article', id: foundArt.id });
       return;
     }
-    const foundInsc = getCanonicalInscriptions(language).find(i => i.id === initialItemId);
+
+    const foundMonarch = DOCUMENTED_FIGURES_REPO.find(f => f.id === resolvedArtId);
+    if (foundMonarch) {
+      setSelectedTarget({ type: 'article', id: foundMonarch.id });
+      return;
+    }
+
+    const foundInsc = getCanonicalInscriptions(language).find(i => i.id === resolvedArtId);
     if (foundInsc) {
-      setSelectedTarget({ type: 'inscription', id: foundInsc.id });
+      setSelectedTarget({ type: 'article', id: foundInsc.id });
     }
   }, [initialItemId, language]);
 
   const openMonarchModal = (figureId: string) => {
-    const resolvedId = LEGACY_FIGURE_ID_MAP[figureId] || figureId;
-    const fig = DOCUMENTED_FIGURES_REPO.find(f => f.id === resolvedId);
-    if (!fig) return;
-    setSelectedTarget({ type: 'monarch', id: fig.id });
+    openArticleOrDossierMonograph(figureId);
   };
 
   // Dynamically compute the ContentDetailItem in the currently selected language
@@ -927,8 +982,8 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
       if (!dossier) return null;
       const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
       const dossierImgMap: Record<string, string> = {
-        'admin-nayankara': `${archiveBase}barabati_fort_gateway.jpg`,
-        'admin-revenue': `${archiveBase}copper_plate_charter.jpg`,
+        'admin-mahapatras': `${archiveBase}copper_plate_charter.jpg`,
+        'admin-nayakas': `${archiveBase}barabati_fort_gateway.jpg`,
         'military-gajasena': `${archiveBase}kondavidu_fort_hills.jpg`,
         'culture-renaissance': `${archiveBase}puri_jagannatha_temple.jpg`
       };
@@ -1067,21 +1122,43 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
   const cultureDossier = GAJAPATHI_DOSSIERS.find(d => d.id === 'culture-renaissance')!;
 
   const selectedFullArticle: Article | null = useMemo(() => {
-    if (selectedTarget?.type !== 'article') return null;
-    const allArts = getAllArticles(language);
-    return allArts.find(a => a.id === selectedTarget.id) || null;
-  }, [selectedTarget, language]);
+    if (!selectedTarget) return null;
+    if (
+      selectedTarget.type === 'article' ||
+      selectedTarget.type === 'dynasty' ||
+      selectedTarget.type === 'dossier' ||
+      selectedTarget.type === 'monarch' ||
+      selectedTarget.type === 'inscription'
+    ) {
+      return (
+        allGajapathiMonographs.find(a => a.id === selectedTarget.id) ||
+        getArticleByIdOrSlug(selectedTarget.id, language) ||
+        null
+      );
+    }
+    return null;
+  }, [selectedTarget, allGajapathiMonographs, language]);
 
   if (selectedFullArticle) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-[#292521]">
         <ArticleDetailView
           article={selectedFullArticle}
-          allArticles={gajapathiArticles.length > 0 ? gajapathiArticles : getAllArticles(language)}
-          onBack={() => setSelectedTarget(null)}
+          allArticles={allGajapathiMonographs.length > 0 ? allGajapathiMonographs : getAllArticles(language)}
+          basePath="/gajapathi-kings"
+          onBack={() => {
+            setSelectedTarget(null);
+            try {
+              const url = new URL(window.location.href);
+              url.searchParams.delete('article');
+              url.searchParams.delete('id');
+              window.history.pushState({}, '', `${url.pathname}${url.search}`);
+            } catch {
+              // ignore history errors
+            }
+          }}
           onSelectArticle={nextArt => {
-            setSelectedTarget({ type: 'article', id: nextArt.id });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            openArticleOrDossierMonograph(nextArt.id);
           }}
           onNavigate={onNavigate}
         />
@@ -1150,6 +1227,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                 const dynasty = fig.dynasty_name[language] || fig.dynasty_name.en;
                 const bio = fig.biography[language] || fig.biography.en;
                 const titles = fig.known_titles[language] || fig.known_titles.en;
+                const figRefNum = getPermanentReferenceNumber(fig.id, 'Historical Figures');
                 const fallbackImg = `${basePath ? basePath + '/' : '/'}assets/archive/kapilendra_deva_portrait.jpg`;
 
                 return (
@@ -1182,6 +1260,9 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        <div className="absolute top-3 left-3">
+                          <ReferenceIdBadge referenceId={figRefNum} size="sm" />
+                        </div>
                       </div>
 
                       <div className="p-6 pb-3 space-y-2.5">
@@ -1246,12 +1327,14 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                 const capital = tr?.capital || dyn.enCapital;
                 const overview = tr?.overview || dyn.enOverview;
                 const period = dyn.period[language] || dyn.period.en;
+                const dynRefNum = getPermanentReferenceNumber(dyn.id, 'Royal Dynasties');
                 const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
                 const dynImgMap: Record<string, string> = {
                   dyn_suryavamsha_gajapathi: `${archiveBase}kapilendra_deva_portrait.jpg`,
                   dyn_eastern_ganga: `${archiveBase}konark_sun_temple_structure.jpg`,
                   dyn_bhoi_mukunda: `${archiveBase}mukunda_deva_barabati.jpg`,
-                  dyn_kakatiya_orugallu: `${archiveBase}kondavidu_fort_hills.jpg`
+                  dyn_traditional_suryavamsha_lineages: `${archiveBase}kondavidu_fort_ramparts.jpg`,
+                  dyn_kakatiya_orugallu: `${archiveBase}warangal_kirti_torana.jpg`
                 };
                 const dynThumb = dynImgMap[dyn.id] || `${archiveBase}barabati_fort_gateway.jpg`;
 
@@ -1260,11 +1343,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                     key={dyn.id}
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelectedTarget({ type: 'dynasty', id: dyn.id })}
+                    onClick={() => openArticleOrDossierMonograph(dyn.id)}
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        setSelectedTarget({ type: 'dynasty', id: dyn.id });
+                        openArticleOrDossierMonograph(dyn.id);
                       }
                     }}
                     className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm"
@@ -1285,6 +1368,9 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        <div className="absolute top-3 left-3">
+                          <ReferenceIdBadge referenceId={dynRefNum} size="sm" />
+                        </div>
                       </div>
                       <div className="p-5 space-y-2.5">
                         <div className="flex items-center justify-between gap-2 text-xs text-[#A87924] font-bold">
@@ -1299,7 +1385,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         </h3>
                         <p className="text-xs text-[#292521] leading-relaxed">{overview}</p>
                         <div className="text-xs font-semibold text-[#76501F] flex items-center gap-1 pt-1">
-                          <span>{ui.viewRecordBtn}</span>
+                          <span>{ui.readArticleBtn}</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </div>
                       </div>
@@ -1330,11 +1416,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                     key={art.id}
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelectedTarget({ type: 'article', id: art.id })}
+                    onClick={() => openArticleOrDossierMonograph(art.id)}
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        setSelectedTarget({ type: 'article', id: art.id });
+                        openArticleOrDossierMonograph(art.id);
                       }
                     }}
                     className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm"
@@ -1356,9 +1442,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         <div className="absolute top-3 left-3">
-                          <span className="px-2.5 py-0.5 rounded-md bg-[#762D35] text-white font-mono text-[10px] font-bold border border-[#D4AF37]/40 shadow-sm">
-                            Ref: {refNum}
-                          </span>
+                          <ReferenceIdBadge referenceId={refNum} size="sm" />
                         </div>
                       </div>
                       <div className="p-6 pb-3 space-y-2">
@@ -1380,7 +1464,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                         type="button"
                         onClick={e => {
                           e.stopPropagation();
-                          setSelectedTarget({ type: 'article', id: art.id });
+                          openArticleOrDossierMonograph(art.id);
                         }}
                         className="text-xs font-semibold text-[#76501F] flex items-center gap-1.5 pt-2 cursor-pointer"
                       >
@@ -1414,16 +1498,17 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                   insc_simhachalam_prataparudra: `${archiveBase}simhachalam_temple.jpg`
                 };
                 const inscThumb = inscImgMap[insc.id] || `${archiveBase}copper_plate_charter.jpg`;
+                const inscRefNum = getPermanentReferenceNumber(insc.id, 'Inscriptions & Copper Plates');
                 return (
                   <div
                     key={insc.id}
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelectedTarget({ type: 'inscription', id: insc.id })}
+                    onClick={() => openArticleOrDossierMonograph(insc.id)}
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        setSelectedTarget({ type: 'inscription', id: insc.id });
+                        openArticleOrDossierMonograph(insc.id);
                       }
                     }}
                     className="rounded-2xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group flex flex-col justify-between shadow-sm"
@@ -1444,6 +1529,9 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        <div className="absolute top-3 left-3">
+                          <ReferenceIdBadge referenceId={inscRefNum} size="sm" />
+                        </div>
                       </div>
                       <div className="p-5 pb-2 space-y-2">
                         <span className="text-[11px] font-bold text-[#A87924] uppercase tracking-wider block">
@@ -1482,19 +1570,20 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
             {adminDossiers.map(dossier => {
               const archiveBase = `${basePath ? basePath + '/' : '/'}assets/archive/`;
               const dossierThumb =
-                dossier.id === 'admin-revenue'
+                dossier.id === 'admin-mahapatras'
                   ? `${archiveBase}copper_plate_charter.jpg`
                   : `${archiveBase}barabati_fort_gateway.jpg`;
+              const dossierRefNum = getPermanentReferenceNumber(dossier.id, 'Royal Dynasties');
               return (
                 <div
                   key={dossier.id}
                   role="button"
                   tabIndex={0}
-                  onClick={() => setSelectedTarget({ type: 'dossier', id: dossier.id })}
+                  onClick={() => openArticleOrDossierMonograph(dossier.id)}
                   onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      setSelectedTarget({ type: 'dossier', id: dossier.id });
+                      openArticleOrDossierMonograph(dossier.id);
                     }
                   }}
                   className="rounded-xl bg-[#FFF9EF] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group"
@@ -1507,6 +1596,9 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    <div className="absolute top-3 left-3">
+                      <ReferenceIdBadge referenceId={dossierRefNum} size="sm" />
+                    </div>
                   </div>
                   <div className="p-5 space-y-2">
                     <span className="text-[11px] text-[#A87924] font-bold uppercase tracking-wider block">
@@ -1519,7 +1611,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
                       {dossier.summary[language] || dossier.summary.en}
                     </p>
                     <span className="text-xs text-[#76501F] font-semibold inline-flex items-center gap-1 pt-1">
-                      <span>{ui.viewRecordBtn}</span>
+                      <span>{ui.readArticleBtn}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
@@ -1535,11 +1627,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         <div
           role="button"
           tabIndex={0}
-          onClick={() => setSelectedTarget({ type: 'dossier', id: militaryDossier.id })}
+          onClick={() => openArticleOrDossierMonograph(militaryDossier.id)}
           onKeyDown={e => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              setSelectedTarget({ type: 'dossier', id: militaryDossier.id });
+              openArticleOrDossierMonograph(militaryDossier.id);
             }
           }}
           className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group shadow-sm"
@@ -1552,6 +1644,9 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <div className="absolute top-3 left-3">
+              <ReferenceIdBadge referenceId={getPermanentReferenceNumber(militaryDossier.id, 'Royal Dynasties')} size="sm" />
+            </div>
           </div>
           <div className="p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -1572,7 +1667,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               <strong>{ui.militaryFindspotsLabel}</strong> {ui.militaryFindspotsText}
             </div>
             <div className="text-xs font-semibold text-[#76501F] inline-flex items-center gap-1.5">
-              <span>{ui.viewRecordBtn}</span>
+              <span>{ui.readArticleBtn}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -1584,11 +1679,11 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
         <div
           role="button"
           tabIndex={0}
-          onClick={() => setSelectedTarget({ type: 'dossier', id: cultureDossier.id })}
+          onClick={() => openArticleOrDossierMonograph(cultureDossier.id)}
           onKeyDown={e => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              setSelectedTarget({ type: 'dossier', id: cultureDossier.id });
+              openArticleOrDossierMonograph(cultureDossier.id);
             }
           }}
           className="rounded-3xl bg-[#FFFCF5] border border-[#D8C3A2] hover:border-[#A87924] overflow-hidden cursor-pointer transition-all group shadow-sm"
@@ -1601,6 +1696,9 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+            <div className="absolute top-3 left-3">
+              <ReferenceIdBadge referenceId={getPermanentReferenceNumber(cultureDossier.id, 'Royal Dynasties')} size="sm" />
+            </div>
           </div>
           <div className="p-6 sm:p-8 space-y-6">
             <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -1621,7 +1719,7 @@ export const GajapathiKingdomPage: React.FC<GajapathiKingdomPageProps> = ({
               {cultureDossier.summary[language] || cultureDossier.summary.en}
             </p>
             <div className="text-xs font-semibold text-[#76501F] inline-flex items-center gap-1.5">
-              <span>{ui.viewRecordBtn}</span>
+              <span>{ui.readArticleBtn}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </div>
           </div>
