@@ -120,10 +120,9 @@ export const SeoHeadManager: React.FC<SeoHeadManagerProps> = ({
 
     // Twitter / X Card metadata
     upsertMetaTag('name', 'twitter:card', 'summary_large_image');
-    upsertMetaTag('name', 'twitter:title', meta.title);
+    upsertMetaTag('name', 'twitter:title', meta.twitterTitle || meta.title);
     upsertMetaTag('name', 'twitter:description', meta.description);
     upsertMetaTag('name', 'twitter:image', meta.imageUrl);
-    upsertMetaTag('name', 'twitter:image:alt', meta.imageAlt);
   }, [currentPath, language, extraArticles, locationTick]);
 
   return null;

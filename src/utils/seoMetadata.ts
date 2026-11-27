@@ -38,6 +38,7 @@ import {
 
 export interface ResolvedSeoMetadata {
   title: string;
+  twitterTitle?: string;
   description: string;
   imagePath: string;
   imageUrl: string;
@@ -71,7 +72,7 @@ const OG_LOCALE_MAP: Record<LanguageCode, string> = {
 };
 
 export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
-  home: '/assets/archive/konark_sun_temple_structure.jpg',
+  home: '/assets/surya-royal-8-hero-banner.png',
   heritage: '/assets/archive/oad_hydraulic_stepwell.jpg',
   personages: '/assets/archive/kapilendra_deva_portrait.jpg',
   prominent_persons: '/assets/archive/emperor_kharavela_udayagiri.jpg',
@@ -765,25 +766,29 @@ export function resolveItemMetadataById(
 
 interface RouteDefinition {
   title: (lang: LanguageCode) => string;
+  twitterTitle?: (lang: LanguageCode) => string;
   description: (lang: LanguageCode) => string;
   rawImagePath: string;
   imageAlt: string;
+  imageType?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   section: string;
   keywords: string[];
 }
 
+const OFFICIAL_PUBLIC_ORIGIN = 'https://historical-web.web.app';
+
 const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
   '/': {
-    title: lang => {
-      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
-      return `${t.siteTitle} — ${t.siteSubtitle}`;
-    },
-    description: lang => {
-      const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
-      return cleanPlainText(`${t.hero.headline}. ${t.hero.subtitle}`, 220);
-    },
-    rawImagePath: CATEGORY_FALLBACK_IMAGES.home,
-    imageAlt: 'Konark Sun Temple & Suryavamsha Odiyaraju Kshatriya Royal Heritage Archive',
+    title: () => 'SURYA-ROYAL-8 | Suryavamsha Odiyaraju Kshatriya Historical Heritage Portal',
+    twitterTitle: () => 'SURYA-ROYAL-8 | Historical Heritage Portal',
+    description: () => 'Know Our Heritage • Preserve Our Glorious Past • Inspire Future Generations.',
+    rawImagePath: '/assets/surya-royal-8-hero-banner.png',
+    imageAlt: 'SURYA-ROYAL-8 Suryavamsha Odiyaraju Kshatriya Historical Heritage Portal Royal Banner',
+    imageType: 'image/png',
+    imageWidth: 1648,
+    imageHeight: 928,
     section: 'Home',
     keywords: [
       'Suryavamsha',
@@ -1353,19 +1358,23 @@ export function resolveSeoMetadata(input: ResolveSeoInput): ResolvedSeoMetadata 
   const { ogImagePath, rawArchiveImagePath } = toOgPreviewImagePath(routeDef.rawImagePath, 'home');
   const langQuery = lang !== 'en' || params.has('lang') ? `?lang=${encodeURIComponent(lang)}` : '';
   const canonicalPath = `${effectiveRoutePath}${langQuery}`;
+  const isOfficialHomeBanner = effectiveRoutePath === '/' && ogImagePath === '/assets/surya-royal-8-hero-banner.png';
+  const effectiveOrigin = isOfficialHomeBanner ? OFFICIAL_PUBLIC_ORIGIN : origin;
+  const effectiveBasePath = isOfficialHomeBanner ? '' : basePath;
 
   return {
     title: routeDef.title(lang),
+    twitterTitle: routeDef.twitterTitle ? routeDef.twitterTitle(lang) : routeDef.title(lang),
     description: routeDef.description(lang),
     imagePath: ogImagePath,
-    imageUrl: toAbsoluteHttpsUrl(ogImagePath, origin, basePath),
+    imageUrl: toAbsoluteHttpsUrl(ogImagePath, effectiveOrigin, effectiveBasePath),
     rawArchiveImagePath,
     imageAlt: routeDef.imageAlt,
-    imageWidth: 1200,
-    imageHeight: 630,
-    imageType: 'image/jpeg',
+    imageWidth: routeDef.imageWidth ?? 1200,
+    imageHeight: routeDef.imageHeight ?? 630,
+    imageType: routeDef.imageType ?? 'image/jpeg',
     canonicalPath,
-    canonicalUrl: toAbsoluteHttpsUrl(canonicalPath, origin, basePath),
+    canonicalUrl: toAbsoluteHttpsUrl(canonicalPath, effectiveOrigin, effectiveBasePath),
     ogType: 'website',
     siteName: siteTitle,
     locale,
@@ -1393,11 +1402,11 @@ export function injectSeoMetadataIntoHtml(
   meta: ResolvedSeoMetadata
 ): string {
   const safeTitle = escapeHtmlAttr(meta.title);
+  const safeTwitterTitle = escapeHtmlAttr(meta.twitterTitle || meta.title);
   const safeDesc = escapeHtmlAttr(meta.description);
   const safeImgUrl = escapeHtmlAttr(meta.imageUrl);
   const safeImgAlt = escapeHtmlAttr(meta.imageAlt);
   const safeCanonicalUrl = escapeHtmlAttr(meta.canonicalUrl);
-  const safeSiteName = escapeHtmlAttr(meta.siteName);
   const safeKeywords = escapeHtmlAttr(meta.keywords.join(', '));
 
   const dynamicHeadBlock = `
@@ -1408,8 +1417,6 @@ export function injectSeoMetadataIntoHtml(
 
     <!-- Open Graph / WhatsApp / Facebook / Telegram / LinkedIn -->
     <meta property="og:type" content="${meta.ogType}" />
-    <meta property="og:site_name" content="${safeSiteName}" />
-    <meta property="og:locale" content="${meta.locale}" />
     <meta property="og:url" content="${safeCanonicalUrl}" />
     <meta property="og:title" content="${safeTitle}" />
     <meta property="og:description" content="${safeDesc}" />
@@ -1422,10 +1429,9 @@ export function injectSeoMetadataIntoHtml(
 
     <!-- Twitter / X Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="${safeTitle}" />
+    <meta name="twitter:title" content="${safeTwitterTitle}" />
     <meta name="twitter:description" content="${safeDesc}" />
     <meta name="twitter:image" content="${safeImgUrl}" />
-    <meta name="twitter:image:alt" content="${safeImgAlt}" />
   `.trim();
 
   let updated = htmlTemplate;
@@ -1433,8 +1439,10 @@ export function injectSeoMetadataIntoHtml(
   // Replace HTML lang attribute if needed
   updated = updated.replace(/<html\s+lang="[^"]*"/i, `<html lang="${meta.language}"`);
 
-  // Remove existing title, description, keywords, canonical, og:*, and twitter:* tags so there are zero duplicates
+  // Remove existing title, description, keywords, canonical, og:*, twitter:* tags and comments so there are zero duplicates
   updated = updated
+    .replace(/<!--\s*Open Graph[\s\S]*?-->/gi, '')
+    .replace(/<!--\s*Twitter\s*\/\s*X Card\s*-->/gi, '')
     .replace(/<title>[\s\S]*?<\/title>/gi, '')
     .replace(/<meta\s+name=["']description["'][^>]*>/gi, '')
     .replace(/<meta\s+name=["']keywords["'][^>]*>/gi, '')

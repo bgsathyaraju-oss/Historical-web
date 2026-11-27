@@ -18,7 +18,6 @@ if (!fs.existsSync(templatePath)) {
 const baseTemplate = fs.readFileSync(templatePath, 'utf-8');
 const origin = (
   process.env.PUBLIC_SITE_URL ||
-  process.env.APP_URL ||
   process.env.VITE_PUBLIC_SITE_URL ||
   DEFAULT_PUBLIC_ORIGIN
 ).replace(/\/+$/, '');

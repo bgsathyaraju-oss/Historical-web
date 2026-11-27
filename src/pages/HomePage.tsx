@@ -72,7 +72,8 @@ const ASSET_WEBP = (name: string) =>
  * Verified 25-Asset Registry mapping the exact filenames in public/assets/
  */
 export const ROYAL_HOMEPAGE_ASSETS = {
-  // 1. Main Hero, Emblem, Textures, Divider & Footer Silhouette (6 files)
+  // 1. Main Hero, Emblem, Textures, Divider & Footer Silhouette
+  suryaRoyalHeroBanner: ASSET_WEBP('surya-royal-8-hero-banner.png'),
   heroBannerKingHorse: ASSET_WEBP('hero-banner-king-horse.webp'),
   logoSunEmblem: ASSET_WEBP('logo-sun-emblem.webp'),
   bgMaroonTexture: ASSET_WEBP('bg-maroon-texture.webp'),
@@ -1699,6 +1700,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
   const [showAllArticles, setShowAllArticles] = useState(false);
   const [showAllTimelineEvents, setShowAllTimelineEvents] = useState(false);
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<GalleryItem | null>(null);
+  const [heroBannerMissing, setHeroBannerMissing] = useState(false);
 
   const canonicalGalleryItems = useMemo<GalleryItem[]>(
     () => getCanonicalGallery(language),
@@ -2579,27 +2581,37 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenSearch }) 
           backgroundImage: `linear-gradient(180deg, #3A0810 0%, #58121D 50%, #2F060C 100%)`
         }}
       >
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 sm:py-8 lg:py-10">
-          {/* Ornate Gold Frame around the Uncropped King-on-White-Horse Hero Artwork */}
+        <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-7 lg:py-9">
+          {/* Ornate Gold Frame around the Uncropped SURYA-ROYAL-8 Royal Heritage Banner */}
           <div className="rounded-2xl sm:rounded-3xl p-[2px] sm:p-[3px] bg-gradient-to-b from-[#F5E1A4] via-[#D4AF37] to-[#8C6214] shadow-[0_18px_50px_rgba(0,0,0,0.65)]">
             <div className="rounded-[14px] sm:rounded-[22px] overflow-hidden bg-[#26050A]">
-              {/* Full Uncropped Hero Artwork */}
+              {/* Full Uncropped SURYA-ROYAL-8 Royal Heritage Hero Banner */}
               <div className="relative w-full bg-[#1C0408]">
-                <img
-                  src={ROYAL_HOMEPAGE_ASSETS.heroBannerKingHorse}
-                  alt={rh.heroTitle}
-                  className="w-full h-auto max-h-[540px] object-contain mx-auto block"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
-                  onError={e => {
-                    const target = e.currentTarget as HTMLImageElement;
-                    const fallback = `${(import.meta as any).env?.BASE_URL || '/'}assets/royal-hero-banner.png`;
-                    if (!target.src.endsWith('royal-hero-banner.png')) {
-                      target.src = fallback;
-                    }
-                  }}
-                />
+                {heroBannerMissing ? (
+                  <div
+                    role="alert"
+                    className="w-full px-4 py-10 sm:py-14 text-center space-y-2 border-b border-[#D4AF37]/40 bg-[#26050A]"
+                  >
+                    <p className="royal-text-gold font-serif font-bold text-sm sm:text-base">
+                      Hero banner image file not found
+                    </p>
+                    <p className="royal-text-cream text-xs sm:text-sm font-mono break-all">
+                      public/assets/surya-royal-8-hero-banner.png
+                    </p>
+                  </div>
+                ) : (
+                  <img
+                    src={ROYAL_HOMEPAGE_ASSETS.suryaRoyalHeroBanner}
+                    alt={`SURYA-ROYAL-8 — ${rh.heroTitle}`}
+                    width={1672}
+                    height={941}
+                    className="w-full h-auto max-h-[720px] object-contain mx-auto block"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    onError={() => setHeroBannerMissing(true)}
+                  />
+                )}
               </div>
 
               {/* Multilingual Royal Hero Proclamation & Action Bar */}
