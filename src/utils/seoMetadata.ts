@@ -787,8 +787,8 @@ const ROUTE_SEO_DEFINITIONS: Record<string, RouteDefinition> = {
     rawImagePath: '/assets/surya-royal-8-hero-banner.png',
     imageAlt: 'SURYA-ROYAL-8 Suryavamsha Odiyaraju Kshatriya Historical Heritage Portal Royal Banner',
     imageType: 'image/png',
-    imageWidth: 1648,
-    imageHeight: 928,
+    imageWidth: 900,
+    imageHeight: 506,
     section: 'Home',
     keywords: [
       'Suryavamsha',
